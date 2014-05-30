@@ -1,0 +1,156 @@
+;===================================================================32 BITS=============================================================
+DISPINTEAX32:
+;Entrance: push eax
+push ebp
+mov ebp,esp
+push eax
+
+mov eax,dword [ss:ebp+8]
+shr eax,24
+mov ah,0Fh
+push ax
+call near DISPINTAL32
+pop ax
+
+mov eax,dword [ss:ebp+8]
+shr eax,16
+mov ah,0Fh
+push ax
+call near DISPINTAL32
+pop ax
+
+mov eax,dword [ss:ebp+8]
+shr eax,8
+mov ah,0Fh
+push ax
+call near DISPINTAL32
+pop ax
+
+mov eax,dword [ss:ebp+8]
+mov ah,0Fh
+push ax
+call near DISPINTAL32
+pop ax
+
+pop eax
+pop ebp
+ret
+
+DISPSTR32:
+;Entrance: push offset
+;ds:offset = String
+push ebp
+mov ebp,esp
+push esi
+push edi
+push eax
+push ebx
+push gs
+
+mov ax,SLCT_GRAPH
+mov gs,ax
+mov esi,dword [ss:ebp+8]
+mov edi,dword [ds:GRAPHPOS_32]
+.loop1:
+mov al,byte [ds:esi]
+cmp al,0
+je .end
+cmp al,0Ah
+jne .loop2
+;let edi point to the next row
+;edi/(80*2) - every row:80 chars, each char takes 2 bytes.
+push eax
+mov eax,edi
+mov bl,160
+div bl
+;only keep the low 8 of eax(al,aka quotion)
+and eax, 0FFh
+inc eax
+;calculate the edi now
+mov bl,160
+mul bl
+mov edi,eax
+pop eax
+inc esi
+jmp .loop1
+.loop2:
+mov ah,0Fh
+mov word [gs:edi],ax
+add edi,2
+inc esi
+jmp .loop1
+.end:
+mov dword [ds:GRAPHPOS_32],edi
+
+pop gs
+pop ebx
+pop eax
+pop edi
+pop esi
+pop ebp
+ret 
+
+DISPINTAL32:
+;Entrance: push ax ,AH=ATTR, AL=Char
+push ebp
+mov ebp,esp
+push eax
+push gs
+push ecx
+push edi
+push ebx
+
+mov edi,dword [ds:GRAPHPOS_32]
+mov ax,SLCT_GRAPH
+mov gs,ax
+xor eax,eax
+mov ax, word [ss:ebp+8]
+mov bx,ax
+;keep high 4 bits of al
+and al,0F0H
+mov cl,4
+shr al,cl
+call near CHANGEAL
+mov word [gs:edi],ax
+add edi,2
+mov dword [ds:GRAPHPOS_32],edi
+;keep low 4 bits of al
+mov ax,bx
+and al,0Fh
+call near CHANGEAL
+mov ah,bh
+mov word [gs:edi],ax
+add edi,2
+mov dword [ds:GRAPHPOS_32],edi
+
+pop ebx
+pop edi
+pop ecx
+pop gs
+pop eax
+pop ebp
+ret
+
+
+DISPRETURN32:
+push eax
+
+mov eax,IO32_RETURN
+push eax
+call near DISPSTR32
+pop eax
+
+pop eax
+ret
+
+DISPSPACE32:
+push eax
+
+mov eax,IO32_SPACE
+push eax
+call near DISPSTR32
+pop eax
+
+pop eax
+ret
+
