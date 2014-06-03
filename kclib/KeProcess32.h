@@ -44,8 +44,8 @@ typedef struct {
 
 
 
-VOID  KeNativeAPI KeCreateProcess(ULONG32 ProcessID,PVOID ProcessAddress,PVOID ProcessStack,PROCESSPRIVILEGE Privilege);
-VOID  KeNativeAPI KeInitProcess(VOID);
-VOID  KeNativeAPI _asm_KeLoadTSS(ULONG32 Selector_TSS);
-VOID  KeNativeAPI _asm_Restart();
+VOID  HYPKERNELAPI KeCreateProcess(ULONG32 ProcessID,PVOID ProcessAddress,PVOID ProcessStack,PROCESSPRIVILEGE Privilege);
+VOID  HYPKERNELAPI KeInitProcess(VOID);
+VOID  HYPKERNELAPI _asm_KeLoadTSS(ULONG32 Selector_TSS);
+VOID  HYPKERNELAPI _asm_Restart();
 #endif

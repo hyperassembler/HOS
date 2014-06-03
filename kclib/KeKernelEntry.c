@@ -5,8 +5,8 @@
 #include "KeIO32.h"
 #include "KeProcess32.h"
 
-VOID KeNativeAPI KeSystemInit(VOID);
-VOID KeNativeAPI KeRawDelay(ULONG32 time);
+VOID HYPKERNELAPI KeSystemInit(VOID);
+VOID HYPKERNELAPI KeRawDelay(ULONG32 time);
 VOID ProcessA(VOID);
 
 

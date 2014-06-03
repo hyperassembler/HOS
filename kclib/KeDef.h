@@ -1,7 +1,7 @@
 #ifndef _KeDef_h_
 #define _KeDef_h_
 // calling conventions
-#define KeNativeAPI _cdecl
+#define HYPKERNELAPI _cdecl
 //asdadadadsasdadas
 //Struct Naming:
 //AAXXXXBB

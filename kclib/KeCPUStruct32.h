@@ -27,6 +27,7 @@ typedef struct {
 	ULONG16 OffsetHigh;
 } IAGATE32,*PIAGATE32;
 
+
 typedef struct {
 	ULONG32 BackLine;
 	ULONG32	esp0;
