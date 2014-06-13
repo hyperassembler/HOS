@@ -142,5 +142,6 @@ ULONG32 HYPKERNELAPI MmMapVirtualAddress(PIAPDE32 PDE_Ptr, ULONG32 PhysicalAddre
 	ULONG32 PTEIndex = KeGetPDEIndex4K32(VirtualAddress);
 	ULONG32 PTEBase = (*(PULONG32)((ULONG32)PDE_Ptr + PDEIndex * 4) >> 12) << 12; // PTE Address
 	PVOID Target = (PVOID)((*(PULONG32)(PTEBase + PTEIndex * 4) >> 12) << 12);
+	//this is test
 	return 0;
 }
