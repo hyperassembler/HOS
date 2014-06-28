@@ -136,12 +136,20 @@ ULONG32 HYPKERNELAPI KeGetPTEIndex4K32(ULONG32 Virtual_Address)
 
 
 
-ULONG32 HYPKERNELAPI MmMapVirtualAddress(PIAPDE32 PDE_Ptr, ULONG32 PhysicalAddress, ULONG32 VirtualAddress, PKePTE4KDescriptor32 PTEDesc)
+ULONG32 HYPKERNELAPI MmMapVirtualAddress4K32(PVOID PDEPtr, ULONG32 PhysicalAddress, ULONG32 VirtualAddress, PKePTE4KDescriptor32 PTEDesc)
 {
 	ULONG32 PDEIndex = KeGetPDEIndex4K32(VirtualAddress);
 	ULONG32 PTEIndex = KeGetPDEIndex4K32(VirtualAddress);
-	ULONG32 PTEBase = (*(PULONG32)((ULONG32)PDE_Ptr + PDEIndex * 4) >> 12) << 12; // PTE Address
+	ULONG32 PTEBase = (*(PULONG32)((ULONG32)PDEPtr + PDEIndex * 4) >> 12) << 12;
 	PVOID Target = (PVOID)((*(PULONG32)(PTEBase + PTEIndex * 4) >> 12) << 12);
-	//this is test
+
+
 	return 0;
+}
+
+ULONG32 HYPKERNELAPI KeSetBit(PVOID Source, ULONG32 SourceBitLength, ULONG32 Position, ULONG32 Value)
+{
+	if (!Source || SourceBitLength < Position || (Value != 0 || Value != 1))
+		return 1;
+	
 }

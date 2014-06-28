@@ -2,6 +2,7 @@
 #define _KeDef_h_
 // calling conventions
 #define HYPKERNELAPI _cdecl
+#define NULL ((void*)0)
 //asdadadadsasdadas
 //Struct Naming:
 //AAXXXXBB

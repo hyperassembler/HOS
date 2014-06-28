@@ -15,10 +15,6 @@ typedef struct {
 
 typedef IAGDT32 IALDT32,*PIALDT32;
 
-typedef ULONG32 IAPDE32,*PIAPDE32;
-
-typedef ULONG32 IAPTE32,*PIAPTE32;
-
 typedef struct {
 	ULONG16 OffsetLow;
 	ULONG16 Selector;
