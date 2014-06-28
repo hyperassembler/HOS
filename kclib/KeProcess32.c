@@ -10,6 +10,7 @@ VOID KeInitProcess(VOID)
 	KeMemorySet((PVOID)&KeTSS,0,sizeof(IATSS32));
 	KeTSS.ss0 = GDT_SELECTOR_DATA;
 	//DESC INIT
+
 	KeInitializeKeGDTDescriptor32(&desc, (ULONG32)&KeTSS, sizeof(IATSS32)-1, KeWriteGDT_G_0,KeWriteGDT_P_1 , KeWriteGDT_S_0, KeWriteGDT_Type_System_32BitsTSSAvailable, KeWriteGDT_DPL_0, KeWriteGDT_DB_1, KeWriteGDT_AVL_0);
 
 	KeWriteGDT(GDT_INDEX_TSS, &KeGDT[0], &desc);
