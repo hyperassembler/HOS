@@ -2,6 +2,7 @@
 #define _KeProcess32_h_
 
 #include "KeDef.h"
+#include "KeKernelStruct32.h"
 
 #pragma  pack(push)
 #pragma  pack(4)

@@ -24,7 +24,7 @@ typedef struct {
 	ULONG32 GateType;
 } KeIDTDescriptor32, *PKeIDTDescriptor32;
 
-typedef struct _WritePDE4K32_Descriptor
+typedef struct
 {
 	ULONG32 P;
 	ULONG32 RW;

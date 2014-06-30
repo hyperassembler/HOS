@@ -1,5 +1,6 @@
 #include "KeProcess32.h"
 #include "KeMemory32.h"
+#include "KeKernelStruct32.h"
 #include "KeIO32.h"
 #include "KeGraph32.h"
 
@@ -48,7 +49,6 @@ VOID KeCreateProcess(ULONG32 ProcessID,PVOID ProcessAddress,PVOID ProcessStack,P
 	process->RestartStack.eip = (ULONG32)ProcessAddress;
 	process->RestartStack.esp = (ULONG32)ProcessStack + PROCESS_STACK_MAX_SIZE;
 	process->RestartStack.eFlags = 0x1202;
-
 	//	process->LDTSelector = GDT_SELECTOR_LDT;
 	//	KeMemoryCopy(&KeGDT[GDT_INDEX_CODE],&process->ProcessLDT[LDT_INDEX_CODE],sizeof(GDT_DESCRIPTOR));
 	//	process->ProcessLDT[LDT_INDEX_CODE].Attr1 = DA_C | PRIVILEGE_TASK << 5;

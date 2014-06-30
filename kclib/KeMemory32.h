@@ -17,9 +17,12 @@ VOID  HYPKERNELAPI KeInitializeWritePTE4KDescriptor32(PKePTE4KDescriptor32 Desc,
 VOID  HYPKERNELAPI KeWritePTE4K32(PKePTE4KDescriptor32 Desc,PVOID Dst );
 ULONG32 HYPKERNELAPI KeGetPDEIndex4K32(ULONG32 Virtual_Address);
 ULONG32 HYPKERNELAPI KeGetPTEIndex4K32(ULONG32 Virtual_Address);
-ULONG32 HYPKERNELAPI KeSetMappingAddress(PVOID PDE_Dir_Address,ULONG32 Physical_Address,ULONG32 Virtual_Address);
+ULONG32 HYPKERNELAPI MmMapVirtualAddress4K32(PVOID PDEPtr, ULONG32 PhysicalAddress, ULONG32 VirtualAddress, PKePTE4KDescriptor32 PTEDesc);
+ULONG32 HYPKERNELAPI KeSetBit(PVOID Source, ULONG32 Position, ULONG32 Value);
+ULONG32 HYPKERNELAPI KeGetBit(PVOID Source, ULONG32 Position);
 
 
+#define KeWritePDE4K32_UNDEFINED_BIT 3
 #define KeWritePDE4K32_P_0 0 // 0 for not present
 #define KeWritePDE4K32_P_1 1 // 1 for Present
 #define KeWritePDE4K32_RW_0 0 // 0 for ReadOnly
@@ -35,6 +38,7 @@ ULONG32 HYPKERNELAPI KeSetMappingAddress(PVOID PDE_Dir_Address,ULONG32 Physical_
 #define KeWritePDE4K32_PS_0 0 //0 for 4K pages
 #define KeWritePDE4K32_PS_1 128 //1 for 4M pages
 
+#define KeWritePTE4K32_UNDEFINED_BIT 3
 #define KeWritePTE4K32_P_0 0 // 0 for not present
 #define KeWritePTE4K32_P_1 1 // 1 for present
 #define KeWritePTE4K32_RW_0 0 // 0 for readonly
