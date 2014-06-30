@@ -3,13 +3,7 @@
 #include "KeKernelStruct32.h"
 #include "KeGraph32.h"
 
-ULONG32 HYPKERNELAPI SegmentToPhyscicalAddress(ULONG16 Segment)
-{
-	PIAGDT32 PDescriptor = &KeGDT[(Segment >> 3)];
-	return (PDescriptor->BaseHigh << 24 | PDescriptor->BaseMid << 16 | PDescriptor->BaseLow);
-};
-
-PVOID HYPKERNELAPI KeMemorySet(PVOID Source, BYTE Value, ULONG32 Length)
+PVOID HYPKERNELAPI KeMemorySet(_IN_ PVOID Source, _IN_ BYTE Value, _IN_ ULONG32 Length)
 {
 	PBYTE src = (PBYTE)Source;
 	while (Length > 0)
@@ -23,7 +17,7 @@ PVOID HYPKERNELAPI KeMemorySet(PVOID Source, BYTE Value, ULONG32 Length)
 	return 0;
 }
 
-PVOID HYPKERNELAPI KeMemoryCopy(PVOID src, PVOID dst, ULONG32 size)
+PVOID HYPKERNELAPI KeMemoryCopy(_IN_ PVOID src, _IN_ PVOID dst, _IN_ ULONG32 size)
 {
 	ULONG32 i = 0;
 	for (i = 0; i < size; i++)
@@ -34,8 +28,10 @@ PVOID HYPKERNELAPI KeMemoryCopy(PVOID src, PVOID dst, ULONG32 size)
 }
 
 
-VOID HYPKERNELAPI KeInitializeWritePDE4KDescriptor32(PKePDE4KDescriptor32 Desc, ULONG32 P, ULONG32 RW, ULONG32 US, ULONG32 PWT, ULONG32 PCD, ULONG32 A, ULONG32 PS, ULONG32 Address)
+VOID HYPKERNELAPI KeInitializeWritePDE4KDescriptor32(_OUT_ PKePDE4KDescriptor32 Desc, _IN_ ULONG32 P, _IN_ ULONG32 RW, _IN_ ULONG32 US, _IN_ ULONG32 PWT, _IN_ ULONG32 PCD, _IN_ ULONG32 A, _IN_ ULONG32 PS, _IN_ ULONG32 Address)
 {
+	if (Desc == NULL)
+		return;
 	Desc->P = P;
 	Desc->Address = Address;
 	Desc->A = A;
@@ -47,8 +43,10 @@ VOID HYPKERNELAPI KeInitializeWritePDE4KDescriptor32(PKePDE4KDescriptor32 Desc, 
 	return;
 }
 
-VOID HYPKERNELAPI KeWritePDE4K32(PKePDE4KDescriptor32 Desc, PVOID Dst)
+VOID HYPKERNELAPI KeWritePDE4K32(_IN_ PKePDE4KDescriptor32 Desc, _IN_ PVOID Dst)
 {
+	if (Desc == NULL || Dst == NULL)
+		return;
 	ULONG32 temp = 0;
 	temp = Desc->Address;
 	temp = (temp & 0xfffff000);
@@ -64,8 +62,10 @@ VOID HYPKERNELAPI KeWritePDE4K32(PKePDE4KDescriptor32 Desc, PVOID Dst)
 }
 
 
-VOID HYPKERNELAPI KeInitializeWritePTE4K32Descriptor(PKePTE4KDescriptor32 Desc, ULONG32 P, ULONG32 RW, ULONG32 US, ULONG32 PWT, ULONG32 PCD, ULONG32 A, ULONG32 D, ULONG32 PS, ULONG32 G, ULONG32 Address)
+VOID HYPKERNELAPI KeInitializeWritePTE4KDescriptor32(_OUT_ PKePTE4KDescriptor32 Desc, _IN_ ULONG32 P, _IN_ ULONG32 RW, _IN_ ULONG32 US, _IN_ ULONG32 PWT, _IN_ ULONG32 PCD, _IN_ ULONG32 A, _IN_ ULONG32 D, _IN_ ULONG32 PS, _IN_ ULONG32 G, _IN_ ULONG32 Address)
 {
+	if (Desc == NULL)
+		return;
 	Desc->P = P;
 	Desc->Address = Address;
 	Desc->A = A;
@@ -79,8 +79,10 @@ VOID HYPKERNELAPI KeInitializeWritePTE4K32Descriptor(PKePTE4KDescriptor32 Desc, 
 	return;
 }
 
-VOID HYPKERNELAPI KeGetPDEInfo(PKePDE4KDescriptor32 pDesc, PVOID PDEPtr)
+VOID HYPKERNELAPI KeGetPDEInfo( _OUT_ PKePDE4KDescriptor32 pDesc, _IN_ PVOID PDEPtr)
 {
+	if (pDesc == NULL || PDEPtr == NULL)
+		return;
 	ULONG32 temp = *(PULONG32)PDEPtr;
 	pDesc->Address = (temp >> 12) << 12;
 	pDesc->A = temp & KeWritePDE4K32_A_1;
@@ -93,8 +95,10 @@ VOID HYPKERNELAPI KeGetPDEInfo(PKePDE4KDescriptor32 pDesc, PVOID PDEPtr)
 	return;
 }
 
-VOID HYPKERNELAPI KeGetPTEInfo(PKePTE4KDescriptor32 pDesc, PVOID PTEPtr)
+VOID HYPKERNELAPI KeGetPTEInfo( _OUT_ PKePTE4KDescriptor32 pDesc, _IN_ PVOID PTEPtr)
 {
+	if (pDesc == NULL || PTEPtr == NULL)
+		return;
 	ULONG32 temp = *(PULONG32)PTEPtr;
 	pDesc->Address = (temp >> 12) << 12;
 	pDesc->P = temp & KeWritePTE4K32_P_1;
@@ -108,8 +112,10 @@ VOID HYPKERNELAPI KeGetPTEInfo(PKePTE4KDescriptor32 pDesc, PVOID PTEPtr)
 	return;
 }
 
-VOID HYPKERNELAPI KeWritePTE4K32(PKePTE4KDescriptor32 Desc, PVOID Dst)
+VOID HYPKERNELAPI KeWritePTE4K32( _IN_ PKePTE4KDescriptor32 Desc, _IN_ PVOID Dst)
 {
+	if (Desc == NULL || Dst == NULL)
+		return;
 	ULONG32 temp = 0;
 	temp = Desc->Address;
 	temp = (temp & 0xfffff000);
@@ -125,44 +131,41 @@ VOID HYPKERNELAPI KeWritePTE4K32(PKePTE4KDescriptor32 Desc, PVOID Dst)
 	*(PULONG32)Dst = temp;
 }
 
-ULONG32 HYPKERNELAPI KeGetPDEIndex4K32(ULONG32 VirtualAddress)
+ULONG32 HYPKERNELAPI KeGetPDEIndex4K32( _IN_ ULONG32 VirtualAddress)
 {
 	return VirtualAddress >> 22;
 }
 
-ULONG32 HYPKERNELAPI KeGetPTEIndex4K32(ULONG32 VirtualAddress)
+ULONG32 HYPKERNELAPI KeGetPTEIndex4K32( _IN_ ULONG32 VirtualAddress)
 {
 	return (VirtualAddress << 10) >> 22;
 }
 
 
 
-ULONG32 HYPKERNELAPI MmMapVirtualAddress4K32(PVOID PDEPtr, ULONG32 PhysicalAddress, ULONG32 VirtualAddress, PKePTE4KDescriptor32 PTEDesc)
+ULONG32 HYPKERNELAPI MmMapVirtualAddress4K32(_IN_ PVOID PDEBase, _IN_ ULONG32 PhysicalAddress, _IN_ ULONG32 VirtualAddress, _IN_ PKePTE4KDescriptor32 PTEDesc, _IN_ _OPTIONAL_  PKePDE4KDescriptor32 PDEDesc)
 {
 	//Physical Address and Virtual Address will be trimmed to be 4K-aligned
+	//Please assign proper address for PDEDesc
 	KePDE4KDescriptor32 PDE;
-	KeGetPDEInfo(&PDE, PDEPtr);
-	if (PDE.P == KeWritePDE4K32_P_0)
-	{
-		//create PDE
-	}
 	ULONG32 PDEIndex = KeGetPDEIndex4K32(VirtualAddress);
 	ULONG32 PTEIndex = KeGetPTEIndex4K32(VirtualAddress);
-	ULONG32 PTEBase = (*(PULONG32)((ULONG32)PDEPtr + PDEIndex * 4) >> 12) << 12;
+	KeGetPDEInfo(&PDE, (PVOID)(PDEIndex*4 + (ULONG32)PDEBase));
+	if (PDE.P == KeWritePDE4K32_P_0)
+	{
+		KeWritePDE4K32(PDEDesc, (PVOID)(PDEIndex * 4 + (ULONG32)PDEBase));
+	}
+	ULONG32 PTEBase = (*(PULONG32)((ULONG32)PDEBase + PDEIndex * 4) >> 12) << 12;
 	PVOID Target = (PVOID)((*(PULONG32)(PTEBase + PTEIndex * 4) >> 12) << 12);
 	KePTE4KDescriptor32 PTE;
 	KeGetPTEInfo(&PTE, Target);
-	if (PTE.P == KeWritePTE4K32_P_0)
-	{
-		//create PTE
-	}
 	PTEDesc->Address = VirtualAddress;
-	KeWritePTE4K32(&PTEDesc, Target);
+	KeWritePTE4K32(PTEDesc, Target);
 	return 0;
 }
 
 
-ULONG32 HYPKERNELAPI KeGetBit(PVOID Source, ULONG32 Position)
+ULONG32 HYPKERNELAPI KeGetBit(_IN_ PVOID Source, _IN_ ULONG32 Position)
 {
 	if (!Source)
 		return 0;
@@ -181,7 +184,7 @@ ULONG32 HYPKERNELAPI KeGetBit(PVOID Source, ULONG32 Position)
 	return Value;
 }
 
-ULONG32 HYPKERNELAPI KeSetBit(PVOID Source, ULONG32 Position, ULONG32 Value)
+ULONG32 HYPKERNELAPI KeSetBit(_IN_ PVOID Source, _IN_ ULONG32 Position, _IN_ ULONG32 Value)
 {
 	if (!Source || Position < 0 || (Value != 0 && Value != 1))
 		return 1;

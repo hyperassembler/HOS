@@ -1,7 +1,9 @@
 #include "KeIO32.h"
 #include "KeGraph32.h"
-VOID KeWriteGDT(ULONG32 Index,PIAGDT32 Dest, PKeGDTDescriptor32 Src)
+VOID KeWriteGDT(_IN_ ULONG32 Index, _IN_ PIAGDT32 Dest, _IN_ PKeGDTDescriptor32 Src)
 { 
+	if (!Dest || !Src)
+		return;
 	ULONG32 temp = 0;
 	ULONG32 datal = 0;
 	ULONG32 datah = 0;
@@ -29,8 +31,10 @@ VOID KeWriteGDT(ULONG32 Index,PIAGDT32 Dest, PKeGDTDescriptor32 Src)
 }
 
 
-VOID KeInitializeKeGDTDescriptor32(PKeGDTDescriptor32 Desc, ULONG32 Base, ULONG32 Limit, ULONG32 G, ULONG32 P, ULONG32 S, ULONG32 Type, ULONG32 DPL, ULONG32 DB, ULONG32 AVL)
+VOID KeInitializeKeGDTDescriptor32(_OUT_ PKeGDTDescriptor32 Desc, _IN_ ULONG32 Base, _IN_ ULONG32 Limit, _IN_ ULONG32 G, _IN_ ULONG32 P, _IN_ ULONG32 S, _IN_ ULONG32 Type, _IN_ ULONG32 DPL, _IN_ ULONG32 DB, _IN_ ULONG32 AVL)
 {
+	if (!Desc)
+		return;
 	Desc->Base = Base;
 	Desc->Limit = Limit;
 	Desc->G = G;
@@ -43,8 +47,10 @@ VOID KeInitializeKeGDTDescriptor32(PKeGDTDescriptor32 Desc, ULONG32 Base, ULONG3
 	return;
 }
 
-VOID KeInitializeKeIDTDescriptor32(PKeIDTDescriptor32 Desc,ULONG32 GateType, ULONG32 DPL, ULONG32 D, ULONG32 P, ULONG32 Selector, ULONG32 Offset)
+VOID KeInitializeKeIDTDescriptor32(_OUT_ PKeIDTDescriptor32 Desc, _IN_ ULONG32 GateType, _IN_ ULONG32 DPL, _IN_ ULONG32 D, _IN_ ULONG32 P, _IN_ ULONG32 Selector, _IN_ ULONG32 Offset)
 {
+	if (!Desc)
+		return;
 	Desc->GateType = GateType;
 	Desc->DPL = DPL;
 	Desc->D = D;
@@ -87,8 +93,10 @@ VOID KeInitInterrupt(VOID)
 }
 
 
-VOID KeWriteIDT(ULONG32 Index,PIAGATE32 Dest ,PKeIDTDescriptor32 Src)
+VOID KeWriteIDT(_IN_ ULONG32 Index, _IN_ PIAGATE32 Dest, _IN_ PKeIDTDescriptor32 Src)
 {
+	if (!Dest || !Src)
+		return;
 	ULONG32 datah = 0;
 	ULONG32 datal = 0;
 	ULONG32 temp = 0;
@@ -124,7 +132,7 @@ VOID KeInit8259A(VOID)
 	_asm_KeWritePort(INT_S_CTLMASK,0xFF);
 }
 
-VOID KeExceptionHandler(ULONG32 VectorNumber,ULONG32 ErrorCode,ULONG32 eip,ULONG32 cs,ULONG32 eFlags)
+VOID KeExceptionHandler(_IN_ ULONG32 VectorNumber, _IN_ ULONG32 ErrorCode, _IN_ ULONG32 eip, _IN_ ULONG32 cs, _IN_ ULONG32 eFlags)
 {
 	_asm_KeClearGraph32();
 	_asm_KePrintStr32("Exception Caught:\n");
@@ -245,7 +253,7 @@ VOID KeInitIDT(VOID)
 	_asm_KeLoadIDT();
 }
 
-VOID KeIrqIntHandler(ULONG32 IrqNumber)
+VOID KeIrqIntHandler(_IN_ ULONG32 IrqNumber)
 {
 	_asm_KePrintStr32("\nIrq Interrupt Detected. Irq Number:");
 	_asm_KePrintHex32(IrqNumber);

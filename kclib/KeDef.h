@@ -2,8 +2,13 @@
 #define _KeDef_h_
 // calling conventions
 #define HYPKERNELAPI _cdecl
+#define _OPTIONAL_
+#define _IN_
+#define _OUT_
+
+// null pointer
 #define NULL ((void*)0)
-//asdadadadsasdadas
+
 //Struct Naming:
 //AAXXXXBB
 //AA: Identifier

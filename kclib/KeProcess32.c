@@ -19,7 +19,7 @@ VOID KeInitProcess(VOID)
 	_asm_KeLoadTSS(GDT_SELECTOR_TSS);
 }
 
-VOID KeCreateProcess(ULONG32 ProcessID,PVOID ProcessAddress,PVOID ProcessStack,PROCESSPRIVILEGE Privilege)
+VOID KeCreateProcess(_IN_ ULONG32 ProcessID, _IN_ PVOID ProcessAddress, _IN_ PVOID ProcessStack, _IN_ PROCESSPRIVILEGE Privilege)
 {
 	PhProcess process;
 	if(Privilege == Process_Priviliege_Kernel)
