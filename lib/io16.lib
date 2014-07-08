@@ -1,5 +1,4 @@
 GETMEM16:
-;ebx = 0
 push eax
 push ebx
 push ecx
@@ -20,7 +19,7 @@ mov di,GETMEMBUFF ;es:di = ASRD
 .loop:
 mov eax,0E820h
 mov ecx,20
-;edx = 'SWAP'
+;edx = 'SMAP'
 mov edx,0534D4150h
 int 15h
 ;if (CF!=0)

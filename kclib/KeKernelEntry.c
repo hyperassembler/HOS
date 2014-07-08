@@ -65,6 +65,12 @@ VOID ProcessA(VOID)
 	}
 }
 
+VOID ConstructPagingTable()
+{
+	PULONG32 pos = (PULONG32)0x0000000;
+
+}
+
 VOID KeRawDelay(ULONG32 time)
 {
 	ULONG32 i,j;

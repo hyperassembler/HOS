@@ -132,6 +132,8 @@ VOID KeInit8259A(VOID)
 	_asm_KeWritePort(INT_S_CTLMASK,0xFF);
 }
 
+
+
 VOID KeExceptionHandler(_IN_ ULONG32 VectorNumber, _IN_ ULONG32 ErrorCode, _IN_ ULONG32 eip, _IN_ ULONG32 cs, _IN_ ULONG32 eFlags)
 {
 	_asm_KeClearGraph32();
