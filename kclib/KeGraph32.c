@@ -14,6 +14,7 @@ ULONG32 KeCheckGraphRowForPrint(_IN_ ULONG32 GraphPosition)
 	return GraphPosition;
 }
 
+
 ULONG32 KeCheckGraphRowForReturn(_IN_ ULONG32 GraphPosition)
 {
 	ULONG32 GraphRow = GraphPosition/(2*DOSGraphColumn);
