@@ -3,6 +3,7 @@
 #include "KeGraph32.h"
 #include "KeMemory32.h"
 #include "KeIO32.h"
+#include "KeKernelStruct32.h"
 #include "KeProcess32.h"
 
 VOID HYPKERNELAPI KeSystemInit(VOID);

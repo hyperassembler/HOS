@@ -1,4 +1,5 @@
 #include "KeProcess32.h"
+#include "KeDef.h"
 #include "KeMemory32.h"
 #include "KeKernelStruct32.h"
 #include "KeIO32.h"

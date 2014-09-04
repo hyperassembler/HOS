@@ -1,5 +1,7 @@
 #include "KeGraph32.h"
+#include "KeDef.h"
 #include "KeGlobalVariables.h"
+#include "KeKernelStruct32.h"
 ULONG32 KeGetCurrentGraphRow( _IN_ ULONG32 GraphPosition)
 {
 	return (GraphPosition/2*DOSGraphColumn);

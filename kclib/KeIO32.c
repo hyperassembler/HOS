@@ -1,4 +1,6 @@
 #include "KeIO32.h"
+#include "KeDef.h"
+#include "KeKernelStruct32.h"
 #include "KeGraph32.h"
 VOID KeWriteGDT(_IN_ ULONG32 Index, _IN_ PIAGDT32 Dest, _IN_ PKeGDTDescriptor32 Src)
 { 
