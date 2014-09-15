@@ -1,8 +1,9 @@
+KERNELIMG=$1
 sudo umount /mnt
 sudo losetup -d /dev/loop0
 sudo losetup -d /dev/loop1
-sudo rm HOS.img
-sudo dd if=/dev/zero of=HOS.img bs=512 count=131072
+sudo rm $KERNELIMG
+sudo dd if=/dev/zero of=$KERNELIMG bs=512 count=131072
 echo "n
 p
 1
@@ -11,14 +12,14 @@ p
 a
 1
 w
-" | sudo fdisk HOS.img
-sudo losetup /dev/loop0 HOS.img -o 1048576
-sudo losetup /dev/loop1 HOS.img
-sudo mkdosfs -F32 /dev/loop0
+" | sudo fdisk $KERNELIMG
+sudo losetup /dev/loop0 $KERNELIMG -o 1048576
+sudo losetup /dev/loop1 $KERNELIMG
+sudo mkdosfs -F 32 /dev/loop0
 sudo mount /dev/loop0 /mnt
 sudo grub-install --root-directory=/mnt --no-floppy /dev/loop1
 sudo umount /mnt
 sudo losetup -d /dev/loop0
 sudo losetup -d /dev/loop1
 echo "p
-" | sudo fdisk HOS.img
+" | sudo fdisk $KERNELIMG
