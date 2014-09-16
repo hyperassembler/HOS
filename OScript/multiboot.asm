@@ -1,13 +1,10 @@
 org 0x01000000
 
-global _KERNEL_STACK ; stack of kernel
-;EXTERN
-extern _HkSystemInit
 ;void HkSystemInit(PMULTIBOOT_INFO info)
 GRUB_LOADED_FLAG equ 0x36d76289
 GRUB_MAGIC_NUMBER equ 0xE85250D6
 GRUB_ARCHITECTURE equ 0x0
-GRUB_CHECK_SUM equ -(GRUB_FLAGS + GRUB_MAGIC_NUMBER + GRUB_HEADER_LENGTH)
+GRUB_CHECK_SUM equ -(GRUB_MAGIC_NUMBER + GRUB_HEADER_LENGTH)
 GRUB_HEADER_LENGTH equ (GRUB_HEADER_END - GRUB_HEADER_START)
 GRUB_HEADER_START:
 dd GRUB_MAGIC_NUMBER
@@ -97,7 +94,7 @@ mov ax,SLCT_GRAPH_0
 mov gs,ax
 
 push ebx
-call _HkSystemInit
+call _printf
 
 _printf:
 ;void printf(char* str)
@@ -121,8 +118,6 @@ mov byte [es:esi],0xFF
 inc edi
 inc esi
 .end:
-jmp .end
-
 pop esi
 pop edi
 mov esp,ebp
