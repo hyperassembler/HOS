@@ -1,7 +1,7 @@
 #ifndef _KeIO32_h_
 #define _KeIO32_h_
 
-#include "KeDef.h"
+#include "hkdef32.h"
 #include "KeGlobalVariables.h"
 #include "KeCPUStruct32.h"
 #include "KeKernelStruct32.h"
@@ -12,7 +12,7 @@
 
 typedef VOID (*PExceptionHandler)(VOID);
 
-VOID HYPKERNELAPI _asm_KeWritePort(_IN_ ULONG16 Port, _IN_ ULONG8 Value);
+void HKA32 _asm_KeWritePort(_IN_ ULONG16 Port, _IN_ ULONG8 Value);
 ULONG8 HYPKERNELAPI _asm_KeReadPort(_IN_ ULONG16 Port);
 VOID HYPKERNELAPI _asm_KeLoadIDT(VOID);
 VOID HYPKERNELAPI KeInit8259A(VOID);
