@@ -19,7 +19,7 @@ sudo losetup /dev/loop0 $KERNELIMG -o 1048576
 sudo losetup /dev/loop1 $KERNELIMG
 sudo mkfs.ext4 /dev/loop0
 sudo mount /dev/loop0 /mnt
-sudo grub-install --root-directory=/mnt --no-floppy /dev/loop1
+sudo grub-install --root-directory=/mnt --no-floppy --recheck /dev/loop1
 sudo grub-mkconfig -o /mnt/boot/grub/grub.cfg
 sudo umount /mnt
 sudo losetup -d /dev/loop0

@@ -1,0 +1,12 @@
+sudo rm HOS.iso
+sudo nasm -f bin kernel_multiboot.asm -o kernel_multiboot.bin
+sudo nasm -f bin kernel_multiboot2.asm -o kernel_multiboot2.bin
+sudo mkdir temp_iso
+sudo mkdir temp_iso/HOS
+sudo mkdir temp_iso/boot
+sudo mkdir temp_iso/boot/grub
+sudo mv kernel_multiboot.bin temp_iso/HOS/kernel_multiboot.bin
+sudo mv kernel_multiboot2.bin temp_iso/HOS/kernel_multiboot2.bin
+sudo cp grub.cfg temp_iso/boot/grub/
+sudo grub-mkrescue -o HOS.iso temp_iso
+sudo rm -rf temp_iso
