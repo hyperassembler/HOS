@@ -3,7 +3,7 @@
 #include "type.h"
 typedef struct
 {
-	UINT32 type;
+	UINT
 	UINT32 size;
 } MULTIBOOT_TAG, *PMULTIBOOT_TAG;
 #endif 
