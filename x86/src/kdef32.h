@@ -1,7 +1,7 @@
 #ifndef _HKDEF32_H_
 #define _HKDEF32_H_
 
-#define HKA32 _cdecl
+#define HKA32 __cdecl
 
 #define NULL ((void*)0)
 
