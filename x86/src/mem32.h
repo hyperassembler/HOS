@@ -1,7 +1,7 @@
 #ifndef _MEM_32_H_
 #define _MEM_32_H_
-
-#include "../hdr/io32.h"
+#include "type32.h"
+#include "io32.h"
 
 #pragma push()
 #pragma pack(1)
