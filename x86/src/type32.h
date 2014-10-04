@@ -1,11 +1,11 @@
 #ifndef _TYPE_H_
 #define _TYPE_H_
-typedef unsigned int UINT32;
-typedef unsigned short UINT16;
-typedef unsigned long long UINT64;
-typedef unsigned char UINT8;
-typedef int INT32;
-typedef short INT16;
-typedef long long INT64;
-typedef char INT8;
+typedef unsigned int uint32;
+typedef unsigned short uint16;
+typedef unsigned long long uint64;
+typedef unsigned char uint8;
+typedef int int32;
+typedef short int16;
+typedef long long int64;
+typedef char int8;
 #endif 

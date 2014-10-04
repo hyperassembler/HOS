@@ -7,13 +7,31 @@
 #pragma pack(1)
 typedef struct
 {
-    UINT16 LimitLow;
-    UINT16 BaseLow;
-    UINT8 BaseMid;
-    UINT8 AccessByte;
-    UINT8 FlagLimitMid;
-    UINT8 BaseHigh;
-} GDT_DESCRIPTOR;
+    uint16 limit_low;
+    uint16 base_low;
+    uint8 base_middle;
+    uint8 access;
+    uint8 limit_mid_flag;
+    uint8 base_high;
+} gdt_descriptor;
+
+typedef struct
+{
+	uint16 limit;
+	uint32 base;
+} gdt_ptr;
+
+typedef struct
+{
+	
+} pde_32;
+
+typedef struct
+{
+	
+} pte_32;
+
+
 #pragma pop()
 
 
