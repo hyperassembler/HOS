@@ -1,15 +1,43 @@
 #include "mem32.h"
 #include "type32.h"
+#include "kdef32.h"
 
-int32 hk_set_gdt_descriptor(gdt_descriptor* pgdt_descriptor, uint32 base, uint32 limit, uint8 access, uint8 gran)
+int32 hk_set_segment_descriptor(segment_descriptor* pseg_descriptor, uint32 base, uint32 limit, uint8 access, uint8 flags)
 {
-	pgdt_descriptor->base_low = (base & 0xFFFF);
-	pgdt_descriptor->base_middle = (base >> 16) & 0xFF;
-	pgdt_descriptor->base_high = (base >> 24) & 0xFF;
+	if (pseg_descriptor == NULL)
+		return -1;
+	pseg_descriptor->base_low = (base & 0xFFFF);
+	pseg_descriptor->base_middle = (base >> 16) & 0xFF;
+	pseg_descriptor->base_high = (base >> 24) & 0xFF;
+	
+	pseg_descriptor->limit_low = (limit & 0xFFFF);
+	pseg_descriptor->access = access & 0xFF;
+	pseg_descriptor->limit_mid_flags = ((flags & 0x0F) << 4) + ((limit >> 16) & 0x0F);
+	return 0;
+}
 
-	pgdt_descriptor->limit_low = (limit & 0xFFFF);
-	pgdt_descriptor->access = ((limit >> 16) & 0x0F);
+int32 hk_set_page_table_entry_32(uint32* dest,uint32 base,uint32 flags)
+{
+	if (dest == NULL)
+		return -1;
+	*dest = (base & 0xFFFFF000) + (flags & 0x0FFF);
+	return 0;
+}
 
-	pgdt_descriptor->granularity |= (gran & 0xF0);
-	pgdt_descriptor->access = access;
+int32 hk_set_page_directory_entry_32(uint32* dest, uint32 base, uint32 flags)
+{
+	if (dest == NULL)
+		return -1;
+	*dest = (base & 0xFFFFF000) + (flags & 0x0FFF);
+	return 0;
+}
+ 
+int32 hk_map_physcial_address_32(uint32* page_directory_base, uint32 physical_addr, uint32 virtual_addr, uint32 flags)
+{
+	if (page_directory_base == NULL)
+		return -1;
+	uint32 pde_idx = virtual_addr >> 22;
+	uint32 pde = *(page_directory_base + pde_idx * 4);
+	uint32 page_table_base = ;
+	uint32 pte_idx = ;
 }

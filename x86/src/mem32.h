@@ -11,9 +11,9 @@ typedef struct
     uint16 base_low;
     uint8 base_middle;
     uint8 access;
-    uint8 limit_mid_flag;
+    uint8 limit_mid_flags;
     uint8 base_high;
-} gdt_descriptor;
+} segment_descriptor;
 
 typedef struct
 {
@@ -34,5 +34,6 @@ typedef struct
 
 #pragma pop()
 
+int32 hk_set_segment_descriptor(segment_descriptor* pseg_descriptor, uint32 base, uint32 limit, uint8 access, uint8 flags);
 
 #endif
