@@ -2,7 +2,7 @@
 #include "type32.h"
 #include "kdef32.h"
 
-int32 HKA32 hk_set_bit(void* dst,uint32 bit)
+int32 HYPKERNEL32 hk_set_bit(void* dst,uint32 bit)
 {
 	if (dst == NULL)
 		return -1;
@@ -13,7 +13,7 @@ int32 HKA32 hk_set_bit(void* dst,uint32 bit)
 	return 0;
 }
 
-int32 HKA32 hk_clear_bit(void* dst, uint32 bit)
+int32 HYPKERNEL32 hk_clear_bit(void* dst, uint32 bit)
 {
 	if (dst == NULL)
 		return -1;
@@ -24,7 +24,7 @@ int32 HKA32 hk_clear_bit(void* dst, uint32 bit)
 	return 0;
 }
 
-int32 HKA32 hk_get_bit(void* dst, uint32 bit) 
+int32 HYPKERNEL32 hk_get_bit(void* dst, uint32 bit)
 {
 	if (dst == NULL)
 		return -1;
@@ -34,7 +34,7 @@ int32 HKA32 hk_get_bit(void* dst, uint32 bit)
 	return *(int32*)(cDst) & (1 << bit);
 }
 
-int32 HKA32 hk_toggle_bit(void* dst, uint32 bit)
+int32 HYPKERNEL32 hk_toggle_bit(void* dst, uint32 bit)
 {
 	if (dst == NULL)
 		return -1;
@@ -46,7 +46,7 @@ int32 HKA32 hk_toggle_bit(void* dst, uint32 bit)
 }
 
 
-int32 HKA32 hk_memcpy(void* src, void* dst, uint32 size)
+int32 HYPKERNEL32 hk_memcpy(void* src, void* dst, uint32 size)
 {
 	if (src == NULL || dst == NULL)
 		return -1;
@@ -57,7 +57,7 @@ int32 HKA32 hk_memcpy(void* src, void* dst, uint32 size)
 	return 0;
 }
 
-int32 HKA32 hk_memmove(void* src, void* dst, uint32 size)
+int32 HYPKERNEL32 hk_memmove(void* src, void* dst, uint32 size)
 {
 	if (src == NULL || dst == NULL)
 		return -1;
@@ -74,7 +74,7 @@ int32 HKA32 hk_memmove(void* src, void* dst, uint32 size)
 	return 0;
 }
 
-int32 HKA32 hk_print_string(char* str)
+int32 HYPKERNEL32 hk_print_string(char* str)
 {
 	char* gs = (char*)(0xb8000);
 	uint8 attr = 0x07;

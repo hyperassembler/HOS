@@ -1,5 +1,8 @@
-org 0x01000000
-
+global print_str
+global kernel_stack
+extern hk_main
+[SECTION .multiboot]
+[BITS 32]
 GRUB_LOADED_FLAG equ 0x2BADB002
 GRUB_MAGIC_NUMBER equ 0x1BADB002
 GRUB_FLAGS equ 0x10003
@@ -41,10 +44,9 @@ db 'Loaded by multiboot1!',0
 
 ;stack
 times 1024 db 0
-_KERNEL_STACK:
+kernel_stack:
 
 GRUB_ENTRY_ADDR:
-[BITS 32]
 cli
 
 cmp eax,GRUB_LOADED_FLAG
@@ -52,15 +54,15 @@ jmp LOADED_BY_GRUB
 hlt
 LOADED_BY_GRUB:
 
-mov eax,_KERNEL_STACK
+mov eax,kernel_stack
 mov esp,eax
 
 push dword 0
 popfd
 
 lgdt [GDT_PTR]
-jmp SLCT_CODE_0:Reload_CS
-Reload_CS:
+jmp SLCT_CODE_0:reload_cs
+reload_cs:
 mov ax,SLCT_DATA_0
 mov ss,ax
 mov ds,ax
@@ -70,13 +72,15 @@ mov ax,SLCT_GRAPH_0
 mov gs,ax
 
 push DUMMY_MSG
-call _printf
+xchg bx,bx
+call print_str
 add esp,4
 
+call hk_main
 end:
 jmp end
 
-_printf:
+print_str:
 ;void printf(char* str)
 ;EAX,ECX,EDX
 push ebp
@@ -103,4 +107,4 @@ pop esi
 pop edi
 mov esp,ebp
 pop ebp
-
+ret

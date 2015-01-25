@@ -6,7 +6,7 @@
 uint64 g_gdt[32];
 gdt_ptr g_gdt_ptr;
 
-uint32 HKA32 hk_main(multiboot_info_t* multibootInfo)
+uint32 HYPKERNEL32 hk_main(multiboot_info_t* multibootInfo)
 {
 	int32 gdtIdx = 0;
 	//empty segment

@@ -1,0 +1,22 @@
+sudo rm HOS.iso
+sudo nasm -f elf32 multiboot.asm -o multiboot.o
+sudo gcc -m32 -masm=intel -c entry.c -o entry.o
+
+sudo mkdir temp_iso
+sudo mkdir temp_iso/HOS
+sudo mkdir temp_iso/boot
+sudo mkdir temp_iso/boot/grub
+#link files
+sudo ld -m elf_i386 -T link.ld
+
+#remove temp obj files
+sudo rm multiboot.o
+sudo rm entry.o
+
+#sudo cp kernel.bin kernel.binn
+sudo mv kernel.bin temp_iso/HOS/kernel.bin
+
+sudo cp grub.cfg temp_iso/boot/grub/
+#make iso file
+sudo grub-mkrescue -o HOS.iso temp_iso
+sudo rm -rf temp_iso
