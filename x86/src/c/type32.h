@@ -8,4 +8,8 @@ typedef int int32;
 typedef short int16;
 typedef long long int64;
 typedef char int8;
+typedef uint8 byte;
+typedef uint16 word;
+typedef uint32 dword;
+typedef uint64 qword;
 #endif 

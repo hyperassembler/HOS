@@ -1,4 +1,3 @@
-global print_str
 global kernel_stack
 extern hk_main
 [SECTION .multiboot]
@@ -40,7 +39,7 @@ SLCT_DATA_0 equ DESC_FLAT_RW - DESC_VOID
 
 ;Message
 DUMMY_MSG:
-db 'Loaded by multiboot1!',0
+db 'Kernel loaded by multiboot...',0
 
 ;stack
 times 1024 db 0
@@ -72,7 +71,6 @@ mov ax,SLCT_GRAPH_0
 mov gs,ax
 
 push DUMMY_MSG
-xchg bx,bx
 call print_str
 add esp,4
 

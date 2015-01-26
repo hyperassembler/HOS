@@ -20,8 +20,8 @@ ASM_FILES = $(wildcard $(ASM_SRC_PATH)/*.asm)
 KERNEL_BIN = $(OUTPUT_DIR)/kernel.bin
 
 #Object files
-C_OBJ_FILES = $(addprefix $(OUTPUT_DIR)/,$(notdir $(C_FILES:.c=.o)))
-ASM_OBJ_FILES = $(addprefix $(OUTPUT_DIR)/,$(notdir $(ASM_FILES:.asm=.o)))
+C_OBJ_FILES = $(addprefix $(OUTPUT_DIR)/,$(notdir $(C_FILES:.c=.oc)))
+ASM_OBJ_FILES = $(addprefix $(OUTPUT_DIR)/,$(notdir $(ASM_FILES:.asm=.oasm)))
 ALL_OBJ_FILES = $(C_OBJ_FILES) $(ASM_OBJ_FILES)
 
 
@@ -45,12 +45,11 @@ buildiso:
 	sudo cp $(GRUB_CFG) $(OUTPUT_DIR)/temp_iso/boot/grub/
 	sudo grub-mkrescue -o HOS.iso $(OUTPUT_DIR)/temp_iso
 
+$(OUTPUT_DIR)/%.oc : $(C_SRC_PATH)/%.c
+	sudo $(CC) $(C_FLAGS_32) -o $@ $^
 
-$(C_OBJ_FILES): $(C_FILES)
-	sudo $(CC) $(C_FLAGS_32) -o $@ $<
-
-$(ASM_OBJ_FILES): $(ASM_FILES)
-	sudo $(ASM) $(ASM_FLAGS_32) -o $@ $<
+$(OUTPUT_DIR)/%.oasm : $(ASM_SRC_PATH)/%.asm
+	sudo $(ASM) $(ASM_FLAGS_32) -o $@ $^
 
 $(KERNEL_BIN): $(ALL_OBJ_FILES)
 	sudo $(LD) $(LD_FLAGS_32) -T $(LD_SCRIPT) -o $(KERNEL_BIN) $(ALL_OBJ_FILES)
