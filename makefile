@@ -1,104 +1,56 @@
-ENTRYPOINT = 0x30000
 ASM = nasm
-ASMBOOTFLAGS = -I inc/ -I lib/
-ASMLOADERFLAGS = -I inc/ -I lib/
-ASMKERNELFLAGS = -f elf
-CFLAGS = -I kclib/ -c -fno-builtin
-LDFLAGS = -e _start -Ttext $(ENTRYPOINT)
 CC = gcc
 LD = ld
-OPY = objcopy
+C_SRC_PATH = x86/src/c
+ASM_SRC_PATH = x86/src/asm
+OUTPUT_DIR = temp
+C_FLAGS_32 = -m32 -c -fno-builtin -masm=intel -Wall -Wextra
+ASM_FLAGS_32 = -f elf32 -I $(ASM_SRC_PATH)/
+LD_FLAGS_32 = -m elf_i386
+LD_SCRIPT = build/link.ld
+GRUB_CFG = build/grub.cfg
 
-#Add corresponding .o files from kclib and kalib
-KERNELBINPRE = kernel/kernel.o kclib/KeKernelEntry.o kalib/_asm_KeMemory32.o kalib/_asm_KeGraph32.o kalib/_asm_KeIO32.o kalib/_asm_KeProcess32.o kclib/KeProcess32.o kclib/KeGraph32.o kclib/KeIO32.o kclib/KeMemory32.o
+#C source code
+C_FILES = $(wildcard $(C_SRC_PATH)/*.c)
 
-#Add all .o files 
-OBJECTFILES = kernel/kernel.o kclib/KeKernelEntry.o kalib/_asm_KeMemory32.o kalib/_asm_KeGraph32.o kalib/_asm_KeIO32.o kalib/_asm_KeProcess32.o kclib/KeProcess32.o kclib/KeGraph32.o kclib/KeIO32.o kclib/KeMemory32.o
+#ASM source code
+ASM_FILES = $(wildcard $(ASM_SRC_PATH)/*.asm)
 
-#Add all .bin files
-BINFILES = boot/boot.bin boot/loader.bin kernel/kernel.bin
+#bin files
+KERNEL_BIN = $(OUTPUT_DIR)/kernel.bin
 
-#Add all temp files
-TEMPFILES = kernel/kernel.out
-
-#Prerequisites
-#Add new .h/.c files form kclib
-KEKERNELENTRYPRE = kclib/KeKernelEntry.c kclib/KeGraph32.h kclib/KeDef.h kclib/KeGlobalVariables.h kclib/KeMemory32.h kclib/KeIO32.h kclib/KeProcess32.h kclib/KeProcess32.c kclib/KeGraph32.c kclib/KeMemory32.c kclib/KeProcess32.c kclib/KeIO32.c kclib/KeKernelStruct32.h
-
-#No need to change
-_ASM_KEGRAPH32PRE = kalib/_asm_KeGraph32.asm
-
-_ASM_KEMEMORY32PRE = kalib/_asm_KeMemory32.asm
-
-KERNELOPRE = kernel/kernel.asm
-
-BOOTBINPRE = boot/boot.asm inc/FAT12Header.inc lib/fat12readfile.lib
-
-LOADERBINPRE = boot/loader.asm inc/FAT12Header.inc inc/pm.inc lib/fat12readfile.lib lib/io16.lib lib/io32.lib lib/mem32.lib
-
-_ASM_KEIO32PRE = kalib/_asm_KeIO32.asm
-
-_ASM_KEPROCESS32PRE = kalib/_asm_KeProcess32.asm
+#Object files
+C_OBJ_FILES = $(addprefix $(OUTPUT_DIR)/,$(notdir $(C_FILES:.c=.o)))
+ASM_OBJ_FILES = $(addprefix $(OUTPUT_DIR)/,$(notdir $(ASM_FILES:.asm=.o)))
+ALL_OBJ_FILES = $(C_OBJ_FILES) $(ASM_OBJ_FILES)
 
 
+all : init compile link buildiso clean
 
+init:
+	sudo mkdir $(OUTPUT_DIR)
 
- 
-.PHONY : everything clean all image buildimg
-everything : $(BINFILES) $(OBJECTFILES) $(TEMPFILES)
+compile: $(C_OBJ_FILES) $(ASM_OBJ_FILES)
 
-all : clean everything
-
-image: all buildimg 
+link: $(KERNEL_BIN)	
 
 clean:
-	rm -rf $(BINFILES) $(OBJECTFILES) $(TEMPFILES)
-
-buildimg: 
-		dd if=boot/boot.bin of=a.img bs=512 count=1 conv=notrunc
-		cp -f kernel/kernel.bin kernel.bin
-		cp -f boot/loader.bin loader.bin
-		rm -rf $(BINFILES) $(OBJECTFILES) $(TEMPFILES)
-
-boot/boot.bin: $(BOOTBINPRE)
-		$(ASM) $(ASMBOOTFLAGS) -o boot/boot.bin boot/boot.asm
-
-boot/loader.bin: $(LOADERPRE)
-		$(ASM) $(ASMBOOTFLAGS) -o boot/loader.bin boot/loader.asm
-		
-kernel/kernel.o: $(KERNELOPRE)
-		$(ASM) $(ASMKERNELFLAGS) -o kernel/kernel.o kernel/kernel.asm
-		
-kalib/_asm_KeMemory32.o: $(_ASM_KEMEMORY32PRE)
-		$(ASM) $(ASMKERNELFLAGS) -o kalib/_asm_KeMemory32.o kalib/_asm_KeMemory32.asm
-
-kalib/_asm_KeGraph32.o: $(_ASM_KEGRAPH32PRE)
-		$(ASM) $(ASMKERNELFLAGS) -o kalib/_asm_KeGraph32.o kalib/_asm_KeGraph32.asm
-		
-kalib/_asm_KeProcess32.o: $(_ASM_KEGRAPH32PRE)
-		$(ASM) $(ASMKERNELFLAGS) -o kalib/_asm_KeProcess32.o kalib/_asm_KeProcess32.asm
-		
-kernel/kernel.bin: $(KERNELBINPRE)
-		$(LD) $(OBJECTFILES) $(LDFLAGS) -o kernel/kernel.out
-		$(OPY) kernel/kernel.out -O binary kernel/kernel.bin
-		
-kalib/_asm_KeIO32.o: $(_ASM_KEIO32PRE)
-		$(ASM) $(ASMKERNELFLAGS) -o kalib/_asm_KeIO32.o kalib/_asm_KeIO32.asm
-		
-#C LIBS
-kclib/KeKernelEntry.o: $(KEKERNELENTRYPRE)
-		$(CC) $(CFLAGS) -o kclib/KeKernelEntry.o kclib/KeKernelEntry.c
-
-kclib/KeIO32.o: $(KERNELBINPRE)
-		$(CC) $(CFLAGS) -o kclib/KeIO32.o kclib/KeIO32.c
-
-kclib/KeGraph32.o: $(KERNELBINPRE)
-		$(CC) $(CFLAGS) -o kclib/KeGraph32.o kclib/KeGraph32.c
-
-kclib/KeProcess32.o: $(KERNELBINPRE)
-		$(CC) $(CFLAGS) -o kclib/KeProcess32.o kclib/KeProcess32.c
-
-kclib/KeMemory32.o: $(KERNELBINPRE)
-		$(CC) $(CFLAGS) -o kclib/KeMemory32.o kclib/KeMemory32.c
+	sudo rm -rf $(OUTPUT_DIR)
+buildiso:
+	sudo mkdir $(OUTPUT_DIR)/temp_iso
+	sudo mkdir $(OUTPUT_DIR)/temp_iso/HOS
+	sudo mkdir $(OUTPUT_DIR)/temp_iso/boot
+	sudo mkdir $(OUTPUT_DIR)/temp_iso/boot/grub
+	sudo mv $(KERNEL_BIN) $(OUTPUT_DIR)/temp_iso/HOS/kernel.bin
+	sudo cp $(GRUB_CFG) $(OUTPUT_DIR)/temp_iso/boot/grub/
+	sudo grub-mkrescue -o HOS.iso $(OUTPUT_DIR)/temp_iso
 
 
+$(C_OBJ_FILES): $(C_FILES)
+	sudo $(CC) $(C_FLAGS_32) -o $@ $<
+
+$(ASM_OBJ_FILES): $(ASM_FILES)
+	sudo $(ASM) $(ASM_FLAGS_32) -o $@ $<
+
+$(KERNEL_BIN): $(ALL_OBJ_FILES)
+	sudo $(LD) $(LD_FLAGS_32) -T $(LD_SCRIPT) -o $(KERNEL_BIN) $(ALL_OBJ_FILES)
