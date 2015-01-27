@@ -2,8 +2,11 @@
 #include "kdef32.h"
 #include "grub.h"
 #include "mem32.h"
-uint8 g_gdt[8*32];
+uint8 g_gdt[8*8];
 gdt_ptr g_gdt_ptr;
+uint8 g_idt[8*256];
+idt_ptr g_idt_ptr;
+
 extern word* kernel_stack;
 
 void HYPKERNEL32 print_str(char* str)
@@ -13,9 +16,9 @@ void HYPKERNEL32 print_str(char* str)
     {
         *gram = (uint8)*str;
         gram++;
-	*gram = 7;
-	gram++;
-	str++;
+	    *gram = 7;
+	    gram++;
+	    str++;
     }
     return;
 }
@@ -40,15 +43,14 @@ int32 HYPKERNEL32 hk_main(multiboot_info_t* multiboot_info)
     hk_set_segment_descriptor(&g_gdt[24], &desc);
     //ring 3 data
     desc.DPL = 3;
-    hk_set_segment_descriptor(&g_gdt[32], &desc); 
-    BOCHS_MAGIC_BREAKPOINT
-    g_gdt_ptr.limit = 32*8-1;
+    hk_set_segment_descriptor(&g_gdt[32], &desc);
+    g_gdt_ptr.limit = 8*8-1;
     g_gdt_ptr.base = (uint32)g_gdt;
-    BOCHS_MAGIC_BREAKPOINT
     hk_load_gdt(&g_gdt_ptr);
+
     char* msg = "Welcome to HYP OS 1.0";
     print_str(msg);
-    BOCHS_MAGIC_BREAKPOINT
+
     loop:
         goto loop;
 }
