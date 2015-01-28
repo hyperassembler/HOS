@@ -62,3 +62,18 @@ xor eax,eax
 mov esp,ebp
 pop ebp
 ret
+
+
+;void hk_disable_paging(void)
+hk_disable_paging:
+mov eax, cr0                                   ; Set the A-register to control register 0.
+and eax, 01111111111111111111111111111111b     ; Clear the PG-bit, which is bit 31.
+mov cr0, eax                                   ; Set control register 0 to the A-register.
+ret
+
+;void hk_enable_paging(void)
+hk_enable_paging:
+mov eax, cr0                                   ; Set the A-register to control register 0.
+or eax, 1 << 31                                ; Set the PG-bit, which is bit 31.
+mov cr0, eax                                   ; Set control register 0 to the A-register.
+ret
