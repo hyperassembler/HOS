@@ -37,10 +37,6 @@ SLCT_CODE_0 equ DESC_FLAT_C - DESC_VOID
 SLCT_GRAPH_0 equ DESC_GRAPH - DESC_VOID
 SLCT_DATA_0 equ DESC_FLAT_RW - DESC_VOID
 
-;Message
-DUMMY_MSG:
-db 'Kernel loaded by multiboot...',0
-
 ;stack
 times 1024 db 0
 kernel_stack:
@@ -70,39 +66,4 @@ mov fs,ax
 mov ax,SLCT_GRAPH_0
 mov gs,ax
 
-push DUMMY_MSG
-call print_str
-add esp,4
-
 call hk_main
-end:
-jmp end
-
-print_str:
-;void printf(char* str)
-;EAX,ECX,EDX
-push ebp
-mov ebp,esp
-push edi
-push esi
-
-mov edi,dword [ss:ebp+8]
-xor esi,esi
-xor ecx,ecx
-
-.begin:
-mov al,byte [ds:edi]
-cmp al,0 ;0 ended
-je .end
-mov byte [gs:esi],al
-inc esi
-mov byte [gs:esi],0x0c
-inc edi
-inc esi
-jmp .begin
-.end:
-pop esi
-pop edi
-mov esp,ebp
-pop ebp
-ret
