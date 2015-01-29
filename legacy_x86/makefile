@@ -1,12 +1,12 @@
 ASM = nasm
 CC = gcc
 LD = ld
-C_SRC_PATH = x64/src/c
-ASM_SRC_PATH = x64/src/asm
+C_SRC_PATH = x86/src/c
+ASM_SRC_PATH = x86/src/asm
 OUTPUT_DIR = temp
-C_FLAGS = -m64 -c -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra
-ASM_FLAGS = -f elf64 -I $(ASM_SRC_PATH)/
-LD_FLAGS = -melf_x86_64
+C_FLAGS_32 = -m32 -c -fno-builtin -masm=intel -Wall -Wextra
+ASM_FLAGS_32 = -f elf32 -I $(ASM_SRC_PATH)/
+LD_FLAGS_32 = -m elf_i386
 LD_SCRIPT = build/link.ld
 GRUB_CFG = build/grub.cfg
 
@@ -46,10 +46,10 @@ buildiso:
 	sudo grub-mkrescue -o HOS.iso $(OUTPUT_DIR)/temp_iso
 
 $(OUTPUT_DIR)/%.oc : $(C_SRC_PATH)/%.c
-	sudo $(CC) $(C_FLAGS) -o $@ $^
+	sudo $(CC) $(C_FLAGS_32) -o $@ $^
 
 $(OUTPUT_DIR)/%.oasm : $(ASM_SRC_PATH)/%.asm
-	sudo $(ASM) $(ASM_FLAGS) -o $@ $^
+	sudo $(ASM) $(ASM_FLAGS_32) -o $@ $^
 
 $(KERNEL_BIN): $(ALL_OBJ_FILES)
-	sudo $(LD) $(LD_FLAGS) -T $(LD_SCRIPT) -o $(KERNEL_BIN) $(ALL_OBJ_FILES)
+	sudo $(LD) $(LD_FLAGS_32) -T $(LD_SCRIPT) -o $(KERNEL_BIN) $(ALL_OBJ_FILES)
