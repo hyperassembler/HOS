@@ -1,5 +1,5 @@
-#include "mem32.h"
-#include "kdef32.h"
+#include "kdef.h"
+#include "mem.h"
 
 int32 HYPKERNEL32 hk_set_segment_descriptor(uint8* const gdt, const segment_descriptor* const seg_desc)
 {

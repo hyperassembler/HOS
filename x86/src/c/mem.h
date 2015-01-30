@@ -1,7 +1,7 @@
 #ifndef _MEM_32_H_
 #define _MEM_32_H_
-#include "type32.h"
-#include "kdef32.h"
+#include "type.h"
+#include "kdef.h"
 
 typedef struct __attribute__ ((packed))
 {

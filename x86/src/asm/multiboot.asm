@@ -66,4 +66,6 @@ mov fs,ax
 mov ax,SLCT_GRAPH_0
 mov gs,ax
 
+push ebx
 call hk_main
+add esp,4

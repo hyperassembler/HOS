@@ -1,5 +1,5 @@
-#ifndef _HKDEF32_H_
-#define _HKDEF32_H_
+#ifndef _KDEF_H_
+#define _KDEF_H_
 
 #define HYPKERNEL64
 

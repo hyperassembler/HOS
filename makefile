@@ -55,11 +55,10 @@ buildiso:
 	sudo mkdir $(OUTPUT_DIR)/temp_iso/HOS
 	sudo mkdir $(OUTPUT_DIR)/temp_iso/boot
 	sudo mkdir $(OUTPUT_DIR)/temp_iso/boot/grub
-	sudo mkdir $(OUTPUT_DIR)/temp_mod
-	sudo mv $(KERNEL_BIN_64) $(OUTPUT_DIR)/temp_mod/kernel64.mod
-	sudo mv $(KERNEL_BIN_32) $(OUTPUT_DIR)/temp_iso/HOS/kernel32.bin
+	sudo mv $(KERNEL_BIN_64) $(OUTPUT_DIR)/temp_iso/HOS/kernel64
+	sudo mv $(KERNEL_BIN_32) $(OUTPUT_DIR)/temp_iso/HOS/kernel32
 	sudo cp $(GRUB_CFG) $(OUTPUT_DIR)/temp_iso/boot/grub/
-	sudo grub-mkrescue --modules="$(OUTPUT_DIR)/temp_mod/kernel64" -o HOS.iso $(OUTPUT_DIR)/temp_iso
+	sudo grub-mkrescue -o HOS.iso $(OUTPUT_DIR)/temp_iso
 
 $(OUTPUT_DIR)/%_x86.o: $(C_SRC_PATH_32)/%.c
 	sudo $(CC) $(C_FLAGS_32) -o $@ $^
