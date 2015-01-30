@@ -18,7 +18,7 @@ mov eax,[ss:ebp+12]
 push eax
 push dword .reload
 retf
-.reload
+.reload:
 mov eax,[ss:ebp+16]
 mov ss,ax
 mov es,ax
@@ -56,9 +56,9 @@ test edx, 1 << 29      ; Test if the LM-bit, which is bit 29, is set in the D-re
 jz .not_supported      ; They aren't, there is no long mode.
 mov eax,1
 jmp .end
-.not_supported
+.not_supported:
 xor eax,eax
-.end
+.end:
 mov esp,ebp
 pop ebp
 ret
