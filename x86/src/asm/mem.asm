@@ -26,7 +26,7 @@ mov fs,ax
 mov gs,ax
 mov ds,ax
 pop eax
-mov ebp,esp
+mov esp,ebp
 pop ebp
 ret
 

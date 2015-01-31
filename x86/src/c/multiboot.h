@@ -1,5 +1,26 @@
-#ifndef _MULTIBOOT_H_
-#define _MULTIBOOT_H_
+/* multiboot.h - Multiboot header file. */
+/* Copyright (C) 1999,2003,2007,2008,2009  Free Software Foundation, Inc.
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to
+ *  deal in the Software without restriction, including without limitation the
+ *  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ *  sell copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in
+ *  all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL ANY
+ *  DEVELOPER OR DISTRIBUTOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ *  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+ *  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+#ifndef MULTIBOOT_HEADER
+#define MULTIBOOT_HEADER 1
 
 /* How many bytes from the start of the file we search for the header. */
 #define MULTIBOOT_SEARCH                        8192
@@ -68,6 +89,8 @@
 
 /* Is there video information? */
 #define MULTIBOOT_INFO_VIDEO_INFO               0x00000800
+
+#ifndef ASM_FILE
 
 typedef unsigned short          multiboot_uint16_t;
 typedef unsigned int            multiboot_uint32_t;
@@ -194,5 +217,7 @@ struct multiboot_mod_list
     multiboot_uint32_t pad;
 };
 typedef struct multiboot_mod_list multiboot_module_t;
+
+#endif /* ! ASM_FILE */
 
 #endif /* ! MULTIBOOT_HEADER */

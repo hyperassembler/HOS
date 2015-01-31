@@ -1,7 +1,7 @@
 #include "kdef.h"
 #include "mem.h"
 
-int32 HYPKERNEL32 hk_set_segment_descriptor(uint8* const gdt, const segment_descriptor* const seg_desc)
+int32 HYPKERNEL32 hk_set_segment_descriptor(uint8* const gdt, segment_descriptor const * const seg_desc)
 {
 	if (gdt == NULL || seg_desc == NULL)
 		return -1;
@@ -19,7 +19,7 @@ int32 HYPKERNEL32 hk_set_segment_descriptor(uint8* const gdt, const segment_desc
 	return 0;
 }
 
-int32 HYPKERNEL32 hk_set_interrupt_gate(uint8* const dst, const interrupt_gate* int_gate)
+int32 HYPKERNEL32 hk_set_interrupt_gate(uint8* const dst, interrupt_gate const * int_gate)
 {
     if(dst == NULL || int_gate == NULL)
         return -1;
@@ -34,7 +34,7 @@ int32 HYPKERNEL32 hk_set_interrupt_gate(uint8* const dst, const interrupt_gate* 
     return 0;
 }
 
-int32 HYPKERNEL32 hk_set_trap_gate(uint8* const dst, const trap_gate* tr_gate)
+int32 HYPKERNEL32 hk_set_trap_gate(uint8* const dst, trap_gate const * tr_gate)
 {
     if(dst == NULL || tr_gate == NULL)
         return -1;
@@ -49,7 +49,7 @@ int32 HYPKERNEL32 hk_set_trap_gate(uint8* const dst, const trap_gate* tr_gate)
     return 0;
 }
 
-int32 HYPKERNEL32 hk_set_task_gate(uint8* const dst, const task_gate* int_gate)
+int32 HYPKERNEL32 hk_set_task_gate(uint8* const dst, task_gate const * int_gate)
 {
     if(dst == NULL || int_gate == NULL)
         return -1;
@@ -64,30 +64,30 @@ int32 HYPKERNEL32 hk_set_task_gate(uint8* const dst, const task_gate* int_gate)
     return 0;
 }
 
-
-int32 HYPKERNEL32 hk_set_page_table_entry_32(uint32* dest,uint32 base,uint32 flags)
+void HYPKERNEL32 hk_mem_cpy(void* src, void* dst, uint32 size)
 {
-	if (dest == NULL)
-		return -1;
-	*dest = (base & 0xFFFFF000) + (flags & 0x0FFF);
-	return 0;
+    if (src == NULL || dst == NULL)
+        return;
+    char* cSrc = (char*)src;
+    char* cDst = (char*)dst;
+    while (size--)
+        *(cDst++) = *(cSrc++);
+    return;
 }
 
-int32 HYPKERNEL32 hk_set_page_directory_entry_32(uint32* dest, uint32 base, uint32 flags)
+void HYPKERNEL32 hk_mem_move(void* src, void* dst, uint32 size)
 {
-	if (dest == NULL)
-		return -1;
-	*dest = (base & 0xFFFFF000) + (flags & 0x0FFF);
-	return 0;
-}
- 
-int32 HYPKERNEL32 hk_map_physcial_address_32(uint32* page_directory_base, uint32 physical_addr, uint32 virtual_addr, uint32 flags)
-{
-	if (page_directory_base == NULL)
-		return -1;
-	uint32 pde_idx = virtual_addr >> 22;
-	uint32 pde = *(page_directory_base + pde_idx * 4);
-	//uint32 page_table_base = ;
-	//uint32 pte_idx = ;
-	return 0;
+    if (src == NULL || dst == NULL)
+        return;
+    char* cSrc = (char*)src;
+    char* cDst = (char*)dst;
+    if (cSrc >= cDst)
+    {
+        return hk_mem_cpy(src,dst,size);
+    }
+    cSrc += size;
+    cDst += size;
+    while (size--)
+        *(--cDst) = *(--cSrc);
+    return;
 }

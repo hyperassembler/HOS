@@ -17,28 +17,7 @@ dd 0
 dd 0
 dd GRUB_ENTRY_ADDR
 
-
-%include "pm.inc"
-
-;GDT to load
-DESC_VOID: Descriptor 0,0,0
-DESC_GRAPH: Descriptor 0b8000h,0xffff,DA_DRW | DA_DPL3
-DESC_FLAT_C: Descriptor 0,0xfffff,DA_CR | DA_32 | DA_LIMIT_4K
-DESC_FLAT_RW: Descriptor 0,0xfffff,DA_DRW | DA_32 | DA_LIMIT_4K
-GDT_END:
-
-GDT_LENGTH equ GDT_END - DESC_VOID - 1
-GDT_PTR:
-dw GDT_LENGTH
-dd DESC_VOID
-
-;SELECTORS
-SLCT_CODE_0 equ DESC_FLAT_C - DESC_VOID
-SLCT_GRAPH_0 equ DESC_GRAPH - DESC_VOID
-SLCT_DATA_0 equ DESC_FLAT_RW - DESC_VOID
-
-;stack
-times 1024 db 0
+times 4096 db 0
 kernel_stack:
 
 GRUB_ENTRY_ADDR:
@@ -55,17 +34,7 @@ mov esp,eax
 push dword 0
 popfd
 
-lgdt [GDT_PTR]
-jmp SLCT_CODE_0:reload_cs
-reload_cs:
-mov ax,SLCT_DATA_0
-mov ss,ax
-mov ds,ax
-mov es,ax
-mov fs,ax
-mov ax,SLCT_GRAPH_0
-mov gs,ax
-
 push ebx
+;jmp since we are not coming back here :D
 call hk_main
 add esp,4

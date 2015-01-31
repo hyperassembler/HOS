@@ -55,11 +55,12 @@ typedef struct __attribute__ ((packed))
     uint32 base;
 } idt_ptr;
 
-int32 HYPKERNEL32 hk_set_segment_descriptor(uint8* const gdt, const segment_descriptor* const seg_desc);
-extern void HYPKERNEL32 hk_load_gdt(const gdt_ptr* const ptr, const uint16 sel_code, const uint16 sel_data);
-int32 HYPKERNEL32 hk_set_interrupt_gate(uint8* const dst, const interrupt_gate* int_gate);
-int32 HYPKERNEL32 hk_set_trap_gate(uint8* const dst, const trap_gate* tr_gate);
-int32 HYPKERNEL32 hk_set_task_gate(uint8* const dst, const task_gate* int_gate);
-int32 HYPKERNEL32 hk_support_x64(void);
-
+int32 HYPKERNEL32 hk_set_segment_descriptor(uint8* const gdt, segment_descriptor const * const seg_desc);
+extern void HYPKERNEL32 hk_load_gdt(gdt_ptr const * const ptr, uint16 const sel_code, uint16 const sel_data);
+int32 HYPKERNEL32 hk_set_interrupt_gate(uint8* const dst, interrupt_gate const * int_gate);
+int32 HYPKERNEL32 hk_set_trap_gate(uint8* const dst, trap_gate const * tr_gate);
+int32 HYPKERNEL32 hk_set_task_gate(uint8* const dst, task_gate const * int_gate);
+void HYPKERNEL32 hk_mem_cpy(void* src, void* dst, uint32 size);
+void HYPKERNEL32 hk_mem_move(void* src, void* dst, uint32 size);
+extern int32 HYPKERNEL32 hk_support_x64(void);
 #endif
