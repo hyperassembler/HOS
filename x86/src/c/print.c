@@ -3,11 +3,11 @@
 #include "mem.h"
 #include "print.h"
 
-uint32 text_pos;
+uint32_t text_pos;
 
-uint32 HYPKERNEL32 hk_str_len(char const * str)
+uint32_t HYPKERNEL32 hk_str_len(char const * str)
 {
-    uint32 length = 0;
+    uint32_t length = 0;
     if(str == NULL)
         return 0;
     while(*str != 0)
@@ -18,11 +18,11 @@ uint32 HYPKERNEL32 hk_str_len(char const * str)
     return length;
 }
 
-uint32 HYPKERNEL32 hk_str_cmp(char const * str1,char const * str2)
+uint32_t HYPKERNEL32 hk_str_cmp(char const * str1,char const * str2)
 {
     if(str1 == NULL || str2 == NULL)
         return 0;
-    uint32 length = hk_str_len(str1);
+    uint32_t length = hk_str_len(str1);
     if(length != hk_str_len(str2))
         return 0;
     while(length--)
@@ -52,6 +52,7 @@ void HYPKERNEL32 hk_print_str(char const *str)
             {
                 //can't hold
                 hk_print_scroll();
+                hk_mem_set((void*)(0xb8000 + 80*24*2), 0, 80 * 2); // clear last row
                 text_pos = 80 * 24;
             }
             str++;
@@ -73,12 +74,12 @@ void HYPKERNEL32 hk_print_str(char const *str)
     return;
 }
 
-void HYPKERNEL32 hk_print_int(int32 number)
+void HYPKERNEL32 hk_print_int(int32_t number)
 {
     char arr[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    uint32 index = 10;
-    uint32 isNegative = 0;
-    uint32 const div = 10;
+    uint32_t index = 10;
+    uint32_t isNegative = 0;
+    uint32_t const div = 10;
     if (number < 0)
     {
         isNegative = 1;
@@ -86,8 +87,8 @@ void HYPKERNEL32 hk_print_int(int32 number)
     }
     while (1)
     {
-        uint32 quo = number / div;
-        uint32 rmd = number % div;
+        uint32_t quo = number / div;
+        uint32_t rmd = number % div;
         number = quo;
         arr[index] = (char) ('0' + rmd);
         index--;
@@ -104,16 +105,16 @@ void HYPKERNEL32 hk_print_int(int32 number)
     return;
 }
 
-void HYPKERNEL32 hk_print_hex(uint32 number)
+void HYPKERNEL32 hk_print_hex(uint32_t number)
 {
     const char lookup_table[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     char arr[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    uint32 index = 9;
-    uint32 const div = 16;
+    uint32_t index = 9;
+    uint32_t const div = 16;
     while (1)
     {
-        uint32 quo = number / div;
-        uint32 rmd = number % div;
+        uint32_t quo = number / div;
+        uint32_t rmd = number % div;
         number = quo;
         arr[index--] = lookup_table[rmd];
         if (number == 0)

@@ -1,5 +1,7 @@
 global hk_load_gdt
 global hk_support_x64
+global hk_disable_paging
+global hk_enable_paging
 SELECTOR_DATA_0 equ 3*8 + 0
 SELECTOR_DATA_3 equ 4*8 + 3
 SELECTOR_CODE_0 equ 1*8 + 0

@@ -3,7 +3,7 @@
 
 extern word *kernel_stack;
 
-int64 HYPKERNEL64 hk_main(void)
+int64_t HYPKERNEL64 hk_main(void)
 {
     //Setup x64
     x64:
