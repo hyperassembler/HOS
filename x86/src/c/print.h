@@ -12,5 +12,5 @@ void HYPKERNEL32 hk_print_int(int32_t number);
 void HYPKERNEL32 hk_print_str(char const *str);
 uint32_t HYPKERNEL32 hk_str_len(char const * str);
 uint32_t HYPKERNEL32 hk_str_cmp(char const * str1,char const * str2);
-
+void HYPKERNEL32 hk_clear_screen(void);
 #endif

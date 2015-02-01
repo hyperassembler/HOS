@@ -3,9 +3,9 @@
 #include "mem.h"
 #include "print.h"
 
-uint32_t text_pos;
+uint64_t text_pos;
 
-uint32_t HYPKERNEL32 hk_str_len(char const * str)
+uint64_t HYPKERNEL64 hk_str_len(char const * str)
 {
     uint32_t length = 0;
     if(str == NULL)
@@ -18,7 +18,7 @@ uint32_t HYPKERNEL32 hk_str_len(char const * str)
     return length;
 }
 
-uint32_t HYPKERNEL32 hk_str_cmp(char const * str1,char const * str2)
+uint64_t HYPKERNEL64 hk_str_cmp(char const * str1,char const * str2)
 {
     if(str1 == NULL || str2 == NULL)
         return 0;
@@ -33,13 +33,13 @@ uint32_t HYPKERNEL32 hk_str_cmp(char const * str1,char const * str2)
     return 1;
 }
 
-void HYPKERNEL32 hk_print_scroll()
+void HYPKERNEL64 hk_print_scroll()
 {
     hk_mem_move((void*)(0xb8000 + get_pos(1,0) * 2), (void*)(0xb8000 + get_pos(0,0) * 2), (80*24)*2);
     return;
 }
 
-void HYPKERNEL32 hk_print_str(char const *str)
+void HYPKERNEL64 hk_print_str(char const *str)
 {
     if(str == NULL)
         return;
@@ -74,10 +74,11 @@ void HYPKERNEL32 hk_print_str(char const *str)
     return;
 }
 
-void HYPKERNEL32 hk_print_int(int32_t number)
+void HYPKERNEL64 hk_print_int(int64_t number)
 {
-    char arr[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    uint32_t index = 10;
+    char arr[21]; // do not need to initialize
+    arr[20] = 0; //zero-terminated
+    uint32_t index = 19;
     uint32_t isNegative = 0;
     uint32_t const div = 10;
     if (number < 0)
@@ -87,8 +88,8 @@ void HYPKERNEL32 hk_print_int(int32_t number)
     }
     while (1)
     {
-        uint32_t quo = number / div;
-        uint32_t rmd = number % div;
+        int64_t quo = number / div;
+        int64_t rmd = number % div;
         number = quo;
         arr[index] = (char) ('0' + rmd);
         index--;
@@ -105,16 +106,17 @@ void HYPKERNEL32 hk_print_int(int32_t number)
     return;
 }
 
-void HYPKERNEL32 hk_print_hex(uint32_t number)
+void HYPKERNEL64 hk_print_hex(uint64_t number)
 {
     const char lookup_table[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-    char arr[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    uint32_t index = 9;
+    char arr[19];
+    arr[18] = 0; //zero-terminated
+    uint32_t index = 17;
     uint32_t const div = 16;
     while (1)
     {
-        uint32_t quo = number / div;
-        uint32_t rmd = number % div;
+        uint64_t quo = number / div;
+        uint64_t rmd = number % div;
         number = quo;
         arr[index--] = lookup_table[rmd];
         if (number == 0)
@@ -124,10 +126,9 @@ void HYPKERNEL32 hk_print_hex(uint32_t number)
     arr[index] = '0';
     hk_print_str(&(arr[index]));
     return;
-};
+}
 
-
-void HYPKERNEL32 hk_clear_screen(void)
+void HYPKERNEL64 hk_clear_screen(void)
 {
     text_pos = 0; // reset text_pos
     hk_mem_set((void*)0xb8000, 0, 25*80*2);

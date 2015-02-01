@@ -13,23 +13,9 @@ extern uint32_t text_pos;
 extern int32_t * kernel_stack;
 extern void hk_entry_comp(void);
 
-void HYPKERNEL32 hk_delay(uint32_t i)
-{
-    uint32_t j = 100000;
-    while(i--)
-    {
-        while(j > 0)
-        {
-            j--;
-        }
-    }
-    return;
-}
-
 void HYPKERNEL32 hk_init_x64()
 {
     //Setup x64
-
     segment_descriptor_t desc_dummy = {.DPL = 0, .Pr = 0, .x64 = 0, .Sys = 0, .type = 0, .Sz = 0, .limit = 0, .Gr = 0, .base = 0, .Acc = 0};
     segment_descriptor_t desc = {.Gr = 1, .Pr = 1, .Sz = 0, .Acc = 0, .Sys = 1, .x64 = 1, .base = 0, .limit = 0};
 
@@ -56,12 +42,12 @@ void HYPKERNEL32 hk_init_x64()
 
 
     //Setup identity x64 PAE paging
-    hk_print_str("*Setting up x86_64 paging...");
+    hk_print_str("*Setting up paging for x64...");
     //Setup
     //TODO: check for available memory and only allocate stuff needed(should not be really hard)
-    uint32_t addr = 0x100000;
-    pml4_entry_t pml4_entry = {.base = 0x101000,.Acc = 0, .PWT = 1, .PCD = 0,.Pr = 1,.USU = 0, .XD = 0, .RW = 1, .Sz = 0};
-    while(addr < 0x101000)
+    uint32_t addr = 0x200000;
+    pml4_entry_t pml4_entry = {.base = 0x201000,.Acc = 0, .PWT = 1, .PCD = 0,.Pr = 1,.USU = 0, .XD = 0, .RW = 1, .Sz = 0};
+    while(addr < 0x201000)
     {
         hk_write_pml4_entry((uint8_t *) addr,&pml4_entry);
         //only map first 512 gigs for obvious reasons.
@@ -69,9 +55,9 @@ void HYPKERNEL32 hk_init_x64()
         pml4_entry.Pr = 0;
         addr += 8;
     }
-    addr = 0x101000;
-    pdpt_entry_t pdpt_entry = {.base = 0x102000,.Acc = 0, .PWT = 1, .PCD = 0,.Pr = 1,.USU = 0, .XD = 0, .RW = 1, .Sz = 0};
-    while(addr < 0x102000)
+    addr = 0x201000;
+    pdpt_entry_t pdpt_entry = {.base = 0x202000,.Acc = 0, .PWT = 1, .PCD = 0,.Pr = 1,.USU = 0, .XD = 0, .RW = 1, .Sz = 0};
+    while(addr < 0x202000)
     {
         hk_write_pdpt_entry((uint8_t*) addr, &pdpt_entry);
         //only map first 1 gig for obvious reasons.
@@ -79,18 +65,18 @@ void HYPKERNEL32 hk_init_x64()
         pdpt_entry.base = 0;
         addr += 8;
     }
-    addr = 0x102000;
-    pd_entry_t pd_entry = {.base = 0x103000,.Acc = 0, .PWT = 1, .PCD = 0,.Pr = 1,.USU = 0, .XD = 0, .RW = 1, .Sz = 0};
-    while(addr < 0x103000)
+    addr = 0x202000;
+    pd_entry_t pd_entry = {.base = 0x203000,.Acc = 0, .PWT = 1, .PCD = 0,.Pr = 1,.USU = 0, .XD = 0, .RW = 1, .Sz = 0};
+    while(addr < 0x203000)
     {
         hk_write_pd_entry((uint8_t *) addr, &pd_entry);
         //ah. no more laziness. At least we need to map first gig.
         pd_entry.base += 0x1000; // increment for every 512 entries * 8 bytes each
         addr += 8;
     }
-    addr = 0x103000;
+    addr = 0x203000;
     pt_entry_t pt_entry = {.base = 0, .Acc = 0, .Pr = 1, .RW = 1, .USU = 0, .PWT = 1,.PCD = 0, .dirty = 0,.Gl = 0, .PAT = 0,.XD = 0};
-    while(addr < (0x103000 + 512 * 0x1000))
+    while(addr < (0x203000 + 512 * 0x1000))
     {
         hk_write_pt_entry((uint8_t *) addr, &pt_entry);
         pt_entry.base += 0x1000;

@@ -1,8 +1,9 @@
 OUTPUT_FORMAT(binary)
 SECTIONS
 {
-  .text :
+  .text.start(0x100000) :
   {
+    *(.entry)
     *(.text)
   }
 

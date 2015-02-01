@@ -33,9 +33,9 @@ KERNEL_BIN_64 = $(OUTPUT_DIR)/kernel64.bin
 
 #Object files
 C_OBJ_FILES_32 = $(addprefix $(OUTPUT_DIR)/,$(notdir $(C_FILES_32:.c=_x86.o)))
-C_OBJ_FILES_64 = $(addprefix $(OUTPUT_DIR)/,$(notdir $(C_FILES_64:.c=_x86_64.o)))
+C_OBJ_FILES_64 = $(addprefix $(OUTPUT_DIR)/,$(notdir $(C_FILES_64:.c=_x64.o)))
 ASM_OBJ_FILES_32 = $(addprefix $(OUTPUT_DIR)/,$(notdir $(ASM_FILES_32:.asm=_asm_x86.o)))
-ASM_OBJ_FILES_64 = $(addprefix $(OUTPUT_DIR)/,$(notdir $(ASM_FILES_64:.asm=_asm_x86_64.o)))
+ASM_OBJ_FILES_64 = $(addprefix $(OUTPUT_DIR)/,$(notdir $(ASM_FILES_64:.asm=_asm_x64.o)))
 ALL_OBJ_FILES_32 = $(C_OBJ_FILES_32) $(ASM_OBJ_FILES_32)
 ALL_OBJ_FILES_64 = $(C_OBJ_FILES_64) $(ASM_OBJ_FILES_64)
 
@@ -63,13 +63,13 @@ buildiso:
 $(OUTPUT_DIR)/%_x86.o: $(C_SRC_PATH_32)/%.c
 	sudo $(CC) $(C_FLAGS_32) -o $@ $^
 
-$(OUTPUT_DIR)/%_x86_64.o: $(C_SRC_PATH_64)/%.c
+$(OUTPUT_DIR)/%_x64.o: $(C_SRC_PATH_64)/%.c
 	sudo $(CC) $(C_FLAGS_64) -o $@ $^
 
 $(OUTPUT_DIR)/%_asm_x86.o: $(ASM_SRC_PATH_32)/%.asm
 	sudo $(ASM) $(ASM_FLAGS_32) -o $@ $^
 
-$(OUTPUT_DIR)/%_asm_x86_64.o: $(ASM_SRC_PATH_64)/%.asm
+$(OUTPUT_DIR)/%_asm_x64.o: $(ASM_SRC_PATH_64)/%.asm
 	sudo $(ASM) $(ASM_FLAGS_64) -o $@ $^
 
 $(KERNEL_BIN_32): $(ALL_OBJ_FILES_32)
