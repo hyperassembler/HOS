@@ -9,8 +9,6 @@ gdt_ptr g_gdt_ptr;
 uint8 g_idt[8 * 256];
 idt_ptr g_idt_ptr;
 extern uint32 text_pos;
-
-
 extern int32* kernel_stack;
 
 void HYPKERNEL32 hk_delay(uint32 i)
@@ -32,27 +30,30 @@ void HYPKERNEL32 hk_main(multiboot_info_t const * const multiboot_info)
     uint32 i = 0;
     text_pos = 0;
     hk_print_str("Welcome to HYP OS! Please wait while we are gathering information...\n\n");
+    hk_print_str("Kernel loaded to address ");
+//    hk_print_hex(*kernel_addr);
+    hk_print_str(".\n\n");
 
-    segment_descriptor desc_dummy = {.DPL = 0, .Pr = 0, .x64 = 0, .Sys = 0, .type = 0, .Sz = 0, .limit = 0, .Gr = 0, .base = 0, .Avl = 0};
-    segment_descriptor desc = {.Gr = 1, .Pr = 1, .Sz = 1, .Avl = 0, .Sys = 1, .x64 = 0, .base = 0, .limit = 0xFFFFF};
+    segment_descriptor desc_dummy = {.DPL = 0, .Pr = 0, .x64 = 0, .Sys = 0, .type = 0, .Sz = 0, .limit = 0, .Gr = 0, .base = 0, .Acc = 0};
+    segment_descriptor desc = {.Gr = 1, .Pr = 1, .Sz = 1, .Acc = 0, .Sys = 1, .x64 = 0, .base = 0, .limit = 0xFFFFF};
 
     hk_print_str("*Setting up GDT...\n\n");
     //dummy descriptor
-    hk_set_segment_descriptor(&g_gdt[0], &desc_dummy);
+    hk_write_segment_descriptor(&g_gdt[0], &desc_dummy);
     //ring 0 code seg, non-conforming
     desc.type = 10;
     desc.DPL = 0;
-    hk_set_segment_descriptor(&g_gdt[8], &desc);
+    hk_write_segment_descriptor(&g_gdt[8], &desc);
     //ring 3 code seg
     desc.DPL = 3;
-    hk_set_segment_descriptor(&g_gdt[16], &desc);
+    hk_write_segment_descriptor(&g_gdt[16], &desc);
     //ring 0 data RW
     desc.DPL = 0;
     desc.type = 2;
-    hk_set_segment_descriptor(&g_gdt[24], &desc);
+    hk_write_segment_descriptor(&g_gdt[24], &desc);
     //ring 3 data
     desc.DPL = 3;
-    hk_set_segment_descriptor(&g_gdt[32], &desc);
+    hk_write_segment_descriptor(&g_gdt[32], &desc);
     g_gdt_ptr.limit = 8 * 8 - 1;
     g_gdt_ptr.base = (uint32) g_gdt;
     hk_load_gdt(&g_gdt_ptr, SEGMENT_SELECTOR(1, 0), SEGMENT_SELECTOR(3, 0));
@@ -135,14 +136,15 @@ void HYPKERNEL32 hk_main(multiboot_info_t const * const multiboot_info)
     hk_print_str("*Checking architecture...\n");
     if (hk_support_x64() == 0)
     {
-        hk_print_str("Arch: x86.\n\nInformation obtained. Countinue to x86 mode...");
+        hk_print_str("Arch: x86.");
         x86:
         goto x86;
     }
     else
     {
-        hk_print_str("Arch: x86_64.\n\nInformation obtained. Countinue to x86_64 mode...");
+        hk_print_str("Arch: x86_64.");
     }
+
     //Setup x64
     x64:
     goto x64;

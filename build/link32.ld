@@ -1,13 +1,9 @@
 OUTPUT_FORMAT(binary)
 SECTIONS
 {
-  .text.start (0x1000000):
+  .text.start(0x100000) :
   {
     *(.multiboot)
-  }
-  
-  .text :
-  {
     *(.text)
   }
 

@@ -5,6 +5,36 @@
 
 typedef struct __attribute__ ((packed))
 {
+    uint8 Pr;
+    uint8 RW;
+    uint8 USU;
+    uint8 PWT;
+    uint8 PCD;
+    uint8 Acc;
+    uint8 Sz; //must be 0
+    uint64 base; // Since 4KB-aligned, 12 bits are useless, 52(total) - 12 = 40 bits left
+                 // will ignore the low 12 bits as well as the high 12 bits of this field
+    uint8 XD;
+} pml4_entry, pdpt_entry, pd_entry;
+
+typedef struct __attribute__ ((packed))
+{
+    uint8 Pr;
+    uint8 RW;
+    uint8 USU;
+    uint8 PWT;
+    uint8 PCD;
+    uint8 Acc;
+    uint8 dirty;
+    uint8 PAT;
+    uint8 Gl;
+    uint64 base; // Since 4KB-aligned, 12 bits are useless, 52(total) - 12 = 40 bits left
+    // will ignore the low 12 bits as well as the high 12 bits of this field
+    uint8 XD;
+} pt_entry;
+
+typedef struct __attribute__ ((packed))
+{
     uint32 offset;
     uint16 seg_sel;
     uint8 Pr;
@@ -35,7 +65,7 @@ typedef struct __attribute__ ((packed))
     uint8 type;
     uint8 DPL;
     uint8 Gr;
-    uint8 Avl;
+    uint8 Acc;
     uint8 Pr;
     uint8 Sz; //32 bits = 1, 16 bits = 0
     uint8 x64;
@@ -55,12 +85,16 @@ typedef struct __attribute__ ((packed))
     uint32 base;
 } idt_ptr;
 
-int32 HYPKERNEL32 hk_set_segment_descriptor(uint8* const gdt, segment_descriptor const * const seg_desc);
+void HYPKERNEL32 hk_write_segment_descriptor(uint8 *const gdt, segment_descriptor const *const seg_desc);
 extern void HYPKERNEL32 hk_load_gdt(gdt_ptr const * const ptr, uint16 const sel_code, uint16 const sel_data);
-int32 HYPKERNEL32 hk_set_interrupt_gate(uint8* const dst, interrupt_gate const * int_gate);
-int32 HYPKERNEL32 hk_set_trap_gate(uint8* const dst, trap_gate const * tr_gate);
-int32 HYPKERNEL32 hk_set_task_gate(uint8* const dst, task_gate const * int_gate);
+void HYPKERNEL32 hk_write_interrupt_gate(uint8 *const dst, interrupt_gate const *int_gate);
+void HYPKERNEL32 hk_write_trap_gate(uint8 *const dst, trap_gate const *tr_gate);
+void HYPKERNEL32 hk_write_task_gate(uint8 *const dst, task_gate const *int_gate);
 void HYPKERNEL32 hk_mem_cpy(void* src, void* dst, uint32 size);
 void HYPKERNEL32 hk_mem_move(void* src, void* dst, uint32 size);
 extern int32 HYPKERNEL32 hk_support_x64(void);
+void HYPKERNEL32 hk_write_pt_entry(uint8 * const base, pt_entry const * const p_entry);
+void HYPKERNEL32 hk_write_pd_entry(uint8 * const base, pd_entry const * const p_entry);
+void HYPKERNEL32 hk_write_pdpt_entry(uint8 * const base, pdpt_entry const * const p_entry);
+void HYPKERNEL32 hk_write_pml4_entry(uint8 * const base, pml4_entry const * const p_entry);
 #endif
