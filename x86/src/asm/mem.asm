@@ -75,3 +75,9 @@ mov eax, cr0                                   ; Set the A-register to control r
 or eax, 1 << 31                                ; Set the PG-bit, which is bit 31.
 mov cr0, eax                                   ; Set control register 0 to the A-register.
 ret
+
+;void hk_flush_tlb(void)
+hk_flush_tlb:
+mov eax,cr3
+mov cr3,eax
+ret

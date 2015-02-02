@@ -1,6 +1,17 @@
 #include "kdef.h"
 #include "mem.h"
 
+void HYPKERNEL32 hk_map_page_64(uint8_t * base, uint64_t const physcial_addr, uint64_t const linear_addr, pml4_entry_t* pml4_entry, pdpt_entry_t* pdpt_entry, pd_entry_t pd_entry_t, pt_entry_t* pt_entry)
+{
+    // all the paging structures serve as supplementary, i.e. when the page entry does not exist.
+    if(physcial_addr << 52 || linear_addr << 52)
+    {
+        return;
+    }
+    uint64_t const pml4_idx = (linear_addr >> 39) & 0x1FF; //9bits
+    
+}
+
 void HYPKERNEL32 hk_write_pml4_entry(uint8_t * const base, pml4_entry_t const * const p_entry)
 {
     if(base == NULL || p_entry == NULL)

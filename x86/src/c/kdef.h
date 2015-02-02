@@ -4,6 +4,7 @@
 #define HYPKERNEL32 __attribute__((cdecl))
 
 #define BOCHS_MAGIC_BREAKPOINT asm("xchg bx,bx");
+#define HLT_CPU asm("hlt");
 
 #define NULL ((void*)0)
 
