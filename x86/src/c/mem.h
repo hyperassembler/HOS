@@ -3,14 +3,22 @@
 #include "type.h"
 #include "kdef.h"
 
-#define SEG_GRANULARITY ((uint64_t)1 << 55)
-#define SEG_LONG ((uint64_t)1 << 53)
-#define SEG_DPL(dpl) (((uint64_t)(dpl) & 0x3) << 45)
-#define SEG_PRESENT ((uint64_t)1 << 47)
-#define SEG_CODE_DATA ((uint64_t)1 << 44)
-#define SEG_TYPE(type) (((uint64_t)(type) & 0xF) << 40)
-#define SEG_AVAILABLE ((uint64_t)1 << 52)
-#define SEG_32_BITS ((uint64_t)1 << 54)
+#define SEG_GRANULARITY (1ull << 55)
+#define SEG_LONG (1ull << 53)
+#define SEG_DPL_0 (0ull << 45)
+#define SEG_DPL_1 (1ull << 45)
+#define SEG_DPL_2 (2ull << 45)
+#define SEG_DPL_3 (3ull << 45)
+#define SEG_PRESENT (1ull << 47)
+#define SEG_CODE_DATA (1ull << 44)
+#define SEG_TYPE_DATA_RW (2ull << 40)
+#define SEG_TYPE_DATA_R (0ull << 40)
+#define SEG_TYPE_CODE_X (8ull << 40)
+#define SEG_TYPE_CODE_XR (10ull << 40)
+#define SEG_TYPE_CODE_XC (12ull << 40)
+#define SEG_TYPE_CODE_XRC (14ull << 40)
+#define SEG_AVAILABLE (1ull << 52)
+#define SEG_32_BITS (1ull << 54)
 
 typedef struct __attribute__ ((packed))
 {

@@ -17,20 +17,17 @@ void HYPKERNEL32 hk_init_x86(multiboot_info_t const * const multiboot_info)
     //dummy descriptor
     hk_write_segment_descriptor((void*)(&g_gdt[0]), 0, 0, 0);
     //ring 0 code seg, non-conforming
-    hk_write_segment_descriptor((void*)(&g_gdt[8]), 0, 0xFFFFF, SEG_TYPE(10) | SEG_CODE_DATA | SEG_32_BITS | SEG_GRANULARITY | SEG_PRESENT | SEG_DPL(0));
+    hk_write_segment_descriptor((void*)(&g_gdt[8]), 0, 0xFFFFF, SEG_TYPE_CODE_XR | SEG_CODE_DATA | SEG_32_BITS | SEG_GRANULARITY | SEG_PRESENT | SEG_DPL_0);
     //ring 3 code seg
-    hk_write_segment_descriptor((void*)(&g_gdt[16]), 0, 0xFFFFF, SEG_TYPE(10) | SEG_CODE_DATA | SEG_32_BITS | SEG_GRANULARITY | SEG_PRESENT | SEG_DPL(3));
+    hk_write_segment_descriptor((void*)(&g_gdt[16]), 0, 0xFFFFF, SEG_TYPE_CODE_XR | SEG_CODE_DATA | SEG_32_BITS | SEG_GRANULARITY | SEG_PRESENT | SEG_DPL_3);
     //ring 0 data RW
-    hk_write_segment_descriptor((void*)(&g_gdt[24]), 0, 0xFFFFF, SEG_TYPE(2) | SEG_CODE_DATA | SEG_32_BITS | SEG_GRANULARITY | SEG_PRESENT | SEG_DPL(0));
+    hk_write_segment_descriptor((void*)(&g_gdt[24]), 0, 0xFFFFF, SEG_TYPE_DATA_RW | SEG_CODE_DATA | SEG_32_BITS | SEG_GRANULARITY | SEG_PRESENT | SEG_DPL_0);
     //ring 3 data
-    hk_write_segment_descriptor((void*)(&g_gdt[24]), 0, 0xFFFFF, SEG_TYPE(2) | SEG_CODE_DATA | SEG_32_BITS | SEG_GRANULARITY | SEG_PRESENT | SEG_DPL(3));
+    hk_write_segment_descriptor((void*)(&g_gdt[32]), 0, 0xFFFFF, SEG_TYPE_DATA_RW | SEG_CODE_DATA | SEG_32_BITS | SEG_GRANULARITY | SEG_PRESENT | SEG_DPL_3);
     g_gdt_ptr.limit = 8 * 8 - 1;
     g_gdt_ptr.base = (uint32_t) g_gdt;
     hk_load_gdt(&g_gdt_ptr, SEG_SELECTOR(1, 0), SEG_SELECTOR(3, 0));
     hk_print_str(" - Done.\n\n");
-
-    BOCHS_MAGIC_BREAKPOINT
-
     //check memory, definitely < 32 so we assume that
     hk_print_str("*Checking memory information...\n");
     if(multiboot_info->flags & (1 << 6))
@@ -103,21 +100,21 @@ void HYPKERNEL32 hk_init_x86(multiboot_info_t const * const multiboot_info)
     {
         hk_print_str("Module information is currently unavailable.\n\n");
     }
-    HLT_CPU
+    a:
+        goto a;
 }
 
 void HYPKERNEL32 hk_init_x64(multiboot_info_t const * const multiboot_info)
 {
     //CHECK MODULE AND LOAD ELF
-    HLT_CPU
+    a:
+        goto a;
 }
 
 void HYPKERNEL32 hk_main(multiboot_info_t const * const multiboot_info)
 {
     //init text_position
     text_pos = 0;
-    hk_load_gdt(&g_gdt_ptr, SEG_SELECTOR(1, 0), SEG_SELECTOR(3, 0));
-    hk_print_str(" - Done.\n\n");
 
     //detect architecture
     hk_print_str("*Checking architecture...\n");

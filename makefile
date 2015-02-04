@@ -4,14 +4,14 @@ LD = ld
 #x86 vars
 C_SRC_PATH_32 = x86/src/c
 ASM_SRC_PATH_32 = x86/src/asm
-C_FLAGS_32 = -m32 -c -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra
+C_FLAGS_32 = -m32 -std=c11 -c -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra
 ASM_FLAGS_32 = -f elf32 -I $(ASM_SRC_PATH_32)/
 LD_FLAGS_32 = -melf_i386
 LD_SCRIPT_32 = build/link32.ld
 #x64 vars
 C_SRC_PATH_64 = x64/src/c
 ASM_SRC_PATH_64 = x64/src/asm
-C_FLAGS_64 = -m64 -c -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra
+C_FLAGS_64 = -m64 -std=c11 -c -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra
 ASM_FLAGS_64 = -f elf64 -I $(ASM_SRC_PATH_64)/
 LD_FLAGS_64 = -melf_x86_64
 LD_SCRIPT_64 = build/link64.ld

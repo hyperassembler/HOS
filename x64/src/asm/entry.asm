@@ -24,7 +24,7 @@ or eax, 1 << 8               ; Set the LM-bit which is the 9th bit (bit 8).
 wrmsr                        ; Write to the model-specific register.
 
 ; let cr3 point at page table
-mov eax,;page table addr
+mov eax,0;page table addr
 mov cr3,eax
 
 ; enable paging, enter compatibility mode
@@ -34,7 +34,7 @@ mov cr0, eax                                   ; Set control register 0 to the A
 ret
 
 ; enter x64
-lgdt [g_gdt_ptr_64]
+;lgdt [g_gdt_ptr_64]
 jmp 8:entry_64
 
 [SECTION .text]
