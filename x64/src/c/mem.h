@@ -3,50 +3,49 @@
 
 #include "type.h"
 #include "kdef.h"
+#define PML4_PRESENT ((uint64_t)1 << 0)
+#define PML4_WRITE ((uint64_t)1 << 1)
+#define PML4_USER ((uint64_t)1 << 2)
+#define PML4_WRITE_THROUGH ((uint64_t)1 << 3)
+#define PML4_CACHE_DISABLED ((uint64_t)1 << 4)
+#define PML4_ACCESSED ((uint64_t)1 << 5)
+#define PML4_EXECUTION_DISABLED ((uint64_t)1 << 63)
 
-typedef struct __attribute__ ((packed))
-{
-    uint64_t Pr;
-    uint64_t RW;
-    uint64_t USU;
-    uint64_t PWT;
-    uint64_t PCD;
-    uint64_t Acc;
-    uint64_t Sz; //must be 0
-    uint64_t base; // Since 4KB-aligned, 12 bits are useless, 52(total) - 12 = 40 bits left
-    // will ignore the low 12 bits as well as the high 12 bits of this field
-    uint64_t XD;
-} pml4_entry_t, pdpt_entry_t, pd_entry_t;
+#define PDPT_PRESENT ((uint64_t)1 << 0)
+#define PDPT_WRITE ((uint64_t)1 << 1)
+#define PDPT_USER ((uint64_t)1 << 2)
+#define PDPT_WRITE_THROUGH ((uint64_t)1 << 3)
+#define PDPT_CACHE_DISABLED ((uint64_t)1 << 4)
+#define PDPT_ACCESSED ((uint64_t)1 << 5)
+#define PDPT_EXECUTION_DISABLED ((uint64_t)1 << 63)
 
-typedef struct __attribute__ ((packed))
-{
-    uint64_t Pr;
-    uint64_t RW;
-    uint64_t USU;
-    uint64_t PWT;
-    uint64_t PCD;
-    uint64_t Acc;
-    uint64_t dirty;
-    uint64_t PAT;
-    uint64_t Gl;
-    uint64_t base; // Since 4KB-aligned, 12 bits are useless, 52(total) - 12 = 40 bits left
-    // will ignore the low 12 bits as well as the high 12 bits of this field
-    uint64_t XD;
-} pt_entry_t;
+#define PD_PRESENT ((uint64_t)1 << 0)
+#define PD_WRITE ((uint64_t)1 << 1)
+#define PD_USER ((uint64_t)1 << 2)
+#define PD_WRITE_THROUGH ((uint64_t)1 << 3)
+#define PD_CACHE_DISABLED ((uint64_t)1 << 4)
+#define PD_ACCESSED ((uint64_t)1 << 5)
+#define PD_EXECUTION_DISABLED ((uint64_t)1 << 63)
 
-typedef struct __attribute__ ((packed))
-{
-    uint64_t base;
-    uint64_t limit;
-    uint64_t type;
-    uint64_t DPL;
-    uint64_t Gr;
-    uint64_t Acc;
-    uint64_t Pr;
-    uint64_t Sz; //32 bits = 1, 16 bits = 0
-    uint64_t x64;
-    uint64_t Sys; //System = 0, code/data = 1
-} segment_descriptor_t;
+#define PT_PRESENT ((uint64_t)1 << 0)
+#define PT_WRITE ((uint64_t)1 << 1)
+#define PT_USER ((uint64_t)1 << 2)
+#define PT_WRITE_THROUGH ((uint64_t)1 << 3)
+#define PT_CACHE_DISABLED ((uint64_t)1 << 4)
+#define PT_ACCESSED ((uint64_t)1 << 5)
+#define PT_DIRTY ((uint64_t)1 << 6)
+#define PT_ATTRIBUTE_TABLE ((uint64_t)1 << 7)
+#define PT_GLOBAL ((uint64_t)1 << 8)
+#define PT_EXECUTION_DISABLED ((uint64_t)1 << 63)
+
+#define SEG_GRANULARITY ((uint64_t)1 << 55)
+#define SEG_LONG ((uint64_t)1 << 53)
+#define SEG_DPL(dpl) (((uint64_t)(dpl) & 0x3) << 45)
+#define SEG_PRESENT ((uint64_t)1 << 47)
+#define SEG_CODE_DATA ((uint64_t)1 << 44)
+#define SEG_TYPE(type) (((uint64_t)(type) & 0xF) << 40)
+#define SEG_AVAILABLE ((uint64_t)1 << 52)
+#define SEG_32_BITS ((uint64_t)1 << 54)
 
 typedef struct __attribute__ ((packed))
 {
@@ -60,7 +59,7 @@ typedef struct __attribute__ ((packed))
     uint64_t base;
 } idt_ptr_t;
 
-void HYPKERNEL64 hk_write_segment_descriptor(uint8_t *const gdt, segment_descriptor_t const *const seg_desc);
+void HYPKERNEL64 hk_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 
 //extern void HYPKERNEL64 hk_load_gdt(gdt_ptr_t const *const ptr, uint16_t const sel_code, uint16_t const sel_data);
 
@@ -70,12 +69,12 @@ void HYPKERNEL64 hk_mem_move(void *src, void *dst, uint64_t size);
 
 void HYPKERNEL64 hk_mem_set(void *src, int8_t const val, uint64_t size);
 
-void HYPKERNEL64 hk_write_pt_entry(uint8_t *const base, pt_entry_t const *const p_entry);
+void HYPKERNEL64 hk_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr);
 
-void HYPKERNEL64 hk_write_pd_entry(uint8_t *const base, pd_entry_t const *const p_entry);
+void HYPKERNEL64 hk_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr);
 
-void HYPKERNEL64 hk_write_pdpt_entry(uint8_t *const base, pdpt_entry_t const *const p_entry);
+void HYPKERNEL64 hk_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr);
 
-void HYPKERNEL64 hk_write_pml4_entry(uint8_t *const base, pml4_entry_t const *const p_entry);
+void HYPKERNEL64 hk_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr);
 
 #endif

@@ -5,6 +5,18 @@
 
 uint64_t text_pos;
 
+void HYPKERNEL64 hk_map_page(void * base, uint64_t const physcial_addr, uint64_t const linear_addr, uint64_t attr)
+{
+
+    if(physcial_addr << 52 || linear_addr << 52)
+    {
+        return;
+    }
+    uint64_t const pml4_idx = (linear_addr >> 39) & 0x1FF; //9bits
+
+}
+
+
 uint64_t HYPKERNEL64 hk_str_len(char const * str)
 {
     uint32_t length = 0;

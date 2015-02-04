@@ -1,83 +1,100 @@
 #include "kdef.h"
 #include "mem.h"
 
-void HYPKERNEL64 hk_write_pml4_entry(uint8_t * const base, pml4_entry_t const * const p_entry)
+
+void HYPKERNEL64 hk_write_pt_entry(void * const base, uint64_t const p_addr, uint64_t const attr)
 {
-    if(base == NULL || p_entry == NULL)
+    if(base == NULL)
         return;
-    base[0] = (uint8_t)((p_entry->Pr & 0x1) + ((p_entry->RW & 0x1) << 1)  + ((p_entry->USU & 0x1) << 2)  + ((p_entry->PWT & 0x1) << 3) + ((p_entry->PCD & 0x1) << 4) + ((p_entry->Acc & 0x1) << 5) + ((p_entry->Sz & 0x1) << 7));
-    base[1] = (uint8_t)(((p_entry->base >> 12) & 0xF) << 4); // 4 bits
-    base[2] = (uint8_t)((p_entry->base >> 16) & 0xFF); // 8 bits
-    base[3] = (uint8_t)((p_entry->base >> 24) & 0xFF); // 8 bits
-    base[4] = (uint8_t)((p_entry->base >> 32) & 0xFF); // 8 bits
-    base[5] = (uint8_t)((p_entry->base >> 40) & 0xFF); // 8 bits
-    base[6] = (uint8_t)((p_entry->base >> 48) & 0xF); // 4 bits
-    base[7] = (uint8_t)((p_entry->XD & 0x1) << 7);
+    uint64_t entry = (p_addr & 0xFFFFFFFFFF000) | attr;
+    ((uint8_t*)base)[0] = (uint8_t)(entry & 0xFF);
+    ((uint8_t*)base)[1] = (uint8_t)((entry >> 8) & 0xFF);
+    ((uint8_t*)base)[2] = (uint8_t)((entry >> 16) & 0xFF);
+    ((uint8_t*)base)[3] = (uint8_t)((entry >> 24) & 0xFF);
+    ((uint8_t*)base)[4] = (uint8_t)((entry >> 32) & 0xFF);
+    ((uint8_t*)base)[5] = (uint8_t)((entry >> 40) & 0xFF);
+    ((uint8_t*)base)[6] = (uint8_t)((entry >> 48) & 0xFF);
+    ((uint8_t*)base)[7] = (uint8_t)((entry >> 56) & 0xFF);
     return;
 }
 
-void HYPKERNEL64 hk_write_pdpt_entry(uint8_t * const base, pdpt_entry_t const * const p_entry)
+void HYPKERNEL64 hk_write_pd_entry(void * const base, uint64_t const pt_addr, uint64_t const attr)
 {
-    if(base == NULL || p_entry == NULL)
+    if(base == NULL)
         return;
-    base[0] = (uint8_t)((p_entry->Pr & 0x1) + ((p_entry->RW & 0x1) << 1)  + ((p_entry->USU & 0x1) << 2)  + ((p_entry->PWT & 0x1) << 3) + ((p_entry->PCD & 0x1) << 4) + ((p_entry->Acc & 0x1) << 5) + ((p_entry->Sz & 0x1) << 7));
-    base[1] = (uint8_t)(((p_entry->base >> 12) & 0xF) << 4); // 4 bits
-    base[2] = (uint8_t)((p_entry->base >> 16) & 0xFF); // 8 bits
-    base[3] = (uint8_t)((p_entry->base >> 24) & 0xFF); // 8 bits
-    base[4] = (uint8_t)((p_entry->base >> 32) & 0xFF); // 8 bits
-    base[5] = (uint8_t)((p_entry->base >> 40) & 0xFF); // 8 bits
-    base[6] = (uint8_t)((p_entry->base >> 48) & 0xF); // 4 bits
-    base[7] = (uint8_t)((p_entry->XD & 0x1) << 7);
+    uint64_t entry = (pt_addr & 0xFFFFFFFFFF000) | attr;
+    ((uint8_t*)base)[0] = (uint8_t)(entry & 0xFF);
+    ((uint8_t*)base)[1] = (uint8_t)((entry >> 8) & 0xFF);
+    ((uint8_t*)base)[2] = (uint8_t)((entry >> 16) & 0xFF);
+    ((uint8_t*)base)[3] = (uint8_t)((entry >> 24) & 0xFF);
+    ((uint8_t*)base)[4] = (uint8_t)((entry >> 32) & 0xFF);
+    ((uint8_t*)base)[5] = (uint8_t)((entry >> 40) & 0xFF);
+    ((uint8_t*)base)[6] = (uint8_t)((entry >> 48) & 0xFF);
+    ((uint8_t*)base)[7] = (uint8_t)((entry >> 56) & 0xFF);
     return;
 }
 
-void HYPKERNEL64 hk_write_pd_entry(uint8_t * const base, pd_entry_t const * const p_entry)
+void HYPKERNEL64 hk_write_pdpt_entry(void * const base, uint64_t const pd_addr, uint64_t const attr)
 {
-    if(base == NULL || p_entry == NULL)
+    if(base == NULL)
         return;
-    base[0] = (uint8_t)((p_entry->Pr & 0x1) + ((p_entry->RW & 0x1) << 1)  + ((p_entry->USU & 0x1) << 2)  + ((p_entry->PWT & 0x1) << 3) + ((p_entry->PCD & 0x1) << 4) + ((p_entry->Acc & 0x1) << 5) + ((p_entry->Sz & 0x1) << 7));
-    base[1] = (uint8_t)(((p_entry->base >> 12) & 0xF) << 4); // 4 bits
-    base[2] = (uint8_t)((p_entry->base >> 16) & 0xFF); // 8 bits
-    base[3] = (uint8_t)((p_entry->base >> 24) & 0xFF); // 8 bits
-    base[4] = (uint8_t)((p_entry->base >> 32) & 0xFF); // 8 bits
-    base[5] = (uint8_t)((p_entry->base >> 40) & 0xFF); // 8 bits
-    base[6] = (uint8_t)((p_entry->base >> 48) & 0xF); // 4 bits
-    base[7] = (uint8_t)((p_entry->XD & 0x1) << 7);
+    uint64_t entry = (pd_addr & 0xFFFFFFFFFF000) | attr;
+    ((uint8_t*)base)[0] = (uint8_t)(entry & 0xFF);
+    ((uint8_t*)base)[1] = (uint8_t)((entry >> 8) & 0xFF);
+    ((uint8_t*)base)[2] = (uint8_t)((entry >> 16) & 0xFF);
+    ((uint8_t*)base)[3] = (uint8_t)((entry >> 24) & 0xFF);
+    ((uint8_t*)base)[4] = (uint8_t)((entry >> 32) & 0xFF);
+    ((uint8_t*)base)[5] = (uint8_t)((entry >> 40) & 0xFF);
+    ((uint8_t*)base)[6] = (uint8_t)((entry >> 48) & 0xFF);
+    ((uint8_t*)base)[7] = (uint8_t)((entry >> 56) & 0xFF);
     return;
 }
 
-
-void HYPKERNEL64 hk_write_pt_entry(uint8_t * const base, pt_entry_t const * const p_entry)
+void HYPKERNEL64 hk_write_pml4_entry(void * const base, uint64_t const pdpt_addr, uint64_t const attr)
 {
-    if(base == NULL || p_entry == NULL)
+    if(base == NULL)
         return;
-    base[0] = (uint8_t)((p_entry->Pr & 0x1) + ((p_entry->RW & 0x1) << 1)  + ((p_entry->USU & 0x1) << 2)  + ((p_entry->PWT & 0x1) << 3) + ((p_entry->PCD & 0x1) << 4) + ((p_entry->Acc & 0x1) << 5) + ((p_entry->dirty & 0x1) << 6) + ((p_entry->PAT & 0x1) << 7));
-    base[1] = (uint8_t)((((p_entry->base >> 12) & 0xF) << 4) + (p_entry->Gl & 0x1)); // 4 bits
-    base[2] = (uint8_t)((p_entry->base >> 16) & 0xFF); // 8 bits
-    base[3] = (uint8_t)((p_entry->base >> 24) & 0xFF); // 8 bits
-    base[4] = (uint8_t)((p_entry->base >> 32) & 0xFF); // 8 bits
-    base[5] = (uint8_t)((p_entry->base >> 40) & 0xFF); // 8 bits
-    base[6] = (uint8_t)((p_entry->base >> 48) & 0xF); // 4 bits
-    base[7] = (uint8_t)((p_entry->XD & 0x1) << 7);
+    uint64_t const entry = (pdpt_addr & 0xFFFFFFFFFF000) | attr;
+    ((uint8_t*)base)[0] = (uint8_t)(entry & 0xFF);
+    ((uint8_t*)base)[1] = (uint8_t)((entry >> 8) & 0xFF);
+    ((uint8_t*)base)[2] = (uint8_t)((entry >> 16) & 0xFF);
+    ((uint8_t*)base)[3] = (uint8_t)((entry >> 24) & 0xFF);
+    ((uint8_t*)base)[4] = (uint8_t)((entry >> 32) & 0xFF);
+    ((uint8_t*)base)[5] = (uint8_t)((entry >> 40) & 0xFF);
+    ((uint8_t*)base)[6] = (uint8_t)((entry >> 48) & 0xFF);
+    ((uint8_t*)base)[7] = (uint8_t)((entry >> 56) & 0xFF);
     return;
 }
 
-void HYPKERNEL64 hk_write_segment_descriptor(uint8_t *const gdt, segment_descriptor_t const *const seg_desc)
+void HYPKERNEL64 hk_write_segment_descriptor(void * const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr)
 {
-	if (gdt == NULL || seg_desc == NULL)
-		return;
-    gdt[0] = (uint8_t)(seg_desc->limit & 0xFF);
-    gdt[1] = (uint8_t)((seg_desc->limit >> 8) & 0xFF);
-    gdt[6] =  gdt[6] | (uint8_t)((seg_desc->limit >> 16) & 0xFF);
+    if (gdt == NULL)
+        return;
+    uint64_t const seg_desc = (((uint64_t)base & 0xFFFF) << 16) | ((((uint64_t)base >> 16) & 0xFF) << 32) | ((((uint64_t)base >> 24) & 0xFF) << 56) | ((uint64_t)limit & 0xFFFF) | ((((uint64_t)limit >> 16) & 0xF) << 48) | attr;
+    ((uint8_t*)gdt)[0] = (uint8_t)(seg_desc & 0xFF);
+    ((uint8_t*)gdt)[1] = (uint8_t)((seg_desc >> 8) & 0xFF);
+    ((uint8_t*)gdt)[2] = (uint8_t)((seg_desc >> 16) & 0xFF);
+    ((uint8_t*)gdt)[3] = (uint8_t)((seg_desc >> 24) & 0xFF);
+    ((uint8_t*)gdt)[4] = (uint8_t)((seg_desc >> 32) & 0xFF);
+    ((uint8_t*)gdt)[5] = (uint8_t)((seg_desc >> 40) & 0xFF);
+    ((uint8_t*)gdt)[6] = (uint8_t)((seg_desc >> 48) & 0xFF);
+    ((uint8_t*)gdt)[7] = (uint8_t)((seg_desc >> 56) & 0xFF);
+    return;
+}
 
-    gdt[2] = (uint8_t)(seg_desc->base & 0xFF);
-    gdt[3] = (uint8_t)((seg_desc->base >> 8) & 0xFF);
-    gdt[4] = (uint8_t)((seg_desc->base >> 16) & 0xFF);
-    gdt[7] = (uint8_t)((seg_desc->base >> 24) & 0xFF);
-
-    gdt[5] = (uint8_t)((seg_desc->type & 0xF) + ((seg_desc->Sys & 0x1) << 4) + ((seg_desc->DPL & 0x3) << 5) + ((seg_desc->Pr & 0x1 ) << 7));
-    gdt[6] = gdt[6] | (uint8_t)(((seg_desc->Acc & 0x1) + ((seg_desc->x64 & 0x1) << 1) + ((seg_desc->Sz & 0x1) << 2) + ((seg_desc->Gr & 0x1) << 3)) << 4);
-	return;
+void HYPKERNEL64 hk_map_page(void * const pml4_base, uint64_t const p_addr, uint64_t const v_addr, uint64_t const attr)
+{
+    //wait a sec, we actually need maximum memory information here for effectively map crap
+    if(pml4_base == NULL || p_addr << 52 || v_addr << 52)
+        return;
+    //ASSUME: little endian
+    uint64_t const pml4_index = (v_addr >> 39) & 0x1FF;
+    void * const pml4_addr = (void*)((uint64_t*)pml4_base + pml4_index);
+    uint64_t const pml4_entry = *(uint64_t*)pml4_addr;
+    if(!(pml4_entry & PML4_PRESENT))
+    {
+        hk_write_pml4_entry(pml4_addr, (uint64_t)pml4_base + 512*8, PML4_PRESENT | PML4_WRITE);
+    }
 }
 
 void HYPKERNEL64 hk_mem_cpy(void* src, void* dst, uint64_t size)
