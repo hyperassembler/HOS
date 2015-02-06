@@ -55,6 +55,13 @@
 #define SEG_AVAILABLE (1ull << 52)
 #define SEG_32_BITS (1ull << 54)
 
+#define PML4_ENTRY_NUM(mem) ((mem) / (4096ull * 512ull * 512ull * 512ull))
+#define PDPT_ENTRY_NUM(mem) ((mem) / (4096ull * 512ull * 512ull))
+#define PD_ENTRY_NUM(mem) ((mem) / (4096ull*512ull))
+#define PT_ENTRY_NUM(mem) ((mem) / 4096ull)
+
+#define PAGE_ENTRY_BASE(PAGE_ENTRY) ((PAGE_ENTRY) & 0xFFFFFFFFFF000)
+
 typedef struct __attribute__ ((packed))
 {
     uint16_t limit;
