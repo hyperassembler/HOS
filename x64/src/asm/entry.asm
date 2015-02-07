@@ -22,25 +22,25 @@ times 512 dq 0 ;reserved the rest for page entries
 
 
 GDT64:                           ; Global Descriptor Table (64-bit).
-    .NULL: equ $ - GDT64         ; The null descriptor.
+    ; NULL
     dw 0                         ; Limit (low).
     dw 0                         ; Base (low).
     db 0                         ; Base (middle)
     db 0                         ; Access.
     db 0                         ; Granularity.
     db 0                         ; Base (high).
-    .CODE: equ $ - GDT64         ; The code descriptor.
+    SLCT_CODE equ $ - GDT64         ; The code descriptor.
     dw 0                         ; Limit (low).
     dw 0                         ; Base (low).
     db 0                         ; Base (middle)
-    db 10011000b                 ; Access.
+    db 10011010b                 ; Access.
     db 00100000b                 ; Granularity.
     db 0                         ; Base (high).
-    .DATA: equ $ - GDT64         ; The data descriptor.
+    SLCT_DATA equ $ - GDT64         ; The data descriptor.
     dw 0                         ; Limit (low).
     dw 0                         ; Base (low).
     db 0                         ; Base (middle)
-    db 10010000b                 ; Access.
+    db 10010010b                 ; Access.
     db 00000000b                 ; Granularity.
     db 0                         ; Base (high).
     .GDT64_PTR:                  ; The GDT-pointer.
@@ -53,9 +53,6 @@ cli
 mov eax, cr0                                   ; Set the A-register to control register 0.
 and eax, 01111111111111111111111111111111b     ; Clear the PG-bit, which is bit 31.
 mov cr0, eax                                   ; Set control register 0 to the A-register.
-
-;pure magic
-xchg bx,bx
 
 ; write values for pml4
 mov eax,PML4_BASE
@@ -101,14 +98,14 @@ or eax, 1 << 31                                ; Set the PG-bit, which is bit 31
 mov cr0, eax                                   ; Set control register 0 to the A-register.
 
 ; enter x64
-;lgdt [GDT64.GDT64_PTR]
-jmp GDT64.CODE:entry
+lgdt [GDT64.GDT64_PTR]
+jmp SLCT_CODE:entry
 
 [SECTION .text]
 [BITS 64]
 entry:
 cli
-mov ax,GDT64.DATA
+mov ax,SLCT_DATA
 mov ds,ax
 mov es,ax
 mov fs,ax

@@ -59,7 +59,6 @@ hk_init_x64:
 push ebp
 mov ebp,esp
 cli
-xchg bx,bx
 mov edi,[ss:ebp+8] ;System V ABI
 jmp 0x100000 ;hard-coded
 mov esp,ebp
