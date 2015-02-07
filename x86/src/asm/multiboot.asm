@@ -1,13 +1,12 @@
 global kernel_stack
 global kernel_addr
-global hk_entry_comp
+global BOCHS_MAGIC_BREAKPOINT
+global HLT_CPU
+global hk_init_x64
 extern hk_main
-extern hk_print_str
-extern hk_print_hex
-extern hk_print_int
+extern hk_printf
 extern hk_enable_paging
 extern hk_disable_paging
-extern g_gdt_ptr_64
 
 [SECTION .entry]
 [BITS 32]
@@ -46,3 +45,24 @@ popfd
 push ebx
 call hk_main
 add esp,4 ; We are actually not coming back here. But out of courtesy...
+hlt
+
+BOCHS_MAGIC_BREAKPOINT:
+xchg bx,bx
+ret
+
+HLT_CPU:
+hlt
+
+;multiboot_info on stack
+hk_init_x64:
+push ebp
+mov ebp,esp
+cli
+xchg bx,bx
+mov edi,[ss:ebp+8] ;System V ABI
+jmp 0x100000 ;hard-coded
+mov esp,ebp
+pop ebp
+ret
+

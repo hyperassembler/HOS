@@ -1,6 +1,5 @@
 #include "kdef.h"
 #include "mem.h"
-#include "print.h"
 
 void HYPKERNEL32 hk_write_segment_descriptor(void * const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr)
 {

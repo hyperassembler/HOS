@@ -9,11 +9,13 @@ uint8_t g_idt[8 * 256];
 idt_ptr_t g_idt_ptr;
 
 extern uint32_t text_pos;
-extern void hk_entry_comp(void);
+extern void hk_init_x64(multiboot_info_t* multiboot_info);
+extern void BOCHS_MAGIC_BREAKPOINT(void);
+extern void HLT_CPU(void);
 
-void HYPKERNEL32 hk_init_x86(multiboot_info_t const * const multiboot_info)
+void HYPKERNEL32 hk_init_x86(multiboot_info_t * multiboot_info)
 {
-    hk_print_str("*Setting up GDT...");
+    hk_printf("*Setting up GDT...");
     //dummy descriptor
     hk_write_segment_descriptor((void*)(&g_gdt[0]), 0, 0, 0);
     //ring 0 code seg, non-conforming
@@ -27,25 +29,19 @@ void HYPKERNEL32 hk_init_x86(multiboot_info_t const * const multiboot_info)
     g_gdt_ptr.limit = 8 * 8 - 1;
     g_gdt_ptr.base = (uint32_t) g_gdt;
     hk_load_gdt(&g_gdt_ptr, SEG_SELECTOR(1, 0), SEG_SELECTOR(3, 0));
-    hk_print_str(" - Done.\n\n");
+    hk_printf(" - Done.\n\n");
     //check memory, definitely < 32 so we assume that
-    hk_print_str("*Checking memory information...\n");
+    hk_printf("*Checking memory information...\n");
     if(multiboot_info->flags & (1 << 6))
     {
         multiboot_memory_map_t const *mem_map = (multiboot_memory_map_t *) multiboot_info->mmap_addr;
         uint32_t const mem_map_size = multiboot_info->mmap_length / sizeof(multiboot_memory_map_t);
-        hk_print_str("BaseAddr  -  Length  -  Type\n");
+        hk_printf("BaseAddr  -  Length  -  Type\n");
         uint32_t total_available_mem = 0;
         uint32_t total_reserved_mem = 0;
-        uint32_t i = 0;
-        for (i = 0; i < mem_map_size; i++)
+        for (uint32_t i = 0; i < mem_map_size; i++)
         {
-            hk_print_hex((uint32_t)((mem_map + i)->addr));
-            hk_print_str("  -  ");
-            hk_print_hex((uint32_t)((mem_map + i)->len));
-            hk_print_str("  -  ");
-            hk_print_hex((mem_map + i)->type);
-            hk_print_str("\n");
+            hk_printf("0x%x  -  0x%X  -  0x%x\n",((uint32_t)(mem_map + i)->addr),(uint32_t)((mem_map + i)->len),(uint32_t)(mem_map + i)->type);
             if((mem_map + i)->type == MULTIBOOT_MEMORY_RESERVED)
             {
                 total_reserved_mem += (uint32_t) ((mem_map + i)->len);
@@ -55,77 +51,50 @@ void HYPKERNEL32 hk_init_x86(multiboot_info_t const * const multiboot_info)
                 total_available_mem += (uint32_t) ((mem_map + i)->len);
             }
         }
-        hk_print_str("Total available memory: ");
-        hk_print_int(total_available_mem);
-        hk_print_str("B = ");
-        hk_print_int(total_available_mem/1024);
-        hk_print_str("KB = ");
-        hk_print_int(total_available_mem/1024/1024);
-        hk_print_str("MB\n");
-        hk_print_str("Total reserved memory: ");
-        hk_print_int(total_reserved_mem);
-        hk_print_str("B = ");
-        hk_print_int(total_reserved_mem/1024);
-        hk_print_str("KB = ");
-        hk_print_int(total_reserved_mem/1024/1024);
-        hk_print_str("MB\n\n");
+        hk_printf("Total available memory: %uB, %uKB, %uMB.\n",total_available_mem,total_available_mem/1024,total_available_mem/1024/1024);
+        hk_printf("Total reserved memory: %uB, %uKB, %uMB.\n\n", total_reserved_mem, total_reserved_mem/1024, total_reserved_mem/1024/1024);
     }
     else
     {
-        hk_print_str("Memory information is currently unavailable.\n\n");
+        hk_printf("Memory information is currently unavailable.\n\n");
     }
 
     //check modules
-    hk_print_str("*Checking loaded kernel modules...\n");
+    hk_printf("*Checking loaded kernel modules...\n");
     if(multiboot_info->flags & (1 << 3))
     {
         multiboot_module_t const * mods_list = (multiboot_module_t *)multiboot_info->mods_addr;
         uint32_t const mods_count = multiboot_info->mods_count;
-        hk_print_int(mods_count);
-        hk_print_str(" module(s) loaded:\n");
-        hk_print_str("Name  -  StartAddr  -  EndAddr\n");
-        uint32_t i = 0;
-        for (i = 0; i < mods_count; i++)
+        hk_printf("%u module(s) loaded:\n", mods_count);
+        hk_printf("Name  -  StartAddr  -  EndAddr\n");
+        for (uint64_t i = 0; i < mods_count; i++)
         {
-            hk_print_str((char *) (mods_list + i)->cmdline);
-            hk_print_str("  -  ");
-            hk_print_hex((mods_list + i)->mod_start);
-            hk_print_str("  -  ");
-            hk_print_hex((mods_list + i)->mod_end);
-            hk_print_str("\n");
+            hk_printf("%s  -  0x%X  -  0x%X\n",(char *) (mods_list + i)->cmdline,(mods_list + i)->mod_start,(mods_list + i)->mod_end);
         }
-        hk_print_str("\n");
+        hk_printf("\n");
     }
     else
     {
-        hk_print_str("Module information is currently unavailable.\n\n");
+        hk_printf("Module information is currently unavailable.\n\n");
     }
-    a:
-        goto a;
+    HLT_CPU();
 }
 
-void HYPKERNEL32 hk_init_x64(multiboot_info_t const * const multiboot_info)
-{
-    //CHECK MODULE AND LOAD ELF
-    a:
-        goto a;
-}
-
-void HYPKERNEL32 hk_main(multiboot_info_t const * const multiboot_info)
+void HYPKERNEL32 hk_main(multiboot_info_t* multiboot_info)
 {
     //init text_position
     text_pos = 0;
 
     //detect architecture
-    hk_print_str("*Checking architecture...\n");
+    hk_printf("*Checking architecture...\n");
     if (hk_support_x64() == 0)
     {
-        hk_print_str("Arch: x86.\n\n");
+        hk_printf("Arch: x86.\n\n");
         hk_init_x86(multiboot_info);
     }
     else
     {
-        hk_print_str("Arch: x86_64.\n\n");
+        hk_printf("Arch: x86_64.\n\n");
         hk_init_x64(multiboot_info);
     }
     return;

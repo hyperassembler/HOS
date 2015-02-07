@@ -1,16 +1,84 @@
 extern hk_main
-[SECTION .entry]
-[BITS 32] ;on stack: multiboot_info*
-; no, no interrupt please.
-cli
+global HLT_CPU
+global BOCHS_MAGIC_BREAKPOINT
 
+;IMPORTANT: Before entering this, CPU should be in protected mode.
+;IMPORTANT: This module should be 4k-page aliened
+[SECTION .entry]
+[BITS 32]
+;on stack: multiboot_info*
+;skip data definition
+jmp start
+; here we need to construct a dummy gdt as well as a dummy page table(As simple as possible, maps 1G page sounds good)
+; for page table we only need 4 gigs since that's the maximum mem one can access in protected mode(without PAE)
+; flags are hard-coded... highly not recommended but for our purpose it's enough
+; little-endian assumed
+times (4096 - 5) db 0; skip the first jmp as well as making it kernel stack, 16 bytes aliened :D
+KERNEL_STACK:
+PML4_BASE:
+times 512 dq 0 ;reserved the rest for page entries
+PDPT_BASE:
+times 512 dq 0 ;reserved the rest for page entries
+
+
+GDT64:                           ; Global Descriptor Table (64-bit).
+    .NULL: equ $ - GDT64         ; The null descriptor.
+    dw 0                         ; Limit (low).
+    dw 0                         ; Base (low).
+    db 0                         ; Base (middle)
+    db 0                         ; Access.
+    db 0                         ; Granularity.
+    db 0                         ; Base (high).
+    .CODE: equ $ - GDT64         ; The code descriptor.
+    dw 0                         ; Limit (low).
+    dw 0                         ; Base (low).
+    db 0                         ; Base (middle)
+    db 10011000b                 ; Access.
+    db 00100000b                 ; Granularity.
+    db 0                         ; Base (high).
+    .DATA: equ $ - GDT64         ; The data descriptor.
+    dw 0                         ; Limit (low).
+    dw 0                         ; Base (low).
+    db 0                         ; Base (middle)
+    db 10010000b                 ; Access.
+    db 00000000b                 ; Granularity.
+    db 0                         ; Base (high).
+    .GDT64_PTR:                  ; The GDT-pointer.
+    dw $ - GDT64 - 1             ; Limit.
+    dq GDT64                     ; Base.
+
+start:
+cli
 ; disable paging first
 mov eax, cr0                                   ; Set the A-register to control register 0.
 and eax, 01111111111111111111111111111111b     ; Clear the PG-bit, which is bit 31.
 mov cr0, eax                                   ; Set control register 0 to the A-register.
-ret
 
-xchg bx,bx ; pure magic
+;pure magic
+xchg bx,bx
+
+; write values for pml4
+mov eax,PML4_BASE
+mov dword [eax], PDPT_BASE + 3
+
+; write values for pdpt
+xor ecx, ecx
+add ecx, 131
+
+mov eax, PDPT_BASE
+mov dword [eax], ecx
+
+add eax,8
+add ecx,0x40000000 ;1G
+mov dword [eax], ecx
+
+add eax,8
+add ecx,0x40000000 ;1G
+mov dword [eax], ecx
+
+add eax,8
+add ecx,0x40000000 ;1G
+mov dword [eax], ecx
 
 ; enable PAE
 mov eax, cr4                 ; Set the A-register to control register 4.
@@ -24,34 +92,37 @@ or eax, 1 << 8               ; Set the LM-bit which is the 9th bit (bit 8).
 wrmsr                        ; Write to the model-specific register.
 
 ; let cr3 point at page table
-mov eax,0;page table addr
+mov eax, PML4_BASE
 mov cr3,eax
 
 ; enable paging, enter compatibility mode
 mov eax, cr0                                   ; Set the A-register to control register 0.
 or eax, 1 << 31                                ; Set the PG-bit, which is bit 31.
 mov cr0, eax                                   ; Set control register 0 to the A-register.
-ret
 
 ; enter x64
-;lgdt [g_gdt_ptr_64]
-jmp 8:entry_64
+;lgdt [GDT64.GDT64_PTR]
+jmp GDT64.CODE:entry
 
 [SECTION .text]
 [BITS 64]
-entry_64:
+entry:
 cli
-;hard code for now
-mov ax,24
+mov ax,GDT64.DATA
 mov ds,ax
 mov es,ax
 mov fs,ax
 mov gs,ax
 mov ss,ax
-;well align 16 bytes like this for now
-mov rax,rsp
-and rax,0xFFFFFFFFFFFFFFF0
-mov rsp,rax
-;no params for now
+
+; align 16 bytes like this for now
+mov rsp,KERNEL_STACK
 call hk_main
 hlt
+
+HLT_CPU:
+hlt
+
+BOCHS_MAGIC_BREAKPOINT:
+xchg bx,bx
+ret
