@@ -68,11 +68,16 @@ typedef struct __attribute__ ((packed))
     uint64_t base;
 } gdt_ptr_t;
 
-typedef struct __attribute__ ((packed))
+typedef struct __attribute__((packed)) _mem_block
 {
-    uint16_t limit;
-    uint64_t base;
-} idt_ptr_t;
+    struct _mem_block * prev;
+    uint64_t start_addr;
+    uint64_t end_addr;
+    uint64_t size;
+    struct _mem_block * next;
+} mem_block;
+
+void* HYPKERNEL64 hk_heap_alloc(uint64_t const size);
 
 void HYPKERNEL64 hk_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 

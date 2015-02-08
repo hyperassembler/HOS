@@ -12,6 +12,8 @@ extern uint32_t text_pos;
 extern void hk_init_x64(multiboot_info_t* multiboot_info);
 extern void BOCHS_MAGIC_BREAKPOINT(void);
 extern void HLT_CPU(void);
+extern char kernel_start[];
+extern char kernel_end[];
 
 void HYPKERNEL32 hk_main(multiboot_info_t* multiboot_info)
 {
@@ -26,7 +28,7 @@ void HYPKERNEL32 hk_main(multiboot_info_t* multiboot_info)
         hk_init_x64(multiboot_info);
     }
     hk_printf("Arch: x86.\n\n");
-
+    hk_printf("Kernel Start: 0x%X. End: 0x%X. Size: 0x%X.\n\n", (uint32_t)kernel_start, (uint32_t)kernel_end, (uint32_t)kernel_end - (uint32_t)kernel_start);
     hk_printf("*Setting up GDT...");
     //dummy descriptor
     hk_write_segment_descriptor((void*)(&g_gdt[0]), 0, 0, 0);

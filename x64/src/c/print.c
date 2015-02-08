@@ -128,9 +128,9 @@ void HYPKERNEL64 _print_hex(uint64_t number, uint64_t capital)
     char const lookup_table_cap[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     char const lookup_table[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
     char const * const look_up = capital == 1 ? lookup_table_cap : lookup_table;
-    char arr[19];
-    arr[18] = 0; //zero-terminated
-    uint32_t index = 17;
+    char arr[17];
+    arr[16] = 0; //zero-terminated
+    uint32_t index = 15;
     uint32_t const div = 16;
     while (1)
     {
@@ -141,9 +141,7 @@ void HYPKERNEL64 _print_hex(uint64_t number, uint64_t capital)
         if (number == 0)
             break;
     }
-    arr[index--] = 'x';
-    arr[index] = '0';
-    _print_str(&(arr[index]));
+    _print_str(&(arr[index + 1]));
     return;
 }
 

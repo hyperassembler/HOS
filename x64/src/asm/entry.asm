@@ -1,12 +1,11 @@
 extern hk_main
 global HLT_CPU
 global BOCHS_MAGIC_BREAKPOINT
-
+global kernel_heap
 ;IMPORTANT: Before entering this, CPU should be in protected mode.
 ;IMPORTANT: This module should be 4k-page aliened
 [SECTION .entry]
 [BITS 32]
-;on stack: multiboot_info*
 ;skip data definition
 jmp start
 ; here we need to construct a dummy gdt as well as a dummy page table(As simple as possible, maps 1G page sounds good)
@@ -123,3 +122,8 @@ hlt
 BOCHS_MAGIC_BREAKPOINT:
 xchg bx,bx
 ret
+
+[SECTION .heap]
+[BITS 64]
+kernel_heap:
+times 4096 db 0

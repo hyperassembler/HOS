@@ -2,6 +2,9 @@
 #include "mem.h"
 
 
+#define kernel_heap_size 4096
+char* _cur_heap = NULL;
+extern char kernel_heap[kernel_heap_size];
 
 void HYPKERNEL64 hk_write_pt_entry(void * const base, uint64_t const p_addr, uint64_t const attr)
 {
@@ -156,4 +159,17 @@ void HYPKERNEL64 hk_mem_move(void* src, void* dst, uint64_t size)
     while (size--)
         *((char*)--dst) = *((char*)--src);
     return;
+}
+
+void* HYPKERNEL64 hk_heap_alloc(uint64_t const size)
+{
+    if(_cur_heap == NULL)
+        _cur_heap = kernel_heap;
+    if(_cur_heap + size < kernel_heap + kernel_heap_size)
+    {
+        void * temp_heap = (void*)_cur_heap;
+        _cur_heap = _cur_heap + size;
+        return temp_heap;
+    }
+    return NULL;
 }
