@@ -13,8 +13,20 @@ extern void hk_init_x64(multiboot_info_t* multiboot_info);
 extern void BOCHS_MAGIC_BREAKPOINT(void);
 extern void HLT_CPU(void);
 
-void HYPKERNEL32 hk_init_x86(multiboot_info_t * multiboot_info)
+void HYPKERNEL32 hk_main(multiboot_info_t* multiboot_info)
 {
+    //init text_position
+    text_pos = 0;
+
+    //detect architecture
+    hk_printf("*Checking architecture...\n");
+    if (hk_support_x64() == 1)
+    {
+        hk_printf("Arch: x86_64.\n\n");
+        hk_init_x64(multiboot_info);
+    }
+    hk_printf("Arch: x86.\n\n");
+
     hk_printf("*Setting up GDT...");
     //dummy descriptor
     hk_write_segment_descriptor((void*)(&g_gdt[0]), 0, 0, 0);
@@ -78,24 +90,6 @@ void HYPKERNEL32 hk_init_x86(multiboot_info_t * multiboot_info)
         hk_printf("Module information is currently unavailable.\n\n");
     }
     HLT_CPU();
-}
 
-void HYPKERNEL32 hk_main(multiboot_info_t* multiboot_info)
-{
-    //init text_position
-    text_pos = 0;
-
-    //detect architecture
-    hk_printf("*Checking architecture...\n");
-    if (hk_support_x64() == 0)
-    {
-        hk_printf("Arch: x86.\n\n");
-        hk_init_x86(multiboot_info);
-    }
-    else
-    {
-        hk_printf("Arch: x86_64.\n\n");
-        hk_init_x64(multiboot_info);
-    }
     return;
 }

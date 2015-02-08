@@ -12,7 +12,6 @@ extern void HYPKERNEL64 hk_flush_gdt(gdt_ptr_t* gdt_ptr, uint64_t code_slct, uin
 void HYPKERNEL64 hk_main(multiboot_info_t* multiboot_info)
 {
     text_pos = 0;
-    hk_printf("Kernel is now running in x64 mode. Multiboot info is located at %X.\n\n", (uint64_t)multiboot_info);
     hk_printf("*Setting up GDT...");
     hk_write_segment_descriptor((void*)&g_gdt[0], 0, 0, 0);
     hk_write_segment_descriptor((void*)&g_gdt[8], 0, 0, SEG_DPL_0 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_CODE_X);
