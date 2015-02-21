@@ -1,7 +1,7 @@
 #ifndef _KDEF_H_
 #define _KDEF_H_
 
-#define HYPKERNEL32 __attribute__((cdecl))
+#define NATIVE32 __attribute__((cdecl))
 
 #define NULL ((void*)0)
 

@@ -8,10 +8,10 @@ gdt_ptr_t g_gdt_ptr;
 extern uint64_t text_pos;
 extern char kernel_start[];
 extern char kernel_end[];
-extern void HYPKERNEL64 HLT_CPU(void);
-extern void HYPKERNEL64 BOCHS_MAGIC_BREAKPOINT();
-extern void HYPKERNEL64 hk_flush_gdt(gdt_ptr_t* gdt_ptr, uint64_t code_slct, uint64_t data_slct);
-void HYPKERNEL64 hk_main(multiboot_info_t* multiboot_info)
+extern void NATIVE64 HLT_CPU(void);
+extern void NATIVE64 BOCHS_MAGIC_BREAKPOINT();
+extern void NATIVE64 hk_flush_gdt(gdt_ptr_t* gdt_ptr, uint64_t code_slct, uint64_t data_slct);
+void NATIVE64 hk_main(multiboot_info_t* multiboot_info)
 {
     text_pos = get_pos(3, 0);
     hk_printf("Kernel Start: 0x%X. End: 0x%X. Size: %dB, %dKB\n\n", (uint64_t)kernel_start, (uint64_t)kernel_end, (uint64_t)kernel_end - (uint64_t)kernel_start,((uint64_t)kernel_end - (uint64_t)kernel_start)/1024);

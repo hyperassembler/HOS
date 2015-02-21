@@ -77,24 +77,24 @@ typedef struct __attribute__((packed)) _mem_block
     struct _mem_block * next;
 } mem_block;
 
-void* HYPKERNEL64 hk_heap_alloc(uint64_t const size);
+void*NATIVE64 hk_heap_alloc(uint64_t const size);
 
-void HYPKERNEL64 hk_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
+void NATIVE64 hk_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 
-//extern void HYPKERNEL64 hk_load_gdt(gdt_ptr_t const *const ptr, uint16_t const sel_code, uint16_t const sel_data);
+//extern void NATIVE64 hk_load_gdt(gdt_ptr_t const *const ptr, uint16_t const sel_code, uint16_t const sel_data);
 
-void HYPKERNEL64 hk_mem_cpy(void *src, void *dst, uint64_t size);
+void NATIVE64 hk_mem_cpy(void *src, void *dst, uint64_t size);
 
-void HYPKERNEL64 hk_mem_move(void *src, void *dst, uint64_t size);
+void NATIVE64 hk_mem_move(void *src, void *dst, uint64_t size);
 
-void HYPKERNEL64 hk_mem_set(void *src, int8_t const val, uint64_t size);
+void NATIVE64 hk_mem_set(void *src, int8_t const val, uint64_t size);
 
-void HYPKERNEL64 hk_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr);
+void NATIVE64 hk_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr);
 
-void HYPKERNEL64 hk_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr);
+void NATIVE64 hk_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr);
 
-void HYPKERNEL64 hk_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr);
+void NATIVE64 hk_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr);
 
-void HYPKERNEL64 hk_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr);
+void NATIVE64 hk_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr);
 
 #endif

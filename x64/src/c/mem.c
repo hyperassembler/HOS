@@ -6,7 +6,7 @@
 char* _cur_heap = NULL;
 extern char kernel_heap[kernel_heap_size];
 
-void HYPKERNEL64 hk_write_pt_entry(void * const base, uint64_t const p_addr, uint64_t const attr)
+void NATIVE64 hk_write_pt_entry(void * const base, uint64_t const p_addr, uint64_t const attr)
 {
     if(base == NULL)
         return;
@@ -22,7 +22,7 @@ void HYPKERNEL64 hk_write_pt_entry(void * const base, uint64_t const p_addr, uin
     return;
 }
 
-void HYPKERNEL64 hk_write_pd_entry(void * const base, uint64_t const pt_addr, uint64_t const attr)
+void NATIVE64 hk_write_pd_entry(void * const base, uint64_t const pt_addr, uint64_t const attr)
 {
     if(base == NULL)
         return;
@@ -38,7 +38,7 @@ void HYPKERNEL64 hk_write_pd_entry(void * const base, uint64_t const pt_addr, ui
     return;
 }
 
-void HYPKERNEL64 hk_write_pdpt_entry(void * const base, uint64_t const pd_addr, uint64_t const attr)
+void NATIVE64 hk_write_pdpt_entry(void * const base, uint64_t const pd_addr, uint64_t const attr)
 {
     if(base == NULL)
         return;
@@ -54,7 +54,7 @@ void HYPKERNEL64 hk_write_pdpt_entry(void * const base, uint64_t const pd_addr, 
     return;
 }
 
-void HYPKERNEL64 hk_write_pml4_entry(void * const base, uint64_t const pdpt_addr, uint64_t const attr)
+void NATIVE64 hk_write_pml4_entry(void * const base, uint64_t const pdpt_addr, uint64_t const attr)
 {
     if(base == NULL)
         return;
@@ -70,7 +70,7 @@ void HYPKERNEL64 hk_write_pml4_entry(void * const base, uint64_t const pdpt_addr
     return;
 }
 
-void HYPKERNEL64 hk_write_segment_descriptor(void * const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr)
+void NATIVE64 hk_write_segment_descriptor(void * const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr)
 {
     if (gdt == NULL)
         return;
@@ -86,7 +86,7 @@ void HYPKERNEL64 hk_write_segment_descriptor(void * const gdt, uint32_t const ba
     return;
 }
 
-uint64_t HYPKERNEL64 hk_map_page(void * const base, uint64_t const p_addr, uint64_t const v_addr, uint64_t const attr, uint64_t const availableRam)
+uint64_t NATIVE64 hk_map_page(void * const base, uint64_t const p_addr, uint64_t const v_addr, uint64_t const attr, uint64_t const availableRam)
 {
     //wait a sec, we actually need maximum memory information here for effectively map crap
     if(base == NULL || p_addr << 52 || v_addr << 52)
@@ -126,7 +126,7 @@ uint64_t HYPKERNEL64 hk_map_page(void * const base, uint64_t const p_addr, uint6
     return 0;
 }
 
-void HYPKERNEL64 hk_mem_cpy(void* src, void* dst, uint64_t size)
+void NATIVE64 hk_mem_cpy(void* src, void* dst, uint64_t size)
 {
     if (src == NULL || dst == NULL)
         return;
@@ -137,7 +137,7 @@ void HYPKERNEL64 hk_mem_cpy(void* src, void* dst, uint64_t size)
     return;
 }
 
-void HYPKERNEL64 hk_mem_set(void* src, int8_t const val,uint64_t size)
+void NATIVE64 hk_mem_set(void* src, int8_t const val,uint64_t size)
 {
     if (src == NULL)
         return;
@@ -146,7 +146,7 @@ void HYPKERNEL64 hk_mem_set(void* src, int8_t const val,uint64_t size)
     return;
 }
 
-void HYPKERNEL64 hk_mem_move(void* src, void* dst, uint64_t size)
+void NATIVE64 hk_mem_move(void* src, void* dst, uint64_t size)
 {
     if (src == NULL || dst == NULL)
         return;
@@ -161,7 +161,7 @@ void HYPKERNEL64 hk_mem_move(void* src, void* dst, uint64_t size)
     return;
 }
 
-void* HYPKERNEL64 hk_heap_alloc(uint64_t const size)
+void*NATIVE64 hk_heap_alloc(uint64_t const size)
 {
     if(_cur_heap == NULL)
         _cur_heap = kernel_heap;

@@ -6,7 +6,7 @@
 
 uint64_t text_pos;
 
-uint64_t HYPKERNEL64 hk_str_len(char const * str)
+uint64_t NATIVE64 hk_str_len(char const * str)
 {
     uint64_t length = 0;
     if(str == NULL)
@@ -19,7 +19,7 @@ uint64_t HYPKERNEL64 hk_str_len(char const * str)
     return length;
 }
 
-uint64_t HYPKERNEL64 hk_str_cmp(char const * str1,char const * str2)
+uint64_t NATIVE64 hk_str_cmp(char const * str1,char const * str2)
 {
     if(str1 == NULL || str2 == NULL)
         return 0;
@@ -34,13 +34,13 @@ uint64_t HYPKERNEL64 hk_str_cmp(char const * str1,char const * str2)
     return 1;
 }
 
-void HYPKERNEL64 hk_print_scroll()
+void NATIVE64 hk_print_scroll()
 {
     hk_mem_move((void*)(0xb8000 + get_pos(1,0) * 2), (void*)(0xb8000 + get_pos(0,0) * 2), (80*24)*2);
     return;
 }
 
-void HYPKERNEL64 _print_str(char const *str)
+void NATIVE64 _print_str(char const *str)
 {
     if(str == NULL)
         return;
@@ -75,7 +75,7 @@ void HYPKERNEL64 _print_str(char const *str)
     return;
 }
 
-void HYPKERNEL64 _print_uint(uint64_t number)
+void NATIVE64 _print_uint(uint64_t number)
 {
     char arr[21]; // do not need to initialize
     arr[20] = 0; //zero-terminated
@@ -94,7 +94,7 @@ void HYPKERNEL64 _print_uint(uint64_t number)
     return;
 }
 
-void HYPKERNEL64 _print_int(int64_t number)
+void NATIVE64 _print_int(int64_t number)
 {
     char arr[21]; // do not need to initialize
     arr[20] = 0; //zero-terminated
@@ -123,7 +123,7 @@ void HYPKERNEL64 _print_int(int64_t number)
     return;
 }
 
-void HYPKERNEL64 _print_hex(uint64_t number, uint64_t capital)
+void NATIVE64 _print_hex(uint64_t number, uint64_t capital)
 {
     char const lookup_table_cap[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     char const lookup_table[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
@@ -145,14 +145,14 @@ void HYPKERNEL64 _print_hex(uint64_t number, uint64_t capital)
     return;
 }
 
-void HYPKERNEL64 hk_clear_screen(void)
+void NATIVE64 hk_clear_screen(void)
 {
     text_pos = 0; // reset text_pos
     hk_mem_set((void*)0xb8000, 0, 25*80*2);
     return;
 }
 
-void HYPKERNEL64 hk_printf(char const *format, ...)
+void NATIVE64 hk_printf(char const *format, ...)
 {
     va_list args;
     va_start(args, format);

@@ -38,12 +38,12 @@ typedef struct __attribute__ ((packed))
     uint32_t base;
 } idt_ptr_t;
 
-void HYPKERNEL32 hk_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
-extern void HYPKERNEL32 hk_load_gdt(gdt_ptr_t const * const ptr, uint16_t const sel_code, uint16_t const sel_data);
-void HYPKERNEL32 hk_mem_cpy(void* src, void* dst, uint32_t size);
-void HYPKERNEL32 hk_mem_move(void* src, void* dst, uint32_t size);
-extern int32_t HYPKERNEL32 hk_support_x64(void);
+void NATIVE32 hk_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
+extern void NATIVE32 hk_load_gdt(gdt_ptr_t const * const ptr, uint16_t const sel_code, uint16_t const sel_data);
+void NATIVE32 hk_mem_cpy(void* src, void* dst, uint32_t size);
+void NATIVE32 hk_mem_move(void* src, void* dst, uint32_t size);
+extern int32_t NATIVE32 hk_support_x64(void);
 extern void hk_disable_paging(void);
 extern void hk_enable_paging(void);
-void HYPKERNEL32 hk_mem_set(void* src, int8_t const val,uint32_t size);
+void NATIVE32 hk_mem_set(void* src, int8_t const val,uint32_t size);
 #endif

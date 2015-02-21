@@ -15,7 +15,7 @@ extern void HLT_CPU(void);
 extern char kernel_start[];
 extern char kernel_end[];
 
-void HYPKERNEL32 hk_main(multiboot_info_t* multiboot_info)
+void NATIVE32 hk_main(multiboot_info_t* multiboot_info)
 {
     //init text_position
     text_pos = 0;
