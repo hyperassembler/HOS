@@ -1,8 +1,8 @@
-global hk_read_port
-global hk_write_port
+global read_port
+global write_port
 [SECTION .text]
 [BITS 32]
-hk_write_port:
+write_port:
 	mov	edx, [esp + 4]
 	mov	al, [esp + 4 + 4]
 	out	dx, al
@@ -10,7 +10,7 @@ hk_write_port:
 	nop
 	ret
 
-hk_read_port:
+read_port:
 	mov	edx, [esp + 4]
 	xor	eax, eax
 	in	al, dx

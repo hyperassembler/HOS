@@ -1,12 +1,11 @@
 #include "kdef.h"
-#include "mem.h"
-
+#include "mm.h"
 
 #define kernel_heap_size 4096
 char* _cur_heap = NULL;
 extern char kernel_heap[kernel_heap_size];
 
-void NATIVE64 hk_write_pt_entry(void * const base, uint64_t const p_addr, uint64_t const attr)
+void NATIVE64 write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr)
 {
     if(base == NULL)
         return;
@@ -22,7 +21,7 @@ void NATIVE64 hk_write_pt_entry(void * const base, uint64_t const p_addr, uint64
     return;
 }
 
-void NATIVE64 hk_write_pd_entry(void * const base, uint64_t const pt_addr, uint64_t const attr)
+void NATIVE64 write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr)
 {
     if(base == NULL)
         return;
@@ -38,7 +37,7 @@ void NATIVE64 hk_write_pd_entry(void * const base, uint64_t const pt_addr, uint6
     return;
 }
 
-void NATIVE64 hk_write_pdpt_entry(void * const base, uint64_t const pd_addr, uint64_t const attr)
+void NATIVE64 write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr)
 {
     if(base == NULL)
         return;
@@ -54,7 +53,7 @@ void NATIVE64 hk_write_pdpt_entry(void * const base, uint64_t const pd_addr, uin
     return;
 }
 
-void NATIVE64 hk_write_pml4_entry(void * const base, uint64_t const pdpt_addr, uint64_t const attr)
+void NATIVE64 write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr)
 {
     if(base == NULL)
         return;
@@ -70,7 +69,7 @@ void NATIVE64 hk_write_pml4_entry(void * const base, uint64_t const pdpt_addr, u
     return;
 }
 
-void NATIVE64 hk_write_segment_descriptor(void * const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr)
+void NATIVE64 write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr)
 {
     if (gdt == NULL)
         return;
@@ -86,11 +85,11 @@ void NATIVE64 hk_write_segment_descriptor(void * const gdt, uint32_t const base,
     return;
 }
 
-uint64_t NATIVE64 hk_map_page(void * const base, uint64_t const p_addr, uint64_t const v_addr, uint64_t const attr, uint64_t const availableRam)
+uint64_t NATIVE64 map_page(void *const base, uint64_t const p_addr, uint64_t const v_addr, uint64_t const attr, uint64_t const availableRam)
 {
     //wait a sec, we actually need maximum memory information here for effectively map crap
     if(base == NULL || p_addr << 52 || v_addr << 52)
-        return;
+        return 0;
     //ASSUME: little endian
     //All of the following should be 4K-aliened
 
@@ -103,30 +102,30 @@ uint64_t NATIVE64 hk_map_page(void * const base, uint64_t const p_addr, uint64_t
 //    if(!(*(uint64_t*)pml4_entry_addr & PML4_PRESENT))
 //    {
 //        //PML4 does not exist
-//        hk_write_pml4_entry(pml4_entry_addr, (uint64_t)((uint64_t*)pdpt_base + pml4_index * 512), PML4_PRESENT | PML4_WRITE);
+//        write_pml4_entry(pml4_entry_addr, (uint64_t)((uint64_t*)pdpt_base + pml4_index * 512), PML4_PRESENT | PML4_WRITE);
 //    }
 //    uint64_t const pml4_entry = *(uint64_t*)pml4_entry_addr;
 //
 //    void * const pdpt_entry_addr = (void*)((uint64_t*) PAGE_ENTRY_BASE(pml4_entry) + pdpt_index);
 //    if(!(*(uint64_t*) pdpt_entry_addr & PDPT_PRESENT))
 //    {
-//        hk_write_pdpt_entry(pdpt_entry_addr, (uint64_t)((uint64_t*)pd_base + pml4_index * 512 * 512 + pdpt_index * 512), PDPT_PRESENT | PDPT_WRITE);
+//        write_pdpt_entry(pdpt_entry_addr, (uint64_t)((uint64_t*)pd_base + pml4_index * 512 * 512 + pdpt_index * 512), PDPT_PRESENT | PDPT_WRITE);
 //    }
 //    uint64_t const pdpt_entry = *(uint64_t*)pdpt_entry_addr;
 //
 //    void * const pd_entry_addr = (void*)((uint64_t*) PAGE_ENTRY_BASE(pdpt_entry) + pd_index);
 //    if(!(*(uint64_t*) pd_entry_addr & PD_PRESENT))
 //    {
-//        hk_write_pd_entry(pd_entry_addr, (uint64_t)((uint64_t*)pt_base + pml4_index * 512 * 512 * 512 + pdpt_index * 512 * 512 + pd_index*512), PD_PRESENT | PD_WRITE);
+//        write_pd_entry(pd_entry_addr, (uint64_t)((uint64_t*)pt_base + pml4_index * 512 * 512 * 512 + pdpt_index * 512 * 512 + pd_index*512), PD_PRESENT | PD_WRITE);
 //    }
 //    uint64_t const pd_entry = *(uint64_t*)pd_entry_addr;
 //
 //    void * const pt_entry_addr = (void*)((uint64_t*) PAGE_ENTRY_BASE(pd_entry) + pt_index);
-//    hk_write_pt_entry(pt_entry_addr, p_addr, attr);
+//    write_pt_entry(pt_entry_addr, p_addr, attr);
     return 0;
 }
 
-void NATIVE64 hk_mem_cpy(void* src, void* dst, uint64_t size)
+void NATIVE64 mem_cpy(void *src, void *dst, uint64_t size)
 {
     if (src == NULL || dst == NULL)
         return;
@@ -137,7 +136,7 @@ void NATIVE64 hk_mem_cpy(void* src, void* dst, uint64_t size)
     return;
 }
 
-void NATIVE64 hk_mem_set(void* src, int8_t const val,uint64_t size)
+void NATIVE64 mem_set(void *src, int8_t const val, uint64_t size)
 {
     if (src == NULL)
         return;
@@ -146,13 +145,13 @@ void NATIVE64 hk_mem_set(void* src, int8_t const val,uint64_t size)
     return;
 }
 
-void NATIVE64 hk_mem_move(void* src, void* dst, uint64_t size)
+void NATIVE64 mem_move(void *src, void *dst, uint64_t size)
 {
     if (src == NULL || dst == NULL)
         return;
     if (src >= dst)
     {
-        return hk_mem_cpy(src,dst,size);
+        return mem_cpy(src, dst, size);
     }
     src += size;
     dst += size;
@@ -161,7 +160,7 @@ void NATIVE64 hk_mem_move(void* src, void* dst, uint64_t size)
     return;
 }
 
-void*NATIVE64 hk_heap_alloc(uint64_t const size)
+void*NATIVE64 dum_heap_alloc(uint64_t const size)
 {
     if(_cur_heap == NULL)
         _cur_heap = kernel_heap;

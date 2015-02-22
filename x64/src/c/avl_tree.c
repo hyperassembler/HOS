@@ -1,4 +1,4 @@
-#include <stdint.h>
+#include "type.h"
 #include "kdef.h"
 #include "avl_tree.h"
 
@@ -71,7 +71,7 @@ int64_t NATIVE64 _get_balance_factor(void *node,
     return _get_height(get_left(node),get_height) - _get_height(get_right(node),get_height);
 }
 
-void*NATIVE64 insert_node(void *node, void *key,
+void*NATIVE64 avl_insert_node(void *node, void *key,
         void *(*get_left)(void *),
         void (*set_left)(void *, void *),
         void *(*get_right)(void *),
@@ -84,11 +84,11 @@ void*NATIVE64 insert_node(void *node, void *key,
     if (node == NULL)
         return key;
     if (compare(key,node) < 0)
-        set_left(node, insert_node(get_left(node), key, get_left, set_left, get_right, set_right, get_height, set_height, compare));
+        set_left(node, avl_insert_node(get_left(node), key, get_left, set_left, get_right, set_right, get_height, set_height, compare));
     else if (compare(key,node) == 0)
         return node;
     else
-        set_right(node, insert_node(get_right(node), key, get_left, set_left, get_right, set_right, get_height, set_height, compare));
+        set_right(node, avl_insert_node(get_right(node), key, get_left, set_left, get_right, set_right, get_height, set_height, compare));
 
     /* 2. Update height of this ancestor node */
     set_height(node, _max(_get_height(get_left(node),get_height), _get_height(get_right(node),get_height)) + 1);
@@ -124,7 +124,7 @@ void*NATIVE64 insert_node(void *node, void *key,
     return node;
 }
 
-void*NATIVE64 delete_node(void *root, void *key,
+void*NATIVE64 avl_delete_node(void *root, void *key,
         void *(*get_left)(void *),
         void (*set_left)(void *, void *),
         void *(*get_right)(void *),
@@ -141,12 +141,12 @@ void*NATIVE64 delete_node(void *root, void *key,
     // If the key to be deleted is smaller than the root's key,
     // then it lies in left subtree
     if ( compare(key,root) < 0 )
-        set_left(root, delete_node(get_left(root), key, get_left, set_left, get_right, set_right, get_height, set_height, compare, set_data));
+        set_left(root, avl_delete_node(get_left(root), key, get_left, set_left, get_right, set_right, get_height, set_height, compare, set_data));
 
         // If the key to be deleted is greater than the root's key,
         // then it lies in right subtree
     else if(compare(key,root) > 0)
-        set_right(root, delete_node(get_right(root), key, get_left, set_left, get_right, set_right, get_height, set_height, compare, set_data));
+        set_right(root, avl_delete_node(get_right(root), key, get_left, set_left, get_right, set_right, get_height, set_height, compare, set_data));
 
         // if key is same as root's key, then This is the node
         // to be deleted
@@ -185,7 +185,7 @@ void*NATIVE64 delete_node(void *root, void *key,
             set_data(root, temp);
 
             // Delete the inorder successor
-            set_right(root, delete_node(get_right(root), temp, get_left, set_left, get_right, set_right, get_height, set_height, compare, set_data));
+            set_right(root, avl_delete_node(get_right(root), temp, get_left, set_left, get_right, set_right, get_height, set_height, compare, set_data));
         }
     }
 

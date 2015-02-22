@@ -6,7 +6,7 @@
 
 uint32_t text_pos;
 
-uint32_t NATIVE32 hk_str_len(char const *str)
+uint32_t NATIVE32 str_len(char const *str)
 {
     uint32_t length = 0;
     if (str == NULL)
@@ -19,12 +19,12 @@ uint32_t NATIVE32 hk_str_len(char const *str)
     return length;
 }
 
-uint32_t NATIVE32 hk_str_cmp(char const *str1, char const *str2)
+uint32_t NATIVE32 str_cmp(char const *str1, char const *str2)
 {
     if (str1 == NULL || str2 == NULL)
         return 0;
-    uint32_t length = hk_str_len(str1);
-    if (length != hk_str_len(str2))
+    uint32_t length = str_len(str1);
+    if (length != str_len(str2))
         return 0;
     while (length--)
     {
@@ -34,9 +34,9 @@ uint32_t NATIVE32 hk_str_cmp(char const *str1, char const *str2)
     return 1;
 }
 
-void NATIVE32 hk_print_scroll()
+void NATIVE32 _print_scroll()
 {
-    hk_mem_move((void *) (0xb8000 + get_pos(1, 0) * 2), (void *) (0xb8000 + get_pos(0, 0) * 2), (80 * 24) * 2);
+    mem_move((void *) (0xb8000 + get_pos(1, 0) * 2), (void *) (0xb8000 + get_pos(0, 0) * 2), (80 * 24) * 2);
     return;
 }
 
@@ -52,8 +52,8 @@ void NATIVE32 _print_str(char const *str)
             if (text_pos > 80 * 25 - 1)
             {
                 //can't hold
-                hk_print_scroll();
-                hk_mem_set((void *) (0xb8000 + 80 * 24 * 2), 0, 80 * 2); // clear last row
+                _print_scroll();
+                mem_set((void *) (0xb8000 + 80 * 24 * 2), 0, 80 * 2); // clear last row
                 text_pos = 80 * 24;
             }
             str++;
@@ -63,7 +63,7 @@ void NATIVE32 _print_str(char const *str)
             if (text_pos > 80 * 25 - 1)
             {
                 //can't hold
-                hk_print_scroll();
+                _print_scroll();
                 text_pos = 80 * 24;
             }
             *((char *) (0xb8000) + text_pos * 2) = *str;
@@ -151,15 +151,15 @@ void NATIVE32 _print_hex(uint32_t number, uint32_t captial)
 }
 
 
-void NATIVE32 hk_clear_screen(void)
+void NATIVE32 clear_screen(void)
 {
     text_pos = 0; // reset text_pos
-    hk_mem_set((void *) 0xb8000, 0, 25 * 80 * 2);
+    mem_set((void *) 0xb8000, 0, 25 * 80 * 2);
     return;
 }
 
 
-void NATIVE32 hk_printf(char const *format, ...)
+void NATIVE32 kprintf(char const *format, ...)
 {
     va_list args;
     va_start(args, format);

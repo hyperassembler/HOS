@@ -1,4 +1,4 @@
-extern hk_main
+extern kmain
 global HLT_CPU
 global BOCHS_MAGIC_BREAKPOINT
 global kernel_heap
@@ -113,7 +113,7 @@ mov ss,ax
 
 ; align 16 bytes like this for now
 mov rsp,KERNEL_STACK
-call hk_main
+call kmain
 hlt
 
 HLT_CPU:

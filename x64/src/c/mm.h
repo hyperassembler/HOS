@@ -1,5 +1,5 @@
-#ifndef _MEM_H_
-#define _MEM_H_
+#ifndef _MM_H_
+#define _MM_H_
 
 #include "type.h"
 #include "kdef.h"
@@ -68,33 +68,24 @@ typedef struct __attribute__ ((packed))
     uint64_t base;
 } gdt_ptr_t;
 
-typedef struct __attribute__((packed)) _mem_block
-{
-    struct _mem_block * prev;
-    uint64_t start_addr;
-    uint64_t end_addr;
-    uint64_t size;
-    struct _mem_block * next;
-} mem_block;
+void*NATIVE64 dum_heap_alloc(uint64_t const size);
 
-void*NATIVE64 hk_heap_alloc(uint64_t const size);
-
-void NATIVE64 hk_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
+void NATIVE64 write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 
 //extern void NATIVE64 hk_load_gdt(gdt_ptr_t const *const ptr, uint16_t const sel_code, uint16_t const sel_data);
 
-void NATIVE64 hk_mem_cpy(void *src, void *dst, uint64_t size);
+void NATIVE64 mem_cpy(void *src, void *dst, uint64_t size);
 
-void NATIVE64 hk_mem_move(void *src, void *dst, uint64_t size);
+void NATIVE64 mem_move(void *src, void *dst, uint64_t size);
 
-void NATIVE64 hk_mem_set(void *src, int8_t const val, uint64_t size);
+void NATIVE64 mem_set(void *src, int8_t const val, uint64_t size);
 
-void NATIVE64 hk_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr);
+void NATIVE64 write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr);
 
-void NATIVE64 hk_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr);
+void NATIVE64 write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr);
 
-void NATIVE64 hk_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr);
+void NATIVE64 write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr);
 
-void NATIVE64 hk_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr);
+void NATIVE64 write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr);
 
 #endif

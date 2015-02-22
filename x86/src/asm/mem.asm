@@ -1,11 +1,11 @@
-global hk_load_gdt
-global hk_support_x64
-global hk_disable_paging
-global hk_enable_paging
+global load_gdt
+global support_x64
+global disable_paging
+global enable_paging
 [SECTION .text]
 [BITS 32]
-;void hk_load_gdt(gdt_ptr* ptr, uint16 SLCT_CODE, uint16 SLCT_DATA)
-hk_load_gdt:
+;void load_gdt(gdt_ptr* ptr, uint16 SLCT_CODE, uint16 SLCT_DATA)
+load_gdt:
 push ebp
 mov ebp,esp
 push eax
@@ -28,8 +28,8 @@ mov esp,ebp
 pop ebp
 ret
 
-;int hk_support_x64(void)
-hk_support_x64:
+;int support_x64(void)
+support_x64:
 push ebp
 mov ebp,esp
 pushfd
@@ -62,22 +62,22 @@ pop ebp
 ret
 
 
-;void hk_disable_paging(void)
-hk_disable_paging:
+;void disable_paging(void)
+disable_paging:
 mov eax, cr0                                   ; Set the A-register to control register 0.
 and eax, 01111111111111111111111111111111b     ; Clear the PG-bit, which is bit 31.
 mov cr0, eax                                   ; Set control register 0 to the A-register.
 ret
 
-;void hk_enable_paging(void)
-hk_enable_paging:
+;void enable_paging(void)
+enable_paging:
 mov eax, cr0                                   ; Set the A-register to control register 0.
 or eax, 1 << 31                                ; Set the PG-bit, which is bit 31.
 mov cr0, eax                                   ; Set control register 0 to the A-register.
 ret
 
-;void hk_flush_tlb(void)
-hk_flush_tlb:
+;void flush_tlb(void)
+flush_tlb:
 mov eax,cr3
 mov cr3,eax
 ret

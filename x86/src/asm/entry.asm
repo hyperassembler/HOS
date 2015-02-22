@@ -2,11 +2,10 @@ global kernel_stack
 global kernel_addr
 global BOCHS_MAGIC_BREAKPOINT
 global HLT_CPU
-global hk_init_x64
-extern hk_main
-extern hk_printf
-extern hk_enable_paging
-extern hk_disable_paging
+global init_x64
+extern kmain
+extern enable_paging
+extern disable_paging
 
 [SECTION .entry]
 [BITS 32]
@@ -23,16 +22,16 @@ dd MULTIBOOT_HEADER
 dd MULTIBOOT_HEADER
 dd 0
 dd 0
-dd hk_entry_32
+dd entry_32
 
 times 4096 db 0
 kernel_stack:
 
-hk_entry_32:
+entry_32:
 cli
 
 cmp eax,GRUB_MAGIC
-jmp hk_entry_32.loaded_by_grub
+jmp entry_32.loaded_by_grub
 hlt
 .loaded_by_grub:
 
@@ -43,7 +42,7 @@ push dword 0
 popfd
 
 push ebx
-call hk_main
+call kmain
 add esp,4 ; We are actually not coming back here. But out of courtesy...
 hlt
 
@@ -55,7 +54,7 @@ HLT_CPU:
 hlt
 
 ;multiboot_info on stack
-hk_init_x64:
+init_x64:
 push ebp
 mov ebp,esp
 cli

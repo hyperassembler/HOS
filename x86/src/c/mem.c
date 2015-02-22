@@ -1,7 +1,7 @@
 #include "kdef.h"
 #include "mem.h"
 
-void NATIVE32 hk_write_segment_descriptor(void * const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr)
+void NATIVE32 write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr)
 {
 	if (gdt == NULL)
 		return;
@@ -17,7 +17,7 @@ void NATIVE32 hk_write_segment_descriptor(void * const gdt, uint32_t const base,
     return;
 }
 
-void NATIVE32 hk_mem_cpy(void* src, void* dst, uint32_t size)
+void NATIVE32 mem_cpy(void* src, void* dst, uint32_t size)
 {
     if (src == NULL || dst == NULL)
         return;
@@ -28,7 +28,7 @@ void NATIVE32 hk_mem_cpy(void* src, void* dst, uint32_t size)
     return;
 }
 
-void NATIVE32 hk_mem_set(void* src, int8_t const val,uint32_t size)
+void NATIVE32 mem_set(void* src, int8_t const val,uint32_t size)
 {
     if (src == NULL)
         return;
@@ -38,7 +38,7 @@ void NATIVE32 hk_mem_set(void* src, int8_t const val,uint32_t size)
     return;
 }
 
-void NATIVE32 hk_mem_move(void* src, void* dst, uint32_t size)
+void NATIVE32 mem_move(void* src, void* dst, uint32_t size)
 {
     if (src == NULL || dst == NULL)
         return;
@@ -46,7 +46,7 @@ void NATIVE32 hk_mem_move(void* src, void* dst, uint32_t size)
     char* cDst = (char*)dst;
     if (cSrc >= cDst)
     {
-        return hk_mem_cpy(src,dst,size);
+        return mem_cpy(src, dst, size);
     }
     cSrc += size;
     cDst += size;
