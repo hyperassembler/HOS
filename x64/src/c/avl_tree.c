@@ -1,228 +1,325 @@
-#include "type.h"
-#include "kdef.h"
 #include "avl_tree.h"
+#include <stdlib.h>
 
-int64_t NATIVE64 _max(int64_t a, int64_t b)
+#define MAX(a, b) (((a) > (b) ? (a) : (b)))
+
+// internal
+int inline _get_height(avl_tree *node)
 {
-    return (a > b)? a : b;
+    return node == NULL ? -1 : node->height;
 }
 
-int64_t NATIVE64 _get_height(void * root, int64_t (*get_height)(void*))
-{
-    if(root == NULL)
-        return -1;
-    return get_height(root);
-}
-
-void *NATIVE64 _right_rotate(void *y,
-        void *(*get_left)(void *),
-        void (*set_left)(void *, void *),
-        void *(*get_right)(void *),
-        void(*set_right)(void *, void *),
-        int64_t (*get_height)(void *),
-        void(*set_height)(void *, int64_t))
-{
-    void *x = get_left(y);
-    void *T2 = get_right(x);
-
-    // Perform rotation
-    set_right(x,y);
-    set_left(y,T2);
-
-    // Update heights
-    set_height(y,_max(_get_height(get_left(y),get_height), _get_height(get_right(y),get_height))+1);
-    set_height(x,_max(_get_height(get_left(x),get_height), _get_height(get_right(x),get_height))+1);
-
-    // Return new root
-    return x;
-}
-
-void *NATIVE64 _left_rotate(void *x,
-        void *(*get_left)(void *),
-        void (*set_left)(void *, void *),
-        void *(*get_right)(void *),
-        void(*set_right)(void *, void *),
-        int64_t (*get_height)(void *),
-        void(*set_height)(void *, int64_t))
-{
-    void *y = get_right(x);
-    void *T2 = get_left(y);
-
-    // Perform rotation
-    set_left(y,x);
-    set_right(x,T2);
-
-    //  Update heights
-    set_height(x, _max(_get_height(get_left(x),get_height), _get_height(get_right(x),get_height))+1);
-    set_height(y, _max(_get_height(get_left(y),get_height), _get_height(get_right(y),get_height))+1);
-
-    // Return new root
-    return y;
-}
-
-// Get Balance factor of node N
-int64_t NATIVE64 _get_balance_factor(void *node,
-        void *(*get_left)(void *),
-        void *(*get_right)(void *),
-        int64_t (*get_height)(void *))
+int _balance_factor(avl_tree *node)
 {
     if (node == NULL)
         return 0;
-    return _get_height(get_left(node),get_height) - _get_height(get_right(node),get_height);
+    return _get_height(node->left) - _get_height(node->right);
 }
 
-void*NATIVE64 avl_insert_node(void *node, void *key,
-        void *(*get_left)(void *),
-        void (*set_left)(void *, void *),
-        void *(*get_right)(void *),
-        void(*set_right)(void *, void *),
-        int64_t (*get_height)(void *),
-        void(*set_height)(void *, int64_t),
-        int (*compare)(void *, void *))
+avl_tree *_right_rotate(avl_tree *root)
 {
-    /* 1.  Perform the normal BST rotation */
-    if (node == NULL)
-        return key;
-    if (compare(key,node) < 0)
-        set_left(node, avl_insert_node(get_left(node), key, get_left, set_left, get_right, set_right, get_height, set_height, compare));
-    else if (compare(key,node) == 0)
-        return node;
+    avl_tree *left_children = root->left;
+    //adjust parents first
+    left_children->parent = root->parent;
+    root->parent = left_children;
+    if (left_children->right != NULL)
+        left_children->right->parent = root;
+    //perform rotation
+    root->left = root->left->right;
+    left_children->right = root;
+    //adjust height
+    root->height = MAX(_get_height(root->left), _get_height(root->right)) + 1;
+    left_children->height = MAX(_get_height(left_children->left), _get_height(left_children->right)) + 1;
+    return left_children;
+}
+
+avl_tree *_left_rotate(avl_tree *root)
+{
+    avl_tree *right_children = root->right;
+    //adjust parents
+    right_children->parent = root->parent;
+    root->parent = right_children;
+    if (right_children->left != NULL)
+        right_children->left->parent = root;
+    //perform rotation
+    root->right = root->right->left;
+    right_children->left = root;
+
+    root->height = MAX(_get_height(root->left), _get_height(root->right)) + 1;
+    right_children->height = MAX(_get_height(right_children->left), _get_height(right_children->right)) + 1;
+    return right_children;
+}
+
+avl_tree *_balance_node(avl_tree *node)
+{
+    const int bf = _balance_factor(node);
+
+    if (bf > 1)
+    {
+        const int left_bf = _balance_factor(node->left);
+        if (left_bf >= 0)
+            //left left
+            return _right_rotate(node);
+        else
+        {
+            //left right
+            node->left = _left_rotate(node->left);
+            return _right_rotate(node);
+        }
+    }
+    else if (bf < -1)
+    {
+        const int right_bf = _balance_factor(node->right);
+        if (right_bf <= 0)
+        {
+            // right right
+            return _left_rotate(node);
+        }
+        else
+        {
+            // right left
+            node->right = _right_rotate(node->right);
+            return _left_rotate(node);
+        }
+    }
     else
-        set_right(node, avl_insert_node(get_right(node), key, get_left, set_left, get_right, set_right, get_height, set_height, compare));
+        return node;
 
-    /* 2. Update height of this ancestor node */
-    set_height(node, _max(_get_height(get_left(node),get_height), _get_height(get_right(node),get_height)) + 1);
-
-    /* 3. Get the balance factor of this ancestor node to check whether
-       this node became unbalanced */
-    int64_t balance = _get_balance_factor(node, get_left, get_right, get_height);
-    // If this node becomes unbalanced, then there are 4 cases
-
-    // Left Left Case
-    if (balance > 1 && compare(key, get_left(node)) < 0)
-        return _right_rotate(node,get_left,set_left,get_right,set_right,get_height,set_height);
-
-    // Right Right Case
-    if (balance < -1 && compare(key, get_right(node)) > 0)
-        return _left_rotate(node,get_left,set_left,get_right,set_right,get_height,set_height);
-
-    // Left Right Case
-    if (balance > 1 && compare(key, get_left(node)) > 0)
-    {
-        set_left(node, _left_rotate(get_left(node),get_left,set_left,get_right,set_right,get_height,set_height));
-        return _right_rotate(node,get_left,set_left,get_right,set_right,get_height,set_height);
-    }
-
-    // Right Left Case
-    if (balance < -1 && compare(key, get_right(node)) < 0)
-    {
-        set_right(node, _right_rotate(get_right(node),get_left,set_left,get_right,set_right,get_height,set_height));
-        return _left_rotate(node,get_left,set_left,get_right,set_right,get_height,set_height);
-    }
-
-    /* return the (unchanged) node pointer */
-    return node;
 }
 
-void*NATIVE64 avl_delete_node(void *root, void *key,
-        void *(*get_left)(void *),
-        void (*set_left)(void *, void *),
-        void *(*get_right)(void *),
-        void(*set_right)(void *, void *),
-        int64_t (*get_height)(void *),
-        void(*set_height)(void *, int64_t),
-        int (*compare)(void *, void *),
-        void (*set_data)(void *, void *))
+avl_tree *_create()
 {
-    // STEP 1: PERFORM STANDARD BST DELETE
-    if (root == NULL)
+    avl_tree *tree = (avl_tree *) (malloc(sizeof(avl_tree)));
+    tree->parent = NULL;
+    tree->data = NULL;
+    tree->right = NULL;
+    tree->left = NULL;
+    tree->height = 0;
+    return tree;
+}
+
+avl_tree *_insert(avl_tree *root, void *data, int(*compare)(void *, void *), avl_tree *parent)
+{
+    if (data == NULL)
         return root;
+    if (root == NULL)
+    {
+        avl_tree *tree = _create();
+        tree->data = data;
+        tree->parent = parent;
+        return tree;
+    }
 
-    // If the key to be deleted is smaller than the root's key,
-    // then it lies in left subtree
-    if ( compare(key,root) < 0 )
-        set_left(root, avl_delete_node(get_left(root), key, get_left, set_left, get_right, set_right, get_height, set_height, compare, set_data));
+    const int comp = compare(root->data, data);
+    if (comp < 0)
+    {
+        root->right = _insert(root->right, data, compare, root);
+    }
+    else if (comp == 0)
+        return root;
+    else
+        root->left = _insert(root->left, data, compare, root);
 
-        // If the key to be deleted is greater than the root's key,
-        // then it lies in right subtree
-    else if(compare(key,root) > 0)
-        set_right(root, avl_delete_node(get_right(root), key, get_left, set_left, get_right, set_right, get_height, set_height, compare, set_data));
+    root->height = MAX(_get_height(root->left), _get_height(root->right)) + 1;
 
-        // if key is same as root's key, then This is the node
-        // to be deleted
+    return _balance_node(root);
+}
+
+// implementation
+
+void *avl_read(avl_tree *root)
+{
+    if (root == NULL)
+        return NULL;
+    return root->data;
+}
+
+avl_tree *avl_next(avl_tree *root)
+{
+    if (root == NULL)
+        return NULL;
+    if (root->right != NULL)
+    {
+        root = root->right;
+        while (root->left != NULL)
+        {
+            root = root->left;
+        }
+        return root;
+    }
+    else
+    {
+        while (root->parent != NULL)
+        {
+            if (root->parent->left == root)
+            {
+                return root->parent;
+            }
+            root = root->parent;
+        }
+        return NULL;
+    }
+}
+
+avl_tree *avl_prev(avl_tree *root)
+{
+    if (root == NULL)
+        return NULL;
+    if (root->left != NULL)
+    {
+        root = root->left;
+        while (root->right != NULL)
+        {
+            root = root->right;
+        }
+        return root;
+    }
+    else
+    {
+        while (root->parent != NULL)
+        {
+            if (root->parent->right == root)
+            {
+                return root->parent;
+            }
+            root = root->parent;
+        }
+        return NULL;
+    }
+}
+
+avl_tree *avl_insert(avl_tree *root, void *data, int (*compare)(void *, void *))
+{
+    return _insert(root, data, compare, NULL);
+}
+
+avl_tree *avl_search(avl_tree *root, void *data, int(*compare)(void *, void *))
+{
+    if(root == NULL)
+        return NULL;
+    const int comp = compare(root->data, data);
+    if (comp < 0)
+    {
+         return avl_search(root->right, data, compare);
+    }
+    else if (comp == 0)
+        return root;
+    else
+        return avl_search(root->left, data, compare);
+}
+
+avl_tree *avl_create()
+{
+    return NULL;
+}
+
+avl_tree *avl_smallest(avl_tree *root)
+{
+    if (root == NULL)
+        return NULL;
+    while (root->left != NULL)
+        root = root->left;
+    return root;
+}
+
+avl_tree *avl_largest(avl_tree *root)
+{
+    if (root == NULL)
+        return NULL;
+    while (root->right != NULL)
+        root = root->right;
+    return root;
+}
+
+int avl_size(avl_tree *avl_tree)
+{
+    if (avl_tree == NULL)
+        return 0;
+    return avl_size(avl_tree->left) + avl_size(avl_tree->right) + 1;
+}
+
+void avl_free(avl_tree *root, void (*delete_data)(void*))
+{
+    if (root == NULL)
+        return;
+    avl_free(root->left, delete_data);
+    avl_free(root->right, delete_data);
+    if(delete_data != NULL)
+        delete_data(root->data);
+    free(root);
+    return;
+}
+
+avl_tree* avl_delete(avl_tree* root, void* data, int (*compare)(void*,void*))
+{
+    if (root == NULL)
+        return NULL;
+    const int comp = compare(root->data, data);
+    if (comp < 0)
+        root->right = avl_delete(root->right, data, compare);
+    else if(comp > 0)
+        root->left = avl_delete(root->left, data, compare);
     else
     {
         // node with only one child or no child
-        if( (get_left(root) == NULL) || (get_right(root) == NULL) )
+        if( (root->left == NULL) || (root->right == NULL) )
         {
-            void *temp = get_left(root) != NULL ? get_left(root) : get_right(root);
+            avl_tree *child = root->left != NULL ? root->left : root->right;
 
-            // No child case
-            if(temp == NULL)
-            {
-                temp = root;
+            if(child == NULL)
+            {   // 0 child
+                free(root);
                 root = NULL;
             }
-            else // One child case
+            else // 1 child
             {
-                set_height(root,_get_height(temp,get_height));
-                set_left(root, get_left(temp));
-                set_right(root,get_right(temp));
-                set_data(root, temp);
+                //copy content of temp to root except for the parent
+                root->left = child->left;
+                root->right = child->right;
+                root->data = child->data;
+                root->height = child->height;
+                free(child);
             }
-
-            //free(temp);
         }
         else
         {
             // node with two children: Get the inorder successor (smallest
             // in the right subtree)
-            void* temp = get_right(root);
-            while(get_left(temp) != NULL)
-                temp = get_left(temp);
+
+            avl_tree* temp = root->right;
+            while(temp->left != NULL)
+                temp = temp->left;
 
             // Copy the inorder successor's data to this node
-            set_data(root, temp);
+            root->data = temp->data;
 
             // Delete the inorder successor
-            set_right(root, avl_delete_node(get_right(root), temp, get_left, set_left, get_right, set_right, get_height, set_height, compare, set_data));
+            root->right = avl_delete(root->right, temp->data, compare);
         }
     }
-
-    // If the tree had only one node then return
     if (root == NULL)
         return root;
-
-    // STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
-    set_height(root, _max(_get_height(get_left(root),get_height), _get_height(get_right(root),get_height)) + 1);
-
-    // STEP 3: GET THE BALANCE FACTOR OF THIS NODE (to check whether
-    //  this node became unbalanced)
-    int64_t balance = _get_balance_factor(root,get_left,get_right,get_height);
-
-    // If this node becomes unbalanced, then there are 4 cases
-
-    // Left Left Case
-    if (balance > 1 && _get_balance_factor(get_left(root),get_left,get_right,get_height) >= 0)
-        return _right_rotate(root,get_left,set_left,get_right,set_right,get_height,set_height);
-
-    // Left Right Case
-    if (balance > 1 && _get_balance_factor(get_left(root),get_left,get_right,get_height) < 0)
-    {
-        set_left(root,_left_rotate(get_left(root),get_left,set_left,get_right,set_right,get_height,set_height));
-        return _right_rotate(root,get_left,set_left,get_right,set_right,get_height,set_height);
-    }
-
-    // Right Right Case
-    if (balance < -1 && _get_balance_factor(get_right(root),get_left,get_right,get_height) <= 0)
-        return _left_rotate(root,get_left,set_left,get_right,set_right,get_height,set_height);
-
-    // Right Left Case
-    if (balance < -1 && _get_balance_factor(get_right(root),get_left,get_right,get_height) > 0)
-    {
-        set_right(root, _right_rotate(get_right(root),get_left,set_left,get_right,set_right,get_height,set_height));
-        return _left_rotate(root,get_left,set_left,get_right,set_right,get_height,set_height);
-    }
-
+    root->height = MAX(_get_height(root->left), _get_height(root->right)) + 1;
+    root = _balance_node(root);
     return root;
 }
+
+
+// TESTS
+
+int avl_test_calculate_height(avl_tree *avl_tree)
+{
+    if (avl_tree == NULL)
+        return -1;
+    return MAX(avl_test_calculate_height(avl_tree->left), avl_test_calculate_height(avl_tree->right)) + 1;
+}
+
+int avl_test(avl_tree *avl_tree)
+{
+    if (avl_tree == NULL)
+        return 1;
+    if (_balance_factor(avl_tree) < -1 || _balance_factor(avl_tree) > 1 || avl_test_calculate_height(avl_tree) != avl_tree->height)
+        return 0;
+    return avl_test(avl_tree->left) && avl_test(avl_tree->right);
+}
+
