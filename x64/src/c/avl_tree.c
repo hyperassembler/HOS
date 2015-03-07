@@ -1,10 +1,11 @@
 #include "avl_tree.h"
+#include "mm.h"
 #include <stdlib.h>
 
 #define MAX(a, b) (((a) > (b) ? (a) : (b)))
 
 // internal
-int inline _get_height(avl_tree *node)
+int _get_height(avl_tree *node)
 {
     return node == NULL ? -1 : node->height;
 }
@@ -89,7 +90,7 @@ avl_tree *_balance_node(avl_tree *node)
 
 avl_tree *_create()
 {
-    avl_tree *tree = (avl_tree *) (malloc(sizeof(avl_tree)));
+    avl_tree *tree = (avl_tree *) (dum_heap_alloc(sizeof(avl_tree)));
     tree->parent = NULL;
     tree->data = NULL;
     tree->right = NULL;
@@ -246,7 +247,7 @@ void avl_free(avl_tree *root, void (*delete_data)(void*))
     avl_free(root->right, delete_data);
     if(delete_data != NULL)
         delete_data(root->data);
-    free(root);
+    //free(root);
     return;
 }
 
@@ -268,7 +269,7 @@ avl_tree* avl_delete(avl_tree* root, void* data, int (*compare)(void*,void*))
 
             if(child == NULL)
             {   // 0 child
-                free(root);
+                //free(root);
                 root = NULL;
             }
             else // 1 child
@@ -278,7 +279,7 @@ avl_tree* avl_delete(avl_tree* root, void* data, int (*compare)(void*,void*))
                 root->right = child->right;
                 root->data = child->data;
                 root->height = child->height;
-                free(child);
+                //free(child);
             }
         }
         else
