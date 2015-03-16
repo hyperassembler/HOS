@@ -68,7 +68,8 @@ typedef struct __attribute__ ((packed))
     uint64_t base;
 } gdt_ptr_t;
 
-void*NATIVE64 dum_heap_alloc(uint64_t const size);
+void*NATIVE64 kmalloc(size_t const size);
+void NATIVE64 kfree(void* ptr);
 
 void NATIVE64 write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 

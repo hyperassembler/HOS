@@ -1,4 +1,6 @@
+#include <stddef.h>
 #include "kdef.h"
+#include "type.h"
 #include "mm.h"
 
 #define kernel_heap_size 4096
@@ -160,7 +162,7 @@ void NATIVE64 mem_move(void *src, void *dst, uint64_t size)
     return;
 }
 
-void*NATIVE64 dum_heap_alloc(uint64_t const size)
+void*NATIVE64 kmalloc(size_t const size)
 {
     if(_cur_heap == NULL)
         _cur_heap = kernel_heap;
@@ -171,4 +173,9 @@ void*NATIVE64 dum_heap_alloc(uint64_t const size)
         return temp_heap;
     }
     return NULL;
+}
+
+void NATIVE64 kfree(void* ptr)
+{
+    return;
 }

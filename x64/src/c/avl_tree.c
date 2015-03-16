@@ -1,25 +1,25 @@
-#include "avl_tree.h"
+#include "kdef.h"
 #include "mm.h"
-#include <stdlib.h>
+#include "avl_tree.h"
 
 #define MAX(a, b) (((a) > (b) ? (a) : (b)))
 
 // internal
-int _get_height(avl_tree *node)
+int NATIVE64 _get_height(avl_tree_node *node)
 {
     return node == NULL ? -1 : node->height;
 }
 
-int _balance_factor(avl_tree *node)
+int NATIVE64 _balance_factor(avl_tree_node *node)
 {
     if (node == NULL)
         return 0;
     return _get_height(node->left) - _get_height(node->right);
 }
 
-avl_tree *_right_rotate(avl_tree *root)
+avl_tree_node * NATIVE64 _right_rotate(avl_tree_node *root)
 {
-    avl_tree *left_children = root->left;
+    avl_tree_node *left_children = root->left;
     //adjust parents first
     left_children->parent = root->parent;
     root->parent = left_children;
@@ -34,9 +34,9 @@ avl_tree *_right_rotate(avl_tree *root)
     return left_children;
 }
 
-avl_tree *_left_rotate(avl_tree *root)
+avl_tree_node * NATIVE64 _left_rotate(avl_tree_node *root)
 {
-    avl_tree *right_children = root->right;
+    avl_tree_node *right_children = root->right;
     //adjust parents
     right_children->parent = root->parent;
     root->parent = right_children;
@@ -51,7 +51,7 @@ avl_tree *_left_rotate(avl_tree *root)
     return right_children;
 }
 
-avl_tree *_balance_node(avl_tree *node)
+avl_tree_node * NATIVE64 _balance_node(avl_tree_node *node)
 {
     const int bf = _balance_factor(node);
 
@@ -88,9 +88,30 @@ avl_tree *_balance_node(avl_tree *node)
 
 }
 
-avl_tree *_create()
+
+void * NATIVE64 _search(avl_tree_node *root, void *data, int(*compare)(void *, void *))
 {
-    avl_tree *tree = (avl_tree *) (dum_heap_alloc(sizeof(avl_tree)));
+    if(root == NULL)
+        return NULL;
+    const int comp = compare(root->data, data);
+    if (comp < 0)
+        return _search(root->right, data, compare);
+    else if (comp == 0)
+        return root->data;
+    else
+        return _search(root->left, data, compare);
+}
+
+void * NATIVE64 avl_search(avl_tree *root, void *data, int(*compare)(void *, void *))
+{
+    if(root == NULL || data == NULL)
+        return NULL;
+    return _search(root->root,data,compare);
+}
+
+avl_tree_node * NATIVE64 _create()
+{
+    avl_tree_node *tree = (avl_tree_node *) (kmalloc(sizeof(avl_tree_node)));
     tree->parent = NULL;
     tree->data = NULL;
     tree->right = NULL;
@@ -99,13 +120,13 @@ avl_tree *_create()
     return tree;
 }
 
-avl_tree *_insert(avl_tree *root, void *data, int(*compare)(void *, void *), avl_tree *parent)
+avl_tree_node * NATIVE64 _insert(avl_tree_node *root, void *data, int(*compare)(void *, void *), avl_tree_node *parent)
 {
     if (data == NULL)
         return root;
     if (root == NULL)
     {
-        avl_tree *tree = _create();
+        avl_tree_node *tree = _create();
         tree->data = data;
         tree->parent = parent;
         return tree;
@@ -126,146 +147,34 @@ avl_tree *_insert(avl_tree *root, void *data, int(*compare)(void *, void *), avl
     return _balance_node(root);
 }
 
-// implementation
-
-void *avl_read(avl_tree *root)
+void NATIVE64 avl_insert(avl_tree *tree, void *data, int (*compare)(void *, void *))
 {
-    if (root == NULL)
-        return NULL;
-    return root->data;
-}
-
-avl_tree *avl_next(avl_tree *root)
-{
-    if (root == NULL)
-        return NULL;
-    if (root->right != NULL)
+    if(tree != NULL && data != NULL && compare != NULL)
     {
-        root = root->right;
-        while (root->left != NULL)
+        if(avl_search(tree,data,compare) == NULL)
         {
-            root = root->left;
+            tree->root = _insert(tree->root, data, compare, NULL);
+            tree->size++;
         }
-        return root;
     }
-    else
-    {
-        while (root->parent != NULL)
-        {
-            if (root->parent->left == root)
-            {
-                return root->parent;
-            }
-            root = root->parent;
-        }
-        return NULL;
-    }
-}
-
-avl_tree *avl_prev(avl_tree *root)
-{
-    if (root == NULL)
-        return NULL;
-    if (root->left != NULL)
-    {
-        root = root->left;
-        while (root->right != NULL)
-        {
-            root = root->right;
-        }
-        return root;
-    }
-    else
-    {
-        while (root->parent != NULL)
-        {
-            if (root->parent->right == root)
-            {
-                return root->parent;
-            }
-            root = root->parent;
-        }
-        return NULL;
-    }
-}
-
-avl_tree *avl_insert(avl_tree *root, void *data, int (*compare)(void *, void *))
-{
-    return _insert(root, data, compare, NULL);
-}
-
-avl_tree *avl_search(avl_tree *root, void *data, int(*compare)(void *, void *))
-{
-    if(root == NULL)
-        return NULL;
-    const int comp = compare(root->data, data);
-    if (comp < 0)
-    {
-         return avl_search(root->right, data, compare);
-    }
-    else if (comp == 0)
-        return root;
-    else
-        return avl_search(root->left, data, compare);
-}
-
-avl_tree *avl_create()
-{
-    return NULL;
-}
-
-avl_tree *avl_smallest(avl_tree *root)
-{
-    if (root == NULL)
-        return NULL;
-    while (root->left != NULL)
-        root = root->left;
-    return root;
-}
-
-avl_tree *avl_largest(avl_tree *root)
-{
-    if (root == NULL)
-        return NULL;
-    while (root->right != NULL)
-        root = root->right;
-    return root;
-}
-
-int avl_size(avl_tree *avl_tree)
-{
-    if (avl_tree == NULL)
-        return 0;
-    return avl_size(avl_tree->left) + avl_size(avl_tree->right) + 1;
-}
-
-void avl_free(avl_tree *root, void (*delete_data)(void*))
-{
-    if (root == NULL)
-        return;
-    avl_free(root->left, delete_data);
-    avl_free(root->right, delete_data);
-    if(delete_data != NULL)
-        delete_data(root->data);
-    //free(root);
     return;
 }
 
-avl_tree* avl_delete(avl_tree* root, void* data, int (*compare)(void*,void*))
+avl_tree_node * NATIVE64 _delete(avl_tree_node *root, void *data, int (*compare)(void *, void *))
 {
-    if (root == NULL)
-        return NULL;
+    if (root == NULL || data == NULL)
+        return root;
     const int comp = compare(root->data, data);
     if (comp < 0)
-        root->right = avl_delete(root->right, data, compare);
+        root->right = _delete(root->right, data, compare);
     else if(comp > 0)
-        root->left = avl_delete(root->left, data, compare);
+        root->left = _delete(root->left, data, compare);
     else
     {
         // node with only one child or no child
         if( (root->left == NULL) || (root->right == NULL) )
         {
-            avl_tree *child = root->left != NULL ? root->left : root->right;
+            avl_tree_node *child = root->left != NULL ? root->left : root->right;
 
             if(child == NULL)
             {   // 0 child
@@ -287,7 +196,7 @@ avl_tree* avl_delete(avl_tree* root, void* data, int (*compare)(void*,void*))
             // node with two children: Get the inorder successor (smallest
             // in the right subtree)
 
-            avl_tree* temp = root->right;
+            avl_tree_node * temp = root->right;
             while(temp->left != NULL)
                 temp = temp->left;
 
@@ -295,7 +204,7 @@ avl_tree* avl_delete(avl_tree* root, void* data, int (*compare)(void*,void*))
             root->data = temp->data;
 
             // Delete the inorder successor
-            root->right = avl_delete(root->right, temp->data, compare);
+            root->right = _delete(root->right, temp->data, compare);
         }
     }
     if (root == NULL)
@@ -305,22 +214,144 @@ avl_tree* avl_delete(avl_tree* root, void* data, int (*compare)(void*,void*))
     return root;
 }
 
+void NATIVE64 avl_delete(avl_tree *tree, void *data, int (*compare)(void *, void *))
+{
+    if(tree != NULL && data != NULL && compare != NULL && tree->size != 0)
+    {
+        if(avl_search(tree,data,compare) != NULL)
+        {
+            tree->root = _delete(tree->root, data, compare);
+            tree->size--;
+        }
+    }
+    return;
+}
+
+void NATIVE64 _free(avl_tree_node * root, void (*delete_data)(void*))
+{
+    if(root != NULL)
+    {
+        _free(root->left, delete_data);
+        _free(root->right, delete_data);
+        if (delete_data != NULL)
+            delete_data(root->data);
+    }
+    return;
+}
+
+void NATIVE64 avl_free(avl_tree *tree, void (*delete_data)(void*))
+{
+    if(tree != NULL)
+    {
+        _free(tree->root, delete_data);
+        kfree(tree);
+    }
+    return;
+}
+
+avl_tree * NATIVE64 avl_create()
+{
+    avl_tree* new_tree = kmalloc(sizeof(avl_tree));
+    new_tree->root = NULL;
+    new_tree->size = 0;
+    return new_tree;
+}
+
+
+//iterator
+
+avl_tree_node * NATIVE64 _smallest(avl_tree_node *root)
+{
+    if (root == NULL)
+        return NULL;
+    while (root->left != NULL)
+        root = root->left;
+    return root;
+}
+
+avl_tree_iterator* NATIVE64 avl_iterator(avl_tree* tree)
+{
+    if(tree == NULL)
+        return NULL;
+    avl_tree_iterator* it = (avl_tree_iterator*)kmalloc(sizeof(avl_tree_iterator));
+    it->current = _smallest(tree->root);
+    return it;
+}
+
+void NATIVE64 avl_next(avl_tree_iterator *it)
+{
+    if (it == NULL || it->current == NULL)
+        return;
+    avl_tree_node* root = it->current;
+    if (root->right != NULL)
+    {
+        root = root->right;
+        while (root->left != NULL)
+        {
+            root = root->left;
+        }
+        it->current = root;
+        return;
+    }
+    else
+    {
+        while (root->parent != NULL)
+        {
+            if (root->parent->left == root)
+            {
+                it->current = root->parent;
+                return;
+            }
+            root = root->parent;
+        }
+        it->current = NULL;
+        return;
+    }
+}
+
+void NATIVE64 avl_prev(avl_tree_iterator *it)
+{
+    if (it == NULL || it->current == NULL)
+        return;
+    avl_tree_node* root = it->current;
+    if (root->left != NULL)
+    {
+        root = root->left;
+        while (root->right != NULL)
+        {
+            root = root->right;
+        }
+        it->current = root;
+    }
+    else
+    {
+        while (root->parent != NULL)
+        {
+            if (root->parent->right == root)
+            {
+                it->current = root->parent;
+            }
+            root = root->parent;
+        }
+        it->current = NULL;
+    }
+}
 
 // TESTS
 
-int avl_test_calculate_height(avl_tree *avl_tree)
+int NATIVE64 avl_test_calculate_height(avl_tree_node * tree)
 {
-    if (avl_tree == NULL)
+    if (tree == NULL)
         return -1;
-    return MAX(avl_test_calculate_height(avl_tree->left), avl_test_calculate_height(avl_tree->right)) + 1;
+    return MAX(avl_test_calculate_height(tree->left), avl_test_calculate_height(tree->right)) + 1;
 }
 
-int avl_test(avl_tree *avl_tree)
+int NATIVE64 avl_test(avl_tree_node *tree)
 {
-    if (avl_tree == NULL)
+    if (tree == NULL)
         return 1;
-    if (_balance_factor(avl_tree) < -1 || _balance_factor(avl_tree) > 1 || avl_test_calculate_height(avl_tree) != avl_tree->height)
+    if (_balance_factor(tree) < -1 || _balance_factor(tree) > 1 || avl_test_calculate_height(tree) != tree->height)
         return 0;
-    return avl_test(avl_tree->left) && avl_test(avl_tree->right);
+    return avl_test(tree->left) && avl_test(tree->right);
 }
 
