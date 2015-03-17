@@ -22,24 +22,24 @@ typedef struct __attribute__((packed))
         avl_tree_node * current;
 } avl_tree_iterator;
 
-void NATIVE64 ert(avl_tree *tree, void *data, int (*compare)(void *, void *));
+void NATIVE64 avl_tree_insert(avl_tree *tree, void *data, int (*compare)(void *, void *));
 
-void NATIVE64 avl_delete(avl_tree *tree, void *data, int (*compare)(void *, void *));
+void NATIVE64 avl_tree_delete(avl_tree *tree, void *data, int (*compare)(void *, void *));
 
-void NATIVE64 avl_free(avl_tree *tree, void (*delete_data)(void*));
+void NATIVE64 avl_tree_free(avl_tree *tree, void (*delete_data)(void *));
 
-void NATIVE64 *avl_search(avl_tree *tree, void *data, int(*compare)(void *, void *));
+void NATIVE64 *avl_tree_search(avl_tree *tree, void *data, int(*compare)(void *, void *));
 
-avl_tree * NATIVE64 avl_create();
+avl_tree * NATIVE64 avl_tree_create();
 
-avl_tree_iterator* NATIVE64 avl_iterator(avl_tree* tree);
+avl_tree_iterator* NATIVE64 avl_tree_create_iterator(avl_tree *tree);
 
-void NATIVE64 avl_next(avl_tree_iterator *it);
+void NATIVE64 avl_tree_next(avl_tree_iterator *it);
 
-void NATIVE64 avl_prev(avl_tree_iterator *it);
+void NATIVE64 avl_tree_prev(avl_tree_iterator *it);
 
-int NATIVE64 avl_test_calculate_height(avl_tree_node * tree);
+int NATIVE64 avl_tree_test_calculate_height(avl_tree_node *tree);
 
-int NATIVE64 avl_test(avl_tree_node *tree);
+int NATIVE64 avl_tree_test(avl_tree_node *tree);
 
 #endif
