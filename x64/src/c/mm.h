@@ -3,6 +3,7 @@
 
 #include "type.h"
 #include "kdef.h"
+#include "linked_list.h"
 #define PML4_PRESENT (1ull << 0)
 #define PML4_WRITE (1ull << 1)
 #define PML4_USER (1ull << 2)
@@ -67,6 +68,13 @@ typedef struct __attribute__ ((packed))
     uint16_t limit;
     uint64_t base;
 } gdt_ptr_t;
+
+typedef struct __attribute__ ((packed))
+{
+    linked_list_node node;
+    uint64_t base;
+    uint64_t limit;
+} phy_mem_info;
 
 void*NATIVE64 kmalloc(size_t const size);
 void NATIVE64 kfree(void* ptr);

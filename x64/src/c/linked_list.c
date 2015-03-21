@@ -1,193 +1,156 @@
-#include "mm.h"
+#include "kdef.h"
 #include "linked_list.h"
 
-//internal
-
-linked_list_node* NATIVE64 _linked_list_get_by_index(linked_list_node *head, int index)
+void NATIVE64 linked_list_node_init(linked_list_node* node)
 {
-    while(1)
+    if(node != NULL)
     {
-        if(index <= 0 || head == NULL)
-            return head;
-        head = head->next;
-        index--;
-    }
-}
-
-linked_list_node* NATIVE64 _linked_list_get_by_element(linked_list_node *head, void *data, int(*compare)(int *, int *))
-{
-    while(1)
-    {
-        if(head == NULL || compare(data,head->data) == 0)
-            return head;
-        head = head->next;
-    }
-}
-
-
-linked_list_node* NATIVE64 _linked_list_create_node()
-{
-    linked_list_node* node = (linked_list_node*)kmalloc(sizeof(linked_list_node));
-    node->data = NULL;
-    node->prev = NULL;
-    node->next = NULL;
-    return node;
-}
-
-void NATIVE64 _linked_list_delete_node(linked_list *list, linked_list_node *node)
-{
-    if(list != NULL && node != NULL)
-    {
-        //check if itself is head
-        if(list->head == node)
-        {
-            list->head = node->next;
-        }
-        //check if itself is tail
-        if(list->tail == node)
-        {
-            list->tail = node->prev;
-        }
-        if (node->prev != NULL)
-            node->prev->next = node->next;
-        if (node->next != NULL)
-            node->next->prev = node->prev;
-        list->size--;
-        kfree(node);
+        node->prev = NULL;
+        node->next = NULL;
     }
     return;
 }
 
-//interface
-linked_list* NATIVE64 linked_list_create()
+linked_list_node* NATIVE64 linked_list_node_get(linked_list_node * head, int index)
 {
-    linked_list* list = (linked_list*)kmalloc(sizeof(linked_list));
-    list->size = 0;
-    list->tail = NULL;
-    list->head = NULL;
-    return list;
+    if(head == NULL || index < 0)
+        return NULL;
+    while(index--)
+    {
+        head = head->next;
+        if(head == NULL)
+            break;
+    }
+    return head;
 }
 
-void NATIVE64 linked_list_free(linked_list* list, void(*delete_data)(void*))
+int NATIVE64 linked_list_node_size(linked_list_node* head)
 {
-    if(list == NULL)
-        return;
-    linked_list_node* head = list->head;
+    int i = 0;
     while(head != NULL)
     {
-        linked_list_node* temp = head;
+        i++;
         head = head->next;
-        if(delete_data != NULL)
-            delete_data(temp->data);
-        kfree(temp);
     }
-    kfree(list);
-    return;
+    return i;
 }
 
-void NATIVE64 linked_list_insert(linked_list * list, void* data)
+//returns new head
+linked_list_node* NATIVE64 linked_list_node_insert(linked_list_node * head, int index, linked_list_node* node)
 {
-    if(list == NULL)
-        return;
-    linked_list_node* node = _linked_list_create_node();
-    node->data = data;
-    if(list->tail != NULL)
+    if(head == NULL)
+        return node;
+    if(node == NULL || index < 0)
+        return head;
+    //@ head != NULL
+    if(index == 0)
     {
-        //already elements in the list
-        //guaranteed that list->next == NULL
-        node->prev = list->tail;
-        list->tail->next = node;
-        list->tail = node;
+        //insert at head
+        node->prev = NULL;
+        node->next = head;
+        head->prev = node;
+        return node;
     }
     else
     {
-        //no element case
-        list->tail = node;
-        list->head = node;
+        linked_list_node* target = linked_list_node_get(head, index-1);
+        if(target == NULL)
+            return NULL;
+        node->prev = target;
+        node->next = target->next;
+        if(target->next != NULL)
+            target->next->prev = node;
+        target->next = node;
+        return head;
     }
-    list->size++;
+}
+
+void NATIVE64 linked_list_node_add(linked_list_node * head, linked_list_node* node)
+{
+    if(head == NULL || node == NULL)
+        return;
+    int size = linked_list_node_size(head);
+    linked_list_node_insert(head,size,node);
     return;
 }
 
-void NATIVE64 linked_list_insert_at(linked_list * list, int position, void* data)
+//returns new head
+linked_list_node* NATIVE64 linked_list_node_remove(linked_list_node *head, int index)
 {
-    if(list != NULL && position >= 0 && position <= list->size)
+    if(head == NULL || index < 0)
+        return head;
+    if(index == 0)
+    {
+        linked_list_node* next = head->next;
+        head->next = NULL;
+        head->prev = NULL;
+        if(next != NULL)
+            next->prev = NULL;
+        return next;
+    }
+    else
+    {
+        linked_list_node *target = linked_list_node_get(head, index);
+        if (target->prev != NULL)
+            target->prev->next = target->next;
+        if (target->next != NULL)
+            target->next->prev = target->prev;
+        target->prev = NULL;
+        target->next = NULL;
+        return head;
+    }
+}
+
+
+void NATIVE64 linked_list_init(linked_list* list)
+{
+    if(list != NULL)
+    {
+        list->size = 0;
+        list->head = NULL;
+    }
+    return;
+}
+
+void NATIVE64 linked_list_add(linked_list * list, linked_list_node* node)
+{
+    if(list != NULL && node != NULL)
+    {
+        //@ node != NULL
+        if (list->head == NULL)
         {
-        linked_list_node* target = _linked_list_get_by_index(list->head, position);
-        if(target == NULL)
-        {
-            //tail case
-            linked_list_insert(list, data);
+            list->head = node;
         }
         else
-        {
-            //head or normal case
-            linked_list_node* node = _linked_list_create_node();
-            node->data = data;
-            if (list->head == target) {
-                list->head = node;
-            }
-            node->prev = target->prev;
-            node->next = target;
-            if (target->prev != NULL)
-                target->prev->next = node;
-            target->prev = node;
-            list->size++;
-        }
+            linked_list_node_add(list->head, node);
+        list->size++;
     }
     return;
 }
 
-void* NATIVE64 linked_list_get(linked_list * list, int index)
+void NATIVE64 linked_list_insert(linked_list * list, int index, linked_list_node* node)
 {
-    if(list == NULL || list->head == NULL || index < 0 || list->size <= index)
+    if(list != NULL && index > 0 && node != NULL)
+    {
+        list->head = linked_list_node_insert(list->head, index, node);
+        list->size++;
+    }
+    return;
+}
+
+linked_list_node* NATIVE64 linked_list_get(linked_list * list, int index)
+{
+    if(list == NULL || index < 0 || index >= list->size)
         return NULL;
-    linked_list_node* node = _linked_list_get_by_index(list->head, index);
-    return node == NULL ? NULL : node->data;
+    return linked_list_node_get(list->head,index);
 }
 
-void NATIVE64 linked_list_delete(linked_list * list, void* data, int(*compare)(int*,int*))
+void NATIVE64 linked_list_remove(linked_list *list, int index)
 {
-    if(list == NULL || list->head == NULL || compare == NULL)
-        return;
-    linked_list_node* node = _linked_list_get_by_element(list->head, data, compare);
-    _linked_list_delete_node(list, node);
-    return;
-}
-
-void NATIVE64 linked_list_delete_at(linked_list * list, int index)
-{
-    if(list == NULL || list->head == NULL || index < 0 || list->size <= index)
-        return;
-    linked_list_node* node = _linked_list_get_by_index(list->head, index);
-    _linked_list_delete_node(list, node);
-    return;
-}
-
-// iterator
-linked_list_iterator* NATIVE64 linked_list_create_iterator(linked_list* list)
-{
-    if(list == NULL)
-        return NULL;
-    linked_list_iterator* it = (linked_list_iterator*)kmalloc(sizeof(linked_list_iterator));
-    it->current = list->head;
-    return it;
-}
-
-void NATIVE64 linked_list_delete_iterator(linked_list_iterator* it)
-{
-    kfree(it);
-    return;
-}
-
-void NATIVE64 linked_list_prev(linked_list_iterator* it)
-{
-    it->current = it->current->prev;
-    return;
-}
-
-void NATIVE64 linked_list_next(linked_list_iterator* it)
-{
-    it->current = it->current->next;
+    if(list != NULL && index >= 0 && index < list->size)
+    {
+        list->head = linked_list_node_remove(list->head, index);
+        list->size--;
+    }
     return;
 }
