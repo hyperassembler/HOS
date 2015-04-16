@@ -12,7 +12,6 @@ extern char kernel_start[];
 extern char kernel_end[];
 extern void NATIVE64 HLT_CPU(void);
 extern void NATIVE64 BOCHS_MAGIC_BREAKPOINT();
-extern void NATIVE64 flush_gdt(gdt_ptr_t *gdt_ptr, uint64_t code_slct, uint64_t data_slct);
 void NATIVE64 kmain(multiboot_info_t *multiboot_info)
 {
     text_pos = get_pos(3, 0);

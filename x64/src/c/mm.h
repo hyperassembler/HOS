@@ -79,6 +79,12 @@ typedef struct __attribute__ ((packed))
 void*NATIVE64 kmalloc(size_t const size);
 void NATIVE64 kfree(void* ptr);
 
+extern void NATIVE64 flush_gdt(gdt_ptr_t *gdt_ptr, uint64_t code_slct, uint64_t data_slct);
+
+extern void NATIVE64 flush_tlb();
+
+extern void NATIVE64 get_cpuid(int64_t * eax, int64_t * ebx, int64_t* ecx, int64_t* edx);
+
 void NATIVE64 write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 
 //extern void NATIVE64 hk_load_gdt(gdt_ptr_t const *const ptr, uint16_t const sel_code, uint16_t const sel_data);

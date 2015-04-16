@@ -1,7 +1,9 @@
 global flush_gdt
 global flush_tlb
+global get_cpuid
 ;Functions preserve the registers rbx, rsp, rbp, r12, r13, r14, and 15
 ;rax, rdi, rsi, rdx, rcx, r8, r9, r10, r11 are scratch registers.
+;function parameter: rdi,rsi,rdx,rcx,r8,r9
 
 [SECTION .text]
 [BITS 64]
@@ -35,3 +37,19 @@ flush_tlb:
 mov rax,cr3
 mov cr3,rax
 ret
+
+
+;void get_cpuid(int64_t* rax, int64_t* rbx, int64_t* rcx, int64_t* rdx)
+get_cpuid:
+mov rax,[rdi]
+push rcx
+mov rcx,[rdx]
+cpuid
+mov [rdi],rax
+mov [rsi],rbx
+mov [rdx],rcx
+pop rcx
+mov [rcx],rdx
+ret
+
+
