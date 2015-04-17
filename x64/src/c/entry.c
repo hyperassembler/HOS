@@ -3,7 +3,6 @@
 #include "print.h"
 #include "mm.h"
 #include "multiboot.h"
-#include "linked_list.h"
 
 uint8_t g_gdt[8*9];
 gdt_ptr_t g_gdt_ptr;
@@ -31,9 +30,6 @@ void NATIVE64 kmain(multiboot_info_t *multiboot_info)
     g_gdt_ptr.limit = 8*9-1;
     flush_gdt(&g_gdt_ptr, SEG_SELECTOR(1, 0), SEG_SELECTOR(2, 0));
     kprintf("Done.\n\n");
-    linked_list* mm_list = (linked_list*)kmalloc(sizeof(linked_list));
-    linked_list_init(mm_list);
-    kprintf("allocated:0x%x\n",(uint64_t)mm_list);
     kprintf("*Checking memory information...\n");
     if(multiboot_info->flags & (1 << 6))
     {
@@ -51,25 +47,27 @@ void NATIVE64 kmain(multiboot_info_t *multiboot_info)
             }
             else if ((mem_map + i)->type == MULTIBOOT_MEMORY_AVAILABLE)
             {
-                phy_mem_info* mm_info = kmalloc(sizeof(phy_mem_info));
-                linked_list_node_init(&mm_info->node);
-                mm_info->base = (mem_map+i)->addr;
-                mm_info->limit = (mem_map+i)->len;
-                linked_list_add(mm_list,(linked_list_node*)mm_info);
                 total_available_mem += (mem_map + i)->len;
             }
         }
         kprintf("Total available memory: %uB, %uKB, %uMB.\n", total_available_mem, total_available_mem / 1024, total_available_mem / 1024 / 1024);
         kprintf("Total reserved memory: %uB, %uKB, %uMB.\n\n", total_reserved_mem, total_reserved_mem / 1024, total_reserved_mem / 1024 / 1024);
-        for(int i = 0; i < mm_list->size; i++)
-        {
-            phy_mem_info* mem_info = (phy_mem_info*)linked_list_get(mm_list,i);
-            kprintf("0x%X - 0x%X", mem_info->base, mem_info->limit);
-        }
     }
     else
     {
         kprintf("Memory information is currently unavailable.\n\n");
+    }
+    kprintf("CPUIDing \n");
+    cpuid_t cpuid_info;
+    cpuid_info.eax = 1;
+    cpuid_info.ebx = 0;
+    cpuid_info.ecx = 0;
+    cpuid_info.edx = 0;
+    BOCHS_MAGIC_BREAKPOINT();
+    cpuid(&cpuid_info.eax,&cpuid_info.ebx,&cpuid_info.ecx,&cpuid_info.edx);
+    if(cpuid_info.edx & 1 << 9)
+    {
+        kprintf("AIPC detected...");
     }
     HLT_CPU();
 }

@@ -69,12 +69,13 @@ typedef struct __attribute__ ((packed))
     uint64_t base;
 } gdt_ptr_t;
 
-typedef struct __attribute__ ((packed))
+typedef struct __attribute__((packed))
 {
-    linked_list_node node;
-    uint64_t base;
-    uint64_t limit;
-} phy_mem_info;
+    uint64_t eax;
+    uint64_t ebx;
+    uint64_t ecx;
+    uint64_t edx;
+} cpuid_t;
 
 void*NATIVE64 kmalloc(size_t const size);
 void NATIVE64 kfree(void* ptr);
@@ -83,7 +84,7 @@ extern void NATIVE64 flush_gdt(gdt_ptr_t *gdt_ptr, uint64_t code_slct, uint64_t 
 
 extern void NATIVE64 flush_tlb();
 
-extern void NATIVE64 get_cpuid(int64_t * eax, int64_t * ebx, int64_t* ecx, int64_t* edx);
+extern void NATIVE64 cpuid(uint64_t * eax, uint64_t * ebx, uint64_t* ecx, uint64_t* edx);
 
 void NATIVE64 write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 
