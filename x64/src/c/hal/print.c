@@ -1,6 +1,6 @@
 #include <stdarg.h>
-#include "kdef.h"
-#include "type.h"
+#include "../common/kdef.h"
+#include "../common/type.h"
 #include "mm.h"
 #include "print.h"
 

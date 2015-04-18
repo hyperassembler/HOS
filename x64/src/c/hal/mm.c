@@ -1,6 +1,5 @@
-#include <stddef.h>
-#include "kdef.h"
-#include "type.h"
+#include "../common/kdef.h"
+#include "../common/type.h"
 #include "mm.h"
 
 #define kernel_heap_size 4096
@@ -68,6 +67,27 @@ void NATIVE64 write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint6
     ((uint8_t*)base)[5] = (uint8_t)((entry >> 40) & 0xFF);
     ((uint8_t*)base)[6] = (uint8_t)((entry >> 48) & 0xFF);
     ((uint8_t*)base)[7] = (uint8_t)((entry >> 56) & 0xFF);
+    return;
+}
+
+void NATIVE64 write_gate(void *const gate, uint64_t const offset, uint32_t const selector, uint32_t const attr)
+{
+    ((uint8_t*)gate)[0] = (uint8_t)(offset & 0xFF);
+    ((uint8_t*)gate)[1] = (uint8_t)((offset >> 8) & 0xFF);
+    ((uint8_t*)gate)[2] = (uint8_t)(selector & 0xFF);
+    ((uint8_t*)gate)[3] = (uint8_t)((selector >> 8) & 0xFF);
+    ((uint8_t*)gate)[4] = (uint8_t)(attr & 0xFF);
+    ((uint8_t*)gate)[5] = (uint8_t)((attr >> 8) & 0xFF);
+    ((uint8_t*)gate)[6] = (uint8_t)((offset >> 16) & 0xFF);
+    ((uint8_t*)gate)[7] = (uint8_t)((offset >> 24) & 0xFF);
+    ((uint8_t*)gate)[8] = (uint8_t)((offset >> 32) & 0xFF);
+    ((uint8_t*)gate)[9] = (uint8_t)((offset >> 40) & 0xFF);
+    ((uint8_t*)gate)[10] = (uint8_t)((offset >> 48) & 0xFF);
+    ((uint8_t*)gate)[11] = (uint8_t)((offset >> 56) & 0xFF);
+    ((uint8_t*)gate)[12] = 0;
+    ((uint8_t*)gate)[13] = 0;
+    ((uint8_t*)gate)[14] = 0;
+    ((uint8_t*)gate)[15] = 0;
     return;
 }
 
