@@ -1,4 +1,4 @@
-#include "../common/kdef.h"
+#include "../../../kdef.h"
 #include "avl_tree.h"
 
 #define MAX(a, b) (((a) > (b) ? (a) : (b)))

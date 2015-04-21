@@ -1,4 +1,4 @@
-#include "../common/kdef.h"
+#include "../../../kdef.h"
 #include "linked_list.h"
 
 void NATIVE64 linked_list_node_init(linked_list_node* node)

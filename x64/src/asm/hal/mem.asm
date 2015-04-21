@@ -7,7 +7,7 @@ global cpuid
 
 [SECTION .text]
 [BITS 64]
-flush_gdt:
+hal_flush_gdt:
 push rbp
 mov rbp,rsp
 lgdt [rdi]
@@ -33,14 +33,14 @@ pop rbp
 ret
 
 ;void flush_tlb(void)
-flush_tlb:
+hal_flush_tlb:
 mov rax,cr3
 mov cr3,rax
 ret
 
 
 ;void get_cpuid(int64_t* rax, int64_t* rbx, int64_t* rcx, int64_t* rdx)
-cpuid:
+hal_cpuid:
 mov rax,[rdi]
 push rcx
 mov rcx,[rdx]

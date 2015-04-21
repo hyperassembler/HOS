@@ -1,46 +1,18 @@
 #include <stdarg.h>
 #include "../common/kdef.h"
 #include "../common/type.h"
-#include "mm.h"
+#include "../common/sys/mem.h"
 #include "print.h"
 
 uint64_t text_pos;
 
-uint64_t NATIVE64 str_len(char const *str)
-{
-    uint64_t length = 0;
-    if(str == NULL)
-        return 0;
-    while(*str != 0)
-    {
-        str++;
-        length++;
-    }
-    return length;
-}
-
-uint64_t NATIVE64 str_cmp(char const *str1, char const *str2)
-{
-    if(str1 == NULL || str2 == NULL)
-        return 0;
-    uint64_t length = str_len(str1);
-    if(length != str_len(str2))
-        return 0;
-    while(length--)
-    {
-        if(*(str1+length) != *(str2+length))
-            return 0;
-    }
-    return 1;
-}
-
-void NATIVE64 _print_scroll()
+void NATIVE64 _hal_print_scroll()
 {
     mem_move((void *) (0xb8000 + get_pos(1, 0) * 2), (void *) (0xb8000 + get_pos(0, 0) * 2), (80 * 24) * 2);
     return;
 }
 
-void NATIVE64 _print_str(char const *str)
+void NATIVE64 _hal_print_str(char const *str)
 {
     if(str == NULL)
         return;
@@ -52,7 +24,7 @@ void NATIVE64 _print_str(char const *str)
             if(text_pos > 80 * 25 - 1)
             {
                 //can't hold
-                _print_scroll();
+                _hal_print_scroll();
                 mem_set((void *) (0xb8000 + 80 * 24 * 2), 0, 80 * 2); // clear last row
                 text_pos = 80 * 24;
             }
@@ -63,7 +35,7 @@ void NATIVE64 _print_str(char const *str)
             if (text_pos > 80 * 25 - 1)
             {
                 //can't hold
-                _print_scroll();
+                _hal_print_scroll();
                 text_pos = 80 * 24;
             }
             *((char*)(0xb8000) + text_pos*2) = *str;
@@ -75,7 +47,7 @@ void NATIVE64 _print_str(char const *str)
     return;
 }
 
-void NATIVE64 _print_uint(uint64_t number)
+void NATIVE64 _hal_print_uint(uint64_t number)
 {
     char arr[21]; // do not need to initialize
     arr[20] = 0; //zero-terminated
@@ -90,11 +62,11 @@ void NATIVE64 _print_uint(uint64_t number)
         if (number == 0)
             break;
     }
-    _print_str(&(arr[index + 1]));
+    _hal_print_str(&(arr[index + 1]));
     return;
 }
 
-void NATIVE64 _print_int(int64_t number)
+void NATIVE64 _hal_print_int(int64_t number)
 {
     char arr[21]; // do not need to initialize
     arr[20] = 0; //zero-terminated
@@ -119,11 +91,11 @@ void NATIVE64 _print_int(int64_t number)
     {
         arr[index--] = '-';
     }
-    _print_str(&(arr[index + 1]));
+    _hal_print_str(&(arr[index + 1]));
     return;
 }
 
-void NATIVE64 _print_hex(uint64_t number, uint64_t capital)
+void NATIVE64 _hal_print_hex(uint64_t number, uint64_t capital)
 {
     char const lookup_table_cap[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     char const lookup_table[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
@@ -141,18 +113,18 @@ void NATIVE64 _print_hex(uint64_t number, uint64_t capital)
         if (number == 0)
             break;
     }
-    _print_str(&(arr[index + 1]));
+    _hal_print_str(&(arr[index + 1]));
     return;
 }
 
-void NATIVE64 clear_screen(void)
+void NATIVE64 hal_clear_screen(void)
 {
     text_pos = 0; // reset text_pos
     mem_set((void *) 0xb8000, 0, 25 * 80 * 2);
     return;
 }
 
-void NATIVE64 kprintf(char const *format, ...)
+void NATIVE64 hal_printf(char const *format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -166,7 +138,7 @@ void NATIVE64 kprintf(char const *format, ...)
         if (*format != '%')
         {
             buf[0] = *format;
-            _print_str(buf);
+            _hal_print_str(buf);
             continue;
         }
         format++;
@@ -174,36 +146,36 @@ void NATIVE64 kprintf(char const *format, ...)
         {
             case 'd':
                 d = va_arg(args, int64_t);
-                _print_int(d);
+                _hal_print_int(d);
                 break;
             case 'u':
                 u = va_arg(args, uint64_t);
-                _print_uint(u);
+                _hal_print_uint(u);
                 break;
             case 's':
                 s = va_arg(args, char *);
-                _print_str(s);
+                _hal_print_str(s);
                 break;
             case 'c':
                 c = va_arg(args, int64_t);
                 buf[0] = c;
-                _print_str(buf);
+                _hal_print_str(buf);
                 break;
             case 'x':
                 u = va_arg(args, uint64_t);
-                _print_hex(u, 0);
+                _hal_print_hex(u, 0);
                 break;
             case 'X':
                 u = va_arg(args, uint64_t);
-                _print_hex(u, 1);
+                _hal_print_hex(u, 1);
                 break;
             case '%':
                 buf[0] = '%';
-                _print_str(buf);
+                _hal_print_str(buf);
                 break;
             default:
                 buf[0] = '%';
-                _print_str(buf);
+                _hal_print_str(buf);
                 format--;
                 break;
         }

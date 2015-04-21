@@ -1,6 +1,6 @@
 #ifndef _AVL_TREE_H_
 #define _AVL_TREE_H_
-#include "../common/kdef.h"
+#include "../../../kdef.h"
 
 typedef struct __attribute__((packed)) _avl_tree_node
 {

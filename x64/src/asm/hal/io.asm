@@ -1,8 +1,8 @@
-global write_port
-global read_port
+global hal_write_port
+global hal_read_port
 [SECTION .text]
 [BITS 64]
-write_port:
+hal_write_port:
 mov rdx,rdi
 mov rax,rsi
 out dx,eax
@@ -10,7 +10,7 @@ nop
 nop
 ret
 
-read_port:
+hal_read_port:
 mov rdx,rdi
 xor rax,rax
 in eax,dx

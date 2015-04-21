@@ -85,33 +85,26 @@ typedef struct __attribute__((packed))
     uint64_t edx;
 } cpuid_t;
 
-void*NATIVE64 kmalloc(size_t const size);
-void NATIVE64 kfree(void* ptr);
+void*NATIVE64 hal_halloc(size_t const size);
 
-extern void NATIVE64 flush_gdt(gdt_ptr_t *gdt_ptr, uint64_t code_slct, uint64_t data_slct);
+void NATIVE64 hal_hfree(void *ptr);
 
-extern void NATIVE64 flush_tlb();
+extern void NATIVE64 hal_flush_gdt(gdt_ptr_t *gdt_ptr, uint64_t code_slct, uint64_t data_slct);
 
-extern void NATIVE64 cpuid(uint64_t * eax, uint64_t * ebx, uint64_t* ecx, uint64_t* edx);
+extern void NATIVE64 hal_flush_tlb();
 
-void NATIVE64 write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
+extern void NATIVE64 hal_cpuid(uint64_t * eax, uint64_t * ebx, uint64_t* ecx, uint64_t* edx);
 
-//extern void NATIVE64 hk_load_gdt(gdt_ptr_t const *const ptr, uint16_t const sel_code, uint16_t const sel_data);
+void NATIVE64 hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 
-void NATIVE64 mem_cpy(void *src, void *dst, uint64_t size);
+void NATIVE64 hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr);
 
-void NATIVE64 mem_move(void *src, void *dst, uint64_t size);
+void NATIVE64 hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr);
 
-void NATIVE64 mem_set(void *src, int8_t const val, uint64_t size);
+void NATIVE64 hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr);
 
-void NATIVE64 write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr);
+void NATIVE64 hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr);
 
-void NATIVE64 write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr);
-
-void NATIVE64 write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr);
-
-void NATIVE64 write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr);
-
-void NATIVE64 write_gate(void *const gate, uint64_t const offset, uint32_t const selector, uint32_t const attr);
+void NATIVE64 hal_write_gate(void *const gate, uint64_t const offset, uint32_t const selector, uint32_t const attr);
 
 #endif
