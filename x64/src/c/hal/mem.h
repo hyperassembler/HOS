@@ -55,15 +55,6 @@
 #define SEG_AVAILABLE (1ull << 52)
 #define SEG_32_BITS (1ull << 54)
 
-#define GATE_DPL_0 (0ull << 13)
-#define GATE_DPL_1 (1ull << 13)
-#define GATE_DPL_2 (2ull << 13)
-#define GATE_DPL_3 (3ull << 13)
-#define GATE_PRESENT (1ull << 15)
-#define GATE_TYPE_CALL (12ull << 8)
-#define GATE_TYPE_INTERRUPT (14ull << 8)
-#define GATE_TYPE_TRAP (15ull << 8)
-
 #define PML4_ENTRY_NUM(mem) ((mem) / (4096ull * 512ull * 512ull * 512ull))
 #define PDPT_ENTRY_NUM(mem) ((mem) / (4096ull * 512ull * 512ull))
 #define PD_ENTRY_NUM(mem) ((mem) / (4096ull*512ull))
@@ -104,7 +95,5 @@ void NATIVE64 hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uin
 void NATIVE64 hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr);
 
 void NATIVE64 hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr);
-
-void NATIVE64 hal_write_gate(void *const gate, uint64_t const offset, uint32_t const selector, uint32_t const attr);
 
 #endif

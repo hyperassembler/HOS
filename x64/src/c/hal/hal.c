@@ -2,6 +2,7 @@
 #include "multiboot.h"
 #include "print.h"
 #include "mem.h"
+#include "io.h"
 
 uint8_t g_gdt[8*9];
 uint8_t g_idt[21*16];
@@ -66,4 +67,11 @@ void NATIVE64 hal_init(multiboot_info_t* m_info)
     {
         hal_printf("AIPC detected...");
     }
+
+    for(uint64_t i = 0; i <= 21; i++)
+    {
+        hal_set_interrupt_handler(i, hal_interrupt_handler_wrapper);
+    }
+
+    return;
 }

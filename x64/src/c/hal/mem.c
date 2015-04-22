@@ -70,27 +70,6 @@ void NATIVE64 hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, u
     return;
 }
 
-void NATIVE64 hal_write_gate(void *const gate, uint64_t const offset, uint32_t const selector, uint32_t const attr)
-{
-    ((uint8_t*)gate)[0] = (uint8_t)(offset & 0xFF);
-    ((uint8_t*)gate)[1] = (uint8_t)((offset >> 8) & 0xFF);
-    ((uint8_t*)gate)[2] = (uint8_t)(selector & 0xFF);
-    ((uint8_t*)gate)[3] = (uint8_t)((selector >> 8) & 0xFF);
-    ((uint8_t*)gate)[4] = (uint8_t)(attr & 0xFF);
-    ((uint8_t*)gate)[5] = (uint8_t)((attr >> 8) & 0xFF);
-    ((uint8_t*)gate)[6] = (uint8_t)((offset >> 16) & 0xFF);
-    ((uint8_t*)gate)[7] = (uint8_t)((offset >> 24) & 0xFF);
-    ((uint8_t*)gate)[8] = (uint8_t)((offset >> 32) & 0xFF);
-    ((uint8_t*)gate)[9] = (uint8_t)((offset >> 40) & 0xFF);
-    ((uint8_t*)gate)[10] = (uint8_t)((offset >> 48) & 0xFF);
-    ((uint8_t*)gate)[11] = (uint8_t)((offset >> 56) & 0xFF);
-    ((uint8_t*)gate)[12] = 0;
-    ((uint8_t*)gate)[13] = 0;
-    ((uint8_t*)gate)[14] = 0;
-    ((uint8_t*)gate)[15] = 0;
-    return;
-}
-
 void NATIVE64 hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr)
 {
     if (gdt == NULL)
