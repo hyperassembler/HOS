@@ -3,8 +3,10 @@ ASM = nasm
 CC = gcc
 
 LD = ld
+
 #Recursive Wildcard
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
+rdircard=$(sort $(dir $(call rwildcard,$1,*)))
 
 #x86 vars
 
@@ -34,12 +36,11 @@ LD_FLAGS_64 := -melf_x86_64
 
 LD_SCRIPT_64 := build/link64.ld
 
-
-
 GRUB_CFG := build/grub.cfg
 
-OUTPUT_DIR := temp
+OUTPUT_DIR := tmp
 
+ALL_OUTPUT_DIRS := $(addprefix $(OUTPUT_DIR)/,$(call rdircard,*))
 
 
 #C source code
@@ -74,16 +75,14 @@ ASM_OBJ_FILES_32 := $(ASM_FILES_32:.asm=.oa32)
 
 ASM_OBJ_FILES_64 := $(ASM_FILES_64:.asm=.oa64)
 
-ALL_OBJ_FILES_32 := $(addprefix $(OUTPUT_DIR)/,$(subst /,_,$(C_OBJ_FILES_32))) $(addprefix $(OUTPUT_DIR)/,$(subst /,_,$(ASM_OBJ_FILES_32)))
+ALL_OBJ_FILES_32 := $(addprefix $(OUTPUT_DIR)/,$(C_OBJ_FILES_32)) $(addprefix $(OUTPUT_DIR)/,$(ASM_OBJ_FILES_32))
 
-ALL_OBJ_FILES_64 := $(addprefix $(OUTPUT_DIR)/,$(subst /,_,$(C_OBJ_FILES_64))) $(addprefix $(OUTPUT_DIR)/,$(subst /,_,$(ASM_OBJ_FILES_64)))
+ALL_OBJ_FILES_64 := $(addprefix $(OUTPUT_DIR)/,$(C_OBJ_FILES_64)) $(addprefix $(OUTPUT_DIR)/,$(ASM_OBJ_FILES_64))
 
 
 
 print_source:
-
-	$(info ${C_OBJ_FILES_32})
-
+	$(info ${ALL_OUTPUT_DIRS})
 
 
 all : init compile link buildiso clean
@@ -91,8 +90,7 @@ all : init compile link buildiso clean
 
 
 init:
-
-	sudo mkdir $(OUTPUT_DIR)
+	sudo mkdir -p $(ALL_OUTPUT_DIRS)
 
 
 
@@ -105,60 +103,42 @@ link: $(KERNEL_BIN_32) $(KERNEL_BIN_64)
 
 
 clean:
-
 	sudo rm -rf $(OUTPUT_DIR)
 
 buildiso:
-
-	sudo mkdir $(OUTPUT_DIR)/temp_iso
-
-	sudo mkdir $(OUTPUT_DIR)/temp_iso/HOS
-
-	sudo mkdir $(OUTPUT_DIR)/temp_iso/boot
-
-	sudo mkdir $(OUTPUT_DIR)/temp_iso/boot/grub
-
+	sudo mkdir -p $(OUTPUT_DIR)/temp_iso/HOS
+	sudo mkdir -p $(OUTPUT_DIR)/temp_iso/boot
+	sudo mkdir -p $(OUTPUT_DIR)/temp_iso/boot/grub
 	sudo mv $(OUTPUT_DIR)/$(KERNEL_BIN_64) $(OUTPUT_DIR)/temp_iso/HOS/kernel64
-
 	sudo mv $(OUTPUT_DIR)/$(KERNEL_BIN_32) $(OUTPUT_DIR)/temp_iso/HOS/kernel32
-
 	sudo cp $(GRUB_CFG) $(OUTPUT_DIR)/temp_iso/boot/grub/
-
 	sudo grub-mkrescue -o HOS.iso $(OUTPUT_DIR)/temp_iso
 
-
-
 %.o32: %.c
-
-	sudo $(CC) $(C_FLAGS_32) -o $(OUTPUT_DIR)/$(subst /,_,$@) $^
+	sudo $(CC) $(C_FLAGS_32) -o $(OUTPUT_DIR)/$@ $^
 
 
 
 %.o64: %.c
-
-	sudo $(CC) $(C_FLAGS_64) -o $(OUTPUT_DIR)/$(subst /,_,$@) $^
+	sudo $(CC) $(C_FLAGS_64) -o $(OUTPUT_DIR)/$@ $^
 
 
 
 %.oa32: %.asm
-
-	sudo $(ASM) $(ASM_FLAGS_32) -o $(OUTPUT_DIR)/$(subst /,_,$@) $^
+	sudo $(ASM) $(ASM_FLAGS_32) -o $(OUTPUT_DIR)/$@ $^
 
 
 
 %.oa64: %.asm
-
-	sudo $(ASM) $(ASM_FLAGS_64) -o $(OUTPUT_DIR)/$(subst /,_,$@) $^
+	sudo $(ASM) $(ASM_FLAGS_64) -o $(OUTPUT_DIR)/$@ $^
 
 
 
 $(KERNEL_BIN_32): $(ALL_OBJ_FILES_32)
-
 	sudo $(LD) $(LD_FLAGS_32) -T $(LD_SCRIPT_32) -o $(OUTPUT_DIR)/$(KERNEL_BIN_32) $(ALL_OBJ_FILES_32)
 
 
 
 $(KERNEL_BIN_64): $(ALL_OBJ_FILES_64)
-
 	sudo $(LD) $(LD_FLAGS_64) -T $(LD_SCRIPT_64) -o $(OUTPUT_DIR)/$(KERNEL_BIN_64) $(ALL_OBJ_FILES_64)
 
