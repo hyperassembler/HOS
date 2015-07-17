@@ -1,5 +1,6 @@
 global hal_flush_gdt
 global hal_flush_tlb
+global hal_flush_idt
 global hal_cpuid
 ;Functions preserve the registers rbx, rsp, rbp, r12, r13, r14, and 15
 ;rax, rdi, rsi, rdx, rcx, r8, r9, r10, r11 are scratch registers.
@@ -50,6 +51,11 @@ mov [rsi],rbx
 mov [rdx],rcx
 pop rcx
 mov [rcx],rdx
+ret
+
+;flush_idt
+hal_flush_idt:
+lidt [rdi]
 ret
 
 

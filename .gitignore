@@ -183,7 +183,7 @@ $RECYCLE.BIN/
 #############
 ## CLION
 #############
-CMakeLists.txt
+#CMakeLists.txt
 .idea/
 
 #############

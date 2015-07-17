@@ -7,6 +7,8 @@
 uint8_t g_gdt[8*9];
 uint8_t g_idt[21*16];
 gdt_ptr_t g_gdt_ptr;
+idt_ptr_t g_idt_ptr;
+
 extern uint64_t text_pos;
 
 void NATIVE64 hal_init(multiboot_info_t* m_info)
@@ -68,10 +70,14 @@ void NATIVE64 hal_init(multiboot_info_t* m_info)
         hal_printf("AIPC detected...");
     }
 
+
     for(uint64_t i = 0; i <= 21; i++)
     {
         hal_set_interrupt_handler(i, hal_interrupt_handler_wrapper);
     }
+    g_idt_ptr.base = (uint64_t)g_idt;
+    g_idt_ptr.limit = 21*16-1;
+    hal_flush_idt(&g_idt_ptr);
 
     return;
 }

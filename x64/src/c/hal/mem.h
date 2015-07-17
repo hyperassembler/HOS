@@ -68,6 +68,12 @@ typedef struct __attribute__ ((packed))
     uint64_t base;
 } gdt_ptr_t;
 
+typedef struct __attribute__ ((packed))
+{
+    uint16_t limit;
+    uint64_t base;
+} idt_ptr_t;
+
 typedef struct __attribute__((packed))
 {
     uint64_t eax;
@@ -85,6 +91,8 @@ extern void NATIVE64 hal_flush_gdt(gdt_ptr_t *gdt_ptr, uint64_t code_slct, uint6
 extern void NATIVE64 hal_flush_tlb();
 
 extern void NATIVE64 hal_cpuid(uint64_t * eax, uint64_t * ebx, uint64_t* ecx, uint64_t* edx);
+
+extern void NATIVE64 hal_flush_idt(idt_ptr_t* idt_ptr);
 
 void NATIVE64 hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 

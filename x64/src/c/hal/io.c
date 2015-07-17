@@ -1,5 +1,6 @@
 #include "io.h"
 #include "print.h"
+#include "hal.h"
 
 void hal_interrupt_handler_dummy(void)
 {
