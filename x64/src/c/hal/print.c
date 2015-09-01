@@ -3,8 +3,7 @@
 #include "../common/type.h"
 #include "../common/sys/mem.h"
 #include "print.h"
-
-uint64_t text_pos;
+#include "var.h"
 
 void NATIVE64 _hal_print_scroll()
 {

@@ -3,6 +3,8 @@
 
 #include "../common/kdef.h"
 #include "../common/type.h"
+#include "../common/util/list/linked_list/linked_list.h"
+
 #define PML4_PRESENT (1ull << 0)
 #define PML4_WRITE (1ull << 1)
 #define PML4_USER (1ull << 2)
@@ -81,6 +83,17 @@ typedef struct __attribute__((packed))
     uint64_t ecx;
     uint64_t edx;
 } cpuid_t;
+
+#define MEMORY_OCCUPIED 0
+#define MEMORY_AVAILABLE 1
+#define MEMORY_RESERVED 2
+typedef struct __attribute__((packed))
+{
+    linked_list_node_t list_node;
+    uint64_t base_addr;
+    uint64_t size;
+    uint32_t type;
+} memory_descriptor_node_t;
 
 void*NATIVE64 hal_halloc(size_t const size);
 

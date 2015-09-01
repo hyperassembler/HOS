@@ -3,18 +3,13 @@
 #include "print.h"
 #include "mem.h"
 #include "io.h"
-
-uint8_t g_gdt[8*9];
-uint8_t g_idt[21*16];
-gdt_ptr_t g_gdt_ptr;
-idt_ptr_t g_idt_ptr;
-
-extern uint64_t text_pos;
+#include "var.h"
+#include "../common/util/list/linked_list/linked_list.h"
 
 void NATIVE64 hal_init(multiboot_info_t* m_info)
 {
     text_pos = get_pos(3, 0);
-    hal_printf("*Setting up GDT...");
+    hal_printf("Setting up GDT...\n");
     hal_write_segment_descriptor((void *) &g_gdt[0], 0, 0, 0);
     hal_write_segment_descriptor((void *) &g_gdt[8], 0, 0, SEG_DPL_0 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_CODE_X);
     hal_write_segment_descriptor((void *) &g_gdt[16], 0, 0, SEG_DPL_0 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_DATA_RW);
@@ -28,37 +23,47 @@ void NATIVE64 hal_init(multiboot_info_t* m_info)
     g_gdt_ptr.base = (uint64_t)g_gdt;
     g_gdt_ptr.limit = 8*9-1;
     hal_flush_gdt(&g_gdt_ptr, SEG_SELECTOR(1, 0), SEG_SELECTOR(2, 0));
-    hal_printf("Done.\n\n");
-    hal_printf("*Checking memory information...\n");
+
     if(m_info->flags & (1 << 6))
     {
         multiboot_memory_map_t const *mem_map = (multiboot_memory_map_t *) m_info->mmap_addr;
         uint64_t const mem_map_size = m_info->mmap_length / sizeof(multiboot_memory_map_t);
-        hal_printf("BaseAddr  -  Length  -  Type\n");
+        hal_printf("Initializing memory descriptors...\n");
         uint64_t total_available_mem = 0;
         uint64_t total_reserved_mem = 0;
         for (int i = 0; i < mem_map_size; i++)
         {
-            hal_printf("0x%X  -  0x%X  -  0x%x\n", (mem_map + i)->addr, (mem_map + i)->len, (mem_map + i)->type);
+            memory_descriptor_node_t* each_desc = (memory_descriptor_node_t*)hal_halloc(sizeof(memory_descriptor_node_t));
+            each_desc->base_addr = (mem_map + i)->addr;
+            each_desc->size =  (mem_map + i)->len;
             if((mem_map + i)->type == MULTIBOOT_MEMORY_RESERVED)
             {
+                each_desc->type = MEMORY_RESERVED;
                 total_reserved_mem += (mem_map + i)->len;
             }
             else if ((mem_map + i)->type == MULTIBOOT_MEMORY_AVAILABLE)
             {
+                each_desc->type = MEMORY_AVAILABLE;
                 total_available_mem += (mem_map + i)->len;
             }
+            linked_list_add(&mem_desc, (linked_list_node_t*)each_desc);
         }
+        // TODO: total RAM should be in memory descriptors list
         hal_printf("Total available memory: %uB, %uKB, %uMB.\n", total_available_mem, total_available_mem / 1024,
                    total_available_mem / 1024 / 1024);
-        hal_printf("Total reserved memory: %uB, %uKB, %uMB.\n\n", total_reserved_mem, total_reserved_mem / 1024,
+        hal_printf("Total reserved memory: %uB, %uKB, %uMB.\n", total_reserved_mem, total_reserved_mem / 1024,
                    total_reserved_mem / 1024 / 1024);
+        hal_printf("Memory Segments:\nBase - Size - Type");
+        for(int i = 0; i < mem_desc.size; i++)
+        {
+            memory_descriptor_node_t* each_node = (memory_descriptor_node_t *) linked_list_get(&mem_desc,i);
+            hal_printf("%d - %d - %s", each_node->base_addr, each_node->size, each_node->type == MEMORY_AVAILABLE ? "Available" : "Reserved");
+        }
     }
     else
     {
-        hal_printf("Memory information is currently unavailable.\n\n");
+        hal_printf("Memory information is currently unavailable.\n");
     }
-    hal_printf("CPUIDing \n");
     cpuid_t cpuid_info;
     cpuid_info.eax = 1;
     cpuid_info.ebx = 0;
@@ -67,7 +72,7 @@ void NATIVE64 hal_init(multiboot_info_t* m_info)
     hal_cpuid(&cpuid_info.eax,&cpuid_info.ebx,&cpuid_info.ecx,&cpuid_info.edx);
     if(cpuid_info.edx & 1 << 9)
     {
-        hal_printf("AIPC detected...");
+        hal_printf("APIC detected...\n");
     }
 
 
