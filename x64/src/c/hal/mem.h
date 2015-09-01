@@ -87,12 +87,12 @@ typedef struct __attribute__((packed))
 #define MEMORY_OCCUPIED 0
 #define MEMORY_AVAILABLE 1
 #define MEMORY_RESERVED 2
-typedef struct __attribute__((packed))
+typedef struct
 {
-    linked_list_node_t list_node;
     uint64_t base_addr;
     uint64_t size;
     uint32_t type;
+    linked_list_node_t list_node;
 } memory_descriptor_node_t;
 
 void*NATIVE64 hal_halloc(size_t const size);

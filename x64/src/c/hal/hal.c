@@ -5,6 +5,7 @@
 #include "io.h"
 #include "var.h"
 #include "../common/util/list/linked_list/linked_list.h"
+#include "../common/util/util.h"
 
 void NATIVE64 hal_init(multiboot_info_t* m_info)
 {
@@ -46,7 +47,7 @@ void NATIVE64 hal_init(multiboot_info_t* m_info)
                 each_desc->type = MEMORY_AVAILABLE;
                 total_available_mem += (mem_map + i)->len;
             }
-            linked_list_add(&mem_desc, (linked_list_node_t*)each_desc);
+            linked_list_add(&mem_desc, &each_desc->list_node);
         }
         // TODO: total RAM should be in memory descriptors list
         hal_printf("Total available memory: %uB, %uKB, %uMB.\n", total_available_mem, total_available_mem / 1024,
@@ -56,7 +57,7 @@ void NATIVE64 hal_init(multiboot_info_t* m_info)
         hal_printf("Memory Segments:\nBase - Size - Type");
         for(int i = 0; i < mem_desc.size; i++)
         {
-            memory_descriptor_node_t* each_node = (memory_descriptor_node_t *) linked_list_get(&mem_desc,i);
+            memory_descriptor_node_t* each_node = OBTAIN_STRUCT_ADDR(linked_list_get(&mem_desc,i), list_node, memory_descriptor_node_t);
             hal_printf("%d - %d - %s", each_node->base_addr, each_node->size, each_node->type == MEMORY_AVAILABLE ? "Available" : "Reserved");
         }
     }

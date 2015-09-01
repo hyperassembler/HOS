@@ -2,7 +2,7 @@
 #define _AVL_TREE_H_
 #include "../../../kdef.h"
 
-typedef struct __attribute__((packed)) _avl_tree_node_t
+typedef struct _avl_tree_node_t
 {
         struct _avl_tree_node_t * left;
         struct _avl_tree_node_t * right;
@@ -10,7 +10,7 @@ typedef struct __attribute__((packed)) _avl_tree_node_t
         int height;
 } avl_tree_node_t;
 
-typedef struct __attribute__((packed))
+typedef struct
 {
         avl_tree_node_t * root;
         int size;
