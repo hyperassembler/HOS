@@ -54,11 +54,11 @@ void NATIVE64 hal_init(multiboot_info_t* m_info)
                    total_available_mem / 1024 / 1024);
         hal_printf("Total reserved memory: %uB, %uKB, %uMB.\n", total_reserved_mem, total_reserved_mem / 1024,
                    total_reserved_mem / 1024 / 1024);
-        hal_printf("Memory Segments:\nBase - Size - Type");
+        hal_printf("Memory Segments:\nBase - Size - Type\n");
         for(int i = 0; i < mem_desc.size; i++)
         {
             memory_descriptor_node_t* each_node = OBTAIN_STRUCT_ADDR(linked_list_get(&mem_desc,i), list_node, memory_descriptor_node_t);
-            hal_printf("%d - %d - %s", each_node->base_addr, each_node->size, each_node->type == MEMORY_AVAILABLE ? "Available" : "Reserved");
+            hal_printf("%X - %X - %s\n", each_node->base_addr, each_node->size, each_node->type == MEMORY_AVAILABLE ? "Available" : "Reserved");
         }
     }
     else
