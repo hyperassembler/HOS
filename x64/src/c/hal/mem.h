@@ -1,8 +1,8 @@
 #ifndef _MM_H_
 #define _MM_H_
 
-#include "../common/kdef.h"
-#include "../common/type.h"
+#include "../common/sys/kdef.h"
+#include "../common/sys/type.h"
 #include "../common/util/list/linked_list/linked_list.h"
 
 #define PML4_PRESENT (1ull << 0)
@@ -84,17 +84,6 @@ typedef struct __attribute__((packed))
     uint64_t edx;
 } cpuid_t;
 
-#define MEMORY_OCCUPIED 0
-#define MEMORY_AVAILABLE 1
-#define MEMORY_RESERVED 2
-typedef struct
-{
-    uint64_t base_addr;
-    uint64_t size;
-    uint32_t type;
-    linked_list_node_t list_node;
-} memory_descriptor_node_t;
-
 void*NATIVE64 hal_halloc(size_t const size);
 
 void NATIVE64 hal_hfree(void *ptr);
@@ -106,6 +95,10 @@ extern void NATIVE64 hal_flush_tlb();
 extern void NATIVE64 hal_cpuid(uint64_t * eax, uint64_t * ebx, uint64_t* ecx, uint64_t* edx);
 
 extern void NATIVE64 hal_flush_idt(idt_ptr_t* idt_ptr);
+
+extern void NATIVE64 hal_write_page_base(void* base);
+
+extern void* NATIVE64 hal_read_page_base();
 
 void NATIVE64 hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 

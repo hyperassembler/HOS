@@ -1,8 +1,8 @@
 #ifndef _HAL_MEM_H_
 #define _HAL_MEM_H_
 
-#include "../type.h"
-#include "../kdef.h"
+#include "../sys/type.h"
+#include "../sys/kdef.h"
 
 void NATIVE64 mem_copy(void *src, void *dst, uint64_t size);
 

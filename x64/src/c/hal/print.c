@@ -1,7 +1,6 @@
-#include <stdarg.h>
-#include "../common/kdef.h"
-#include "../common/type.h"
-#include "../common/sys/mem.h"
+#include "../common/sys/kdef.h"
+#include "../common/sys/type.h"
+#include "../common/lib/mem.h"
 #include "print.h"
 #include "var.h"
 

@@ -3,6 +3,7 @@ global hal_read_port
 global hal_enable_interrupt
 global hal_disable_interrupt
 global hal_interrupt_handler_wrapper
+global hal_halt_cpu
 extern hal_interrupt_handler_dummy
 
 %macro pushaq 0
@@ -74,3 +75,7 @@ call hal_interrupt_handler_dummy
 popaq
 xchg bx,bx
 iretq
+
+hal_halt_cpu:
+hlt
+ret

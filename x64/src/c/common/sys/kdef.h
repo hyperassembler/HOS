@@ -2,6 +2,7 @@
 #define _KDEF_H_
 
 #include <stddef.h>
+#include <stdarg.h>
 
 #define NATIVE64 __attribute__((sysv_abi))
 

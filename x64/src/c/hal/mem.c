@@ -1,5 +1,5 @@
-#include "../common/kdef.h"
-#include "../common/type.h"
+#include "../common/sys/kdef.h"
+#include "../common/sys/type.h"
 #include "mem.h"
 
 #define kernel_heap_size 4096
@@ -85,6 +85,12 @@ void NATIVE64 hal_write_segment_descriptor(void *const gdt, uint32_t const base,
     ((uint8_t*)gdt)[7] = (uint8_t)((seg_desc >> 56) & 0xFF);
     return;
 }
+
+void NATIVE64 hal_create_initial_page_table(void* const base, uint64_t size)
+{
+
+};
+
 //
 //uint64_t NATIVE64 map_page(void *const base, uint64_t const p_addr, uint64_t const v_addr, uint64_t const attr, uint64_t const availableRam)
 //{

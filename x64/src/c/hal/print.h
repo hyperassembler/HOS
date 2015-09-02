@@ -1,7 +1,7 @@
 #ifndef _PRINT_H_
 #define _PRINT_H_
-#include "../common/kdef.h"
-#include "../common/type.h"
+#include "../common/sys/kdef.h"
+#include "../common/sys/type.h"
 
 #define get_column(pos) (pos % 80)
 #define get_row(pos) (pos / 80)

@@ -1,14 +1,28 @@
-#include "../common/kdef.h"
+#include "../common/sys/kdef.h"
 #include "../hal/hal.h"
 #include "../hal/print.h"
 #include "../hal/io.h"
+#include "../common/sys/sys_info.h"
 
 extern char kernel_start[];
 extern char kernel_end[];
 void NATIVE64 kmain(multiboot_info_t *multiboot_info)
 {
-    hal_init(multiboot_info);
-    hal_printf("Finished setting up HAL\n");
+    boot_info_t* boot_info = hal_init(multiboot_info);
+
+
+    hal_printf("Available Memory: %uMB\n",boot_info->mem_info->mem_available / 1024 / 1024);
+    hal_printf("Reserved Memory: %uMB\n",boot_info->mem_info->mem_reserved / 1024 / 1024);
+    hal_printf("Installed Memory: %uMB\n",(boot_info->mem_info->mem_reserved + boot_info->mem_info->mem_available)
+                                          /1024 /1024);
+
+
+    for(uint64_t i = 0; i <= 21; i++)
+    {
+        hal_set_interrupt_handler(i, hal_interrupt_handler_wrapper);
+    }
     hal_enable_interrupt();
-    while(1);
+
+    hal_printf("KRNL: Kernel task finished.");
+    hal_halt_cpu();
 }

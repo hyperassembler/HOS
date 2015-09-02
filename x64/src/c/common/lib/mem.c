@@ -1,5 +1,5 @@
-#include "../type.h"
-#include "../kdef.h"
+#include "../sys/type.h"
+#include "../sys/kdef.h"
 #include "mem.h"
 
 void NATIVE64 mem_copy(void *src, void *dst, uint64_t size)

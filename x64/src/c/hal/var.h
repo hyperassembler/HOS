@@ -9,6 +9,5 @@ extern uint8_t g_idt[21*16];
 extern gdt_ptr_t g_gdt_ptr;
 extern idt_ptr_t g_idt_ptr;
 extern uint64_t text_pos;
-extern linked_list_t mem_desc;
 
 #endif
