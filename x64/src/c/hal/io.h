@@ -24,5 +24,8 @@ extern void NATIVE64 hal_halt_cpu();
 
 void NATIVE64 hal_write_gate(void *const gate, uint64_t const offset, uint32_t const selector, uint32_t const attr);
 
+//assert
+void NATIVE64 hal_assert(int64_t exp, char* message);
+
 extern uint8_t g_idt[];
 #endif

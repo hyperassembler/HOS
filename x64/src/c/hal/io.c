@@ -35,3 +35,13 @@ void NATIVE64 hal_set_interrupt_handler(uint64_t index, void (*handler)(void))
     hal_write_gate(g_idt + 16*index, (uint64_t)handler, SEG_SELECTOR(1,0), GATE_DPL_0 | GATE_PRESENT | GATE_TYPE_INTERRUPT);
     return;
 }
+
+void NATIVE64 hal_assert(int64_t expression, char* message)
+{
+    if(!expression)
+    {
+        hal_printf("HAL: Assertion failed. Detail: %s", message == NULL ? "NULL" : message);
+    }
+    hal_halt_cpu();
+    return;
+}

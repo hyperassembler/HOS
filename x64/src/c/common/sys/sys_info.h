@@ -21,8 +21,22 @@ typedef struct {
     uint64_t mem_available;
 } mem_info_t;
 
+typedef struct
+{
+    uint64_t base_addr;
+    uint64_t size;
+    char* name;
+    linked_list_node_t list_node;
+} module_descriptor_node_t;
+
+typedef struct {
+    linked_list_t* module_list;
+    uint64_t module_count;
+} module_info_t;
+
 typedef struct {
     mem_info_t* mem_info;    // all available memory info
+    module_info_t* module_info; // all kernel modules loaded
 } boot_info_t;
 
 #endif

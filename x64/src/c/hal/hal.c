@@ -3,9 +3,8 @@
 #include "mem.h"
 #include "io.h"
 #include "var.h"
-#include "../common/util/util.h"
-#include "../common/sys/sys_info.h"
-#include "../common/util/list/linked_list/linked_list.h"
+#include "../common/lib/str.h"
+#include "../common/lib/mem.h"
 
 boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info)
 {
@@ -33,16 +32,16 @@ boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info)
 
 
     boot_info_t* boot_info = (boot_info_t*)hal_halloc(sizeof(boot_info_t));
+    hal_assert(boot_info != NULL, "Unable to allocate memory for boot_info.");
+    // obtain boot information
+    // memory info
     boot_info->mem_info = (mem_info_t*)hal_halloc(sizeof(mem_info_t));
+    hal_assert(boot_info->mem_info != NULL, "Unable to allocate memory for mem_info.");
     boot_info->mem_info->mem_available = 0;
     boot_info->mem_info->mem_reserved = 0;
     boot_info->mem_info->mem_seg_list = (linked_list_t*)hal_halloc((sizeof(linked_list_t)));
-    boot_info->mem_info->mem_seg_list->head = NULL;
-    boot_info->mem_info->mem_seg_list->size = 0;
-
-    // obtain boot information
-
-    // memory info
+    hal_assert(boot_info->mem_info->mem_seg_list != NULL, "Unable to allocate memory for mem_seg_list.");
+    linked_list_init(boot_info->mem_info->mem_seg_list);
     if(m_info->flags & (1 << 6))
     {
         multiboot_memory_map_t const *mem_map = (multiboot_memory_map_t *) m_info->mmap_addr;
@@ -50,6 +49,7 @@ boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info)
         for (int i = 0; i < mem_map_size; i++)
         {
             memory_descriptor_node_t* each_desc = (memory_descriptor_node_t*)hal_halloc(sizeof(memory_descriptor_node_t));
+            hal_assert(each_desc != NULL, "Unable to allocate memory for memory_descriptor.");
             each_desc->base_addr = (mem_map + i)->addr;
             each_desc->size =  (mem_map + i)->len;
             if((mem_map + i)->type == MULTIBOOT_MEMORY_RESERVED)
@@ -69,6 +69,36 @@ boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info)
     {
         // halt machine
         hal_printf("HAL: Cannot detect memory information.");
+        hal_halt_cpu();
+    }
+
+    // loaded kernel modules
+    boot_info->module_info = (module_info_t*)hal_halloc(sizeof(module_info_t));
+    hal_assert(boot_info->module_info != NULL, "Unable to allocate memory for module_info.");
+    boot_info->module_info->module_count = 0;
+    boot_info->module_info->module_list = (linked_list_t*)hal_halloc(sizeof(linked_list_t));
+    hal_assert(boot_info->module_info->module_list != NULL, "Unable to allocate memory for module_list.");
+    linked_list_init(boot_info->module_info->module_list);
+    if(m_info->flags & (1 << 3))
+    {
+        multiboot_module_t const * mods_list = (multiboot_module_t *)m_info->mods_addr;
+        boot_info->module_info->module_count = m_info->mods_count;
+        for (uint64_t i = 0; i < boot_info->module_info->module_count; i++)
+        {
+            module_descriptor_node_t* each_module = (module_descriptor_node_t*)hal_halloc(sizeof(module_descriptor_node_t));
+            hal_assert(each_module != NULL, "Unable to allocate memory for module_descriptor.");
+            each_module->base_addr = (mods_list + i)->mod_start;
+            each_module->size = (mods_list + i)->mod_end - (mods_list + i)->mod_start;
+            each_module->name = (char*)hal_halloc((size_t)str_len((char *) (mods_list + i)->cmdline) + 1);
+            hal_assert(each_module->name != NULL, "Unable to allocate memory for module name string.");
+            mem_copy((void*)(mods_list + i)->cmdline, each_module->name, str_len((char *) (mods_list + i)->cmdline) + 1);
+            linked_list_add(boot_info->module_info->module_list, &each_module->list_node);
+        }
+    }
+    else
+    {
+        // halt machine
+        hal_printf("HAL: Cannot detect kernel modules.");
         hal_halt_cpu();
     }
 
