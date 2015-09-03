@@ -13,7 +13,6 @@ extern void NATIVE64 hal_spin_unlock(uint32_t * lock);
 boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info);
 
 //debug
-extern void NATIVE64 HLT_CPU(void);
 extern void NATIVE64 BOCHS_MAGIC_BREAKPOINT();
 
 #endif
