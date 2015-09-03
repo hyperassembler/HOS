@@ -10,6 +10,7 @@ MULTIBOOT_MAGIC_NUMBER equ 0x1BADB002
 MULTIBOOT_FLAGS equ 0x10003
 MULTIBOOT_CHECK_SUM equ - (MULTIBOOT_MAGIC_NUMBER + MULTIBOOT_FLAGS)
 MULTIBOOT_HEADER:
+align 4
 dd MULTIBOOT_MAGIC_NUMBER
 dd MULTIBOOT_FLAGS
 dd MULTIBOOT_CHECK_SUM
@@ -21,12 +22,16 @@ dd 0
 dd entry_32
 MULTIBOOT_HEADER_SIZE equ ($ - MULTIBOOT_HEADER)
 
-times (8192 - MULTIBOOT_HEADER_SIZE) db 0 ;skip the header
+align 4096 ;4k alignment
+times 4096 db 0
 KERNEL_STACK:
 
+align 4096 ;4k alignment
 ; temporary page table
 PML4_BASE:
 times 512 dq 0 ;reserved the rest for page entries
+
+align 4096 ;4k alignment
 PDPT_BASE:
 times 512 dq 0 ;reserved the rest for page entries
 
@@ -39,14 +44,14 @@ GDT64:                           ; Global Descriptor Table (64-bit).
     db 0                         ; Access.
     db 0                         ; Granularity.
     db 0                         ; Base (high).
-    .SLCT_CODE equ $ - GDT64         ; The code descriptor.
+    SLCT_CODE equ $ - GDT64         ; The code descriptor.
     dw 0                         ; Limit (low).
     dw 0                         ; Base (low).
     db 0                         ; Base (middle)
     db 10011010b                 ; Access.
     db 00100000b                 ; Granularity.
     db 0                         ; Base (high).
-    .SLCT_DATA equ $ - GDT64         ; The data descriptor.
+    SLCT_DATA equ $ - GDT64         ; The data descriptor.
     dw 0                         ; Limit (low).
     dw 0                         ; Base (low).
     db 0                         ; Base (middle)
@@ -61,16 +66,22 @@ entry_32:
 ; close interrupt
 cli
 
+; check loaded by grub
+cmp eax,GRUB_MAGIC
+jmp entry_32.loaded_by_grub
+hlt
+.loaded_by_grub:
+
 ; set stack pointer
 mov esp, KERNEL_STACK
 
 ; check x64 support
 call ensure_support_x64
 cmp eax,1
-je init_x64
+je .init_x64
 hlt
 
-init_x64:
+.init_x64:
 ; disable paging first
 mov eax, cr0                                   ; Set the A-register to control register 0.
 and eax, 01111111111111111111111111111111b     ; Clear the PG-bit, which is bit 31.
@@ -178,5 +189,6 @@ ret
 
 [SECTION .heap]
 [BITS 64]
+align 4096 ;4k alignment
 kernel_heap:
-times 8192 db 0
+times 4096 db 0
