@@ -11,10 +11,10 @@ void NATIVE64 kmain(multiboot_info_t *multiboot_info)
     boot_info_t* boot_info = hal_init(multiboot_info);
 
 
-    hal_printf("Available Memory: %uMB\n",boot_info->mem_info->mem_available / 1024 / 1024);
-    hal_printf("Reserved Memory: %uMB\n",boot_info->mem_info->mem_reserved / 1024 / 1024);
-    hal_printf("Installed Memory: %uMB\n",(boot_info->mem_info->mem_reserved + boot_info->mem_info->mem_available)
-                                          /1024 /1024);
+    hal_printf("Available Memory: %uKB\n",boot_info->mem_info->mem_available / 1024);
+    hal_printf("Reserved Memory: %uB\n",boot_info->mem_info->mem_reserved);
+    hal_printf("Installed Memory: %uKB\n",(boot_info->mem_info->mem_reserved + boot_info->mem_info->mem_available)
+                                          /1024);
 
 
     for(uint64_t i = 0; i <= 21; i++)
