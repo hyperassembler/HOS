@@ -21,15 +21,13 @@ void NATIVE32 kmain(multiboot_info_t *multiboot_info)
     text_pos = 0;
 
     //detect architecture
-    kprintf("*Checking architecture...\n");
     if (support_x64() == 1)
     {
-        kprintf("Arch: x86_64.\n\n");
+        kprintf("Architecture x64.\n\n");
         init_x64(multiboot_info);
     }
-    kprintf("Arch: x86.\n\n");
-    kprintf("Kernel Start: 0x%X. End: 0x%X. Size: 0x%X.\n\n", (uint32_t) kernel_start, (uint32_t) kernel_end, (uint32_t) kernel_end - (uint32_t) kernel_start);
-    kprintf("*Setting up GDT...");
+    kprintf("Architecture x86.\n\n");
+    kprintf("Kernel Loaded at 0x%X. Size: %uB, %uKB\n\n",kernel_start,(kernel_end-kernel_start),(kernel_end-kernel_start)/1024);
     //dummy descriptor
     write_segment_descriptor((void *) (&g_gdt[0]), 0, 0, 0);
     //ring 0 code seg, non-conforming
@@ -43,7 +41,6 @@ void NATIVE32 kmain(multiboot_info_t *multiboot_info)
     g_gdt_ptr.limit = 8 * 8 - 1;
     g_gdt_ptr.base = (uint32_t) g_gdt;
     load_gdt(&g_gdt_ptr, SEG_SELECTOR(1, 0), SEG_SELECTOR(3, 0));
-    kprintf(" - Done.\n\n");
     //check memory, definitely < 32 so we assume that
     kprintf("*Checking memory information...\n");
     if(multiboot_info->flags & (1 << 6))
