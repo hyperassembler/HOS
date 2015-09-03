@@ -2,12 +2,28 @@ extern kmain
 global HLT_CPU
 global BOCHS_MAGIC_BREAKPOINT
 global kernel_heap
-;IMPORTANT: Before entering this, CPU should be in protected mode.
-;IMPORTANT: This module should be 4k-page aliened
+; IMPORTANT: This module should be 4k-page aliened
 [SECTION .entry]
 [BITS 32]
-;skip data definition
+; skip data definition
 jmp start
+
+; MultiBoot Header
+GRUB_MAGIC equ 0x2BADB002
+MULTIBOOT_MAGIC_NUMBER equ 0x1BADB002
+MULTIBOOT_FLAGS equ 0x10003
+MULTIBOOT_CHECK_SUM equ - (MULTIBOOT_MAGIC_NUMBER + MULTIBOOT_FLAGS)
+MULTIBOOT_HEADER:
+dd MULTIBOOT_MAGIC_NUMBER
+dd MULTIBOOT_FLAGS
+dd MULTIBOOT_CHECK_SUM
+
+dd MULTIBOOT_HEADER
+dd MULTIBOOT_HEADER
+dd 0
+dd 0
+dd entry_32
+
 ; here we need to construct a dummy gdt as well as a dummy page table(As simple as possible, maps 1G page sounds good)
 ; for page table we only need 4 gigs since that's the maximum mem one can access in protected mode(without PAE)
 ; flags are hard-coded... highly not recommended but for our purpose it's enough

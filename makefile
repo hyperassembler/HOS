@@ -14,7 +14,7 @@ C_SRC_PATH_32 := x86/src/c
 
 ASM_SRC_PATH_32 := x86/src/asm
 
-C_FLAGS_32 := -m32 -std=c11 -c -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra
+C_FLAGS_32 := -m32 -std=c11 -g -c -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra
 
 ASM_FLAGS_32 := -f elf32 -I $(ASM_SRC_PATH_32)/
 
@@ -28,7 +28,7 @@ C_SRC_PATH_64 := x64/src/c
 
 ASM_SRC_PATH_64 := x64/src/asm
 
-C_FLAGS_64 := -m64 -std=c11 -c -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra
+C_FLAGS_64 := -m64 -std=c11 -g -c -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra
 
 ASM_FLAGS_64 := -f elf64 -I $(ASM_SRC_PATH_64)/
 
@@ -80,65 +80,55 @@ ALL_OBJ_FILES_32 := $(addprefix $(OUTPUT_DIR)/,$(C_OBJ_FILES_32)) $(addprefix $(
 ALL_OBJ_FILES_64 := $(addprefix $(OUTPUT_DIR)/,$(C_OBJ_FILES_64)) $(addprefix $(OUTPUT_DIR)/,$(ASM_OBJ_FILES_64))
 
 
+#Commands
+
+HOS: init compile link buildsymbol buildiso
 
 print_source:
 	$(info ${ALL_OUTPUT_DIRS})
 
-
-all : init compile link buildiso clean
-
-
-
 init:
-	sudo mkdir -p $(ALL_OUTPUT_DIRS)
-
-
+	mkdir -p $(ALL_OUTPUT_DIRS)
 
 compile: $(C_OBJ_FILES_32) $(ASM_OBJ_FILES_32) $(C_OBJ_FILES_64) $(ASM_OBJ_FILES_64)
 
 
-
 link: $(KERNEL_BIN_32) $(KERNEL_BIN_64)
 
-
-
-clean:
-	sudo rm -rf $(OUTPUT_DIR)
+buildsymbol:
+	objcopy --only-keep-debug $(OUTPUT_DIR)/$(KERNEL_BIN_32) $(OUTPUT_DIR)/$(KERNEL_BIN_32).debug
+	objcopy --only-keep-debug $(OUTPUT_DIR)/$(KERNEL_BIN_64) $(OUTPUT_DIR)/$(KERNEL_BIN_64).debug
+	objcopy --strip-debug $(OUTPUT_DIR)/$(KERNEL_BIN_32)
+	objcopy --strip-debug $(OUTPUT_DIR)/$(KERNEL_BIN_64)
 
 buildiso:
-	sudo mkdir -p $(OUTPUT_DIR)/temp_iso/HOS
-	sudo mkdir -p $(OUTPUT_DIR)/temp_iso/boot
-	sudo mkdir -p $(OUTPUT_DIR)/temp_iso/boot/grub
-	sudo mv $(OUTPUT_DIR)/$(KERNEL_BIN_64) $(OUTPUT_DIR)/temp_iso/HOS/kernel64
-	sudo mv $(OUTPUT_DIR)/$(KERNEL_BIN_32) $(OUTPUT_DIR)/temp_iso/HOS/kernel32
-	sudo cp $(GRUB_CFG) $(OUTPUT_DIR)/temp_iso/boot/grub/
-	sudo grub-mkrescue -o HOS.iso $(OUTPUT_DIR)/temp_iso
+	mkdir -p $(OUTPUT_DIR)/temp_iso/HOS
+	mkdir -p $(OUTPUT_DIR)/temp_iso/boot
+	mkdir -p $(OUTPUT_DIR)/temp_iso/boot/grub
+	mv $(OUTPUT_DIR)/$(KERNEL_BIN_64) $(OUTPUT_DIR)/temp_iso/HOS/kernel64
+	mv $(OUTPUT_DIR)/$(KERNEL_BIN_32) $(OUTPUT_DIR)/temp_iso/HOS/kernel32
+	cp $(GRUB_CFG) $(OUTPUT_DIR)/temp_iso/boot/grub/
+	grub-mkrescue -o $(OUTPUT_DIR)/HOS.iso $(OUTPUT_DIR)/temp_iso
+	rm -rf $(OUTPUT_DIR)/temp_iso
+
+clean:
+	rm -rf $(OUTPUT_DIR)
 
 %.o32: %.c
-	sudo $(CC) $(C_FLAGS_32) -o $(OUTPUT_DIR)/$@ $^
-
-
+	$(CC) $(C_FLAGS_32) -o $(OUTPUT_DIR)/$@ $^
 
 %.o64: %.c
-	sudo $(CC) $(C_FLAGS_64) -o $(OUTPUT_DIR)/$@ $^
-
-
+	$(CC) $(C_FLAGS_64) -o $(OUTPUT_DIR)/$@ $^
 
 %.oa32: %.asm
-	sudo $(ASM) $(ASM_FLAGS_32) -o $(OUTPUT_DIR)/$@ $^
-
-
+	$(ASM) $(ASM_FLAGS_32) -o $(OUTPUT_DIR)/$@ $^
 
 %.oa64: %.asm
-	sudo $(ASM) $(ASM_FLAGS_64) -o $(OUTPUT_DIR)/$@ $^
-
-
+	$(ASM) $(ASM_FLAGS_64) -o $(OUTPUT_DIR)/$@ $^
 
 $(KERNEL_BIN_32): $(ALL_OBJ_FILES_32)
-	sudo $(LD) $(LD_FLAGS_32) -T $(LD_SCRIPT_32) -o $(OUTPUT_DIR)/$(KERNEL_BIN_32) $(ALL_OBJ_FILES_32)
-
-
+	$(LD) $(LD_FLAGS_32) -T $(LD_SCRIPT_32) -o $(OUTPUT_DIR)/$(KERNEL_BIN_32) $(ALL_OBJ_FILES_32)
 
 $(KERNEL_BIN_64): $(ALL_OBJ_FILES_64)
-	sudo $(LD) $(LD_FLAGS_64) -T $(LD_SCRIPT_64) -o $(OUTPUT_DIR)/$(KERNEL_BIN_64) $(ALL_OBJ_FILES_64)
+	$(LD) $(LD_FLAGS_64) -T $(LD_SCRIPT_64) -o $(OUTPUT_DIR)/$(KERNEL_BIN_64) $(ALL_OBJ_FILES_64)
 
