@@ -2,7 +2,6 @@
 #include "../hal/hal.h"
 #include "../hal/print.h"
 #include "../hal/io.h"
-#include "../common/sys/sys_info.h"
 
 extern char kernel_start[];
 extern char kernel_end[];

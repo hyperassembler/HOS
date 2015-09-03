@@ -132,7 +132,7 @@ void NATIVE32 _print_hex(uint32_t number, uint32_t captial)
 {
     char const lookup_table_cap[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     char const lookup_table[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-    char const * const look_up = captial == 1 ? lookup_table_cap : lookup_table;
+    char const * const look_up = captial == 1 ? &lookup_table_cap[0] : &lookup_table[0];
     char arr[9];
     arr[8] = 0; //zero-terminated
     uint32_t index = 7;

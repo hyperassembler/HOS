@@ -1,7 +1,5 @@
 #include <stdint.h>
 #include "var.h"
-#include "mem.h"
-#include "../common/util/list/linked_list/linked_list.h"
 
 uint8_t g_gdt[8*9];
 uint8_t g_idt[21*16];
