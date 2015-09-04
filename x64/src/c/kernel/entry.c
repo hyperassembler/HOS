@@ -4,8 +4,8 @@
 #include "../hal/io.h"
 #include "../common/util/util.h"
 
-extern uint64_t kernel_start;
-extern uint64_t kernel_end;
+extern char kernel_start[];
+extern char kernel_end[];
 void NATIVE64 kmain(multiboot_info_t *multiboot_info)
 {
     boot_info_t* boot_info = hal_init(multiboot_info);

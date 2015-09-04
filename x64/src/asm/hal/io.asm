@@ -73,7 +73,6 @@ pushaq
 cld
 call hal_interrupt_handler_dummy
 popaq
-xchg bx,bx
 iretq
 
 hal_halt_cpu:

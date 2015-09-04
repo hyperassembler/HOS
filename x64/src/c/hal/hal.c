@@ -8,7 +8,7 @@
 
 boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info)
 {
-    text_pos = get_pos(3, 0);
+    text_pos = get_pos(0, 0);
 
     // get gdt ready
     hal_write_segment_descriptor((void *) &g_gdt[0], 0, 0, 0);
@@ -30,8 +30,8 @@ boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info)
     g_idt_ptr.limit = 21*16-1;
     hal_flush_idt(&g_idt_ptr);
 
-
     boot_info_t* boot_info = (boot_info_t*)hal_halloc(sizeof(boot_info_t));
+    BOCHS_MAGIC_BREAKPOINT();
     hal_assert(boot_info != NULL, "Unable to allocate memory for boot_info.");
     // obtain boot information
     // memory info
@@ -94,12 +94,6 @@ boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info)
             mem_copy((void*)(mods_list + i)->cmdline, each_module->name, str_len((char *) (mods_list + i)->cmdline) + 1);
             linked_list_add(boot_info->module_info->module_list, &each_module->list_node);
         }
-    }
-    else
-    {
-        // halt machine
-        hal_printf("HAL: Cannot detect kernel modules.");
-        hal_halt_cpu();
     }
 
     // detect APIC

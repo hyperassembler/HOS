@@ -40,7 +40,7 @@ void NATIVE64 hal_assert(int64_t expression, char* message)
     if(!expression)
     {
         hal_printf("HAL: Assertion failed. Detail: %s", message == NULL ? "NULL" : message);
+        hal_halt_cpu();
     }
-    hal_halt_cpu();
     return;
 }

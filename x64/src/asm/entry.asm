@@ -63,7 +63,6 @@ GDT64:                           ; Global Descriptor Table (64-bit).
     dq GDT64                     ; Base.
 
 entry_32:
-xchg bx,bx
 ; close interrupt
 cli
 
@@ -75,6 +74,9 @@ hlt
 
 ; set stack pointer
 mov esp, KERNEL_STACK
+
+; save multiboot_info*
+mov esi,ebx
 
 ; check x64 support
 call ensure_support_x64
@@ -181,6 +183,7 @@ mov ss,ax
 
 ; align 16 bytes like this for now
 mov rsp,KERNEL_STACK
+mov rdi,rsi ; multiboot_info*
 call kmain
 hlt
 
