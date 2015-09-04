@@ -38,7 +38,7 @@ LD_SCRIPT_64 := build/link64.ld
 
 GRUB_CFG := build/grub.cfg
 
-OUTPUT_DIR := tmp
+OUTPUT_DIR := out
 
 ALL_OUTPUT_DIRS := $(addprefix $(OUTPUT_DIR)/,$(call rdircard,*))
 
@@ -82,7 +82,8 @@ ALL_OBJ_FILES_64 := $(addprefix $(OUTPUT_DIR)/,$(C_OBJ_FILES_64)) $(addprefix $(
 
 #Commands
 
-HOS: init compile link buildsymbol buildiso
+HOS: init compile link buildiso clean
+# buildsymbol
 
 print_source:
 	$(info ${ALL_OUTPUT_DIRS})
@@ -108,7 +109,7 @@ buildiso:
 	mv $(OUTPUT_DIR)/$(KERNEL_BIN_64) $(OUTPUT_DIR)/temp_iso/HOS/kernel64
 	mv $(OUTPUT_DIR)/$(KERNEL_BIN_32) $(OUTPUT_DIR)/temp_iso/HOS/kernel32
 	cp $(GRUB_CFG) $(OUTPUT_DIR)/temp_iso/boot/grub/
-	grub-mkrescue -o $(OUTPUT_DIR)/HOS.iso $(OUTPUT_DIR)/temp_iso
+	grub-mkrescue -o HOS.iso $(OUTPUT_DIR)/temp_iso
 	rm -rf $(OUTPUT_DIR)/temp_iso
 
 clean:

@@ -63,12 +63,13 @@ GDT64:                           ; Global Descriptor Table (64-bit).
     dq GDT64                     ; Base.
 
 entry_32:
+xchg bx,bx
 ; close interrupt
 cli
 
 ; check loaded by grub
 cmp eax,GRUB_MAGIC
-jmp entry_32.loaded_by_grub
+je .loaded_by_grub
 hlt
 .loaded_by_grub:
 
@@ -132,7 +133,7 @@ mov cr0, eax                                   ; Set control register 0 to the A
 
 ; enter x64
 lgdt [GDT64.GDT64_PTR]
-jmp GDT64.SLCT_CODE:entry
+jmp SLCT_CODE:entry
 hlt
 
 ensure_support_x64:
@@ -171,7 +172,7 @@ ret
 [BITS 64]
 entry:
 cli
-mov ax,GDT64.SLCT_DATA
+mov ax,SLCT_DATA
 mov ds,ax
 mov es,ax
 mov fs,ax
