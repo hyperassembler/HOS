@@ -1,4 +1,6 @@
 extern kmain
+extern kernel_start
+extern kernel_end
 global BOCHS_MAGIC_BREAKPOINT
 global kernel_heap
 ; IMPORTANT: This module should be 4k-page aliened

@@ -109,7 +109,7 @@ avl_tree_node_t * NATIVE64 _avl_tree_node_insert(avl_tree_node_t *root, avl_tree
     return _avl_tree_node_balance(root);
 }
 
-void _swap_nodes(avl_tree_node_t *node1, avl_tree_node_t *node2)
+void _avl_tree_swap_nodes(avl_tree_node_t *node1, avl_tree_node_t *node2)
 {
     if (node1 == NULL || node2 == NULL)
         return;
@@ -271,7 +271,7 @@ avl_tree_node_t * NATIVE64 avl_tree_node_delete(avl_tree_node_t * root, avl_tree
             while(successor->left != NULL)
                 successor = successor->left;
             //swap fields
-            _swap_nodes(successor,root);
+            _avl_tree_swap_nodes(successor, root);
 
             // Detach the inorder successor
             successor->right = avl_tree_node_delete(successor->right, root, compare);

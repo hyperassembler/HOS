@@ -11,7 +11,6 @@ typedef struct
 {
     uint64_t base_addr;
     uint64_t size;
-    uint32_t type;
     linked_list_node_t list_node;
 } memory_descriptor_node_t;
 

@@ -42,7 +42,6 @@ void NATIVE32 write_segment_descriptor(void *const gdt, uint32_t const base, uin
 extern void NATIVE32 load_gdt(gdt_ptr_t const * const ptr, uint16_t const sel_code, uint16_t const sel_data);
 void NATIVE32 mem_cpy(void* src, void* dst, uint32_t size);
 void NATIVE32 mem_move(void* src, void* dst, uint32_t size);
-extern int32_t NATIVE32 support_x64(void);
 extern void disable_paging(void);
 extern void enable_paging(void);
 void NATIVE32 mem_set(void* src, int8_t const val,uint32_t size);

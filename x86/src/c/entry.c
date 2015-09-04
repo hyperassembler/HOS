@@ -9,7 +9,6 @@ uint8_t g_idt[8 * 256];
 idt_ptr_t g_idt_ptr;
 
 extern uint32_t text_pos;
-extern void init_x64(multiboot_info_t* multiboot_info);
 extern void BOCHS_MAGIC_BREAKPOINT(void);
 extern void HLT_CPU(void);
 extern char kernel_start[];
@@ -20,13 +19,6 @@ void NATIVE32 kmain(multiboot_info_t *multiboot_info)
     //init text_position
     text_pos = 0;
 
-    //detect architecture
-    if (support_x64() == 1)
-    {
-        kprintf("Architecture x64.\n\n");
-        init_x64(multiboot_info);
-    }
-    kprintf("Architecture x86.\n\n");
     kprintf("Kernel Loaded at 0x%X. Size: %uB, %uKB\n\n",kernel_start,(kernel_end-kernel_start),(kernel_end-kernel_start)/1024);
     //dummy descriptor
     write_segment_descriptor((void *) (&g_gdt[0]), 0, 0, 0);

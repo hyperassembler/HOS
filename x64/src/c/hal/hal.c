@@ -31,19 +31,19 @@ boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info)
     hal_flush_idt(&g_idt_ptr);
 
     boot_info_t* boot_info = (boot_info_t*)hal_halloc(sizeof(boot_info_t));
-    BOCHS_MAGIC_BREAKPOINT();
     hal_assert(boot_info != NULL, "Unable to allocate memory for boot_info.");
+    mem_set(boot_info,0, sizeof(boot_info_t));
     // obtain boot information
     // memory info
-    boot_info->mem_info = (mem_info_t*)hal_halloc(sizeof(mem_info_t));
-    hal_assert(boot_info->mem_info != NULL, "Unable to allocate memory for mem_info.");
-    boot_info->mem_info->mem_available = 0;
-    boot_info->mem_info->mem_reserved = 0;
-    boot_info->mem_info->mem_seg_list = (linked_list_t*)hal_halloc((sizeof(linked_list_t)));
-    hal_assert(boot_info->mem_info->mem_seg_list != NULL, "Unable to allocate memory for mem_seg_list.");
-    linked_list_init(boot_info->mem_info->mem_seg_list);
     if(m_info->flags & (1 << 6))
     {
+        boot_info->mem_info = (mem_info_t*)hal_halloc(sizeof(mem_info_t));
+        hal_assert(boot_info->mem_info != NULL, "Unable to allocate memory for mem_info.");
+        boot_info->mem_info->mem_available = 0;
+        boot_info->mem_info->mem_reserved = 0;
+        boot_info->mem_info->mem_seg_list = (linked_list_t*)hal_halloc((sizeof(linked_list_t)));
+        hal_assert(boot_info->mem_info->mem_seg_list != NULL, "Unable to allocate memory for mem_seg_list.");
+        linked_list_init(boot_info->mem_info->mem_seg_list);
         multiboot_memory_map_t const *mem_map = (multiboot_memory_map_t *) m_info->mmap_addr;
         uint64_t const mem_map_size = m_info->mmap_length / sizeof(multiboot_memory_map_t);
         for (int i = 0; i < mem_map_size; i++)
@@ -52,17 +52,16 @@ boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info)
             hal_assert(each_desc != NULL, "Unable to allocate memory for memory_descriptor.");
             each_desc->base_addr = (mem_map + i)->addr;
             each_desc->size =  (mem_map + i)->len;
-            if((mem_map + i)->type == MULTIBOOT_MEMORY_RESERVED)
+           if((mem_map + i)->type == MULTIBOOT_MEMORY_RESERVED)
             {
-                each_desc->type = MEMORY_RESERVED;
+
                 boot_info->mem_info->mem_reserved += (mem_map + i)->len;
             }
             else if ((mem_map + i)->type == MULTIBOOT_MEMORY_AVAILABLE)
             {
-                each_desc->type = MEMORY_AVAILABLE;
+                linked_list_add(boot_info->mem_info->mem_seg_list, &each_desc->list_node);
                 boot_info->mem_info->mem_available += (mem_map + i)->len;
             }
-            linked_list_add(boot_info->mem_info->mem_seg_list, &each_desc->list_node);
         }
     }
     else
@@ -73,14 +72,14 @@ boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info)
     }
 
     // loaded kernel modules
-    boot_info->module_info = (module_info_t*)hal_halloc(sizeof(module_info_t));
-    hal_assert(boot_info->module_info != NULL, "Unable to allocate memory for module_info.");
-    boot_info->module_info->module_count = 0;
-    boot_info->module_info->module_list = (linked_list_t*)hal_halloc(sizeof(linked_list_t));
-    hal_assert(boot_info->module_info->module_list != NULL, "Unable to allocate memory for module_list.");
-    linked_list_init(boot_info->module_info->module_list);
     if(m_info->flags & (1 << 3))
     {
+        boot_info->module_info = (module_info_t*)hal_halloc(sizeof(module_info_t));
+        hal_assert(boot_info->module_info != NULL, "Unable to allocate memory for module_info.");
+        boot_info->module_info->module_count = 0;
+        boot_info->module_info->module_list = (linked_list_t*)hal_halloc(sizeof(linked_list_t));
+        hal_assert(boot_info->module_info->module_list != NULL, "Unable to allocate memory for module_list.");
+        linked_list_init(boot_info->module_info->module_list);
         multiboot_module_t const * mods_list = (multiboot_module_t *)m_info->mods_addr;
         boot_info->module_info->module_count = m_info->mods_count;
         for (uint64_t i = 0; i < boot_info->module_info->module_count; i++)
