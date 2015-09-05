@@ -3,8 +3,6 @@
 
 #include "../common/util/list/linked_list/linked_list.h"
 
-#define PHYSICAL_PAGE_SIZE 4096
-
 void pmm_init(linked_list_t* occupied, linked_list_t* available);
 
 void*pmm_alloc_page();

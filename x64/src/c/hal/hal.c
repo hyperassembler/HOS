@@ -5,6 +5,7 @@
 #include "var.h"
 #include "../common/lib/str.h"
 #include "../common/lib/mem.h"
+#include "../common/sys/sys_info.h"
 
 boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info)
 {
@@ -40,28 +41,71 @@ boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info)
         boot_info->mem_info = (mem_info_t*)hal_halloc(sizeof(mem_info_t));
         hal_assert(boot_info->mem_info != NULL, "Unable to allocate memory for mem_info.");
         boot_info->mem_info->mem_available = 0;
-        boot_info->mem_info->mem_reserved = 0;
-        boot_info->mem_info->mem_seg_list = (linked_list_t*)hal_halloc((sizeof(linked_list_t)));
-        hal_assert(boot_info->mem_info->mem_seg_list != NULL, "Unable to allocate memory for mem_seg_list.");
-        linked_list_init(boot_info->mem_info->mem_seg_list);
+        boot_info->mem_info->mem_installed = 0;
+        boot_info->mem_info->free_page_list = (linked_list_t*)hal_halloc((sizeof(linked_list_t)));
+        boot_info->mem_info->occupied_page_list = (linked_list_t*)hal_halloc((sizeof(linked_list_t)));
+        hal_assert(boot_info->mem_info->free_page_list != NULL &&
+                   boot_info->mem_info->occupied_page_list != NULL
+                , "Unable to allocate memory for mem_info_lists.");
+        linked_list_init(boot_info->mem_info->free_page_list);
+        linked_list_init(boot_info->mem_info->occupied_page_list);
         multiboot_memory_map_t const *mem_map = (multiboot_memory_map_t *) m_info->mmap_addr;
         uint64_t const mem_map_size = m_info->mmap_length / sizeof(multiboot_memory_map_t);
         for (int i = 0; i < mem_map_size; i++)
         {
-            memory_descriptor_node_t* each_desc = (memory_descriptor_node_t*)hal_halloc(sizeof(memory_descriptor_node_t));
-            hal_assert(each_desc != NULL, "Unable to allocate memory for memory_descriptor.");
-            each_desc->base_addr = (mem_map + i)->addr;
-            each_desc->size =  (mem_map + i)->len;
-           if((mem_map + i)->type == MULTIBOOT_MEMORY_RESERVED)
+            hal_printf("\n==Base: 0x%X, Length: %u, Type: %s==", (mem_map + i)->addr, (mem_map + i)->len,
+                       (mem_map + i)->type== MULTIBOOT_MEMORY_AVAILABLE ? "AVL" : "RSV");
+            if ((mem_map + i)->type == MULTIBOOT_MEMORY_AVAILABLE)
             {
+                uint64_t base_addr = (mem_map + i)->addr;
+                uint64_t end_addr = base_addr + (mem_map + i)->len;
 
-                boot_info->mem_info->mem_reserved += (mem_map + i)->len;
+                // align head
+                uint64_t aligned_base_addr = ALIGN_UP(base_addr, PHYSICAL_PAGE_SIZE);
+                // align tail
+                uint64_t aligned_end_addr = ALIGN_DOWN(end_addr, PHYSICAL_PAGE_SIZE);
+
+
+                uint64_t page_count =  (aligned_end_addr - aligned_base_addr) / PHYSICAL_PAGE_SIZE;
+
+                if(page_count == 0)
+                    continue;
+
+                // strip kernel-occupied pages
+                // TODO: Finished this.
+//                uint64_t aligned_kernel_base = ALIGN_DOWN((uint64_t)kernel_start, PHYSICAL_PAGE_SIZE);
+//                uint64_t aligned_kernel_end = ALIGN_UP((uint64_t)kernel_end, PHYSICAL_PAGE_SIZE);
+//                if(IS_OVERLAP(aligned_base_addr,aligned_end_addr,aligned_kernel_base,aligned_kernel_end))
+//                {
+//                    uint64_t overlap_pages = (MIN(aligned_kernel_end, aligned_end_addr)
+//                                        - MAX(aligned_kernel_base, aligned_base_addr)) / PHYSICAL_PAGE_SIZE;
+//
+//                    if(overlap_pages != 0)
+//                    {
+//                        // if there is overlap, add to occupied list
+//                        memory_descriptor_node_t *occupied_desc = (memory_descriptor_node_t *) hal_halloc(
+//                                sizeof(memory_descriptor_node_t));
+//                        hal_assert(occupied_desc != NULL, "Unable to allocate memory for memory_descriptor.");
+//                        occupied_desc->base_addr = aligned_kernel_base;
+//                        occupied_desc->page_count = overlap_pages;
+//                        linked_list_add(boot_info->mem_info->occupied_page_list, &occupied_desc->list_node);
+//
+//                        // also adjust corresponding segment
+//                        page_count = page_count - overlap_pages;
+//                        if(page_count == 0) // if kernel occupies the whole segment, continue
+//                            continue;
+//
+//                    }
+//                }
+
+                memory_descriptor_node_t* each_desc = (memory_descriptor_node_t*)hal_halloc(sizeof(memory_descriptor_node_t));
+                hal_assert(each_desc != NULL, "Unable to allocate memory for memory_descriptor.");
+                each_desc->page_count = page_count;
+                each_desc->base_addr = aligned_base_addr;
+                linked_list_add(boot_info->mem_info->free_page_list, &each_desc->list_node);
+                boot_info->mem_info->mem_available += aligned_end_addr-aligned_base_addr;
             }
-            else if ((mem_map + i)->type == MULTIBOOT_MEMORY_AVAILABLE)
-            {
-                linked_list_add(boot_info->mem_info->mem_seg_list, &each_desc->list_node);
-                boot_info->mem_info->mem_available += (mem_map + i)->len;
-            }
+            boot_info->mem_info->mem_installed += (mem_map + i)->len;
         }
     }
     else

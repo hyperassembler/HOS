@@ -40,17 +40,17 @@ void* pmm_alloc_page()
         return NULL;
     for(int i = 0; i < available_mem->size; i++)
     {
-        memory_descriptor_node_t* each_node = OBTAIN_STRUCT_ADDR(linked_list_get(available_mem,i),list_node,memory_descriptor_node_t);
-        if(each_node->size >= PHYSICAL_PAGE_SIZE)
-        {
-            uint64_t address = each_node->base_addr;
-            // found, add to occupied list and return
-            each_node->size = each_node->size - PHYSICAL_PAGE_SIZE;
-            each_node->base_addr = each_node->base_addr + PHYSICAL_PAGE_SIZE;
-
-
-            return (void*)address;
-        }
+//        memory_descriptor_node_t* each_node = OBTAIN_STRUCT_ADDR(linked_list_get(available_mem,i),list_node,memory_descriptor_node_t);
+//        if(each_node->size >= PHYSICAL_PAGE_SIZE)
+//        {
+//            uint64_t address = each_node->base_addr;
+//            // found, add to occupied list and return
+//            each_node->size = each_node->size - PHYSICAL_PAGE_SIZE;
+//            each_node->base_addr = each_node->base_addr + PHYSICAL_PAGE_SIZE;
+//
+//
+//            return (void*)address;
+//        }
     }
 
     // not found

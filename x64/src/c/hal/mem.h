@@ -64,6 +64,8 @@
 
 #define PAGE_ENTRY_BASE(PAGE_ENTRY) ((PAGE_ENTRY) & 0xFFFFFFFFFF000)
 
+#define PHYSICAL_PAGE_SIZE 4096
+
 typedef struct __attribute__ ((packed))
 {
     uint16_t limit;

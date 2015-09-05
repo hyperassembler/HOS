@@ -10,13 +10,14 @@
 typedef struct
 {
     uint64_t base_addr;
-    uint64_t size;
+    uint64_t page_count;
     linked_list_node_t list_node;
 } memory_descriptor_node_t;
 
 typedef struct {
-    linked_list_t* mem_seg_list;     // a list containing memory_descriptor_node_t nodes
-    uint64_t mem_reserved;
+    linked_list_t* free_page_list;     // a list containing memory_descriptor_node_t nodes
+    linked_list_t* occupied_page_list;
+    uint64_t mem_installed;
     uint64_t mem_available;
 } mem_info_t;
 

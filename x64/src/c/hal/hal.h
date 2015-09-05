@@ -9,7 +9,11 @@
 extern void NATIVE64 hal_spin_lock(uint32_t * lock);
 extern void NATIVE64 hal_spin_unlock(uint32_t * lock);
 
-//inti
+// loaded kernel addr
+extern char kernel_start[];
+extern char kernel_end[];
+
+//hal
 boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info);
 
 //debug
