@@ -193,8 +193,6 @@ BOCHS_MAGIC_BREAKPOINT:
 xchg bx,bx
 ret
 
-[SECTION .heap]
-[BITS 64]
 align 4096 ;4k alignment
 kernel_heap:
 times 4096 db 0

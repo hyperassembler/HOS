@@ -4,35 +4,25 @@ SECTIONS
   . = 0x1000000;
   kernel_start = .;
 
-  .entry :
+  .entry : ALIGN(0x1000)
   {
     *(.entry)
   }
 
-  .text :
+  .text : ALIGN(0x1000)
   {
     *(.text)
   }
 
-  .data :
+  .data : ALIGN(0x1000)
   {
     *(.data)
     *(.rodata)
   }
 
-  .bss :
+  .bss : ALIGN(0x1000)
   {
     *(.bss)
-  }
-
-  .stack :
-  {
-    *(.stack)
-  }
-
-  .heap :
-  {
-    *(.heap)
   }
 
   kernel_end = .;
