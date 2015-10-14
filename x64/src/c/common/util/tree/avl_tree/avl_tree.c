@@ -3,19 +3,19 @@
 
 #define MAX(a, b) (((a) > (b) ? (a) : (b)))
 
-int NATIVE64 _avl_tree_node_get_height(avl_tree_node_t *node)
+int _KERNEL_ABI _avl_tree_node_get_height(avl_tree_node_t *node)
 {
     return node == NULL ? -1 : node->height;
 }
 
-int NATIVE64 _avl_tree_node_get_balance_factor(avl_tree_node_t *node)
+int _KERNEL_ABI _avl_tree_node_get_balance_factor(avl_tree_node_t *node)
 {
     if (node == NULL)
         return 0;
     return _avl_tree_node_get_height(node->left) - _avl_tree_node_get_height(node->right);
 }
 
-avl_tree_node_t * NATIVE64 _avl_tree_node_right_rotate(avl_tree_node_t *root)
+avl_tree_node_t *_KERNEL_ABI _avl_tree_node_right_rotate(avl_tree_node_t *root)
 {
     avl_tree_node_t *left_children = root->left;
     //adjust parents first
@@ -32,7 +32,7 @@ avl_tree_node_t * NATIVE64 _avl_tree_node_right_rotate(avl_tree_node_t *root)
     return left_children;
 }
 
-avl_tree_node_t * NATIVE64 _avl_tree_node_left_rotate(avl_tree_node_t *root)
+avl_tree_node_t *_KERNEL_ABI _avl_tree_node_left_rotate(avl_tree_node_t *root)
 {
     avl_tree_node_t *right_children = root->right;
     //adjust parents
@@ -49,7 +49,7 @@ avl_tree_node_t * NATIVE64 _avl_tree_node_left_rotate(avl_tree_node_t *root)
     return right_children;
 }
 
-avl_tree_node_t * NATIVE64 _avl_tree_node_balance(avl_tree_node_t *node)
+avl_tree_node_t *_KERNEL_ABI _avl_tree_node_balance(avl_tree_node_t *node)
 {
     const int bf = _avl_tree_node_get_balance_factor(node);
 
@@ -86,7 +86,7 @@ avl_tree_node_t * NATIVE64 _avl_tree_node_balance(avl_tree_node_t *node)
 
 }
 
-avl_tree_node_t * NATIVE64 _avl_tree_node_insert(avl_tree_node_t *root, avl_tree_node_t *node, int(*compare)(void *, void *), avl_tree_node_t *parent)
+avl_tree_node_t *_KERNEL_ABI _avl_tree_node_insert(avl_tree_node_t *root, avl_tree_node_t *node, int(*compare)(void *, void *), avl_tree_node_t *parent)
 {
     if (node == NULL)
         return root;
@@ -232,12 +232,12 @@ void _avl_tree_swap_nodes(avl_tree_node_t *node1, avl_tree_node_t *node2)
 }
 
 //Interface
-avl_tree_node_t * NATIVE64 avl_tree_node_insert(avl_tree_node_t * root, avl_tree_node_t * node, int(*compare)(void*,void*))
+avl_tree_node_t *_KERNEL_ABI avl_tree_node_insert(avl_tree_node_t * root, avl_tree_node_t * node, int(*compare)(void*, void*))
 {
     return _avl_tree_node_insert(root, node, compare, NULL);
 }
 
-avl_tree_node_t * NATIVE64 avl_tree_node_delete(avl_tree_node_t * root, avl_tree_node_t * node, int (*compare)(void *, void *))
+avl_tree_node_t *_KERNEL_ABI avl_tree_node_delete(avl_tree_node_t * root, avl_tree_node_t * node, int (*compare)(void *, void *))
 {
     if (root == NULL || node == NULL)
         return root;
@@ -286,7 +286,7 @@ avl_tree_node_t * NATIVE64 avl_tree_node_delete(avl_tree_node_t * root, avl_tree
     return root;
 }
 
-avl_tree_node_t * NATIVE64 avl_tree_node_search(avl_tree_node_t *root, avl_tree_node_t * node, int(*compare)(void *, void *))
+avl_tree_node_t *_KERNEL_ABI avl_tree_node_search(avl_tree_node_t *root, avl_tree_node_t * node, int(*compare)(void *, void *))
 {
     if(root == NULL)
         return NULL;
@@ -299,7 +299,7 @@ avl_tree_node_t * NATIVE64 avl_tree_node_search(avl_tree_node_t *root, avl_tree_
         return avl_tree_node_search(root->left, node, compare);
 }
 
-void NATIVE64 avl_tree_node_init(avl_tree_node_t * it)
+void _KERNEL_ABI avl_tree_node_init(avl_tree_node_t * it)
 {
     if(it != NULL)
     {
@@ -312,7 +312,7 @@ void NATIVE64 avl_tree_node_init(avl_tree_node_t * it)
 }
 
 
-avl_tree_node_t * NATIVE64 avl_tree_node_smallest(avl_tree_node_t *root)
+avl_tree_node_t *_KERNEL_ABI avl_tree_node_smallest(avl_tree_node_t *root)
 {
     if (root == NULL)
         return NULL;
@@ -321,7 +321,7 @@ avl_tree_node_t * NATIVE64 avl_tree_node_smallest(avl_tree_node_t *root)
     return root;
 }
 
-avl_tree_node_t * NATIVE64 avl_tree_node_largest(avl_tree_node_t *root)
+avl_tree_node_t *_KERNEL_ABI avl_tree_node_largest(avl_tree_node_t *root)
 {
     if (root == NULL)
         return NULL;
@@ -331,7 +331,7 @@ avl_tree_node_t * NATIVE64 avl_tree_node_largest(avl_tree_node_t *root)
 }
 
 
-avl_tree_node_t * NATIVE64 avl_tree_node_next(avl_tree_node_t *it)
+avl_tree_node_t *_KERNEL_ABI avl_tree_node_next(avl_tree_node_t *it)
 {
     if (it == NULL)
         return NULL;
@@ -355,7 +355,7 @@ avl_tree_node_t * NATIVE64 avl_tree_node_next(avl_tree_node_t *it)
     }
 }
 
-avl_tree_node_t * NATIVE64 avl_tree_node_prev(avl_tree_node_t *it)
+avl_tree_node_t *_KERNEL_ABI avl_tree_node_prev(avl_tree_node_t *it)
 {
     if (it == NULL)
         return NULL;
@@ -385,7 +385,7 @@ avl_tree_node_t * avl_tree_search(avl_tree_t *tree, avl_tree_node_t * node, int 
 }
 
 
-void NATIVE64 avl_tree_insert(avl_tree_t *tree, void *data, int (*compare)(void *, void *))
+void _KERNEL_ABI avl_tree_insert(avl_tree_t *tree, void *data, int (*compare)(void *, void *))
 {
     if(tree != NULL && data != NULL && compare != NULL)
     {
@@ -398,7 +398,7 @@ void NATIVE64 avl_tree_insert(avl_tree_t *tree, void *data, int (*compare)(void 
     return;
 }
 
-void NATIVE64 avl_tree_delete(avl_tree_t *tree, void *data, int (*compare)(void *, void *))
+void _KERNEL_ABI avl_tree_delete(avl_tree_t *tree, void *data, int (*compare)(void *, void *))
 {
     if(tree != NULL && data != NULL && compare != NULL && tree->size != 0)
     {
@@ -411,7 +411,7 @@ void NATIVE64 avl_tree_delete(avl_tree_t *tree, void *data, int (*compare)(void 
     return;
 }
 
-void NATIVE64 avl_tree_init(avl_tree_t * tree)
+void _KERNEL_ABI avl_tree_init(avl_tree_t * tree)
 {
     if(tree != NULL)
     {
@@ -422,14 +422,14 @@ void NATIVE64 avl_tree_init(avl_tree_t * tree)
 }
 // TESTS
 
-int NATIVE64 avl_tree_node_calculate_height(avl_tree_node_t *tree)
+int _KERNEL_ABI avl_tree_node_calculate_height(avl_tree_node_t *tree)
 {
     if (tree == NULL)
         return -1;
     return MAX(avl_tree_node_calculate_height(tree->left), avl_tree_node_calculate_height(tree->right)) + 1;
 }
 
-int NATIVE64 avl_tree_node_test(avl_tree_node_t *tree, int (*compare)(void*,void*))
+int _KERNEL_ABI avl_tree_node_test(avl_tree_node_t *tree, int (*compare)(void*, void*))
 {
     if (tree == NULL)
         return 1;

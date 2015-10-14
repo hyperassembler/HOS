@@ -6,17 +6,17 @@
 #include "../common/sys/sys_info.h"
 
 //concurrency
-extern void NATIVE64 hal_spin_lock(uint32_t * lock);
-extern void NATIVE64 hal_spin_unlock(uint32_t * lock);
+extern void _KERNEL_ABI hal_spin_lock(uint32_t * lock);
+extern void _KERNEL_ABI hal_spin_unlock(uint32_t * lock);
 
 // loaded kernel addr
 extern char kernel_start[];
 extern char kernel_end[];
 
 //hal
-boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info);
+boot_info_t*_KERNEL_ABI hal_init(multiboot_info_t* m_info);
 
 //debug
-extern void NATIVE64 BOCHS_MAGIC_BREAKPOINT();
+extern void _KERNEL_ABI BOCHS_MAGIC_BREAKPOINT();
 
 #endif

@@ -1,7 +1,7 @@
 #include "../../../sys/kdef.h"
 #include "linked_list.h"
 
-void NATIVE64 linked_list_node_init(linked_list_node_t * node)
+void _KERNEL_ABI linked_list_node_init(linked_list_node_t * node)
 {
     if(node != NULL)
     {
@@ -11,7 +11,7 @@ void NATIVE64 linked_list_node_init(linked_list_node_t * node)
     return;
 }
 
-linked_list_node_t * NATIVE64 linked_list_node_get(linked_list_node_t * head, int index)
+linked_list_node_t *_KERNEL_ABI linked_list_node_get(linked_list_node_t * head, int index)
 {
     if(head == NULL || index < 0)
         return NULL;
@@ -24,7 +24,7 @@ linked_list_node_t * NATIVE64 linked_list_node_get(linked_list_node_t * head, in
     return head;
 }
 
-int NATIVE64 linked_list_node_size(linked_list_node_t * head)
+int _KERNEL_ABI linked_list_node_size(linked_list_node_t * head)
 {
     int i = 0;
     while(head != NULL)
@@ -36,7 +36,7 @@ int NATIVE64 linked_list_node_size(linked_list_node_t * head)
 }
 
 //returns new head
-linked_list_node_t * NATIVE64 linked_list_node_insert(linked_list_node_t * head, int index, linked_list_node_t * node)
+linked_list_node_t *_KERNEL_ABI linked_list_node_insert(linked_list_node_t * head, int index, linked_list_node_t * node)
 {
     if(head == NULL)
         return node;
@@ -65,7 +65,7 @@ linked_list_node_t * NATIVE64 linked_list_node_insert(linked_list_node_t * head,
     }
 }
 
-void NATIVE64 linked_list_node_add(linked_list_node_t * head, linked_list_node_t * node)
+void _KERNEL_ABI linked_list_node_add(linked_list_node_t * head, linked_list_node_t * node)
 {
     if(head == NULL || node == NULL)
         return;
@@ -75,7 +75,7 @@ void NATIVE64 linked_list_node_add(linked_list_node_t * head, linked_list_node_t
 }
 
 //returns new head
-linked_list_node_t * NATIVE64 linked_list_node_remove(linked_list_node_t *head, int index)
+linked_list_node_t *_KERNEL_ABI linked_list_node_remove(linked_list_node_t *head, int index)
 {
     if(head == NULL || index < 0)
         return head;
@@ -102,7 +102,7 @@ linked_list_node_t * NATIVE64 linked_list_node_remove(linked_list_node_t *head, 
 }
 
 
-void NATIVE64 linked_list_init(linked_list_t * list)
+void _KERNEL_ABI linked_list_init(linked_list_t * list)
 {
     if(list != NULL)
     {
@@ -112,7 +112,7 @@ void NATIVE64 linked_list_init(linked_list_t * list)
     return;
 }
 
-void NATIVE64 linked_list_add(linked_list_t * list, linked_list_node_t * node)
+void _KERNEL_ABI linked_list_add(linked_list_t * list, linked_list_node_t * node)
 {
     if(list != NULL && node != NULL)
     {
@@ -128,7 +128,7 @@ void NATIVE64 linked_list_add(linked_list_t * list, linked_list_node_t * node)
     return;
 }
 
-void NATIVE64 linked_list_insert(linked_list_t * list, int index, linked_list_node_t * node)
+void _KERNEL_ABI linked_list_insert(linked_list_t * list, int index, linked_list_node_t * node)
 {
     if(list != NULL && index > 0 && node != NULL)
     {
@@ -138,14 +138,14 @@ void NATIVE64 linked_list_insert(linked_list_t * list, int index, linked_list_no
     return;
 }
 
-linked_list_node_t * NATIVE64 linked_list_get(linked_list_t * list, int index)
+linked_list_node_t *_KERNEL_ABI linked_list_get(linked_list_t * list, int index)
 {
     if(list == NULL || index < 0 || index >= list->size)
         return NULL;
     return linked_list_node_get(list->head,index);
 }
 
-void NATIVE64 linked_list_remove(linked_list_t *list, int index)
+void _KERNEL_ABI linked_list_remove(linked_list_t *list, int index)
 {
     if(list != NULL && index >= 0 && index < list->size)
     {

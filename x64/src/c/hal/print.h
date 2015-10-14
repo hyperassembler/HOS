@@ -7,7 +7,7 @@
 #define get_row(pos) (pos / 80)
 #define get_pos(row,col) ((row) * 80 + (col))
 
-void NATIVE64 hal_clear_screen(void);
-void NATIVE64 hal_printf(char const *format, ...);
+void _KERNEL_ABI hal_clear_screen(void);
+void _KERNEL_ABI hal_printf(char const *format, ...);
 
 #endif

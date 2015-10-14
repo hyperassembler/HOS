@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdarg.h>
 
-#define NATIVE64 __attribute__((sysv_abi))
+#define _KERNEL_ABI __attribute__((sysv_abi))
 
 #define ALIGN_DOWN(val, alignment) (((val) / (alignment)) * (alignment))
 
@@ -17,5 +17,15 @@
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 
 #define SEG_SELECTOR(Index,RPL) (((Index) << 3) + (RPL))
+
+#define _IN_OPT
+#define _OUT_OPT
+#define _IN
+#define _OUT
+
+typedef enum {
+    KERNEL_STATUS_SUCCESS = 0,
+    KERNEL_STATUS_FAIL = 1
+} kernel_status_t;
 
 #endif

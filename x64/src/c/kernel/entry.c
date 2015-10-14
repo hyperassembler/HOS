@@ -7,7 +7,7 @@
 #include "../common/util/list/linked_list/linked_list.h"
 
 
-void NATIVE64 kmain(multiboot_info_t *multiboot_info)
+void _KERNEL_ABI kmain(multiboot_info_t *multiboot_info)
 {
     boot_info_t* boot_info = hal_init(multiboot_info);
 

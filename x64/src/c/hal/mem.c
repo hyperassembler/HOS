@@ -6,7 +6,7 @@
 char* _cur_heap = NULL;
 extern char kernel_heap[kernel_heap_size];
 
-void NATIVE64 hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr)
+void _KERNEL_ABI hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr)
 {
     if(base == NULL)
         return;
@@ -22,7 +22,7 @@ void NATIVE64 hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64
     return;
 }
 
-void NATIVE64 hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr)
+void _KERNEL_ABI hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr)
 {
     if(base == NULL)
         return;
@@ -38,7 +38,7 @@ void NATIVE64 hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint6
     return;
 }
 
-void NATIVE64 hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr)
+void _KERNEL_ABI hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr)
 {
     if(base == NULL)
         return;
@@ -54,7 +54,7 @@ void NATIVE64 hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uin
     return;
 }
 
-void NATIVE64 hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr)
+void _KERNEL_ABI hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr)
 {
     if(base == NULL)
         return;
@@ -70,7 +70,7 @@ void NATIVE64 hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, u
     return;
 }
 
-void NATIVE64 hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr)
+void _KERNEL_ABI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr)
 {
     if (gdt == NULL)
         return;
@@ -86,13 +86,13 @@ void NATIVE64 hal_write_segment_descriptor(void *const gdt, uint32_t const base,
     return;
 }
 
-void NATIVE64 hal_create_initial_page_table(void* const base, uint64_t size)
+void _KERNEL_ABI hal_create_initial_page_table(void* const base, uint64_t size)
 {
 
 };
 
 
-//uint64_t NATIVE64 hal_map_page(void* const base, uint64_t const p_addr, uint64_t const v_addr, uint64_t const flags)
+//uint64_t _KERNEL_ABI hal_map_page(void* const base, uint64_t const p_addr, uint64_t const v_addr, uint64_t const flags)
 //{
 //    // assume the initial page table has already been allocated
 //
@@ -134,7 +134,7 @@ void NATIVE64 hal_create_initial_page_table(void* const base, uint64_t size)
 //    return 0;
 //}
 
-void*NATIVE64 hal_halloc(size_t const size)
+void*_KERNEL_ABI hal_halloc(size_t const size)
 {
     if(_cur_heap == NULL)
         _cur_heap = kernel_heap;
@@ -147,7 +147,7 @@ void*NATIVE64 hal_halloc(size_t const size)
     return NULL;
 }
 
-void NATIVE64 hal_hfree(void *ptr)
+void _KERNEL_ABI hal_hfree(void *ptr)
 {
     return;
 }

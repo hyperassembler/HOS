@@ -1,6 +1,6 @@
 #include "str.h"
 
-uint64_t NATIVE64 str_len(char const *str)
+uint64_t _KERNEL_ABI str_len(char const *str)
 {
     uint64_t length = 0;
     if(str == NULL)
@@ -13,7 +13,7 @@ uint64_t NATIVE64 str_len(char const *str)
     return length;
 }
 
-uint64_t NATIVE64 str_cmp(char const *str1, char const *str2)
+uint64_t _KERNEL_ABI str_cmp(char const *str1, char const *str2)
 {
     if(str1 == NULL || str2 == NULL)
         return 0;

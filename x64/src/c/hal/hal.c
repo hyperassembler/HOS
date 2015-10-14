@@ -7,7 +7,7 @@
 #include "../common/lib/mem.h"
 #include "../common/sys/sys_info.h"
 
-boot_info_t* NATIVE64 hal_init(multiboot_info_t* m_info)
+boot_info_t*_KERNEL_ABI hal_init(multiboot_info_t* m_info)
 {
     text_pos = get_pos(0, 0);
 
