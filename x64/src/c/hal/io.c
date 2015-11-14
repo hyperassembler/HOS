@@ -8,44 +8,45 @@ void hal_interrupt_handler_dummy(void)
 }
 
 
-kernel_status_t _KERNEL_ABI hal_write_gate(_IN void *const gate,
-                                           _IN uint64_t const offset,
-                                           _IN uint32_t const selector,
-                                           _IN uint32_t const attr)
+void _KERNEL_ABI hal_write_gate(_IN void *const gate,
+                                _IN uint64_t const offset,
+                                _IN uint32_t const selector,
+                                _IN uint32_t const attr)
 {
-    ((uint8_t*)gate)[0] = (uint8_t)(offset & 0xFF);
-    ((uint8_t*)gate)[1] = (uint8_t)((offset >> 8) & 0xFF);
-    ((uint8_t*)gate)[2] = (uint8_t)(selector & 0xFF);
-    ((uint8_t*)gate)[3] = (uint8_t)((selector >> 8) & 0xFF);
-    ((uint8_t*)gate)[4] = (uint8_t)(attr & 0xFF);
-    ((uint8_t*)gate)[5] = (uint8_t)((attr >> 8) & 0xFF);
-    ((uint8_t*)gate)[6] = (uint8_t)((offset >> 16) & 0xFF);
-    ((uint8_t*)gate)[7] = (uint8_t)((offset >> 24) & 0xFF);
-    ((uint8_t*)gate)[8] = (uint8_t)((offset >> 32) & 0xFF);
-    ((uint8_t*)gate)[9] = (uint8_t)((offset >> 40) & 0xFF);
-    ((uint8_t*)gate)[10] = (uint8_t)((offset >> 48) & 0xFF);
-    ((uint8_t*)gate)[11] = (uint8_t)((offset >> 56) & 0xFF);
-    ((uint8_t*)gate)[12] = 0;
-    ((uint8_t*)gate)[13] = 0;
-    ((uint8_t*)gate)[14] = 0;
-    ((uint8_t*)gate)[15] = 0;
-    return KERNEL_STATUS_SUCCESS;
+    ((uint8_t *) gate)[0] = (uint8_t) (offset & 0xFF);
+    ((uint8_t *) gate)[1] = (uint8_t) ((offset >> 8) & 0xFF);
+    ((uint8_t *) gate)[2] = (uint8_t) (selector & 0xFF);
+    ((uint8_t *) gate)[3] = (uint8_t) ((selector >> 8) & 0xFF);
+    ((uint8_t *) gate)[4] = (uint8_t) (attr & 0xFF);
+    ((uint8_t *) gate)[5] = (uint8_t) ((attr >> 8) & 0xFF);
+    ((uint8_t *) gate)[6] = (uint8_t) ((offset >> 16) & 0xFF);
+    ((uint8_t *) gate)[7] = (uint8_t) ((offset >> 24) & 0xFF);
+    ((uint8_t *) gate)[8] = (uint8_t) ((offset >> 32) & 0xFF);
+    ((uint8_t *) gate)[9] = (uint8_t) ((offset >> 40) & 0xFF);
+    ((uint8_t *) gate)[10] = (uint8_t) ((offset >> 48) & 0xFF);
+    ((uint8_t *) gate)[11] = (uint8_t) ((offset >> 56) & 0xFF);
+    ((uint8_t *) gate)[12] = 0;
+    ((uint8_t *) gate)[13] = 0;
+    ((uint8_t *) gate)[14] = 0;
+    ((uint8_t *) gate)[15] = 0;
+    return;
 }
 
-kernel_status_t _KERNEL_ABI hal_set_interrupt_handler(_IN uint64_t index,
-                                                      _IN void (*handler)(void))
+void _KERNEL_ABI hal_set_interrupt_handler(_IN uint64_t index,
+                                           _IN void (*handler)(void))
 {
-    hal_write_gate(g_idt + 16*index, (uint64_t)handler, SEG_SELECTOR(1,0), GATE_DPL_0 | GATE_PRESENT | GATE_TYPE_INTERRUPT);
-    return KERNEL_STATUS_SUCCESS;
+    hal_write_gate(g_idt + 16 * index, (uint64_t) handler, SEG_SELECTOR(1, 0),
+                   GATE_DPL_0 | GATE_PRESENT | GATE_TYPE_INTERRUPT);
+    return;
 }
 
-kernel_status_t _KERNEL_ABI hal_assert(_IN int64_t expression,
-                            _IN_OPT char* message)
+void _KERNEL_ABI hal_assert(_IN int64_t expression,
+                            _IN_OPT char *message)
 {
-    if(!expression)
+    if (!expression)
     {
         hal_printf("HAL: Assertion failed. Detail: %s", message == NULL ? "NULL" : message);
         hal_halt_cpu();
     }
-    return KERNEL_STATUS_SUCCESS;
+    return;
 }

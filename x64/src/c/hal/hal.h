@@ -5,10 +5,14 @@
 #include "multiboot.h"
 #include "../common/sys/sys_info.h"
 
-//concurrency
-extern void _KERNEL_ABI hal_spin_lock(uint32_t * lock);
-extern void _KERNEL_ABI hal_spin_unlock(uint32_t * lock);
+// concurrency
+void _KERNEL_ABI hal_spin_lock(uint64_t * lock);
+void _KERNEL_ABI hal_spin_unlock(uint64_t * lock);
 
+// Atomically set *dst = val
+// return: the previous value of *dst
+extern uint64_t _KERNEL_ABI hal_interlocked_exchange(_IN _OUT uint64_t* dst,
+                                                     _IN uint64_t val);
 // loaded kernel addr
 extern char kernel_start[];
 extern char kernel_end[];

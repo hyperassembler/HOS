@@ -86,9 +86,9 @@ typedef struct __attribute__((packed))
     uint64_t edx;
 } cpuid_t;
 
-void*_KERNEL_ABI hal_halloc(size_t const size);
+void* _KERNEL_ABI hal_halloc(_IN size_t const size);
 
-void _KERNEL_ABI hal_hfree(void *ptr);
+void _KERNEL_ABI hal_hfree(_IN void *ptr);
 
 extern void _KERNEL_ABI hal_flush_gdt(gdt_ptr_t *gdt_ptr, uint64_t code_slct, uint64_t data_slct);
 

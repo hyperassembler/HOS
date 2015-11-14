@@ -16,16 +16,16 @@ extern void _KERNEL_ABI hal_write_port(uint64_t port, int64_t data);
 extern int64_t _KERNEL_ABI hal_read_port(uint64_t port);
 void _KERNEL_ABI hal_interrupt_handler_dummy();
 
-kernel_status_t _KERNEL_ABI hal_set_interrupt_handler(uint64_t index, void (*handler)());
+void _KERNEL_ABI hal_set_interrupt_handler(uint64_t index, void (*handler)());
 extern void _KERNEL_ABI hal_enable_interrupt();
 extern void _KERNEL_ABI hal_disable_interrupt();
 extern void _KERNEL_ABI hal_interrupt_handler_wrapper();
 extern void _KERNEL_ABI hal_halt_cpu();
 
-kernel_status_t _KERNEL_ABI hal_write_gate(void *const gate, uint64_t const offset, uint32_t const selector, uint32_t const attr);
+void _KERNEL_ABI hal_write_gate(void *const gate, uint64_t const offset, uint32_t const selector, uint32_t const attr);
 
 //assert
-kernel_status_t _KERNEL_ABI hal_assert(int64_t exp, char* message);
+void _KERNEL_ABI hal_assert(int64_t exp, char* message);
 
 extern uint8_t g_idt[];
 #endif

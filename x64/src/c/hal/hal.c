@@ -7,46 +7,58 @@
 #include "../common/lib/mem.h"
 #include "../common/sys/sys_info.h"
 
-boot_info_t*_KERNEL_ABI hal_init(multiboot_info_t* m_info)
+boot_info_t *_KERNEL_ABI hal_init(multiboot_info_t *m_info)
 {
+    if (m_info == NULL)
+        return NULL;
+    boot_info_t *boot_info = (boot_info_t *) hal_halloc(sizeof(boot_info_t));
     text_pos = get_pos(0, 0);
 
     // get gdt ready
     hal_write_segment_descriptor((void *) &g_gdt[0], 0, 0, 0);
-    hal_write_segment_descriptor((void *) &g_gdt[8], 0, 0, SEG_DPL_0 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_CODE_X);
-    hal_write_segment_descriptor((void *) &g_gdt[16], 0, 0, SEG_DPL_0 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_DATA_RW);
-    hal_write_segment_descriptor((void *) &g_gdt[24], 0, 0, SEG_DPL_3 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_CODE_X);
-    hal_write_segment_descriptor((void *) &g_gdt[32], 0, 0, SEG_DPL_3 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_DATA_RW);
+    hal_write_segment_descriptor((void *) &g_gdt[8], 0, 0,
+                                 SEG_DPL_0 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_CODE_X);
+    hal_write_segment_descriptor((void *) &g_gdt[16], 0, 0,
+                                 SEG_DPL_0 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_DATA_RW);
+    hal_write_segment_descriptor((void *) &g_gdt[24], 0, 0,
+                                 SEG_DPL_3 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_CODE_X);
+    hal_write_segment_descriptor((void *) &g_gdt[32], 0, 0,
+                                 SEG_DPL_3 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_DATA_RW);
 
-    hal_write_segment_descriptor((void *) &g_gdt[40], 0, 0xFFFFF, SEG_DPL_0 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS | SEG_TYPE_CODE_X);
-    hal_write_segment_descriptor((void *) &g_gdt[48], 0, 0xFFFFF, SEG_DPL_0 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS | SEG_TYPE_DATA_RW);
-    hal_write_segment_descriptor((void *) &g_gdt[56], 0, 0xFFFFF, SEG_DPL_3 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS | SEG_TYPE_CODE_X);
-    hal_write_segment_descriptor((void *) &g_gdt[64], 0, 0xFFFFF, SEG_DPL_3 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS | SEG_TYPE_DATA_RW);
-    g_gdt_ptr.base = (uint64_t)g_gdt;
-    g_gdt_ptr.limit = 8*9-1;
+    hal_write_segment_descriptor((void *) &g_gdt[40], 0, 0xFFFFF,
+                                 SEG_DPL_0 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
+                                 SEG_TYPE_CODE_X);
+    hal_write_segment_descriptor((void *) &g_gdt[48], 0, 0xFFFFF,
+                                 SEG_DPL_0 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
+                                 SEG_TYPE_DATA_RW);
+    hal_write_segment_descriptor((void *) &g_gdt[56], 0, 0xFFFFF,
+                                 SEG_DPL_3 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
+                                 SEG_TYPE_CODE_X);
+    hal_write_segment_descriptor((void *) &g_gdt[64], 0, 0xFFFFF,
+                                 SEG_DPL_3 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
+                                 SEG_TYPE_DATA_RW);
+    g_gdt_ptr.base = (uint64_t) g_gdt;
+    g_gdt_ptr.limit = 8 * 9 - 1;
     hal_flush_gdt(&g_gdt_ptr, SEG_SELECTOR(1, 0), SEG_SELECTOR(2, 0));
 
     // get idt ptr ready
-    g_idt_ptr.base = (uint64_t)g_idt;
-    g_idt_ptr.limit = 21*16-1;
+    g_idt_ptr.base = (uint64_t) g_idt;
+    g_idt_ptr.limit = 21 * 16 - 1;
     hal_flush_idt(&g_idt_ptr);
 
-    boot_info_t* boot_info = (boot_info_t*)hal_halloc(sizeof(boot_info_t));
-    hal_assert(boot_info != NULL, "Unable to allocate memory for boot_info.");
-    mem_set(boot_info,0, sizeof(boot_info_t));
+    mem_set(boot_info, 0, sizeof(boot_info_t));
     // obtain boot information
     // memory info
-    if(m_info->flags & (1 << 6))
+    if (m_info->flags & (1 << 6))
     {
-        boot_info->mem_info = (mem_info_t*)hal_halloc(sizeof(mem_info_t));
+        boot_info->mem_info = (mem_info_t *) hal_halloc(sizeof(mem_info_t));
         hal_assert(boot_info->mem_info != NULL, "Unable to allocate memory for mem_info.");
         boot_info->mem_info->mem_available = 0;
         boot_info->mem_info->mem_installed = 0;
-        boot_info->mem_info->free_page_list = (linked_list_t*)hal_halloc((sizeof(linked_list_t)));
-        boot_info->mem_info->occupied_page_list = (linked_list_t*)hal_halloc((sizeof(linked_list_t)));
+        boot_info->mem_info->free_page_list = (linked_list_t *) hal_halloc((sizeof(linked_list_t)));
+        boot_info->mem_info->occupied_page_list = (linked_list_t *) hal_halloc((sizeof(linked_list_t)));
         hal_assert(boot_info->mem_info->free_page_list != NULL &&
-                   boot_info->mem_info->occupied_page_list != NULL
-                , "Unable to allocate memory for mem_info_lists.");
+                   boot_info->mem_info->occupied_page_list != NULL, "Unable to allocate memory for mem_info_lists.");
         linked_list_init(boot_info->mem_info->free_page_list);
         linked_list_init(boot_info->mem_info->occupied_page_list);
         multiboot_memory_map_t const *mem_map = (multiboot_memory_map_t *) m_info->mmap_addr;
@@ -54,7 +66,7 @@ boot_info_t*_KERNEL_ABI hal_init(multiboot_info_t* m_info)
         for (int i = 0; i < mem_map_size; i++)
         {
             hal_printf("\n==Base: 0x%X, Length: %u, Type: %s==", (mem_map + i)->addr, (mem_map + i)->len,
-                       (mem_map + i)->type== MULTIBOOT_MEMORY_AVAILABLE ? "AVL" : "RSV");
+                       (mem_map + i)->type == MULTIBOOT_MEMORY_AVAILABLE ? "AVL" : "RSV");
             if ((mem_map + i)->type == MULTIBOOT_MEMORY_AVAILABLE)
             {
                 uint64_t base_addr = (mem_map + i)->addr;
@@ -66,9 +78,9 @@ boot_info_t*_KERNEL_ABI hal_init(multiboot_info_t* m_info)
                 uint64_t aligned_end_addr = ALIGN_DOWN(end_addr, PHYSICAL_PAGE_SIZE);
 
 
-                uint64_t page_count =  (aligned_end_addr - aligned_base_addr) / PHYSICAL_PAGE_SIZE;
+                uint64_t page_count = (aligned_end_addr - aligned_base_addr) / PHYSICAL_PAGE_SIZE;
 
-                if(page_count == 0)
+                if (page_count == 0)
                     continue;
 
                 // strip kernel-occupied pages
@@ -98,12 +110,13 @@ boot_info_t*_KERNEL_ABI hal_init(multiboot_info_t* m_info)
 //                    }
 //                }
 
-                memory_descriptor_node_t* each_desc = (memory_descriptor_node_t*)hal_halloc(sizeof(memory_descriptor_node_t));
+                memory_descriptor_node_t *each_desc = (memory_descriptor_node_t *) hal_halloc(
+                        sizeof(memory_descriptor_node_t));
                 hal_assert(each_desc != NULL, "Unable to allocate memory for memory_descriptor.");
                 each_desc->page_count = page_count;
                 each_desc->base_addr = aligned_base_addr;
                 linked_list_add(boot_info->mem_info->free_page_list, &each_desc->list_node);
-                boot_info->mem_info->mem_available += aligned_end_addr-aligned_base_addr;
+                boot_info->mem_info->mem_available += aligned_end_addr - aligned_base_addr;
             }
             boot_info->mem_info->mem_installed += (mem_map + i)->len;
         }
@@ -116,25 +129,27 @@ boot_info_t*_KERNEL_ABI hal_init(multiboot_info_t* m_info)
     }
 
     // loaded kernel modules
-    if(m_info->flags & (1 << 3))
+    if (m_info->flags & (1 << 3))
     {
-        boot_info->module_info = (module_info_t*)hal_halloc(sizeof(module_info_t));
+        boot_info->module_info = (module_info_t *) hal_halloc(sizeof(module_info_t));
         hal_assert(boot_info->module_info != NULL, "Unable to allocate memory for module_info.");
         boot_info->module_info->module_count = 0;
-        boot_info->module_info->module_list = (linked_list_t*)hal_halloc(sizeof(linked_list_t));
+        boot_info->module_info->module_list = (linked_list_t *) hal_halloc(sizeof(linked_list_t));
         hal_assert(boot_info->module_info->module_list != NULL, "Unable to allocate memory for module_list.");
         linked_list_init(boot_info->module_info->module_list);
-        multiboot_module_t const * mods_list = (multiboot_module_t *)m_info->mods_addr;
+        multiboot_module_t const *mods_list = (multiboot_module_t *) m_info->mods_addr;
         boot_info->module_info->module_count = m_info->mods_count;
         for (uint64_t i = 0; i < boot_info->module_info->module_count; i++)
         {
-            module_descriptor_node_t* each_module = (module_descriptor_node_t*)hal_halloc(sizeof(module_descriptor_node_t));
+            module_descriptor_node_t *each_module = (module_descriptor_node_t *) hal_halloc(
+                    sizeof(module_descriptor_node_t));
             hal_assert(each_module != NULL, "Unable to allocate memory for module_descriptor.");
             each_module->base_addr = (mods_list + i)->mod_start;
             each_module->size = (mods_list + i)->mod_end - (mods_list + i)->mod_start;
-            each_module->name = (char*)hal_halloc((size_t)str_len((char *) (mods_list + i)->cmdline) + 1);
+            each_module->name = (char *) hal_halloc((size_t) str_len((char *) (mods_list + i)->cmdline) + 1);
             hal_assert(each_module->name != NULL, "Unable to allocate memory for module name string.");
-            mem_copy((void*)(mods_list + i)->cmdline, each_module->name, str_len((char *) (mods_list + i)->cmdline) + 1);
+            mem_copy((void *) (mods_list + i)->cmdline, each_module->name,
+                     str_len((char *) (mods_list + i)->cmdline) + 1);
             linked_list_add(boot_info->module_info->module_list, &each_module->list_node);
         }
     }
@@ -145,8 +160,8 @@ boot_info_t*_KERNEL_ABI hal_init(multiboot_info_t* m_info)
     cpuid_info.ebx = 0;
     cpuid_info.ecx = 0;
     cpuid_info.edx = 0;
-    hal_cpuid(&cpuid_info.eax,&cpuid_info.ebx,&cpuid_info.ecx,&cpuid_info.edx);
-    if(cpuid_info.edx & 1 << 9)
+    hal_cpuid(&cpuid_info.eax, &cpuid_info.ebx, &cpuid_info.ecx, &cpuid_info.edx);
+    if (cpuid_info.edx & 1 << 9)
     {
         //TODO: detected.
     }
@@ -158,4 +173,23 @@ boot_info_t*_KERNEL_ABI hal_init(multiboot_info_t* m_info)
     }
 
     return boot_info;
+}
+
+void _KERNEL_ABI hal_spin_lock(uint64_t *lock)
+{
+    if (lock != NULL)
+    {
+        while (hal_interlocked_exchange(lock, 1) == 1)
+        { };
+    }
+    return;
+}
+
+void _KERNEL_ABI hal_spin_unlock(uint64_t *lock)
+{
+    if (lock != NULL)
+    {
+        *lock = 0;
+    }
+    return;
 }
