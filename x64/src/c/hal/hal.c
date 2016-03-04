@@ -115,7 +115,7 @@ boot_info_t *_KERNEL_ABI hal_init(multiboot_info_t *m_info)
                 hal_assert(each_desc != NULL, "Unable to allocate memory for memory_descriptor.");
                 each_desc->page_count = page_count;
                 each_desc->base_addr = aligned_base_addr;
-                linked_list_add(boot_info->mem_info->free_page_list, &each_desc->list_node);
+                linked_list_push_back(boot_info->mem_info->free_page_list, &each_desc->list_node);
                 boot_info->mem_info->mem_available += aligned_end_addr - aligned_base_addr;
             }
             boot_info->mem_info->mem_installed += (mem_map + i)->len;
@@ -150,7 +150,7 @@ boot_info_t *_KERNEL_ABI hal_init(multiboot_info_t *m_info)
             hal_assert(each_module->name != NULL, "Unable to allocate memory for module name string.");
             mem_copy((void *) (mods_list + i)->cmdline, each_module->name,
                      str_len((char *) (mods_list + i)->cmdline) + 1);
-            linked_list_add(boot_info->module_info->module_list, &each_module->list_node);
+            linked_list_push_back(boot_info->module_info->module_list, &each_module->list_node);
         }
     }
 

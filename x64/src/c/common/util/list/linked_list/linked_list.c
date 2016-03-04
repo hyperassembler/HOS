@@ -65,7 +65,7 @@ linked_list_node_t *_KERNEL_ABI linked_list_node_insert(linked_list_node_t * hea
     }
 }
 
-void _KERNEL_ABI linked_list_node_add(linked_list_node_t * head, linked_list_node_t * node)
+void _KERNEL_ABI linked_list_node_push_back(linked_list_node_t *head, linked_list_node_t *node)
 {
     if(head == NULL || node == NULL)
         return;
@@ -112,7 +112,7 @@ void _KERNEL_ABI linked_list_init(linked_list_t * list)
     return;
 }
 
-void _KERNEL_ABI linked_list_add(linked_list_t * list, linked_list_node_t * node)
+void _KERNEL_ABI linked_list_push_back(linked_list_t *list, linked_list_node_t *node)
 {
     if(list != NULL && node != NULL)
     {
@@ -122,7 +122,7 @@ void _KERNEL_ABI linked_list_add(linked_list_t * list, linked_list_node_t * node
             list->head = node;
         }
         else
-            linked_list_node_add(list->head, node);
+            linked_list_node_push_back(list->head, node);
         list->size++;
     }
     return;
