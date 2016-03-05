@@ -82,8 +82,7 @@ linked_list_node_t *_KERNEL_ABI linked_list_node_remove(linked_list_node_t *head
     if(index == 0)
     {
         linked_list_node_t * next = head->next;
-        head->next = NULL;
-        head->prev = NULL;
+        linked_list_node_init(head);
         if(next != NULL)
             next->prev = NULL;
         return next;
@@ -95,8 +94,7 @@ linked_list_node_t *_KERNEL_ABI linked_list_node_remove(linked_list_node_t *head
             target->prev->next = target->next;
         if (target->next != NULL)
             target->next->prev = target->prev;
-        target->prev = NULL;
-        target->next = NULL;
+        linked_list_node_init(target);
         return head;
     }
 }
