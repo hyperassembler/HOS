@@ -2,9 +2,12 @@
 #include "../common/sys/type.h"
 #include "mem.h"
 
-#define kernel_heap_size 4096
+#define KERNEL_HEAP_SIZE 4096
+
+char kernel_heap[KERNEL_HEAP_SIZE];
+
 char *_cur_heap = NULL;
-extern char kernel_heap[kernel_heap_size];
+extern char kernel_heap[KERNEL_HEAP_SIZE];
 
 void _KERNEL_ABI hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr)
 {
@@ -141,7 +144,7 @@ void* _KERNEL_ABI hal_halloc(_IN size_t const size)
 {
     if (_cur_heap == NULL)
         _cur_heap = kernel_heap;
-    if (_cur_heap + size < kernel_heap + kernel_heap_size)
+    if (_cur_heap + size < kernel_heap + KERNEL_HEAP_SIZE)
     {
         _cur_heap = _cur_heap + size;
         return _cur_heap - size;

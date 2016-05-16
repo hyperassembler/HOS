@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdarg.h>
+#include <stdint.h>
 
 #define _KERNEL_ABI __attribute__((sysv_abi))
 
