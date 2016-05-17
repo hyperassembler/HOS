@@ -2,7 +2,6 @@ extern kmain
 extern kernel_start
 extern kernel_end
 global BOCHS_MAGIC_BREAKPOINT
-global kernel_heap
 ; IMPORTANT: This module should be 4k-page aliened
 [SECTION .entry]
 [BITS 32]
@@ -192,7 +191,3 @@ hlt
 BOCHS_MAGIC_BREAKPOINT:
 xchg bx,bx
 ret
-
-align 4096 ;4k alignment
-kernel_heap:
-times 4096 db 0

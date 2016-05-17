@@ -1,7 +1,7 @@
 #ifndef _PMM_H_
 #define _PMM_H_
 
-#include "../common/util/list/linked_list/linked_list.h"
+#include "../common/lib/list/linked_list/linked_list.h"
 
 void pmm_init(linked_list_t* occupied, linked_list_t* available);
 

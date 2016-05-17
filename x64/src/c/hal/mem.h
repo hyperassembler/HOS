@@ -3,7 +3,7 @@
 
 #include "../common/sys/kdef.h"
 #include "../common/sys/type.h"
-#include "../common/util/list/linked_list/linked_list.h"
+#include "../common/lib/list/linked_list/linked_list.h"
 
 #define PML4_PRESENT (1ull << 0)
 #define PML4_WRITE (1ull << 1)
@@ -86,30 +86,32 @@ typedef struct __attribute__((packed))
     uint64_t edx;
 } cpuid_t;
 
-void* _KERNEL_ABI hal_halloc(_IN size_t const size);
+void* SAPI hal_alloc(uint32_t size);
 
-void _KERNEL_ABI hal_hfree(_IN void *ptr);
+void SAPI hal_free(void *ptr);
 
-extern void _KERNEL_ABI hal_flush_gdt(gdt_ptr_t *gdt_ptr, uint64_t code_slct, uint64_t data_slct);
+void SAPI hal_alloc_init();
 
-extern void _KERNEL_ABI hal_flush_tlb();
+extern void SAPI hal_flush_gdt(gdt_ptr_t *gdt_ptr, uint64_t code_slct, uint64_t data_slct);
 
-extern void _KERNEL_ABI hal_cpuid(uint64_t * eax, uint64_t * ebx, uint64_t* ecx, uint64_t* edx);
+extern void SAPI hal_flush_tlb();
 
-extern void _KERNEL_ABI hal_flush_idt(idt_ptr_t* idt_ptr);
+extern void SAPI hal_cpuid(uint64_t * eax, uint64_t * ebx, uint64_t* ecx, uint64_t* edx);
 
-extern void _KERNEL_ABI hal_write_page_base(void* base);
+extern void SAPI hal_flush_idt(idt_ptr_t* idt_ptr);
 
-extern void*_KERNEL_ABI hal_read_page_base();
+extern void SAPI hal_write_page_base(void* base);
 
-void _KERNEL_ABI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
+extern void*SAPI hal_read_page_base();
 
-void _KERNEL_ABI hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr);
+void SAPI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 
-void _KERNEL_ABI hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr);
+void SAPI hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr);
 
-void _KERNEL_ABI hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr);
+void SAPI hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr);
 
-void _KERNEL_ABI hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr);
+void SAPI hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr);
+
+void SAPI hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr);
 
 #endif

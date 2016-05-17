@@ -1,7 +1,7 @@
 #ifndef _SYS_INFO_H_
 #define _SYS_INFO_H_
 #include "type.h"
-#include "../util/list/linked_list/linked_list.h"
+#include "../lib/list/linked_list/linked_list.h"
 
 #define MEMORY_OCCUPIED 0
 #define MEMORY_AVAILABLE 1

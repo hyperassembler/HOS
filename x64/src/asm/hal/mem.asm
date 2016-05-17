@@ -63,11 +63,13 @@ ret
 ;read_cr3
 hal_read_page_base:
 mov rax,cr3
-and rax,0xFFFFFFFFFF000 ;keep bits 12-51
+mov r11,0xFFFFFFFFFF000
+and rax,r11 ;keep bits 12-51
 ret
 
 ;write_cr3
 hal_write_page_base:
-and rdi,0xFFFFFFFFFF000 ;keep bits 12-51
+mov r11,0xFFFFFFFFFF000
+and rdi,r11 ;keep bits 12-51
 mov cr3,rdi
 ret

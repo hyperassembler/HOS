@@ -2,7 +2,7 @@
 #define _VAR_H_
 
 #include "mem.h"
-#include "../common/util/list/linked_list/linked_list.h"
+#include "../common/lib/list/linked_list/linked_list.h"
 
 extern uint8_t g_gdt[8*9];
 extern uint8_t g_idt[21*16];

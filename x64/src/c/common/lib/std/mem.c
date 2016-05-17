@@ -1,8 +1,8 @@
-#include "../sys/type.h"
-#include "../sys/kdef.h"
+#include "../../sys/type.h"
+#include "../../sys/kdef.h"
 #include "mem.h"
 
-void _KERNEL_ABI mem_copy(void *src, void *dst, uint64_t size)
+void SAPI mem_copy(void *src, void *dst, uint64_t size)
 {
     if (src == NULL || dst == NULL)
         return;
@@ -13,7 +13,7 @@ void _KERNEL_ABI mem_copy(void *src, void *dst, uint64_t size)
     return;
 }
 
-void _KERNEL_ABI mem_set(void *src, int8_t const val, uint64_t size)
+void SAPI mem_set(void *src, int8_t const val, uint64_t size)
 {
     if (src == NULL)
         return;
@@ -22,7 +22,7 @@ void _KERNEL_ABI mem_set(void *src, int8_t const val, uint64_t size)
     return;
 }
 
-void _KERNEL_ABI mem_move(void *src, void *dst, uint64_t size)
+void SAPI mem_move(void *src, void *dst, uint64_t size)
 {
     if (src == NULL || dst == NULL)
         return;

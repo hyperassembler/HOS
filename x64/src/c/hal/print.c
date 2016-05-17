@@ -1,16 +1,16 @@
 #include "../common/sys/kdef.h"
 #include "../common/sys/type.h"
-#include "../common/lib/mem.h"
+#include "../common/lib/std/mem.h"
 #include "print.h"
-#include "var.h"
+#include "var.h" 
 
-void _KERNEL_ABI _hal_print_scroll()
+void SAPI _hal_print_scroll()
 {
     mem_move((void *) (0xb8000 + get_pos(1, 0) * 2), (void *) (0xb8000 + get_pos(0, 0) * 2), (80 * 24) * 2);
     return;
 }
 
-void _KERNEL_ABI _hal_print_str(char const *str)
+void SAPI _hal_print_str(char const *str)
 {
     if(str == NULL)
         return;
@@ -45,7 +45,7 @@ void _KERNEL_ABI _hal_print_str(char const *str)
     return;
 }
 
-void _KERNEL_ABI _hal_print_uint(uint64_t number)
+void SAPI _hal_print_uint(uint64_t number)
 {
     char arr[21]; // do not need to initialize
     arr[20] = 0; //zero-terminated
@@ -64,7 +64,7 @@ void _KERNEL_ABI _hal_print_uint(uint64_t number)
     return;
 }
 
-void _KERNEL_ABI _hal_print_int(int64_t number)
+void SAPI _hal_print_int(int64_t number)
 {
     char arr[21]; // do not need to initialize
     arr[20] = 0; //zero-terminated
@@ -93,7 +93,7 @@ void _KERNEL_ABI _hal_print_int(int64_t number)
     return;
 }
 
-void _KERNEL_ABI _hal_print_hex(uint64_t number, uint64_t capital)
+void SAPI _hal_print_hex(uint64_t number, uint64_t capital)
 {
     char const lookup_table_cap[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     char const lookup_table[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
@@ -115,14 +115,14 @@ void _KERNEL_ABI _hal_print_hex(uint64_t number, uint64_t capital)
     return;
 }
 
-void _KERNEL_ABI hal_clear_screen(void)
+void SAPI hal_clear_screen(void)
 {
     text_pos = 0; // reset text_pos
     mem_set((void *) 0xb8000, 0, 25 * 80 * 2);
     return;
 }
 
-void _KERNEL_ABI hal_printf(char const *format, ...)
+void SAPI hal_printf(char const *format, ...)
 {
     va_list args;
     va_start(args, format);

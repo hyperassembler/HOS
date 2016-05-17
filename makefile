@@ -82,7 +82,7 @@ ALL_OBJ_FILES_64 := $(addprefix $(OUTPUT_DIR)/,$(C_OBJ_FILES_64)) $(addprefix $(
 
 #Commands
 
-HOS: init compile link buildiso clean
+all: init compile link buildiso clean
 # buildsymbol
 
 print_source:

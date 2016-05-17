@@ -1,7 +1,7 @@
 #include "../../../sys/kdef.h"
 #include "linked_list.h"
 
-void _KERNEL_ABI linked_list_node_init(linked_list_node_t * node)
+static void SAPI linked_list_node_init(linked_list_node_t * node)
 {
     if(node != NULL)
     {
@@ -11,7 +11,7 @@ void _KERNEL_ABI linked_list_node_init(linked_list_node_t * node)
     return;
 }
 
-linked_list_node_t *_KERNEL_ABI linked_list_node_get(linked_list_node_t * head, int index)
+static linked_list_node_t *SAPI linked_list_node_get(linked_list_node_t * head, int index)
 {
     if(head == NULL || index < 0)
         return NULL;
@@ -24,7 +24,7 @@ linked_list_node_t *_KERNEL_ABI linked_list_node_get(linked_list_node_t * head, 
     return head;
 }
 
-int _KERNEL_ABI linked_list_node_size(linked_list_node_t * head)
+static int SAPI linked_list_node_size(linked_list_node_t * head)
 {
     int i = 0;
     while(head != NULL)
@@ -36,7 +36,7 @@ int _KERNEL_ABI linked_list_node_size(linked_list_node_t * head)
 }
 
 //returns new head
-linked_list_node_t *_KERNEL_ABI linked_list_node_insert(linked_list_node_t * head, int index, linked_list_node_t * node)
+static linked_list_node_t *SAPI linked_list_node_insert(linked_list_node_t * head, int index, linked_list_node_t * node)
 {
     if(head == NULL)
         return node;
@@ -65,7 +65,7 @@ linked_list_node_t *_KERNEL_ABI linked_list_node_insert(linked_list_node_t * hea
     }
 }
 
-void _KERNEL_ABI linked_list_node_push_back(linked_list_node_t *head, linked_list_node_t *node)
+static void SAPI linked_list_node_push_back(linked_list_node_t *head, linked_list_node_t *node)
 {
     if(head == NULL || node == NULL)
         return;
@@ -75,7 +75,7 @@ void _KERNEL_ABI linked_list_node_push_back(linked_list_node_t *head, linked_lis
 }
 
 //returns new head
-linked_list_node_t *_KERNEL_ABI linked_list_node_remove(linked_list_node_t *head, int index)
+static linked_list_node_t *SAPI linked_list_node_remove(linked_list_node_t *head, int index)
 {
     if(head == NULL || index < 0)
         return head;
@@ -100,7 +100,7 @@ linked_list_node_t *_KERNEL_ABI linked_list_node_remove(linked_list_node_t *head
 }
 
 
-void _KERNEL_ABI linked_list_init(linked_list_t * list)
+void SAPI linked_list_init(linked_list_t * list)
 {
     if(list != NULL)
     {
@@ -110,11 +110,12 @@ void _KERNEL_ABI linked_list_init(linked_list_t * list)
     return;
 }
 
-void _KERNEL_ABI linked_list_push_back(linked_list_t *list, linked_list_node_t *node)
+void SAPI linked_list_push_back(linked_list_t *list, linked_list_node_t *node)
 {
     if(list != NULL && node != NULL)
     {
         //@ node != NULL
+        linked_list_node_init(node);
         if (list->head == NULL)
         {
             list->head = node;
@@ -126,24 +127,25 @@ void _KERNEL_ABI linked_list_push_back(linked_list_t *list, linked_list_node_t *
     return;
 }
 
-void _KERNEL_ABI linked_list_insert(linked_list_t * list, int index, linked_list_node_t * node)
+void SAPI linked_list_insert(linked_list_t * list, int index, linked_list_node_t * node)
 {
     if(list != NULL && index > 0 && node != NULL)
     {
+        linked_list_node_init(node);
         list->head = linked_list_node_insert(list->head, index, node);
         list->size++;
     }
     return;
 }
 
-linked_list_node_t *_KERNEL_ABI linked_list_get(linked_list_t * list, int index)
+linked_list_node_t *SAPI linked_list_get(linked_list_t * list, int index)
 {
     if(list == NULL || index < 0 || index >= list->size)
         return NULL;
     return linked_list_node_get(list->head,index);
 }
 
-void _KERNEL_ABI linked_list_remove(linked_list_t *list, int index)
+void SAPI linked_list_remove(linked_list_t *list, int index)
 {
     if(list != NULL && index >= 0 && index < list->size)
     {

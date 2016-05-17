@@ -8,10 +8,10 @@ void hal_interrupt_handler_dummy(void)
 }
 
 
-void _KERNEL_ABI hal_write_gate(_IN void *const gate,
-                                _IN uint64_t const offset,
-                                _IN uint32_t const selector,
-                                _IN uint32_t const attr)
+void SAPI hal_write_gate(void *const gate,
+                                uint64_t const offset,
+                                uint32_t const selector,
+                                uint32_t const attr)
 {
     ((uint8_t *) gate)[0] = (uint8_t) (offset & 0xFF);
     ((uint8_t *) gate)[1] = (uint8_t) ((offset >> 8) & 0xFF);
@@ -32,16 +32,16 @@ void _KERNEL_ABI hal_write_gate(_IN void *const gate,
     return;
 }
 
-void _KERNEL_ABI hal_set_interrupt_handler(_IN uint64_t index,
-                                           _IN void (*handler)(void))
+void SAPI hal_set_interrupt_handler(uint64_t index,
+                                           void (*handler)(void))
 {
-    hal_write_gate(g_idt + 16 * index, (uint64_t) handler, SEG_SELECTOR(1, 0),
+    hal_write_gate(g_idt + 16 * index, (uint64_t) handler, seg_selector(1, 0),
                    GATE_DPL_0 | GATE_PRESENT | GATE_TYPE_INTERRUPT);
     return;
 }
 
-void _KERNEL_ABI hal_assert(_IN int64_t expression,
-                            _IN_OPT char *message)
+void SAPI hal_assert(int64_t expression,
+                            char *message)
 {
     if (!expression)
     {

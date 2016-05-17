@@ -1,8 +1,6 @@
 #include "pmm.h"
 #include "../common/sys/sys_info.h"
 #include "../hal/io.h"
-#include "../common/util/list/linked_list/linked_list.h"
-#include "../common/util/util.h"
 
 linked_list_t* occupied_mem;
 linked_list_t* available_mem;
