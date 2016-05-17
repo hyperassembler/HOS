@@ -37,7 +37,7 @@ uint32_t read_alloc_header_flag(alloc_header* header, uint32_t bit)
 
 void set_alloc_header_flag(alloc_header* header, uint32_t bit, uint32_t value)
 {
-    value &= bit_mask_32(1);
+    value &= bit_mask_32(0);
     if(value == 1)
     {
         header->flags |= bit_mask_32(bit);
@@ -133,6 +133,32 @@ int kfree(void* base, void* ptr)
     return 1;
 }
 
+void kalloc_print(void* base)
+{
+    if(base != NULL)
+    {
+        printf("=======================================================\n");
+        char* c_ptr = (char*)base;
+        while(1)
+        {
+            uint32_t cur_blk_free = read_alloc_header_flag((alloc_header *) c_ptr, ALLOC_HEADER_FLAG_FREE);
+            uint32_t cur_blk_last = read_alloc_header_flag((alloc_header *) c_ptr, ALLOC_HEADER_FLAG_LAST);
+            uint32_t cur_blk_size = read_alloc_header_size((alloc_header*)c_ptr);
+            printf("Block:0x%llX Size:%d Free:%d Last:%d\n", (unsigned long long)c_ptr, cur_blk_size, cur_blk_free, cur_blk_last);
+
+            if(cur_blk_last == 1)
+            {
+                break;
+            }
+            else
+            {
+                c_ptr += cur_blk_size;
+            }
+        }
+    }
+    return;
+}
+
 int kalloc(void* base, unsigned int size, void** ptr)
 {
     if(base != NULL && size != 0 && ptr != NULL)
@@ -144,20 +170,21 @@ int kalloc(void* base, unsigned int size, void** ptr)
             uint32_t cur_blk_free = read_alloc_header_flag((alloc_header*)c_ptr, ALLOC_HEADER_FLAG_FREE);
             uint32_t cur_blk_size = read_alloc_header_size((alloc_header*)c_ptr);
             uint32_t cur_blk_last = read_alloc_header_flag((alloc_header*)c_ptr, ALLOC_HEADER_FLAG_LAST);
-            if(cur_blk_free == 0)
+            if(cur_blk_free == 0 || cur_blk_size < total_size)
             {
                 //if cur block not a free block
+                //or the current block size is less than the size we want
                 if(cur_blk_last == 1)
                     //if last one, break and fail.
                     break;
                 else
                     c_ptr += cur_blk_size;
             }
-            else if(cur_blk_size >= total_size)
+            else
             {
                 // we have a free block with enough size
                 if(total_size == cur_blk_size ||
-                        cur_blk_size - total_size <= sizeof(alloc_header))
+                   cur_blk_size - total_size < sizeof(alloc_header))
                 {
                     // since the space left is not enough for alloc_header
                     // we alloc the whole block
@@ -196,8 +223,31 @@ int main()
     void *a = NULL, *b = NULL, *c = NULL, *d = NULL;
     init_alloc(buffer, 1024);
     kalloc(buffer, 10, &a);
+    kalloc_print(buffer);
     kalloc(buffer, 10, &b);
+    kalloc_print(buffer);
     kalloc(buffer, 10, &c);
+    kalloc_print(buffer);
     kalloc(buffer, 10, &d);
+    kalloc_print(buffer);
+    kfree(buffer, b);
+    kalloc_print(buffer);
+    kfree(buffer,c);
+    kalloc_print(buffer);
+    kalloc(buffer,20,&b);
+    kalloc_print(buffer);
+    kfree(buffer,b);
+    kalloc_print(buffer);
+    kfree(buffer,a);
+    kfree(buffer,b);
+    kfree(buffer,c);
+    kfree(buffer,d);
+    kalloc_print(buffer);
+    kalloc(buffer, 1024, &a);
+    kalloc_print(buffer);
+    kalloc(buffer, 1024 - sizeof(alloc_header), &a);
+    kalloc_print(buffer);
+    kfree(buffer,a);
+    kalloc_print(buffer);
     return 0;
 }
