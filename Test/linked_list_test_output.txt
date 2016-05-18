@@ -1,0 +1,16 @@
+3210======0123   good
+256410======014652   good
+0123======3210   good
+0123======3210   good
+10======01   good
+5310======0135   good
+01======10   good
+0123======3210   good
+size:  okay   good
+remove all:   YEAH   good   YEAH   good   YEAH   good
+4321======1234   good
+321======123   good
+YEAH   good
+1234======4321   good
+123======321   good
+YEAH   good

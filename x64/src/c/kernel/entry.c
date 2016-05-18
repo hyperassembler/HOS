@@ -14,7 +14,7 @@ void SAPI kmain(multiboot_info_t *multiboot_info)
     {
         hal_printf("Installed Memory: %uB\n", boot_info->mem_info->mem_installed);
         hal_printf("Useable Memory: %uB\n", boot_info->mem_info->mem_available);
-        for(int i = 0; i < boot_info->mem_info->free_page_list->size; i++)
+        for(int i = 0; i < linked_list_size(boot_info->mem_info->free_page_list); i++)
         {
             memory_descriptor_node_t* each_node = OBTAIN_STRUCT_ADDR(
             linked_list_get(boot_info->mem_info->free_page_list,i),

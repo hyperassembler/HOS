@@ -17,13 +17,13 @@ void _pmm_add_page(linked_list_t* list,uint64_t base_addr, uint64_t size)
 {
     hal_assert(list != NULL,NULL);
     base_addr = (base_addr >> 12) << 12;
-    if(list->size == 0)
+    if(linked_list_size(list) == 0)
     {
         return;
     }
     else
     {
-        for (int i = 0; i < list->size; i++) {
+        for (int i = 0; i < linked_list_size(list); i++) {
             memory_descriptor_node_t *each_node = OBTAIN_STRUCT_ADDR(linked_list_get(list, i), list_node,
                                                                      memory_descriptor_node_t);
 
@@ -34,9 +34,9 @@ void _pmm_add_page(linked_list_t* list,uint64_t base_addr, uint64_t size)
 void* pmm_alloc_page()
 {
     hal_assert(occupied_mem != NULL && available_mem != NULL, NULL);
-    if(available_mem->size == 0)
+    if(linked_list_size(available_mem) == 0)
         return NULL;
-    for(int i = 0; i < available_mem->size; i++)
+    for(int i = 0; i < linked_list_size(available_mem); i++)
     {
 //        memory_descriptor_node_t* each_node = OBTAIN_STRUCT_ADDR(linked_list_get(available_mem,i),list_node,memory_descriptor_node_t);
 //        if(each_node->size >= PHYSICAL_PAGE_SIZE)
