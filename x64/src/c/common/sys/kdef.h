@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include "type.h"
 
 #define SAPI __attribute__((sysv_abi))
@@ -48,6 +49,6 @@ static inline uint32_t seg_selector(uint32_t index, uint32_t rpl)
     return (index << 3) + rpl;
 }
 
-#define OBTAIN_STRUCT_ADDR(member_addr, member_name, struct_name) ((struct_name*)((char*)(member_addr)-(uint64_t)(&(((struct_name*)0)->member_name))))
+#define OBTAIN_STRUCT_ADDR(member_addr, member_name, struct_name) ((struct_name*)((void*)(member_addr)-(void*)(&(((struct_name*)0)->member_name))))
 
 #endif
