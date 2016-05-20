@@ -47,6 +47,4 @@ linked_list_node_t *SAPI linked_list_last(linked_list_t *list);
 
 int32_t SAPI linked_list_search(linked_list_t *list, linked_list_node_t* target, bool (*equals)(linked_list_node_t*, linked_list_node_t*));
 
-#define OBTAIN_STRUCT_ADDR(member_addr, member_name, struct_name) ((struct_name*)((char*)(member_addr)-(char*)(&(((struct_name*)0)->member_name))))
-
 #endif

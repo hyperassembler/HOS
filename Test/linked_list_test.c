@@ -3,12 +3,50 @@
 #include <stdbool.h>
 #include "linked_list.h"
 
+
 typedef struct
 {
     linked_list_node_t lnode;
     int val;
-} my_list;
+} my_list_node;
 
+#define GLOBAL_ALLOC_TABLE_SIZE 256
+my_list_node* g_gat[GLOBAL_ALLOC_TABLE_SIZE];
+
+void delete_list(linked_list_t* list)
+{
+    if(list != NULL)
+    {
+        linked_list_node_t* node = linked_list_first(list);
+        while(node != NULL)
+        {
+            my_list_node *mnode = OBTAIN_STRUCT_ADDR(node, lnode, my_list_node);
+            node = linked_list_next(node);
+            free(mnode);
+        }
+    }
+    return;
+}
+
+void push_gat(my_list_node* wow)
+{
+    int i = 0;
+    for(i = 0; i < GLOBAL_ALLOC_TABLE_SIZE; i++)
+    {
+        if(g_gat[i] == NULL)
+            g_gat[i] = wow;
+    }
+}
+
+void clear_gat()
+{
+    int i = 0;
+    for(i = 0; i < GLOBAL_ALLOC_TABLE_SIZE; i++)
+    {
+        if(g_gat[i] != NULL)
+            free(g_gat[i]);
+    }
+}
 
 bool validate_list(linked_list_t* list)
 {
@@ -46,7 +84,7 @@ bool assert_list(linked_list_t* list, int val[], int size)
 
     while(node != NULL && i < size)
     {
-        my_list* enode = OBTAIN_STRUCT_ADDR(node, lnode, my_list);
+        my_list_node* enode = OBTAIN_STRUCT_ADDR(node, lnode, my_list_node);
         if(enode->val != val[i])
         {
             return false;
@@ -63,7 +101,7 @@ bool assert_list(linked_list_t* list, int val[], int size)
     node = linked_list_last(list);
     while(node != NULL && i >= 0)
     {
-        my_list* enode = OBTAIN_STRUCT_ADDR(node, lnode, my_list);
+        my_list_node* enode = OBTAIN_STRUCT_ADDR(node, lnode, my_list_node);
         if(enode->val != val[i-1])
         {
             return false;
@@ -77,19 +115,19 @@ bool assert_list(linked_list_t* list, int val[], int size)
 
 //void print_validate(linked_list_t *list)
 //{
-//    my_list* node = (my_list*) linked_list_first(list);
+//    my_list_node* node = (my_list_node*) linked_list_first(list);
 //    while(node != NULL)
 //    {
 //        printf("%d", node->val);
-//        node = (my_list*) linked_list_next((linked_list_node_t *) node);
+//        node = (my_list_node*) linked_list_next((linked_list_node_t *) node);
 //    }
 //
 //    printf("======");
-//    node = (my_list*) linked_list_last(list);
+//    node = (my_list_node*) linked_list_last(list);
 //    while(node != NULL)
 //    {
 //        printf("%d", node->val);
-//        node = (my_list*) linked_list_prev((linked_list_node_t *) node);
+//        node = (my_list_node*) linked_list_prev((linked_list_node_t *) node);
 //    }
 //
 //    validate_list(list);
@@ -99,23 +137,26 @@ bool assert_list(linked_list_t* list, int val[], int size)
 
 void insert_val(linked_list_t* list, int index, int val)
 {
-    my_list *a = (my_list*)malloc(sizeof(my_list));
+    my_list_node *a = (my_list_node*)malloc(sizeof(my_list_node));
     a->val = val;
     linked_list_insert_idx(list, index, &a->lnode);
+    push_gat(a);
 }
 
 void push_back_val(linked_list_t* list, int val)
 {
-    my_list *a = (my_list*)malloc(sizeof(my_list));
+    my_list_node *a = (my_list_node*)malloc(sizeof(my_list_node));
     a->val = val;
     linked_list_push_back(list, &a->lnode);
+    push_gat(a);
 }
 
 void push_front_val(linked_list_t* list, int val)
 {
-    my_list *a = (my_list*)malloc(sizeof(my_list));
+    my_list_node *a = (my_list_node*)malloc(sizeof(my_list_node));
     a->val = val;
     linked_list_push_front(list, &a->lnode);
+    push_gat(a);
 }
 
 
@@ -401,7 +442,7 @@ void push_pop_back_test()
 
 bool equals(linked_list_node_t* a, linked_list_node_t* b)
 {
-    return (int)a == OBTAIN_STRUCT_ADDR(b, lnode, my_list)->val;
+    return (int)a == OBTAIN_STRUCT_ADDR(b, lnode, my_list_node)->val;
 }
 
 void search_test()
@@ -438,6 +479,12 @@ void search_test()
 
 int main(void)
 {
+    int i = 0;
+    for(i = 0; i < GLOBAL_ALLOC_TABLE_SIZE; i++)
+    {
+        g_gat[i] = NULL;
+    }
+
     insert_test_beginning();
     insert_test_middle();
     insert_test_end();
@@ -456,6 +503,8 @@ int main(void)
     push_pop_back_test();
 
     search_test();
+
+    clear_gat();
 
     return 0;
 }
