@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include "avl_tree.h"
 
 static inline int32_t SAPI _avl_tree_node_get_height(avl_tree_entry_t *node)
@@ -229,7 +230,7 @@ static void _avl_tree_swap_nodes(avl_tree_entry_t *node1, avl_tree_entry_t *node
 }
 
 static avl_tree_entry_t *SAPI _avl_tree_node_delete(avl_tree_entry_t *root, avl_tree_entry_t *node,
-                                                   int32_t (*compare)(avl_tree_entry_t *, avl_tree_entry_t *))
+                                                    int32_t (*compare)(avl_tree_entry_t *, avl_tree_entry_t *))
 {
     if (root == NULL || node == NULL || compare == NULL)
         return root;
@@ -279,7 +280,7 @@ static avl_tree_entry_t *SAPI _avl_tree_node_delete(avl_tree_entry_t *root, avl_
 }
 
 static avl_tree_entry_t *SAPI _avl_tree_node_search(avl_tree_entry_t *root, avl_tree_entry_t *node,
-                                                   int32_t(*compare)(avl_tree_entry_t *, avl_tree_entry_t *))
+                                                    int32_t(*compare)(avl_tree_entry_t *, avl_tree_entry_t *))
 {
     if(root == NULL || compare == NULL)
         return NULL;
@@ -378,26 +379,27 @@ avl_tree_entry_t *SAPI avl_tree_smaller(avl_tree_entry_t *it)
     }
 }
 
-avl_tree_entry_t * SAPI avl_tree_search(avl_tree_t *tree, avl_tree_entry_t * node)
+avl_tree_entry_t * SAPI avl_tree_search(avl_tree_t *tree, avl_tree_entry_t * node, int32_t (*compare)(avl_tree_entry_t *, avl_tree_entry_t *))
 {
-    return _avl_tree_node_search(tree->root, node, tree->compare);
+    return _avl_tree_node_search(tree->root, node, compare);
 }
 
 
-void SAPI avl_tree_insert(avl_tree_t *tree, avl_tree_entry_t* data)
+void SAPI avl_tree_insert(avl_tree_t *tree, avl_tree_entry_t* data, int32_t (*compare)(avl_tree_entry_t *, avl_tree_entry_t *))
 {
     if(tree != NULL && data != NULL)
     {
-        tree->root = _avl_tree_node_insert(tree->root, data, tree->compare, NULL);
+        _avl_tree_node_init(data);
+        tree->root = _avl_tree_node_insert(tree->root, data, compare, NULL);
     }
     return;
 }
 
-void SAPI avl_tree_delete(avl_tree_t *tree, avl_tree_entry_t *data)
+void SAPI avl_tree_delete(avl_tree_t *tree, avl_tree_entry_t *data, int32_t (*compare)(avl_tree_entry_t *, avl_tree_entry_t *))
 {
     if(tree != NULL && data != NULL)
     {
-        tree->root = _avl_tree_node_delete(tree->root, data, tree->compare);
+        tree->root = _avl_tree_node_delete(tree->root, data, compare);
     }
     return;
 }
@@ -418,12 +420,53 @@ int32_t SAPI avl_tree_size(avl_tree_t *tree)
     return size;
 }
 
-void SAPI avl_tree_init(avl_tree_t * tree, int32_t (*compare)(avl_tree_entry_t*, avl_tree_entry_t*))
+void SAPI avl_tree_init(avl_tree_t * tree)
 {
     if(tree != NULL)
     {
         tree->root = NULL;
-        tree->compare = compare;
     }
     return;
+}
+
+
+
+// TESTING STUFF
+
+static int32_t SAPI _avl_tree_node_calculate_height(avl_tree_entry_t *tree)
+{
+    if (tree == NULL)
+        return -1;
+    return max_32(_avl_tree_node_calculate_height(tree->left), _avl_tree_node_calculate_height(tree->right)) + 1;
+}
+
+static bool SAPI _avl_tree_node_test(avl_tree_entry_t *tree, int32_t (*compare)(avl_tree_entry_t*, avl_tree_entry_t*))
+{
+    if (tree == NULL)
+        return true;
+    if (_avl_tree_node_get_balance_factor(tree) < -1 || _avl_tree_node_get_balance_factor(tree) > 1 || _avl_tree_node_calculate_height(tree) != tree->height)
+        return false;
+    if(tree->left != NULL)
+    {
+        if(tree->left->parent != tree)
+            return false;
+    }
+    if(tree->right != NULL)
+    {
+        if(tree->right->parent != tree)
+            return false;
+    }
+    if(compare != NULL)
+    {
+        if((tree->right != NULL && compare(tree,tree->right) > 0) || (tree->left != NULL && compare(tree,tree->left) < 0))
+            return false;
+    }
+    return _avl_tree_node_test(tree->left,compare) && _avl_tree_node_test(tree->right,compare);
+}
+
+bool SAPI avl_tree_validate(avl_tree_t *tree, int32_t (*compare)(avl_tree_entry_t *, avl_tree_entry_t *))
+{
+    if(tree == NULL)
+        return true;
+    return _avl_tree_node_test(tree->root, compare);
 }

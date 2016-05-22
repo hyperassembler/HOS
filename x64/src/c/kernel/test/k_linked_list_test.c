@@ -12,35 +12,23 @@ typedef struct
     int val;
 } my_list_node;
 
-#define GLOBAL_ALLOC_TABLE_SIZE 64
-my_list_node* g_gat[GLOBAL_ALLOC_TABLE_SIZE];
+#define GLOBAL_ALLOC_TABLE_SIZE 128
+static my_list_node* g_gat[GLOBAL_ALLOC_TABLE_SIZE];
 
-void delete_list(linked_list_t* list)
-{
-    if(list != NULL)
-    {
-        linked_list_entry_t* node = linked_list_first(list);
-        while(node != NULL)
-        {
-            my_list_node *mnode = OBTAIN_STRUCT_ADDR(node, lnode, my_list_node);
-            node = linked_list_next(node);
-            hal_free(mnode);
-        }
-    }
-    return;
-}
-
-void push_gat(my_list_node* wow)
+static void push_gat(my_list_node* wow)
 {
     int i = 0;
     for(i = 0; i < GLOBAL_ALLOC_TABLE_SIZE; i++)
     {
         if(g_gat[i] == NULL)
+        {
             g_gat[i] = wow;
+            break;
+        }
     }
 }
 
-void clear_gat()
+static void clear_gat()
 {
     int i = 0;
     for(i = 0; i < GLOBAL_ALLOC_TABLE_SIZE; i++)
@@ -50,7 +38,7 @@ void clear_gat()
     }
 }
 
-bool validate_list(linked_list_t* list)
+static bool validate_list(linked_list_t* list)
 {
     bool result = true;
     // list_head_test
@@ -76,10 +64,10 @@ bool validate_list(linked_list_t* list)
 }
 
 
-bool assert_list(linked_list_t* list, int val[], int size)
+static bool assert_list(linked_list_t* list, int val[], int size)
 {
     linked_list_entry_t * node = linked_list_first(list);
-    unsigned int i = 0;
+    int i = 0;
 
     if(!validate_list(list))
         return false;
@@ -137,7 +125,7 @@ bool assert_list(linked_list_t* list, int val[], int size)
 //    return;
 //}
 
-void insert_val(linked_list_t* list, int index, int val)
+static void insert_val(linked_list_t* list, int index, int val)
 {
     my_list_node *a = (my_list_node*)hal_alloc(sizeof(my_list_node));
     a->val = val;
@@ -145,7 +133,7 @@ void insert_val(linked_list_t* list, int index, int val)
     push_gat(a);
 }
 
-void push_back_val(linked_list_t* list, int val)
+static void push_back_val(linked_list_t* list, int val)
 {
     my_list_node *a = (my_list_node*)hal_alloc(sizeof(my_list_node));
     a->val = val;
@@ -153,7 +141,7 @@ void push_back_val(linked_list_t* list, int val)
     push_gat(a);
 }
 
-void push_front_val(linked_list_t* list, int val)
+static void push_front_val(linked_list_t* list, int val)
 {
     my_list_node *a = (my_list_node*)hal_alloc(sizeof(my_list_node));
     a->val = val;
@@ -162,7 +150,7 @@ void push_front_val(linked_list_t* list, int val)
 }
 
 
-void insert_test_beginning()
+static void insert_test_beginning()
 {
     linked_list_t list;
     linked_list_init(&list);
@@ -176,7 +164,7 @@ void insert_test_beginning()
     hal_printf("insert_test_beginning %s\n",assert_list(&list, val, 4) ? "PASS" : "FAIL");
 }
 
-void insert_test_middle()
+static void insert_test_middle()
 {
     linked_list_t list;
     linked_list_init(&list);
@@ -193,7 +181,7 @@ void insert_test_middle()
     hal_printf("insert_test_middle %s\n",assert_list(&list, val, 6) ? "PASS" : "FAIL");
 }
 
-void insert_test_end()
+static void insert_test_end()
 {
     linked_list_t list;
     linked_list_init(&list);
@@ -207,7 +195,7 @@ void insert_test_end()
     hal_printf("insert_test_end %s\n",assert_list(&list, val, 4) ? "PASS" : "FAIL");
 }
 
-void insert_test_invalid()
+static void insert_test_invalid()
 {
     linked_list_t list;
     linked_list_init(&list);
@@ -237,7 +225,7 @@ void insert_test_invalid()
 }
 
 
-void remove_test_beginning()
+static void remove_test_beginning()
 {
     linked_list_t list;
     linked_list_init(&list);
@@ -254,7 +242,7 @@ void remove_test_beginning()
     hal_printf("remove_test_beginning %s\n",assert_list(&list, val, 2) ? "PASS" : "FAIL");
 }
 
-void remove_test_middle()
+static void remove_test_middle()
 {
     linked_list_t list;
     linked_list_init(&list);
@@ -275,7 +263,7 @@ void remove_test_middle()
     hal_printf("remove_test_middle %s\n",assert_list(&list, val, 4) ? "PASS" : "FAIL");
 }
 
-void remove_test_end()
+static void remove_test_end()
 {
     linked_list_t list;
     linked_list_init(&list);
@@ -292,7 +280,7 @@ void remove_test_end()
     hal_printf("remove_test_all %s\n",assert_list(&list, val, 2) ? "PASS" : "FAIL");
 }
 
-void remove_test_all()
+static void remove_test_all()
 {
     bool result = true;
     linked_list_t list;
@@ -337,7 +325,7 @@ void remove_test_all()
     hal_printf("remove_test_end %s\n",result ? "PASS" : "FAIL");
 }
 
-void remove_test_invalid()
+static void remove_test_invalid()
 {
     linked_list_t list;
     linked_list_init(&list);
@@ -367,7 +355,7 @@ void remove_test_invalid()
     hal_printf("remove_test_invalid %s\n",assert_list(&list, val, 4) ? "PASS" : "FAIL");
 }
 
-void size_test()
+static void size_test()
 {
     bool result = true;
     linked_list_t list;
@@ -386,7 +374,7 @@ void size_test()
     hal_printf("size_test %s\n", result ? "PASS" : "FAIL");
 }
 
-void push_pop_front_test()
+static void push_pop_front_test()
 {
     bool result = true;
     linked_list_t list;
@@ -414,7 +402,7 @@ void push_pop_front_test()
     hal_printf("push_pop_front_test %s\n", result ? "PASS" : "FAIL");
 }
 
-void push_pop_back_test()
+static void push_pop_back_test()
 {
     bool result = true;
     linked_list_t list;
@@ -442,12 +430,12 @@ void push_pop_back_test()
     hal_printf("push_pop_back_test %s\n", result ? "PASS" : "FAIL");
 }
 
-bool equals(linked_list_entry_t* a, linked_list_entry_t* b)
+static bool equals(linked_list_entry_t* a, linked_list_entry_t* b)
 {
-    return (int)a == OBTAIN_STRUCT_ADDR(b, lnode, my_list_node)->val;
+    return (int64_t)a == OBTAIN_STRUCT_ADDR(b, lnode, my_list_node)->val;
 }
 
-void search_test()
+static void search_test()
 {
     bool result = true;
     linked_list_t list;
@@ -461,13 +449,13 @@ void search_test()
     int val1[] = {1,2,3,4};
     result = result && assert_list(&list, val1, 4);
 
-    result = result && (linked_list_search(&list, 4 ,equals) == 3);
-    result = result && (linked_list_search(&list, 3 ,equals) == 2);
-    result = result && (linked_list_search(&list, 2 ,equals) == 1);
-    result = result && (linked_list_search(&list, 1 ,equals) == 0);
+    result = result && (linked_list_search(&list, (linked_list_entry_t *) 4, equals) == 3);
+    result = result && (linked_list_search(&list, (linked_list_entry_t *)3 ,equals) == 2);
+    result = result && (linked_list_search(&list, (linked_list_entry_t *)2 ,equals) == 1);
+    result = result && (linked_list_search(&list, (linked_list_entry_t *)1 ,equals) == 0);
 
     result = result && (linked_list_search(&list, NULL ,equals) == -1);
-    result = result && (linked_list_search(NULL, 1 ,equals) == -1);
+    result = result && (linked_list_search(NULL, (linked_list_entry_t *)1 ,equals) == -1);
 
     linked_list_entry_t* node = linked_list_get(&list, 1);
     result = result && (linked_list_search(&list, node , NULL) == 1);
@@ -479,7 +467,7 @@ void search_test()
 }
 
 
-int linked_list_test(void)
+void linked_list_test(void)
 {
     int i = 0;
     for(i = 0; i < GLOBAL_ALLOC_TABLE_SIZE; i++)
@@ -507,7 +495,5 @@ int linked_list_test(void)
     search_test();
 
     clear_gat();
-
-    return 0;
 }
 

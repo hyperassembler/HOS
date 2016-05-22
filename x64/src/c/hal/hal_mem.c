@@ -3,7 +3,7 @@
 #include "hal_mem.h"
 #include "salloc.h"
 
-#define KERNEL_HEAP_SIZE 4096
+#define KERNEL_HEAP_SIZE 8192
 
 char kernel_heap[KERNEL_HEAP_SIZE];
 

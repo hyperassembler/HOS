@@ -13,8 +13,7 @@ void SAPI kmain(multiboot_info_t *multiboot_info)
     hal_printf("Kernel Loaded at 0x%X. Size: %uB, %uKB\n\n",kernel_start,(kernel_end-kernel_start),(kernel_end-kernel_start)/1024);
 
     linked_list_test();
-	
-    //avl_tree_test();
+    avl_tree_test();
 
     if(boot_info->mem_info != NULL)
     {

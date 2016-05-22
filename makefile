@@ -14,7 +14,7 @@ C_SRC_PATH_32 := x86/src/c
 
 ASM_SRC_PATH_32 := x86/src/asm
 
-C_FLAGS_32 := -m32 -std=c11 -g -c -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra
+C_FLAGS_32 := -m32 -std=c11 -g -c -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra -Wno-comment
 
 ASM_FLAGS_32 := -f elf32 -I $(ASM_SRC_PATH_32)/
 
@@ -34,7 +34,7 @@ C_SRC_PATH_64 := x64/src/c
 
 ASM_SRC_PATH_64 := x64/src/asm
 
-C_FLAGS_64 := -m64 -std=c11 -g -c $(HEADER_DIRS_OPTION_64) -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra
+C_FLAGS_64 := -m64 -std=c11 -g -c $(HEADER_DIRS_OPTION_64) -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra -Wno-comment
 
 ASM_FLAGS_64 := -f elf64 -I $(ASM_SRC_PATH_64)/
 
