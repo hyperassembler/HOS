@@ -7,7 +7,7 @@ LD = ld
 #Recursive Wildcard
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
 rdircard=$(sort $(dir $(call rwildcard,$1,*)))
-
+rdircardex=$(sort $(dir $(call rwildcard,$1,$2)))
 #x86 vars
 
 C_SRC_PATH_32 := x86/src/c
@@ -24,11 +24,17 @@ LD_SCRIPT_32 := build/link32.ld
 
 #x64 vars
 
+#64 header files
+
+HEADER_DIRS_64 := $(call rdircardex, *,*.h)
+
+HEADER_DIRS_OPTION_64 :=  $(addprefix -I, $(HEADER_DIRS_64))
+
 C_SRC_PATH_64 := x64/src/c
 
 ASM_SRC_PATH_64 := x64/src/asm
 
-C_FLAGS_64 := -m64 -std=c11 -g -c -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra
+C_FLAGS_64 := -m64 -std=c11 -g -c $(HEADER_DIRS_OPTION_64) -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra
 
 ASM_FLAGS_64 := -f elf64 -I $(ASM_SRC_PATH_64)/
 

@@ -24,10 +24,6 @@ dd entry_32
 MULTIBOOT_HEADER_SIZE equ ($ - MULTIBOOT_HEADER)
 
 align 4096 ;4k alignment
-times 4096 db 0
-KERNEL_STACK:
-
-align 4096 ;4k alignment
 ; temporary page table
 PML4_BASE:
 times 512 dq 0 ;reserved the rest for page entries
@@ -191,3 +187,7 @@ hlt
 BOCHS_MAGIC_BREAKPOINT:
 xchg bx,bx
 ret
+
+align 4096 ;4k alignment
+times 8192 db 0
+KERNEL_STACK:

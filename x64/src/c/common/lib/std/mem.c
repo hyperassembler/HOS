@@ -1,8 +1,8 @@
-#include "../../sys/type.h"
-#include "../../sys/kdef.h"
-#include "mem.h"
+#include "k_type.h"
+#include "k_def.h"
+#include "std_lib.h"
 
-void SAPI mem_copy(void *src, void *dst, uint64_t size)
+void SAPI mem_cpy(void *src, void *dst, uint64_t size)
 {
     if (src == NULL || dst == NULL)
         return;
@@ -28,7 +28,7 @@ void SAPI mem_move(void *src, void *dst, uint64_t size)
         return;
     if (src >= dst)
     {
-        return mem_copy(src, dst, size);
+        return mem_cpy(src, dst, size);
     }
     src += size;
     dst += size;

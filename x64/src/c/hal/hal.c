@@ -1,16 +1,18 @@
 #include "hal.h"
-#include "print.h"
-#include "mem.h"
-#include "io.h"
-#include "var.h"
-#include "../common/lib/std/str.h"
-#include "../common/lib/std/mem.h"
-#include "../common/sys/sys_info.h"
+#include "hal_print.h"
+#include "hal_mem.h"
+#include "hal_io.h"
+#include "hal_var.h"
+#include "std_lib.h"
 
 boot_info_t *SAPI hal_init(multiboot_info_t *m_info)
 {
     if (m_info == NULL)
         return NULL;
+
+    // set up kernel heap;
+    hal_alloc_init();
+
     boot_info_t *boot_info = (boot_info_t *) hal_alloc(sizeof(boot_info_t));
     text_pos = get_pos(0, 0);
 
@@ -46,9 +48,6 @@ boot_info_t *SAPI hal_init(multiboot_info_t *m_info)
     g_idt_ptr.limit = 21 * 16 - 1;
     hal_flush_idt(&g_idt_ptr);
 
-    // set up kernel heap;
-    hal_alloc_init();
-
     mem_set(boot_info, 0, sizeof(boot_info_t));
     // obtain boot information
     // memory info
@@ -68,7 +67,7 @@ boot_info_t *SAPI hal_init(multiboot_info_t *m_info)
         uint64_t mem_map_size = m_info->mmap_length / sizeof(multiboot_memory_map_t);
         for (uint64_t i = 0; i < mem_map_size; i++)
         {
-            hal_printf("\n==Base: 0x%X, Length: %u, Type: %s==", (mem_map + i)->addr, (mem_map + i)->len,
+            hal_printf("==Base: 0x%X, Length: %u, Type: %s==\n", (mem_map + i)->addr, (mem_map + i)->len,
                        (mem_map + i)->type == MULTIBOOT_MEMORY_AVAILABLE ? "AVL" : "RSV");
             if ((mem_map + i)->type == MULTIBOOT_MEMORY_AVAILABLE)
             {
@@ -151,8 +150,8 @@ boot_info_t *SAPI hal_init(multiboot_info_t *m_info)
             each_module->size = (mods_list + i)->mod_end - (mods_list + i)->mod_start;
             each_module->name = (char *) hal_alloc((size_t) str_len((char *) (uint64_t)(mods_list + i)->cmdline) + 1);
             hal_assert(each_module->name != NULL, "Unable to allocate memory for module name string.");
-            mem_copy((void *)(uint64_t)(mods_list + i)->cmdline, each_module->name,
-                     str_len((char *)(uint64_t)(mods_list + i)->cmdline) + 1);
+            mem_cpy((void *) (uint64_t) (mods_list + i)->cmdline, each_module->name,
+                    str_len((char *) (uint64_t) (mods_list + i)->cmdline) + 1);
             linked_list_push_back(boot_info->module_info->module_list, &each_module->list_node);
         }
     }

@@ -1,4 +1,4 @@
-#include "str.h"
+#include "std_lib.h"
 
 uint64_t SAPI str_len(char const *str)
 {
