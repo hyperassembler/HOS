@@ -13,7 +13,7 @@ boot_info_t *SAPI hal_init(multiboot_info_t *m_info)
     // set up kernel heap;
     hal_alloc_init();
 
-    boot_info_t *boot_info = (boot_info_t *) hal_alloc(sizeof(boot_info_t));
+    boot_info_t *boot_info = (boot_info_t *) halloc(sizeof(boot_info_t));
     text_pos = get_pos(0, 0);
 
     // get gdt ready
@@ -53,12 +53,12 @@ boot_info_t *SAPI hal_init(multiboot_info_t *m_info)
     // memory info
     if (m_info->flags & (1 << 6))
     {
-        boot_info->mem_info = (mem_info_t *) hal_alloc(sizeof(mem_info_t));
+        boot_info->mem_info = (mem_info_t *) halloc(sizeof(mem_info_t));
         hal_assert(boot_info->mem_info != NULL, "Unable to allocate memory for mem_info.");
         boot_info->mem_info->mem_available = 0;
         boot_info->mem_info->mem_installed = 0;
-        boot_info->mem_info->free_page_list = (linked_list_t *) hal_alloc((sizeof(linked_list_t)));
-        boot_info->mem_info->occupied_page_list = (linked_list_t *) hal_alloc((sizeof(linked_list_t)));
+        boot_info->mem_info->free_page_list = (linked_list_t *) halloc((sizeof(linked_list_t)));
+        boot_info->mem_info->occupied_page_list = (linked_list_t *) halloc((sizeof(linked_list_t)));
         hal_assert(boot_info->mem_info->free_page_list != NULL &&
                    boot_info->mem_info->occupied_page_list != NULL, "Unable to allocate memory for mem_info_lists.");
         linked_list_init(boot_info->mem_info->free_page_list);
@@ -112,7 +112,7 @@ boot_info_t *SAPI hal_init(multiboot_info_t *m_info)
 //                    }
 //                }
 
-                memory_descriptor_node_t *each_desc = (memory_descriptor_node_t *) hal_alloc(
+                memory_descriptor_node_t *each_desc = (memory_descriptor_node_t *) halloc(
                         sizeof(memory_descriptor_node_t));
                 hal_assert(each_desc != NULL, "Unable to allocate memory for memory_descriptor.");
                 each_desc->page_count = page_count;
@@ -133,22 +133,22 @@ boot_info_t *SAPI hal_init(multiboot_info_t *m_info)
     // loaded kernel modules
     if (m_info->flags & (1 << 3))
     {
-        boot_info->module_info = (module_info_t *) hal_alloc(sizeof(module_info_t));
+        boot_info->module_info = (module_info_t *) halloc(sizeof(module_info_t));
         hal_assert(boot_info->module_info != NULL, "Unable to allocate memory for module_info.");
         boot_info->module_info->module_count = 0;
-        boot_info->module_info->module_list = (linked_list_t *) hal_alloc(sizeof(linked_list_t));
+        boot_info->module_info->module_list = (linked_list_t *) halloc(sizeof(linked_list_t));
         hal_assert(boot_info->module_info->module_list != NULL, "Unable to allocate memory for module_list.");
         linked_list_init(boot_info->module_info->module_list);
         multiboot_module_t *mods_list = (multiboot_module_t *) (uint64_t) m_info->mods_addr;
         boot_info->module_info->module_count = m_info->mods_count;
         for (uint64_t i = 0; i < boot_info->module_info->module_count; i++)
         {
-            module_descriptor_node_t *each_module = (module_descriptor_node_t *) hal_alloc(
+            module_descriptor_node_t *each_module = (module_descriptor_node_t *) halloc(
                     sizeof(module_descriptor_node_t));
             hal_assert(each_module != NULL, "Unable to allocate memory for module_descriptor.");
             each_module->base_addr = (mods_list + i)->mod_start;
             each_module->size = (mods_list + i)->mod_end - (mods_list + i)->mod_start;
-            each_module->name = (char *) hal_alloc((size_t) str_len((char *) (uint64_t)(mods_list + i)->cmdline) + 1);
+            each_module->name = (char *) halloc((size_t) str_len((char *) (uint64_t) (mods_list + i)->cmdline) + 1);
             hal_assert(each_module->name != NULL, "Unable to allocate memory for module name string.");
             mem_cpy((void *) (uint64_t) (mods_list + i)->cmdline, each_module->name,
                     str_len((char *) (uint64_t) (mods_list + i)->cmdline) + 1);

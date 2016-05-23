@@ -1,6 +1,5 @@
-#include "hal_print.h"
+#include "k_test_driver.h"
 #include "avl_tree.h"
-#include "hal_mem.h"
 
 typedef struct
 {
@@ -8,38 +7,10 @@ typedef struct
     int val;
 } int_tree_node;
 
-#define GLOBAL_ALLOC_TABLE_SIZE 150
-
-static void* g_gat[GLOBAL_ALLOC_TABLE_SIZE];
-
-static void push_gat(void* wow)
-{
-    int i = 0;
-    for(i = 0; i < GLOBAL_ALLOC_TABLE_SIZE; i++)
-    {
-        if(g_gat[i] == NULL)
-        {
-            g_gat[i] = wow;
-            break;
-        }
-    }
-}
-
-static void clear_gat()
-{
-    int i = 0;
-    for(i = 0; i < GLOBAL_ALLOC_TABLE_SIZE; i++)
-    {
-        if(g_gat[i] != NULL)
-            hal_free(g_gat[i]);
-    }
-}
-
 static int_tree_node *create_tree_node(int val)
 {
-    int_tree_node *rs = hal_alloc(sizeof(int_tree_node));
+    int_tree_node *rs = talloc(sizeof(int_tree_node));
     rs->val = val;
-    push_gat(rs);
     return rs;
 }
 
@@ -524,12 +495,12 @@ static bool delete_complex_2()
     avl_tree_insert(&tree, &create_tree_node(30)->tree_entry, compare);
     avl_tree_insert(&tree, &create_tree_node(25)->tree_entry, compare);
     avl_tree_insert(&tree, &create_tree_node(35)->tree_entry, compare);
-    int val1[] = {20,10,30,25,35};
+    int val1[] = {20, 10, 30, 25, 35};
     result = result && pre_order_assert(&tree, val1, 5);
 
     avl_tree_delete(&tree, &deleted->tree_entry, compare);
 
-    int val2[] = {25,10,30,35};
+    int val2[] = {25, 10, 30, 35};
     result = result && pre_order_assert(&tree, val2, 4);
     return result && avl_tree_validate(&tree, compare);
 }
@@ -564,12 +535,12 @@ static bool delete_complex_3()
     avl_tree_insert(&tree, &create_tree_node(5)->tree_entry, compare);
     avl_tree_insert(&tree, &create_tree_node(15)->tree_entry, compare);
     avl_tree_insert(&tree, &create_tree_node(25)->tree_entry, compare);
-    int val1[] = {20,10,5,15,30,25};
+    int val1[] = {20, 10, 5, 15, 30, 25};
     result = result && pre_order_assert(&tree, val1, 6);
 
     avl_tree_delete(&tree, &deleted->tree_entry, compare);
 
-    int val2[] = {20,15,5,30,25};
+    int val2[] = {20, 15, 5, 30, 25};
     result = result && pre_order_assert(&tree, val2, 5);
     return result && avl_tree_validate(&tree, compare);
 }
@@ -609,7 +580,7 @@ static bool delete_complex_4()
     avl_tree_insert(&tree, &delete15->tree_entry, compare);
     avl_tree_insert(&tree, &delete25->tree_entry, compare);
 
-    int val1[] = {20,10,5,15,30,25};
+    int val1[] = {20, 10, 5, 15, 30, 25};
     result = result && pre_order_assert(&tree, val1, 6);
 
     avl_tree_delete(&tree, &delete5->tree_entry, compare);
@@ -668,12 +639,12 @@ static bool delete_complex_single_rotation()
     avl_tree_insert(&tree, &create_tree_node(35)->tree_entry, compare);
     avl_tree_insert(&tree, &deleted->tree_entry, compare);
     avl_tree_insert(&tree, &create_tree_node(31)->tree_entry, compare);
-    int val1[] = {20,10,5,15,12,30,25,22,40,35,31,50};
+    int val1[] = {20, 10, 5, 15, 12, 30, 25, 22, 40, 35, 31, 50};
     result = result && pre_order_assert(&tree, val1, 12);
 
     avl_tree_delete(&tree, &deleted->tree_entry, compare);
 
-    int val2[] = {20,10,5,15,12,30,25,22,35,31,40};
+    int val2[] = {20, 10, 5, 15, 12, 30, 25, 22, 35, 31, 40};
     result = result && pre_order_assert(&tree, val2, 11);
     return result && avl_tree_validate(&tree, compare);
 }
@@ -723,12 +694,12 @@ static bool delete_complex_double_rotation()
     avl_tree_insert(&tree, &create_tree_node(35)->tree_entry, compare);
     avl_tree_insert(&tree, &create_tree_node(50)->tree_entry, compare);
     avl_tree_insert(&tree, &create_tree_node(31)->tree_entry, compare);
-    int val1[] = {20,10,5,15,12,30,25,22,40,35,31,50};
+    int val1[] = {20, 10, 5, 15, 12, 30, 25, 22, 40, 35, 31, 50};
     result = result && pre_order_assert(&tree, val1, 12);
 
     avl_tree_delete(&tree, &deleted->tree_entry, compare);
 
-    int val2[] = {20,10,5,15,12,35,30,25,31,40,50};
+    int val2[] = {20, 10, 5, 15, 12, 35, 30, 25, 31, 40, 50};
     result = result && pre_order_assert(&tree, val2, 11);
     return result && avl_tree_validate(&tree, compare);
 }
@@ -778,12 +749,12 @@ static bool delete_complex_multiple_rotation()
     avl_tree_insert(&tree, &create_tree_node(35)->tree_entry, compare);
     avl_tree_insert(&tree, &create_tree_node(50)->tree_entry, compare);
     avl_tree_insert(&tree, &create_tree_node(31)->tree_entry, compare);
-    int val1[] = {20,10,5,15,12,30,25,22,40,35,31,50};
+    int val1[] = {20, 10, 5, 15, 12, 30, 25, 22, 40, 35, 31, 50};
     result = result && pre_order_assert(&tree, val1, 12);
 
     avl_tree_delete(&tree, &deleted->tree_entry, compare);
 
-    int val2[] = {30,20,12,10,15,25,22,40,35,31,50};
+    int val2[] = {30, 20, 12, 10, 15, 25, 22, 40, 35, 31, 50};
     result = result && pre_order_assert(&tree, val2, 11);
     return result && avl_tree_validate(&tree, compare);
 }
@@ -822,7 +793,7 @@ static bool delete_DNE()
     avl_tree_insert(&tree, &create_tree_node(15)->tree_entry, compare);
     avl_tree_insert(&tree, &create_tree_node(25)->tree_entry, compare);
 
-    int val1[] = {20,10,5,15,30,25};
+    int val1[] = {20, 10, 5, 15, 30, 25};
     result = result && pre_order_assert(&tree, val1, 6);
 
     avl_tree_delete(&tree, &delete24->tree_entry, compare);
@@ -833,44 +804,41 @@ static bool delete_DNE()
 
 void SAPI avl_tree_test(void)
 {
-    int i = 0;
-    for (i = 0; i < GLOBAL_ALLOC_TABLE_SIZE; i++)
-    {
-        g_gat[i] = NULL;
-    }
+    test_begin("AVL tree test");
+
     // simple tests
-    hal_printf("insert_simple_l %s\n", insert_simple_l() ? "PASS" : "FAIL");
-    hal_printf("insert_simple_r %s\n", insert_simple_r() ? "PASS" : "FAIL");
-    hal_printf("insert_simple_ll %s\n", insert_simple_ll() ? "PASS" : "FAIL");
-    hal_printf("insert_simple_rr %s\n", insert_simple_rr() ? "PASS" : "FAIL");
+    run_case("insert_simple_l", insert_simple_l());
+    run_case("insert_simple_r", insert_simple_r());
+    run_case("insert_simple_ll", insert_simple_ll());
+    run_case("insert_simple_rr", insert_simple_rr());
 
     // complex ones
-    hal_printf("insert_complex_1 %s\n", insert_complex_1() ? "PASS" : "FAIL");
-    hal_printf("insert_complex_2 %s\n", insert_complex_2() ? "PASS" : "FAIL");
-    hal_printf("insert_complex_3 %s\n", insert_complex_3() ? "PASS" : "FAIL");
-    hal_printf("insert_complex_4 %s\n", insert_complex_4() ? "PASS" : "FAIL");
+    run_case("insert_complex_1", insert_complex_1());
+    run_case("insert_complex_2", insert_complex_2());
+    run_case("insert_complex_3", insert_complex_3());
+    run_case("insert_complex_4", insert_complex_4());
 
     // insert duplicate
-    hal_printf("insert_duplicate %s\n", insert_duplicate() ? "PASS" : "FAIL");
+    run_case("insert_duplicate", insert_duplicate());
 
     // simple tests
-    hal_printf("delete_simple_l %s\n", delete_simple_l() ? "PASS" : "FAIL");
-    hal_printf("delete_simple_r %s\n", delete_simple_r() ? "PASS" : "FAIL");
-    hal_printf("delete_simple_ll %s\n", delete_simple_ll() ? "PASS" : "FAIL");
-    hal_printf("delete_simple_rr %s\n", delete_simple_rr() ? "PASS" : "FAIL");
+    run_case("delete_simple_l", delete_simple_l());
+    run_case("delete_simple_r", delete_simple_r());
+    run_case("delete_simple_ll", delete_simple_ll());
+    run_case("delete_simple_rr", delete_simple_rr());
 
     // complex tests
-    hal_printf("delete_complex_1 %s\n", delete_complex_1() ? "PASS" : "FAIL");
-    hal_printf("delete_complex_2 %s\n", delete_complex_2() ? "PASS" : "FAIL");
-    hal_printf("delete_complex_3 %s\n", delete_complex_3() ? "PASS" : "FAIL");
-    hal_printf("delete_complex_4 %s\n", delete_complex_4() ? "PASS" : "FAIL");
-    hal_printf("delete_complex_single_rotation %s\n", delete_complex_single_rotation() ? "PASS" : "FAIL");
-    hal_printf("delete_complex_double_rotation %s\n", delete_complex_double_rotation() ? "PASS" : "FAIL");
-    hal_printf("delete_complex_multiple_rotation %s\n", delete_complex_multiple_rotation() ? "PASS" : "FAIL");
+    run_case("delete_complex_1", delete_complex_1());
+    run_case("delete_complex_2", delete_complex_2());
+    run_case("delete_complex_3", delete_complex_3());
+    run_case("delete_complex_4", delete_complex_4());
+    run_case("delete_complex_single_rotation", delete_complex_single_rotation());
+    run_case("delete_complex_double_rotation", delete_complex_double_rotation());
+    run_case("delete_complex_multiple_rotation", delete_complex_multiple_rotation());
 
     // delete non-existing
-    hal_printf("delete_DNE %s\n", delete_DNE() ? "PASS" : "FAIL");
+    run_case("delete_DNE", delete_DNE());
 
-    clear_gat();
+    test_end();
 }
 

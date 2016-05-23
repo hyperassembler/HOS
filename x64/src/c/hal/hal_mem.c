@@ -72,7 +72,7 @@ void SAPI hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint6
 }
 
 void SAPI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit,
-                                              uint64_t const attr)
+                                       uint64_t const attr)
 {
     if (gdt == NULL)
         return;
@@ -90,12 +90,12 @@ void SAPI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uin
     return;
 }
 
-void* SAPI hal_alloc(uint32_t size)
+void *SAPI halloc(uint32_t size)
 {
-    return salloc(kernel_heap,size);
+    return salloc(kernel_heap, size);
 }
 
-void SAPI hal_free(void *ptr)
+void SAPI hfree(void *ptr)
 {
     sfree(kernel_heap, ptr);
     return;

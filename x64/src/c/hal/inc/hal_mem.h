@@ -93,9 +93,9 @@ typedef struct __attribute__((packed))
     uint64_t edx;
 } cpuid_t;
 
-void* SAPI hal_alloc(uint32_t size);
+void* SAPI halloc(uint32_t size);
 
-void SAPI hal_free(void *ptr);
+void SAPI hfree(void *ptr);
 
 void SAPI hal_alloc_init();
 
