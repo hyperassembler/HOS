@@ -3,7 +3,7 @@
 
 typedef struct
 {
-    avl_tree_entry_t tree_entry;
+    avl_tree_node_t tree_entry;
     int val;
 } int_tree_node;
 
@@ -14,14 +14,14 @@ static int_tree_node *create_tree_node(int val)
     return rs;
 }
 
-static int compare(avl_tree_entry_t *root, avl_tree_entry_t *node)
+static int compare(avl_tree_node_t *root, avl_tree_node_t *node)
 {
     int_tree_node *rooti = OBTAIN_STRUCT_ADDR(root, tree_entry, int_tree_node);
     int_tree_node *nodei = OBTAIN_STRUCT_ADDR(node, tree_entry, int_tree_node);
     return rooti->val - nodei->val;
 }
 
-//static void _pre_order(avl_tree_entry_t *node, bool root)
+//static void _pre_order(avl_tree_node_t *node, bool root)
 //{
 //    if (node == NULL)
 //        return;
@@ -33,14 +33,14 @@ static int compare(avl_tree_entry_t *root, avl_tree_entry_t *node)
 //        printf("\n");
 //}
 //
-//static void pre_order(avl_tree_entry_t *node)
+//static void pre_order(avl_tree_node_t *node)
 //{
 //    _pre_order(node, true);
 //}
 
 static int counter = 0;
 
-static bool _pre_order_assert(avl_tree_entry_t *node, int order[], int size)
+static bool _pre_order_assert(avl_tree_node_t *node, int order[], int size)
 {
     if (node == NULL)
         return true;
@@ -828,7 +828,7 @@ static bool test_apocalypse()
     result = result && avl_tree_size(&tree) == AVL_APOCALYPSE_NUM;
 
     // smaller and bigger test
-    avl_tree_entry_t* entry = avl_tree_smallest(&tree);
+    avl_tree_node_t* entry = avl_tree_smallest(&tree);
     uint32_t size = 0;
     int32_t prev = -1;
     int32_t cur = OBTAIN_STRUCT_ADDR(entry, tree_entry,int_tree_node)->val;
