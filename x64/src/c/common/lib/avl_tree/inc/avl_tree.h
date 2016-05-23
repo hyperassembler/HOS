@@ -38,4 +38,6 @@ avl_tree_entry_t *SAPI avl_tree_smaller(avl_tree_entry_t *entry);
 
 bool SAPI avl_tree_validate(avl_tree_t *tree, int32_t (*compare)(avl_tree_entry_t *, avl_tree_entry_t *));
 
+int32_t SAPI avl_tree_size(avl_tree_t *tree);
+
 #endif

@@ -1,5 +1,4 @@
 #include "k_test_driver.h"
-#include "k_type.h"
 #include "linked_list.h"
 #include "k_lib_test.h"
 #include "std_lib.h"

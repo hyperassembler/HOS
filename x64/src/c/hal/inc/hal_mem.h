@@ -6,7 +6,7 @@
 #include "linked_list.h"
 
 
-static inline uint32_t seg_selector(uint32_t index, uint32_t rpl)
+static inline uint32_t SAPI seg_selector(uint32_t index, uint32_t rpl)
 {
     return (index << 3) + rpl;
 }

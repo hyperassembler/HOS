@@ -802,7 +802,93 @@ static bool delete_DNE()
     return result && avl_tree_validate(&tree, compare);
 }
 
-void SAPI avl_tree_test(void)
+#define AVL_APOCALYPSE_NUM 500
+#define AVL_APOCALYPSE_ITER 2
+static int_tree_node apocalypse[AVL_APOCALYPSE_NUM];
+
+static bool test_apocalypse()
+{
+    bool result = true;
+    avl_tree_t tree;
+    avl_tree_init(&tree);
+
+    // insert test
+    for(int i = 0; i < AVL_APOCALYPSE_NUM; i++)
+    {
+        apocalypse[i].val = rand();
+        while(avl_tree_search(&tree, &apocalypse[i].tree_entry,compare) != NULL)
+        {
+            apocalypse[i].val += rand() % 32765;
+        }
+        avl_tree_insert(&tree, &apocalypse[i].tree_entry, compare);
+    }
+
+    // integrity test
+    result = result && avl_tree_validate(&tree, compare);
+    result = result && avl_tree_size(&tree) == AVL_APOCALYPSE_NUM;
+
+    // smaller and bigger test
+    avl_tree_entry_t* entry = avl_tree_smallest(&tree);
+    uint32_t size = 0;
+    int32_t prev = -1;
+    int32_t cur = OBTAIN_STRUCT_ADDR(entry, tree_entry,int_tree_node)->val;
+    while(entry != NULL)
+    {
+        if(cur < prev)
+        {
+            result = false;
+            break;
+        }
+        size++;
+        entry = avl_tree_larger(entry);
+        prev = cur;
+        if(entry != NULL)
+        {
+            cur = OBTAIN_STRUCT_ADDR(entry, tree_entry, int_tree_node)->val;
+        }
+    }
+
+    result = result && size == AVL_APOCALYPSE_NUM;
+
+    // larger test
+    entry = avl_tree_largest(&tree);
+    size = 0;
+    cur = OBTAIN_STRUCT_ADDR(entry, tree_entry,int_tree_node)->val;
+    prev = cur;
+    while(entry != NULL)
+    {
+        if(cur > prev)
+        {
+            result = false;
+            break;
+        }
+        size++;
+        entry = avl_tree_smaller(entry);
+        prev = cur;
+        if(entry != NULL)
+        {
+            cur = OBTAIN_STRUCT_ADDR(entry, tree_entry, int_tree_node)->val;
+        }
+    }
+
+    result = result && size == AVL_APOCALYPSE_NUM;
+
+
+    // delete and search test
+    for(int i = 0; i < AVL_APOCALYPSE_NUM; i++)
+    {
+        result = result && (avl_tree_search(&tree,&apocalypse[i].tree_entry, compare) != NULL);
+        avl_tree_delete(&tree,&apocalypse[i].tree_entry, compare);
+        result = result && (avl_tree_search(&tree,&apocalypse[i].tree_entry, compare) == NULL);
+        result = result && avl_tree_validate(&tree, compare);
+    }
+
+    result = result && (avl_tree_size(&tree) == 0);
+    return result;
+}
+
+
+void  avl_tree_test(void)
 {
     test_begin("AVL tree test");
 
@@ -838,6 +924,13 @@ void SAPI avl_tree_test(void)
 
     // delete non-existing
     run_case("delete_DNE", delete_DNE());
+
+    srand(2986);
+    // ultimate apocalypse
+    for(int i = 0; i < AVL_APOCALYPSE_ITER; i++)
+    {
+        run_case("test_apocalypse", test_apocalypse());
+    }
 
     test_end();
 }
