@@ -1,3 +1,8 @@
+/* Copyright 2016 secXsQuared
+ * Distributed under GPL license
+ * See COPYING under root for details
+ */
+
 #include "hal_var.h"
 
 uint8_t g_gdt[8*9];

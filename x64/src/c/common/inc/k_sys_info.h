@@ -1,3 +1,8 @@
+/* Copyright 2016 secXsQuared
+ * Distributed under GPL license
+ * See COPYING under root for details
+ */
+
 #ifndef _K_SYS_INFO_H_
 #define _K_SYS_INFO_H_
 #include "k_type.h"

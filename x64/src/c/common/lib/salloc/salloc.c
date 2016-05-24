@@ -1,3 +1,8 @@
+/* Copyright 2016 secXsQuared
+ * Distributed under GPL license
+ * See COPYING under root for details
+ */
+
 #include "k_def.h"
 #include "bit_ops.h"
 

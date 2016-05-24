@@ -1,3 +1,8 @@
+/* Copyright 2016 secXsQuared
+ * Distributed under GPL license
+ * See COPYING under root for details
+ */
+
 #include "k_pmm.h"
 #include "k_sys_info.h"
 #include "hal_io.h"

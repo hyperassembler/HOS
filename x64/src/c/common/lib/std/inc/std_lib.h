@@ -1,3 +1,8 @@
+/* Copyright 2016 secXsQuared
+ * Distributed under GPL license
+ * See COPYING under root for details
+ */
+
 #ifndef _STD_LIB_H_
 #define _STD_LIB_H_
 

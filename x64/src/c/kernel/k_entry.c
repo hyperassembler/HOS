@@ -1,3 +1,8 @@
+/* Copyright 2016 secXsQuared
+ * Distributed under GPL license
+ * See COPYING under root for details
+ */
+
 #include "k_def.h"
 #include "std_lib.h"
 #include "k_lib_test.h"

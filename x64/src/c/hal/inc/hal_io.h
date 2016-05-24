@@ -1,3 +1,8 @@
+/* Copyright 2016 secXsQuared
+ * Distributed under GPL license
+ * See COPYING under root for details
+ */
+
 #ifndef _HAL_IO_H_
 #define _HAL_IO_H_
 #include "k_def.h"

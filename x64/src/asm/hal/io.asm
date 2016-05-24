@@ -1,3 +1,7 @@
+; Copyright 2016 secXsQuared
+; Distributed under GPL license
+; See COPYING under root for details
+
 global hal_write_port
 global hal_read_port
 global hal_enable_interrupt

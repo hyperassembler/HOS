@@ -1,3 +1,8 @@
+/* Copyright 2016 secXsQuared
+ * Distributed under GPL license
+ * See COPYING under root for details
+ */
+
 #ifndef _LINKED_LIST_H_
 #define _LINKED_LIST_H_
 

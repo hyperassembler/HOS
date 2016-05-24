@@ -1,3 +1,7 @@
+; Copyright 2016 secXsQuared
+; Distributed under GPL license
+; See COPYING under root for details
+
 extern kmain
 extern kernel_start
 extern kernel_end

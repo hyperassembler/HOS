@@ -1,3 +1,8 @@
+/* Copyright 2016 secXsQuared
+ * Distributed under GPL license
+ * See COPYING under root for details
+ */
+
 #include "hal_io.h"
 #include "hal_print.h"
 #include "hal_mem.h"

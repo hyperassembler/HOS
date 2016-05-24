@@ -1,6 +1,7 @@
-//
-// Created by Oscar on 2016-04-24.
-//
+/* Copyright 2016 secXsQuared
+ * Distributed under GPL license
+ * See COPYING under root for details
+ */
 
 #ifndef _PROC_H
 #define _PROC_H

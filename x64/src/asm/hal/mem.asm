@@ -1,3 +1,7 @@
+; Copyright 2016 secXsQuared
+; Distributed under GPL license
+; See COPYING under root for details
+
 global hal_flush_gdt
 global hal_flush_tlb
 global hal_flush_idt
