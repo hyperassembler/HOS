@@ -5,4 +5,6 @@ void SAPI linked_list_test(void);
 
 void SAPI avl_tree_test(void);
 
+void SAPI salloc_test(void);
+
 #endif

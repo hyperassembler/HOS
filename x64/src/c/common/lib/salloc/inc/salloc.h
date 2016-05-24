@@ -3,10 +3,13 @@
 
 #include "k_def.h"
 
-void salloc_init(void *base, uint32_t size);
+void SAPI salloc_init(void *base, uint32_t size);
 
-void* salloc(void *base, uint32_t size);
+void* SAPI salloc(void *base, uint32_t size);
 
-void sfree(void *base, void *ptr);
+void SAPI sfree(void *base, void *ptr);
+
+bool SAPI salloc_assert(void *base, uint32_t blk_size[], bool blk_free[], uint32_t size);
+
 
 #endif

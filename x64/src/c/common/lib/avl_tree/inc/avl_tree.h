@@ -8,7 +8,7 @@ typedef struct _avl_tree_node_t
     struct _avl_tree_node_t *left;
     struct _avl_tree_node_t *right;
     struct _avl_tree_node_t *parent;
-    int height;
+    int32_t height;
 } avl_tree_node_t;
 
 typedef struct
