@@ -11,7 +11,7 @@ typedef struct
 {
     uint64_t base_addr;
     uint64_t page_count;
-    linked_list_entry_t list_node;
+    linked_list_node_t list_node;
 } memory_descriptor_node_t;
 
 typedef struct {
@@ -26,7 +26,7 @@ typedef struct
     uint64_t base_addr;
     uint64_t size;
     char* name;
-    linked_list_entry_t list_node;
+    linked_list_node_t list_node;
 } module_descriptor_node_t;
 
 typedef struct {

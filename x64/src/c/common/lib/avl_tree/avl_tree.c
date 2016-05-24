@@ -260,9 +260,7 @@ static avl_tree_node_t *SAPI _avl_tree_node_delete(avl_tree_node_t *root, avl_tr
         {
             // node with two children: Get the inorder successor (smallest
             // in the right subtree)
-            avl_tree_node_t *successor = root->right;
-            while(successor->left != NULL)
-                successor = successor->left;
+            avl_tree_node_t *successor = avl_tree_larger(root);
             //swap fields
             _avl_tree_swap_nodes(successor, root);
 

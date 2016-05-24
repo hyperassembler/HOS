@@ -5,7 +5,7 @@
 
 typedef struct
 {
-    linked_list_entry_t lnode;
+    linked_list_node_t lnode;
     int val;
 } my_list_node;
 
@@ -37,7 +37,7 @@ static bool validate_list(linked_list_t *list)
 
 static bool assert_list(linked_list_t *list, int val[], int size)
 {
-    linked_list_entry_t *node = linked_list_first(list);
+    linked_list_node_t *node = linked_list_first(list);
     int i = 0;
 
     if (!validate_list(list))
@@ -398,7 +398,7 @@ static bool push_pop_back_test()
     return result;
 }
 
-static bool equals(linked_list_entry_t *a, linked_list_entry_t *b)
+static bool equals(linked_list_node_t *a, linked_list_node_t *b)
 {
     return (int64_t) a == OBTAIN_STRUCT_ADDR(b, lnode, my_list_node)->val;
 }
@@ -417,15 +417,15 @@ static bool search_test()
     int val1[] = {1, 2, 3, 4};
     result = result && assert_list(&list, val1, 4);
 
-    result = result && (linked_list_search(&list, (linked_list_entry_t *) 4, equals) == 3);
-    result = result && (linked_list_search(&list, (linked_list_entry_t *) 3, equals) == 2);
-    result = result && (linked_list_search(&list, (linked_list_entry_t *) 2, equals) == 1);
-    result = result && (linked_list_search(&list, (linked_list_entry_t *) 1, equals) == 0);
+    result = result && (linked_list_search(&list, (linked_list_node_t *) 4, equals) == 3);
+    result = result && (linked_list_search(&list, (linked_list_node_t *) 3, equals) == 2);
+    result = result && (linked_list_search(&list, (linked_list_node_t *) 2, equals) == 1);
+    result = result && (linked_list_search(&list, (linked_list_node_t *) 1, equals) == 0);
 
     result = result && (linked_list_search(&list, NULL, equals) == -1);
-    result = result && (linked_list_search(NULL, (linked_list_entry_t *) 1, equals) == -1);
+    result = result && (linked_list_search(NULL, (linked_list_node_t *) 1, equals) == -1);
 
-    linked_list_entry_t *node = linked_list_get(&list, 1);
+    linked_list_node_t *node = linked_list_get(&list, 1);
     result = result && (linked_list_search(&list, node, NULL) == 1);
 
 

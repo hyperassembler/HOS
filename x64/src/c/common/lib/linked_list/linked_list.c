@@ -1,6 +1,6 @@
 #include "inc/linked_list.h"
 
-static void SAPI _init_linked_list_node(linked_list_entry_t *node)
+static void SAPI _init_linked_list_node(linked_list_node_t *node)
 {
     if (node != NULL)
     {
@@ -10,12 +10,12 @@ static void SAPI _init_linked_list_node(linked_list_entry_t *node)
     return;
 }
 
-static void SAPI _append_node(linked_list_entry_t *target, linked_list_entry_t *node)
+static void SAPI _append_node(linked_list_node_t *target, linked_list_node_t *node)
 {
     if(target == NULL || node == NULL)
         return;
 
-    linked_list_entry_t* next = target->next;
+    linked_list_node_t* next = target->next;
     // update the next node
     if(next != NULL)
     {
@@ -33,12 +33,12 @@ static void SAPI _append_node(linked_list_entry_t *target, linked_list_entry_t *
 }
 
 // link target with node, suppose target is in the current list
-static void SAPI _prepend_node(linked_list_entry_t *target, linked_list_entry_t *node)
+static void SAPI _prepend_node(linked_list_node_t *target, linked_list_node_t *node)
 {
     if(target == NULL || node == NULL)
         return;
 
-    linked_list_entry_t* prev = target->prev;
+    linked_list_node_t* prev = target->prev;
     // update the prev node
     if(prev != NULL)
     {
@@ -55,7 +55,7 @@ static void SAPI _prepend_node(linked_list_entry_t *target, linked_list_entry_t 
     return;
 }
 
-static void SAPI _unlink_node(linked_list_entry_t* node)
+static void SAPI _unlink_node(linked_list_node_t* node)
 {
     if(node == NULL)
         return;
@@ -91,8 +91,8 @@ int32_t SAPI linked_list_size(linked_list_t *list)
         return 0;
 
     int32_t size = 1;
-    linked_list_entry_t *cur_node = list->head;
-    linked_list_entry_t *tail = list->tail;
+    linked_list_node_t *cur_node = list->head;
+    linked_list_node_t *tail = list->tail;
     while ((cur_node != tail) && ((cur_node = cur_node->next) != NULL))
     {
         size++;
@@ -100,7 +100,7 @@ int32_t SAPI linked_list_size(linked_list_t *list)
     return size;
 }
 
-void SAPI linked_list_push_front(linked_list_t *list, linked_list_entry_t *node)
+void SAPI linked_list_push_front(linked_list_t *list, linked_list_node_t *node)
 {
     if (list == NULL || node == NULL)
         return;
@@ -112,7 +112,7 @@ void SAPI linked_list_push_front(linked_list_t *list, linked_list_entry_t *node)
     return;
 }
 
-void SAPI linked_list_push_back(linked_list_t *list, linked_list_entry_t *node)
+void SAPI linked_list_push_back(linked_list_t *list, linked_list_node_t *node)
 {
     if (list == NULL || node == NULL)
         return;
@@ -124,14 +124,14 @@ void SAPI linked_list_push_back(linked_list_t *list, linked_list_entry_t *node)
     return;
 }
 
-linked_list_entry_t *SAPI linked_list_pop_front(linked_list_t *list)
+linked_list_node_t *SAPI linked_list_pop_front(linked_list_t *list)
 {
     if (list == NULL)
         return NULL;
     return linked_list_remove_ref(list, list->head);
 }
 
-linked_list_entry_t *SAPI linked_list_pop_back(linked_list_t *list)
+linked_list_node_t *SAPI linked_list_pop_back(linked_list_t *list)
 {
     if (list == NULL)
         return NULL;
@@ -140,7 +140,7 @@ linked_list_entry_t *SAPI linked_list_pop_back(linked_list_t *list)
 }
 
 
-void SAPI linked_list_insert_ref(linked_list_t *list, linked_list_entry_t *prev_node, linked_list_entry_t *node)
+void SAPI linked_list_insert_ref(linked_list_t *list, linked_list_node_t *prev_node, linked_list_node_t *node)
 {
     if (list == NULL || node == NULL)
         return;
@@ -175,11 +175,11 @@ void SAPI linked_list_insert_ref(linked_list_t *list, linked_list_entry_t *prev_
     }
 }
 
-void SAPI linked_list_insert_idx(linked_list_t *list, int32_t index, linked_list_entry_t *node)
+void SAPI linked_list_insert_idx(linked_list_t *list, int32_t index, linked_list_node_t *node)
 {
     if (list == NULL || index < 0 || node == NULL)
         return;
-    linked_list_entry_t *prev_node = linked_list_get(list, index - 1);
+    linked_list_node_t *prev_node = linked_list_get(list, index - 1);
     _init_linked_list_node(node);
 
     if (prev_node == NULL)
@@ -197,11 +197,11 @@ void SAPI linked_list_insert_idx(linked_list_t *list, int32_t index, linked_list
     return;
 }
 
-linked_list_entry_t *SAPI linked_list_remove_idx(linked_list_t *list, int32_t index)
+linked_list_node_t *SAPI linked_list_remove_idx(linked_list_t *list, int32_t index)
 {
     if (list == NULL || index < 0)
         return NULL;
-    linked_list_entry_t *cur_node = linked_list_get(list, index);
+    linked_list_node_t *cur_node = linked_list_get(list, index);
 
     if (cur_node == NULL)
         return NULL;
@@ -209,7 +209,7 @@ linked_list_entry_t *SAPI linked_list_remove_idx(linked_list_t *list, int32_t in
     return linked_list_remove_ref(list, cur_node);
 }
 
-linked_list_entry_t *SAPI linked_list_remove_ref(linked_list_t *list, linked_list_entry_t *node)
+linked_list_node_t *SAPI linked_list_remove_ref(linked_list_t *list, linked_list_node_t *node)
 {
     if (list == NULL || node == NULL)
         return NULL;
@@ -231,16 +231,16 @@ linked_list_entry_t *SAPI linked_list_remove_ref(linked_list_t *list, linked_lis
     return node;
 }
 
-linked_list_entry_t *SAPI linked_list_get(linked_list_t *list, int32_t index)
+linked_list_node_t *SAPI linked_list_get(linked_list_t *list, int32_t index)
 {
     if (list == NULL || index < 0 || list->head == NULL)
         return NULL;
-    linked_list_entry_t *cur_node = list->head;
+    linked_list_node_t *cur_node = list->head;
     while (index-- && (cur_node = cur_node->next) != NULL);
     return cur_node;
 }
 
-linked_list_entry_t *SAPI linked_list_next(linked_list_entry_t *node)
+linked_list_node_t *SAPI linked_list_next(linked_list_node_t *node)
 {
     if (node != NULL)
     {
@@ -249,7 +249,7 @@ linked_list_entry_t *SAPI linked_list_next(linked_list_entry_t *node)
     return node;
 }
 
-linked_list_entry_t *SAPI linked_list_prev(linked_list_entry_t *node)
+linked_list_node_t *SAPI linked_list_prev(linked_list_node_t *node)
 {
     if (node != NULL)
     {
@@ -258,9 +258,9 @@ linked_list_entry_t *SAPI linked_list_prev(linked_list_entry_t *node)
     return node;
 }
 
-linked_list_entry_t *SAPI linked_list_first(linked_list_t *list)
+linked_list_node_t *SAPI linked_list_first(linked_list_t *list)
 {
-    linked_list_entry_t *result = NULL;
+    linked_list_node_t *result = NULL;
     if (list != NULL)
     {
         result = list->head;
@@ -268,9 +268,9 @@ linked_list_entry_t *SAPI linked_list_first(linked_list_t *list)
     return result;
 }
 
-linked_list_entry_t *SAPI linked_list_last(linked_list_t *list)
+linked_list_node_t *SAPI linked_list_last(linked_list_t *list)
 {
-    linked_list_entry_t *result = NULL;
+    linked_list_node_t *result = NULL;
     if (list != NULL)
     {
         result = list->tail;
@@ -278,12 +278,12 @@ linked_list_entry_t *SAPI linked_list_last(linked_list_t *list)
     return result;
 }
 
-int32_t SAPI linked_list_search(linked_list_t *list, linked_list_entry_t *target, bool (*equals)(linked_list_entry_t *, linked_list_entry_t *))
+int32_t SAPI linked_list_search(linked_list_t *list, linked_list_node_t *target, bool (*equals)(linked_list_node_t *, linked_list_node_t *))
 {
     if(list == NULL || target == NULL)
         return -1;
     int32_t result = 0;
-    linked_list_entry_t* node = linked_list_first(list);
+    linked_list_node_t* node = linked_list_first(list);
     while(node != NULL)
     {
         if(equals !=NULL)
