@@ -3,15 +3,17 @@
  * See COPYING under root for details
  */
 
-#include "hal.h"
+#include "hal_multiboot.h"
 #include "hal_print.h"
 #include "hal_mem.h"
-#include "hal_io.h"
+#include "hal_intr.h"
 #include "hal_var.h"
+#include "k_sys_info.h"
 #include "std_lib.h"
 
-boot_info_t *SAPI hal_init(multiboot_info_t *m_info)
+boot_info_t *KAPI hal_init(void *_m_info)
 {
+    multiboot_info_t* m_info = (multiboot_info_t*) _m_info;
     if (m_info == NULL)
         return NULL;
 
@@ -180,23 +182,4 @@ boot_info_t *SAPI hal_init(multiboot_info_t *m_info)
     }
 
     return boot_info;
-}
-
-void SAPI hal_spin_lock(uint64_t *lock)
-{
-    if (lock != NULL)
-    {
-        while (hal_interlocked_exchange(lock, 1) == 1)
-        { };
-    }
-    return;
-}
-
-void SAPI hal_spin_unlock(uint64_t *lock)
-{
-    if (lock != NULL)
-    {
-        *lock = 0;
-    }
-    return;
 }

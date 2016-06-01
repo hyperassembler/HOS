@@ -12,7 +12,7 @@
 
 char kernel_heap[KERNEL_HEAP_SIZE];
 
-void SAPI hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr)
+void KAPI hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr)
 {
     if (base == NULL)
         return;
@@ -28,7 +28,7 @@ void SAPI hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t c
     return;
 }
 
-void SAPI hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr)
+void KAPI hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr)
 {
     if (base == NULL)
         return;
@@ -44,7 +44,7 @@ void SAPI hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t 
     return;
 }
 
-void SAPI hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr)
+void KAPI hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr)
 {
     if (base == NULL)
         return;
@@ -60,7 +60,7 @@ void SAPI hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_
     return;
 }
 
-void SAPI hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr)
+void KAPI hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr)
 {
     if (base == NULL)
         return;
@@ -76,7 +76,7 @@ void SAPI hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint6
     return;
 }
 
-void SAPI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit,
+void KAPI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit,
                                        uint64_t const attr)
 {
     if (gdt == NULL)
@@ -95,18 +95,18 @@ void SAPI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uin
     return;
 }
 
-void *SAPI halloc(uint32_t size)
+void *KAPI halloc(uint32_t size)
 {
     return salloc(kernel_heap, size);
 }
 
-void SAPI hfree(void *ptr)
+void KAPI hfree(void *ptr)
 {
     sfree(kernel_heap, ptr);
     return;
 }
 
-void SAPI hal_alloc_init()
+void KAPI hal_alloc_init()
 {
     salloc_init(kernel_heap, KERNEL_HEAP_SIZE);
     return;

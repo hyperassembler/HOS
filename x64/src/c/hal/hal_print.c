@@ -8,13 +8,13 @@
 #include "hal_print.h"
 #include "hal_var.h"
 
-void SAPI _hal_print_scroll()
+void KAPI _hal_print_scroll()
 {
     mem_move((void *) (0xb8000 + get_pos(1, 0) * 2), (void *) (0xb8000 + get_pos(0, 0) * 2), (80 * 24) * 2);
     return;
 }
 
-void SAPI _hal_print_str(char const *str)
+void KAPI _hal_print_str(char const *str)
 {
     if(str == NULL)
         return;
@@ -49,7 +49,7 @@ void SAPI _hal_print_str(char const *str)
     return;
 }
 
-void SAPI _hal_print_uint(uint64_t number)
+void KAPI _hal_print_uint(uint64_t number)
 {
     char arr[21]; // do not need to initialize
     arr[20] = 0; //zero-terminated
@@ -68,7 +68,7 @@ void SAPI _hal_print_uint(uint64_t number)
     return;
 }
 
-void SAPI _hal_print_int(int64_t number)
+void KAPI _hal_print_int(int64_t number)
 {
     char arr[21]; // do not need to initialize
     arr[20] = 0; //zero-terminated
@@ -97,7 +97,7 @@ void SAPI _hal_print_int(int64_t number)
     return;
 }
 
-void SAPI _hal_print_hex(uint64_t number, uint64_t capital)
+void KAPI _hal_print_hex(uint64_t number, uint64_t capital)
 {
     char const lookup_table_cap[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     char const lookup_table[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
@@ -119,14 +119,14 @@ void SAPI _hal_print_hex(uint64_t number, uint64_t capital)
     return;
 }
 
-void SAPI hal_clear_screen(void)
+void KAPI hal_clear_screen(void)
 {
     text_pos = 0; // reset text_pos
     mem_set((void *) 0xb8000, 0, 25 * 80 * 2);
     return;
 }
 
-void SAPI hal_printf(char const *format, ...)
+void KAPI hal_printf(char const *format, ...)
 {
     va_list args;
     va_start(args, format);

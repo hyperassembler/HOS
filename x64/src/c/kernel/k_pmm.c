@@ -5,7 +5,7 @@
 
 #include "k_pmm.h"
 #include "k_sys_info.h"
-#include "hal_io.h"
+#include "hal_intr.h"
 #include "std_lib.h"
 
 linked_list_t* occupied_mem;

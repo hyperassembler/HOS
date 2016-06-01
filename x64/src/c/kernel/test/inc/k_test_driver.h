@@ -4,12 +4,12 @@
 #include "k_type.h"
 #include "k_def.h"
 
-void SAPI test_begin(char *name);
+void KAPI test_begin(char *name);
 
-void SAPI test_end();
+void KAPI test_end();
 
-void *SAPI talloc(uint32_t size);
+void *KAPI talloc(uint32_t size);
 
-void SAPI run_case(char *name, bool result);
+void KAPI run_case(char *name, bool result);
 
 #endif

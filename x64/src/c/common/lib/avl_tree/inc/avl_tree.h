@@ -22,27 +22,27 @@ typedef struct
 } avl_tree_t;
 
 
-avl_tree_node_t *SAPI avl_tree_search(avl_tree_t *tree, avl_tree_node_t *entry,
+avl_tree_node_t *KAPI avl_tree_search(avl_tree_t *tree, avl_tree_node_t *entry,
                                        int32_t (*compare)(avl_tree_node_t *, avl_tree_node_t *));
 
-void SAPI avl_tree_insert(avl_tree_t *tree, avl_tree_node_t *entry,
+void KAPI avl_tree_insert(avl_tree_t *tree, avl_tree_node_t *entry,
                           int32_t (*compare)(avl_tree_node_t *, avl_tree_node_t *));
 
-void SAPI avl_tree_delete(avl_tree_t *tree, avl_tree_node_t *entry,
+void KAPI avl_tree_delete(avl_tree_t *tree, avl_tree_node_t *entry,
                           int32_t (*compare)(avl_tree_node_t *, avl_tree_node_t *));
 
-void SAPI avl_tree_init(avl_tree_t *tree);
+void KAPI avl_tree_init(avl_tree_t *tree);
 
-avl_tree_node_t *SAPI avl_tree_largest(avl_tree_t *tree);
+avl_tree_node_t *KAPI avl_tree_largest(avl_tree_t *tree);
 
-avl_tree_node_t *SAPI avl_tree_smallest(avl_tree_t *tree);
+avl_tree_node_t *KAPI avl_tree_smallest(avl_tree_t *tree);
 
-avl_tree_node_t *SAPI avl_tree_larger(avl_tree_node_t *entry);
+avl_tree_node_t *KAPI avl_tree_larger(avl_tree_node_t *entry);
 
-avl_tree_node_t *SAPI avl_tree_smaller(avl_tree_node_t *entry);
+avl_tree_node_t *KAPI avl_tree_smaller(avl_tree_node_t *entry);
 
-bool SAPI avl_tree_validate(avl_tree_t *tree, int32_t (*compare)(avl_tree_node_t *, avl_tree_node_t *));
+bool KAPI avl_tree_validate(avl_tree_t *tree, int32_t (*compare)(avl_tree_node_t *, avl_tree_node_t *));
 
-int32_t SAPI avl_tree_size(avl_tree_t *tree);
+int32_t KAPI avl_tree_size(avl_tree_t *tree);
 
 #endif

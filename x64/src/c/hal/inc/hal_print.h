@@ -12,7 +12,7 @@
 #define get_row(pos) (pos / 80)
 #define get_pos(row,col) ((row) * 80 + (col))
 
-void SAPI hal_clear_screen(void);
-void SAPI hal_printf(char const *format, ...);
+void KAPI hal_clear_screen(void);
+void KAPI hal_printf(char const *format, ...);
 
 #endif

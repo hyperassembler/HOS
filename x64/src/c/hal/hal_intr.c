@@ -3,18 +3,11 @@
  * See COPYING under root for details
  */
 
-#include "hal_io.h"
+#include "hal_intr.h"
 #include "hal_print.h"
 #include "hal_mem.h"
 
-void hal_interrupt_handler_dummy(void)
-{
-    hal_printf("Yep... That just happened, an interrupt...\n");
-    return;
-}
-
-
-void SAPI hal_write_gate(void *const gate,
+void KAPI hal_write_gate(void *const gate,
                                 uint64_t const offset,
                                 uint32_t const selector,
                                 uint32_t const attr)
@@ -38,7 +31,7 @@ void SAPI hal_write_gate(void *const gate,
     return;
 }
 
-void SAPI hal_set_interrupt_handler(uint64_t index,
+void KAPI hal_set_interrupt_handler(uint64_t index,
                                            void (*handler)(void))
 {
     hal_write_gate(g_idt + 16 * index, (uint64_t) handler, seg_selector(1, 0),
@@ -46,7 +39,7 @@ void SAPI hal_set_interrupt_handler(uint64_t index,
     return;
 }
 
-void SAPI hal_assert(int64_t expression,
+void KAPI hal_assert(int64_t expression,
                             char *message)
 {
     if (!expression)

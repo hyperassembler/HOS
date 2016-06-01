@@ -4,14 +4,11 @@
  */
 
 #include "k_def.h"
+#include "k_hal.h"
 #include "std_lib.h"
 #include "k_lib_test.h"
-#include "hal.h"
-#include "hal_print.h"
-#include "hal_io.h"
 
-
-void SAPI kmain(multiboot_info_t *multiboot_info)
+void KAPI kmain(void *multiboot_info)
 {
     boot_info_t* boot_info = hal_init(multiboot_info);
 

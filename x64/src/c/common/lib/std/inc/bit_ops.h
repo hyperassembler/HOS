@@ -8,22 +8,22 @@
 
 #include "k_type.h"
 
-static inline uint64_t SAPI bit_mask_64(uint32_t bit)
+static inline uint64_t KAPI bit_mask_64(uint32_t bit)
 {
     return (uint64_t)1 << bit;
 }
 
-static inline uint32_t SAPI bit_mask_32(uint32_t bit)
+static inline uint32_t KAPI bit_mask_32(uint32_t bit)
 {
     return (uint32_t)1 << bit;
 }
 
-static inline uint64_t SAPI bit_field_mask_64(uint32_t low, uint32_t high)
+static inline uint64_t KAPI bit_field_mask_64(uint32_t low, uint32_t high)
 {
     return ~(~(uint64_t)0 << high << 1) << low;
 }
 
-static inline uint32_t SAPI bit_field_mask_32(uint32_t low, uint32_t high)
+static inline uint32_t KAPI bit_field_mask_32(uint32_t low, uint32_t high)
 {
     return ~(~(uint32_t)0 << high << 1) << low;
 }

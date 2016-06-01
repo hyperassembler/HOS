@@ -85,7 +85,7 @@ static void ginfo_push(char *case_name, bool success)
     hal_printf("GINFO full, [%s] result not recorded.\n", r_case_name);
 }
 
-void SAPI test_begin(char *name)
+void KAPI test_begin(char *name)
 {
     test_name = (name == NULL ? "Anonymous Test" : name);
     for (int i = 0; i < GAT_SIZE; i++)
@@ -98,7 +98,7 @@ void SAPI test_begin(char *name)
     }
 }
 
-void SAPI test_end()
+void KAPI test_end()
 {
     gat_free();
     int32_t total = 0, failed = 0, success = 0;
@@ -136,7 +136,7 @@ void SAPI test_end()
     }
 }
 
-void SAPI *talloc(uint32_t size)
+void KAPI *talloc(uint32_t size)
 {
     if (!gat_full())
     {
@@ -152,7 +152,7 @@ void SAPI *talloc(uint32_t size)
     return NULL;
 }
 
-void SAPI run_case(char *name, bool result)
+void KAPI run_case(char *name, bool result)
 {
     ginfo_push(name, result);
 }

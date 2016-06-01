@@ -20,4 +20,4 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 file(GLOB_RECURSE SOURCE_FILES ./x64/*.h ./x64/*.c)
 
-add_executable(Workspace ${SOURCE_FILES} x64/src/c/common/lib/salloc/inc/salloc.h)
+add_executable(Workspace ${SOURCE_FILES})

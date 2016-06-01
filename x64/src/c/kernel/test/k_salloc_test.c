@@ -256,7 +256,7 @@ static bool salloc_free_all()
 }
 
 
-void SAPI salloc_test()
+void KAPI salloc_test()
 {
     test_begin("salloc test");
 

@@ -10,7 +10,7 @@
 #include <stdarg.h>
 #include "k_type.h"
 
-#define SAPI __attribute__((sysv_abi))
+#define KAPI __attribute__((sysv_abi))
 #define UAPI __attribute__((sysv_abi))
 
 #endif

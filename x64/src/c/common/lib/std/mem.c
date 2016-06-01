@@ -7,7 +7,7 @@
 #include "k_def.h"
 #include "std_lib.h"
 
-void SAPI mem_cpy(void *src, void *dst, uint64_t size)
+void KAPI mem_cpy(void *src, void *dst, uint64_t size)
 {
     if (src == NULL || dst == NULL)
         return;
@@ -18,7 +18,7 @@ void SAPI mem_cpy(void *src, void *dst, uint64_t size)
     return;
 }
 
-void SAPI mem_set(void *src, int8_t const val, uint64_t size)
+void KAPI mem_set(void *src, int8_t const val, uint64_t size)
 {
     if (src == NULL)
         return;
@@ -27,7 +27,7 @@ void SAPI mem_set(void *src, int8_t const val, uint64_t size)
     return;
 }
 
-void SAPI mem_move(void *src, void *dst, uint64_t size)
+void KAPI mem_move(void *src, void *dst, uint64_t size)
 {
     if (src == NULL || dst == NULL)
         return;
