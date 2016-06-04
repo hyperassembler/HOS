@@ -87,6 +87,9 @@ ALL_OBJ_FILES_64 := $(addprefix $(OUTPUT_DIR)/,$(C_OBJ_FILES_64)) $(addprefix $(
 
 
 #Commands
+x64:
+    cd x64
+    make all
 
 all: init compile link buildiso clean
 # buildsymbol
