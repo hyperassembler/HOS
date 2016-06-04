@@ -45,7 +45,7 @@ buildiso:
 	mkdir -p $(OUTPUT_DIR)/temp_iso/secX
 	mkdir -p $(OUTPUT_DIR)/temp_iso/boot
 	mkdir -p $(OUTPUT_DIR)/temp_iso/boot/grub
-	mv $(OUTPUT_DIR)/$(KERNEL_BIN) $(OUTPUT_DIR)/temp_iso/secX/kernel
+	mv $(OUTPUT_DIR)/$(KERNEL_BIN) $(OUTPUT_DIR)/temp_iso/secX/$(KERNEL_BIN)
 	cp $(GRUB_CFG) $(OUTPUT_DIR)/temp_iso/boot/grub/
 	grub-mkrescue -o secX.iso $(OUTPUT_DIR)/temp_iso
 	rm -rf $(OUTPUT_DIR)/temp_iso

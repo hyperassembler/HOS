@@ -1,144 +1,64 @@
 ASM = nasm
-
 CC = gcc
-
 LD = ld
 
 #Recursive Wildcard
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
 rdircard=$(sort $(dir $(call rwildcard,$1,*)))
 rdircardex=$(sort $(dir $(call rwildcard,$1,$2)))
-#x86 vars
 
-C_SRC_PATH_32 := x86/src/c
-
-ASM_SRC_PATH_32 := x86/src/asm
-
-C_FLAGS_32 := -m32 -std=c11 -g -c -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra -Wno-comment
-
-ASM_FLAGS_32 := -f elf32 -I $(ASM_SRC_PATH_32)/
-
-LD_FLAGS_32 := -melf_i386
-
-LD_SCRIPT_32 := build/link32.ld
-
-#x64 vars
-
-#64 header files
-
-HEADER_DIRS_64 := $(call rdircardex, *,*.h)
-
-HEADER_DIRS_OPTION_64 :=  $(addprefix -I, $(HEADER_DIRS_64))
-
-C_SRC_PATH_64 := x64/src/c
-
-ASM_SRC_PATH_64 := x64/src/asm
-
-C_FLAGS_64 := -m64 -std=c11 -g -c $(HEADER_DIRS_OPTION_64) -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra -Wno-comment
-
-ASM_FLAGS_64 := -f elf64 -I $(ASM_SRC_PATH_64)/
-
-LD_FLAGS_64 := -melf_x86_64
-
-LD_SCRIPT_64 := build/link64.ld
-
-GRUB_CFG := build/grub.cfg
+#x32 vars
+LD_SCRIPT := linker.ld
+GRUB_CFG := grub.cfg
 
 OUTPUT_DIR := out
-
+HEADER_DIRS := $(call rdircardex, *,*.h)
 ALL_OUTPUT_DIRS := $(addprefix $(OUTPUT_DIR)/,$(call rdircard,*))
 
+C_FLAGS := -m32 -std=c11 -g -c -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra -Wno-comment
+ASM_FLAGS := -f elf32 -I $(ASM_SRC_PATH_32)/
+LD_FLAGS := -melf_i386
 
-#C source code
+C_SRC := $(call rwildcard, ./, *.c)
+ASM_SRC := $(call rwildcard, ./, *.asm)
 
-C_FILES_32 := $(call rwildcard, $(C_SRC_PATH_32), *.c)
-
-C_FILES_64 := $(call rwildcard, $(C_SRC_PATH_64), *.c)
-
-
-
-#ASM source code
-
-ASM_FILES_32 := $(call rwildcard, $(ASM_SRC_PATH_32), *.asm)
-
-ASM_FILES_64 := $(call rwildcard, $(ASM_SRC_PATH_64), *.asm)
-
-
-#bin files
-
-KERNEL_BIN_32 := kernel32.bin
-
-KERNEL_BIN_64 := kernel64.bin
-
+KERNEL_BIN := kernel.bin
+KERNEL_ELF := kernel.elf
 
 #Object files
-
-C_OBJ_FILES_32 := $(C_FILES_32:.c=.o32)
-
-C_OBJ_FILES_64 := $(C_FILES_64:.c=.o64)
-
-ASM_OBJ_FILES_32 := $(ASM_FILES_32:.asm=.oa32)
-
-ASM_OBJ_FILES_64 := $(ASM_FILES_64:.asm=.oa64)
-
-ALL_OBJ_FILES_32 := $(addprefix $(OUTPUT_DIR)/,$(C_OBJ_FILES_32)) $(addprefix $(OUTPUT_DIR)/,$(ASM_OBJ_FILES_32))
-
-ALL_OBJ_FILES_64 := $(addprefix $(OUTPUT_DIR)/,$(C_OBJ_FILES_64)) $(addprefix $(OUTPUT_DIR)/,$(ASM_OBJ_FILES_64))
+C_OBJ := $(C_SRC:.c=.o)
+ASM_OBJ := $(ASM_SRC:.asm=.oasm)
+ALL_OBJ := $(addprefix $(OUTPUT_DIR)/,$(C_OBJ)) $(addprefix $(OUTPUT_DIR)/,$(ASM_OBJ))
 
 
 #Commands
-x64:
-    cd x64
-    make all
-
 all: init compile link buildiso clean
-# buildsymbol
-
-print_source:
-	$(info ${ALL_OUTPUT_DIRS})
 
 init:
 	mkdir -p $(ALL_OUTPUT_DIRS)
 
-compile: $(C_OBJ_FILES_32) $(ASM_OBJ_FILES_32) $(C_OBJ_FILES_64) $(ASM_OBJ_FILES_64)
+compile: $(C_OBJ) $(ASM_OBJ)
 
-
-link: $(KERNEL_BIN_32) $(KERNEL_BIN_64)
-
-buildsymbol:
-	objcopy --only-keep-debug $(OUTPUT_DIR)/$(KERNEL_BIN_32) $(OUTPUT_DIR)/$(KERNEL_BIN_32).debug
-	objcopy --only-keep-debug $(OUTPUT_DIR)/$(KERNEL_BIN_64) $(OUTPUT_DIR)/$(KERNEL_BIN_64).debug
-	objcopy --strip-debug $(OUTPUT_DIR)/$(KERNEL_BIN_32)
-	objcopy --strip-debug $(OUTPUT_DIR)/$(KERNEL_BIN_64)
+link: $(KERNEL_BIN)
 
 buildiso:
-	mkdir -p $(OUTPUT_DIR)/temp_iso/HOS
+	mkdir -p $(OUTPUT_DIR)/temp_iso/secX
 	mkdir -p $(OUTPUT_DIR)/temp_iso/boot
 	mkdir -p $(OUTPUT_DIR)/temp_iso/boot/grub
-	mv $(OUTPUT_DIR)/$(KERNEL_BIN_64) $(OUTPUT_DIR)/temp_iso/HOS/kernel64
-	mv $(OUTPUT_DIR)/$(KERNEL_BIN_32) $(OUTPUT_DIR)/temp_iso/HOS/kernel32
+	mv $(OUTPUT_DIR)/$(KERNEL_BIN) $(OUTPUT_DIR)/temp_iso/secX/$(KERNEL_BIN)
 	cp $(GRUB_CFG) $(OUTPUT_DIR)/temp_iso/boot/grub/
-	grub-mkrescue -o HOS.iso $(OUTPUT_DIR)/temp_iso
+	grub-mkrescue -o secX.iso $(OUTPUT_DIR)/temp_iso
 	rm -rf $(OUTPUT_DIR)/temp_iso
 
 clean:
 	rm -rf $(OUTPUT_DIR)
 
-%.o32: %.c
-	$(CC) $(C_FLAGS_32) -o $(OUTPUT_DIR)/$@ $^
+%.o: %.c
+	$(CC) $(C_FLAGS) -o $(OUTPUT_DIR)/$@ $^
 
-%.o64: %.c
-	$(CC) $(C_FLAGS_64) -o $(OUTPUT_DIR)/$@ $^
+%.oasm: %.asm
+	$(ASM) $(ASM_FLAGS) -o $(OUTPUT_DIR)/$@ $^
 
-%.oa32: %.asm
-	$(ASM) $(ASM_FLAGS_32) -o $(OUTPUT_DIR)/$@ $^
-
-%.oa64: %.asm
-	$(ASM) $(ASM_FLAGS_64) -o $(OUTPUT_DIR)/$@ $^
-
-$(KERNEL_BIN_32): $(ALL_OBJ_FILES_32)
-	$(LD) $(LD_FLAGS_32) -T $(LD_SCRIPT_32) -o $(OUTPUT_DIR)/$(KERNEL_BIN_32) $(ALL_OBJ_FILES_32)
-
-$(KERNEL_BIN_64): $(ALL_OBJ_FILES_64)
-	$(LD) $(LD_FLAGS_64) -T $(LD_SCRIPT_64) -o $(OUTPUT_DIR)/$(KERNEL_BIN_64) $(ALL_OBJ_FILES_64)
+$(KERNEL_BIN): $(ALL_OBJ)
+	$(LD) $(LD_FLAGS) -T $(LD_SCRIPT) -o $(OUTPUT_DIR)/$(KERNEL_BIN) $(ALL_OBJ)
 
