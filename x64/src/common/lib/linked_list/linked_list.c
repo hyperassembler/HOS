@@ -3,7 +3,7 @@
  * See COPYING under root for details
  */
 
-#include "inc/linked_list.h"
+#include "linked_list.h"
 
 static void KAPI _init_linked_list_node(linked_list_node_t *node)
 {

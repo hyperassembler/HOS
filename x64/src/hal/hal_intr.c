@@ -49,3 +49,9 @@ void KAPI hal_assert(int64_t expression,
     }
     return;
 }
+
+void KAPI hal_interrupt_dispatcher(void)
+{
+    hal_printf("Yep... That just happened, an interrupt...\n");
+    return;
+}

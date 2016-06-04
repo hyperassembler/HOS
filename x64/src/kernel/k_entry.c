@@ -18,6 +18,9 @@ void KAPI kmain(void *multiboot_info)
     avl_tree_test();
     salloc_test();
 
+    hal_printf("KRNL: Kernel task finished.");
+    hal_halt_cpu();
+
     if(boot_info->mem_info != NULL)
     {
         hal_printf("Installed Memory: %uB\n", boot_info->mem_info->mem_installed);
@@ -48,10 +51,10 @@ void KAPI kmain(void *multiboot_info)
     }
 
     // setup interrupt
-    for(uint64_t i = 0; i <= 21; i++)
-    {
-        hal_set_interrupt_handler(i, hal_interrupt_handler_wrapper);
-    }
+//    for(uint64_t i = 0; i <= 21; i++)
+//    {
+//        hal_set_interrupt_handler(i, hal_interrupt_handler_wrapper);
+//    }
     // hal_enable_interrupt();
 
     hal_printf("KRNL: Kernel task finished.");

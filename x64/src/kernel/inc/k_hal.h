@@ -37,6 +37,6 @@ extern void KAPI hal_halt_cpu(void);
 // hal memory
 
 //debug
-extern void KAPI BOCHS_MAGIC_BREAKPOINT();
+extern void KAPI hal_bochs_magic_breakpoint();
 
 #endif

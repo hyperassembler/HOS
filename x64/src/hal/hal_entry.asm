@@ -3,39 +3,62 @@
 ; See COPYING under root for details
 
 extern kmain
-extern kernel_start
-extern kernel_end
-global BOCHS_MAGIC_BREAKPOINT
+
 ; IMPORTANT: This module should be 4k-page aliened
 [SECTION .entry]
 [BITS 32]
 ; MultiBoot Header
-GRUB_MAGIC equ 0x2BADB002
-MULTIBOOT_MAGIC_NUMBER equ 0x1BADB002
-MULTIBOOT_FLAGS equ 0x10003
-MULTIBOOT_CHECK_SUM equ - (MULTIBOOT_MAGIC_NUMBER + MULTIBOOT_FLAGS)
-MULTIBOOT_HEADER:
-align 4
-dd MULTIBOOT_MAGIC_NUMBER
-dd MULTIBOOT_FLAGS
-dd MULTIBOOT_CHECK_SUM
+MULTIBOOT_LOADED_MAGIC equ 0x36d76289
+MULTIBOOT_MAGIC_NUMBER equ 0xE85250D6
+MULTIBOOT_ARCH equ 0
+MULTIBOOT_CHECK_SUM equ - (MULTIBOOT_MAGIC_NUMBER + MULTIBOOT_HEADER_SIZE + MULTIBOOT_ARCH)
 
-dd MULTIBOOT_HEADER
-dd MULTIBOOT_HEADER
-dd 0
-dd 0
+align 8
+MULTIBOOT_HEADER:
+dd MULTIBOOT_MAGIC_NUMBER
+dd MULTIBOOT_ARCH
+dd MULTIBOOT_HEADER_SIZE
+dd MULTIBOOT_CHECK_SUM
+;====================
+;Address_tag
+MULTIBOOT_ADDRESS_TAG:
+dw 0x2 ;type=2
+dw 0x0 ;flag=0
+dd MULTIBOOT_ADDRESS_TAG_SIZE; size
+dd MULTIBOOT_HEADER ; Since at the beginning of the file
+dd MULTIBOOT_HEADER ; load start
+dd 0 ; load end
+dd 0 ; bss
+MULTIBOOT_ADDRESS_TAG_SIZE equ ( $ - MULTIBOOT_ADDRESS_TAG)
+;====================
+;Entry_tag
+align 8
+MULTIBOOT_ENTRY_TAG:
+dw 0x3; type=3
+dw 0x0; flag=0
+dd MULTIBOOT_ENTRY_TAG_SIZE
 dd entry_32
+MULTIBOOT_ENTRY_TAG_SIZE equ ($ - MULTIBOOT_ENTRY_TAG)
+;====================
+;End_tag
+align 8
+dw 0x0
+dw 0x0
+dd 0x8
+;====================
 MULTIBOOT_HEADER_SIZE equ ($ - MULTIBOOT_HEADER)
 
-align 4096 ;4k alignment
+
+align 4096
 ; temporary page table
 PML4_BASE:
 times 512 dq 0 ;reserved the rest for page entries
 
-align 4096 ;4k alignment
+align 4096
 PDPT_BASE:
 times 512 dq 0 ;reserved the rest for page entries
 
+align 4096
 ; long mode gdt
 GDT64:                           ; Global Descriptor Table (64-bit).
     ; NULL
@@ -63,12 +86,14 @@ GDT64:                           ; Global Descriptor Table (64-bit).
     dw $ - GDT64 - 1             ; Limit.
     dq GDT64                     ; Base.
 
+align 4096
 entry_32:
 ; close interrupt
 cli
+cld
 
 ; check loaded by grub
-cmp eax,GRUB_MAGIC
+cmp eax,MULTIBOOT_LOADED_MAGIC
 je .loaded_by_grub
 hlt
 .loaded_by_grub:
@@ -187,10 +212,6 @@ mov rsp,KERNEL_STACK
 mov rdi,rsi ; multiboot_info*
 call kmain
 hlt
-
-BOCHS_MAGIC_BREAKPOINT:
-xchg bx,bx
-ret
 
 align 4096 ;4k alignment
 times 8192 db 0

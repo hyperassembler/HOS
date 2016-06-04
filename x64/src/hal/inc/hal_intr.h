@@ -19,7 +19,7 @@
 
 extern void KAPI hal_write_port(uint64_t port, int64_t data);
 extern int64_t KAPI hal_read_port(uint64_t port);
-void KAPI hal_interrupt_handler_dummy();
+void KAPI hal_interrupt_handler_dispatcher();
 
 void KAPI hal_set_interrupt_handler(uint64_t index, void (*handler)(void));
 extern void KAPI hal_enable_interrupt();

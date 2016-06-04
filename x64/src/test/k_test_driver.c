@@ -1,6 +1,5 @@
 #include "hal_print.h"
 #include "k_test_driver.h"
-#include "k_type.h"
 #include "hal_mem.h"
 
 #define GAT_SIZE 256

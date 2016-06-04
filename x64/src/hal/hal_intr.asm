@@ -2,14 +2,6 @@
 ; Distributed under GPL license
 ; See COPYING under root for details
 
-global hal_write_port
-global hal_read_port
-global hal_enable_interrupt
-global hal_disable_interrupt
-global hal_interrupt_handler_wrapper
-global hal_halt_cpu
-extern hal_interrupt_handler_dummy
-
 %macro pushaq 0
    push rax      ;save current rax
    push rbx      ;save current rbx
@@ -48,6 +40,8 @@ extern hal_interrupt_handler_dummy
 
 [SECTION .text]
 [BITS 64]
+;====================
+global hal_write_port
 hal_write_port:
 mov rdx,rdi
 mov rax,rsi
@@ -56,6 +50,8 @@ nop
 nop
 ret
 
+;====================
+global hal_read_port
 hal_read_port:
 mov rdx,rdi
 xor rax,rax
@@ -64,21 +60,36 @@ nop
 nop
 ret
 
+;====================
+global hal_disable_interrupt
 hal_disable_interrupt:
 cli
 ret
 
+;====================
+global hal_enable_interrupt
 hal_enable_interrupt:
 sti
 ret
 
-hal_interrupt_handler_wrapper:
+;====================
+global hal_interrupt_handler
+extern hal_interrupt_dispatcher
+hal_interrupt_handler:
 pushaq
 cld
-call hal_interrupt_handler_dummy
+call hal_interrupt_dispatcher
 popaq
 iretq
 
+;====================
+global hal_halt_cpu
 hal_halt_cpu:
 hlt
+ret
+
+;====================
+global hal_bochs_magic_breakpoint
+hal_bochs_magic_breakpoint:
+xchg bx,bx
 ret
