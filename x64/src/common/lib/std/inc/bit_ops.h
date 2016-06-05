@@ -7,6 +7,7 @@
 #define _BIT_OPERATION_H_
 
 #include "k_type.h"
+#include "k_def.h"
 
 static inline uint64_t KAPI bit_mask_64(uint32_t bit)
 {
