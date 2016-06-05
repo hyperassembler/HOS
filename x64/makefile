@@ -56,6 +56,7 @@ clean_temp:
 clean: clean_temp
 	rm -rf $(KERNEL_DASM)
 	rm -rf secX.iso
+	rm -rf *.log
 
 %.o: %.c
 	$(CC) $(C_FLAGS) -o $(TEMP_DIR)/$@ $^
