@@ -17,8 +17,7 @@ extern void KAPI hal_unmask_interrupt();
 extern void KAPI hal_set_interrupt_handler(uint64_t index, void (*handler)(void));
 
 // concurrency
-extern void KAPI hal_spin_lock(uint64_t * lock);
-extern void KAPI hal_spin_unlock(uint64_t * lock);
+extern uint64_t KAPI hal_interlocked_exchange(uint64_t* dst, uint64_t val);
 
 // loaded kernel addr
 extern char kernel_start[];
