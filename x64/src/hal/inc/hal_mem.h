@@ -10,6 +10,9 @@
 #include "k_type.h"
 #include "linked_list.h"
 
+#define GDT_ENTRY_SIZE 8
+#define GDT_ENTRY_NUM 9
+
 
 static inline uint32_t KAPI seg_selector(uint32_t index, uint32_t rpl)
 {
@@ -78,43 +81,11 @@ static inline uint32_t KAPI seg_selector(uint32_t index, uint32_t rpl)
 
 #define PHYSICAL_PAGE_SIZE 4096
 
-typedef struct __attribute__ ((packed))
-{
-    uint16_t limit;
-    uint64_t base;
-} gdt_ptr_t;
-
-typedef struct __attribute__ ((packed))
-{
-    uint16_t limit;
-    uint64_t base;
-} idt_ptr_t;
-
-typedef struct __attribute__((packed))
-{
-    uint64_t eax;
-    uint64_t ebx;
-    uint64_t ecx;
-    uint64_t edx;
-} cpuid_t;
-
 void* KAPI halloc(uint32_t size);
 
 void KAPI hfree(void *ptr);
 
 void KAPI hal_alloc_init();
-
-extern void KAPI hal_flush_gdt(gdt_ptr_t *gdt_ptr, uint64_t code_slct, uint64_t data_slct);
-
-extern void KAPI hal_flush_tlb();
-
-extern void KAPI hal_cpuid(uint64_t * eax, uint64_t * ebx, uint64_t* ecx, uint64_t* edx);
-
-extern void KAPI hal_flush_idt(idt_ptr_t* idt_ptr);
-
-extern void KAPI hal_write_page_base(void* base);
-
-extern void*KAPI hal_read_page_base();
 
 void KAPI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 

@@ -40,8 +40,9 @@ typedef struct {
 } module_info_t;
 
 typedef struct {
+    char cpu_vendor_string[13];
     mem_info_t* mem_info;    // all available memory info
     module_info_t* module_info; // all kernel modules loaded
-} boot_info_t;
+} k_hal_info_t;
 
 #endif

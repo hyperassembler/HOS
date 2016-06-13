@@ -1,9 +1,14 @@
 #include "k_intr.h"
 #include "k_hal.h"
 
-void KAPI k_set_interrupt_handler(uint64_t index, void (*handler)(void))
+void KAPI k_register_interrupt_handler(uint64_t index, void (*handler)(uint64_t pc, uint64_t sp, uint64_t error))
 {
-    hal_set_interrupt_handler(index, handler);
+    hal_register_interrupt_handler(index, handler);
+}
+
+void KAPI k_deregister_interrupt_handler(uint64_t index, void (*handler)(uint64_t pc, uint64_t sp, uint64_t error))
+{
+    hal_register_interrupt_handler(index, handler);
 }
 
 void KAPI k_disable_interrupt()

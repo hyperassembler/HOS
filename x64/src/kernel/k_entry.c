@@ -3,16 +3,25 @@
  * See COPYING under root for details
  */
 
+#include <k_sys_info.h>
 #include "k_def.h"
 #include "k_hal.h"
 #include "std_lib.h"
 #include "k_lib_test.h"
 
+// returning from this function results in halting the cpu
 void KAPI kmain(void *multiboot_info)
 {
-    boot_info_t* boot_info = hal_init(multiboot_info);
+    k_hal_info_t* boot_info = hal_init(multiboot_info);
+
+    if(boot_info == NULL)
+    {
+        hal_printf("HAL failed.\n");
+        hal_halt_cpu();
+    }
 
     hal_printf("Kernel Loaded at 0x%X. Size: %uB, %uKB\n\n",kernel_start,(kernel_end-kernel_start),(kernel_end-kernel_start)/1024);
+    hal_printf("CPU Vendor:%s\n", boot_info->cpu_vendor_string);
 
     linked_list_test();
     avl_tree_test();
@@ -49,13 +58,6 @@ void KAPI kmain(void *multiboot_info)
                        module_descriptor->base_addr, module_descriptor->size, module_descriptor->size / 1024);
         };
     }
-
-    // setup interrupt
-//    for(uint64_t i = 0; i <= 21; i++)
-//    {
-//        hal_set_interrupt_handler(i, hal_interrupt_handler_wrapper);
-//    }
-    // hal_enable_interrupt();
 
     hal_printf("KRNL: Kernel task finished.");
     hal_halt_cpu();

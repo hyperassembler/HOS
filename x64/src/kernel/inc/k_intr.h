@@ -14,7 +14,7 @@ typedef uint64_t k_irql_t;
 #define IRQL_APC 2
 #define IRQL_USER 3
 
-void KAPI k_set_interrupt_handler(uint64_t index, void (*handler)(void));
+void KAPI k_register_interrupt_handler(uint64_t index, void (*handler)(uint64_t pc, uint64_t sp, uint64_t error));
 
 void KAPI k_disable_interrupt();
 
