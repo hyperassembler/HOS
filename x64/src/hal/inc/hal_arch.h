@@ -30,9 +30,17 @@ extern void KAPI hal_disable_interrupt();
 
 extern void KAPI hal_halt_cpu();
 
-extern void KAPI hal_write_port(uint64_t port, int64_t data);
+extern int8_t KAPI hal_read_port_8(uint16_t port);
 
-extern int64_t KAPI hal_read_port(uint64_t port);
+extern int16_t KAPI hal_read_port_16(uint16_t port);
+
+extern int32_t KAPI hal_read_port_32(uint16_t port);
+
+extern void KAPI hal_write_port_8(uint16_t port, uint8_t data);
+
+extern void KAPI hal_write_port_16(uint16_t port, uint16_t data);
+
+extern void KAPI hal_write_port_32(uint16_t port, uint32_t data);
 
 extern void KAPI hal_write_mem_32(void* target, uint32_t data);
 

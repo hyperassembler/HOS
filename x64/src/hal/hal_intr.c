@@ -151,8 +151,8 @@ int32_t KAPI hal_interrupt_init(void)
     hal_flush_idt(&g_idt_ptr);
 
     // disable PIC
-    hal_write_port(0xa1, 0xff);
-    hal_write_port(0x21, 0xff);
+    hal_write_port_8(0xa1, 0xff);
+    hal_write_port_8(0x21, 0xff);
 
     uint64_t apic_base_reg = 0;
     uint64_t apic_base = 0;
