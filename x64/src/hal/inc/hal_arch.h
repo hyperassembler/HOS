@@ -3,17 +3,17 @@
 
 #include "k_def.h"
 
-typedef struct __attribute__ ((packed))
+typedef struct
 {
     uint16_t limit;
     uint64_t base;
-} hal_gdt_ptr_t;
+} __attribute__ ((packed)) hal_gdt_ptr_t;
 
-typedef struct __attribute__ ((packed))
+typedef struct
 {
     uint16_t limit;
     uint64_t base;
-} hal_idt_ptr_t;
+} __attribute__ ((packed)) hal_idt_ptr_t;
 
 extern uint64_t KAPI hal_interlocked_exchange(uint64_t *dst, uint64_t val);
 
@@ -45,6 +45,8 @@ extern void KAPI hal_flush_tlb();
 #define hal_trigger_interrupt(x) __asm__ __volatile__ ("int "#x);
 
 extern void KAPI hal_flush_idt(hal_idt_ptr_t *idt_ptr);
+
+extern void KAPI hal_read_idt(hal_idt_ptr_t **idt_ptr);
 
 extern void KAPI hal_write_cr3(uint64_t base);
 

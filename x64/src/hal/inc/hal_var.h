@@ -11,9 +11,9 @@
 #include "hal_arch.h"
 #include "hal_intr.h"
 
-extern uint8_t g_gdt[];
-extern uint8_t g_idt[];
-extern void (*g_intr_handler_table[IDT_ENTRY_SIZE])(uint64_t pc, uint64_t sp, uint64_t error);
+extern uint8_t g_gdt[GDT_ENTRY_NUM*GDT_ENTRY_SIZE];
+extern uint8_t g_idt[IDT_ENTRY_NUM*IDT_ENTRY_SIZE];
+extern void (*g_intr_handler_table[IDT_ENTRY_NUM])(uint64_t pc, uint64_t sp, uint64_t error);
 extern hal_gdt_ptr_t g_gdt_ptr;
 extern hal_idt_ptr_t g_idt_ptr;
 extern uint64_t text_pos;

@@ -9,21 +9,21 @@
 
 #include "k_def.h"
 
-typedef struct __attribute__((packed))
+typedef struct
 {
     uint64_t rax;
     uint64_t rbx;
     uint64_t rcx;
     uint64_t rdx;
-} process_context_t;
+} __attribute__((packed)) process_context_t;
 
-typedef struct __attribute__((packed))
+typedef struct
 {
     uint32_t process_id;
     uint32_t priority;
     process_context_t context;
 
-} process_control_block_t;
+} __attribute__((packed)) process_control_block_t;
 
 
 #endif

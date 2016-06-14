@@ -3,6 +3,7 @@
  * See COPYING under root for details
  */
 
+#include <hal_arch.h>
 #include "bit_ops.h"
 #include "hal_arch.h"
 #include "hal_intr.h"
@@ -120,7 +121,6 @@ static void KAPI _hal_populate_idt()
     hal_set_interrupt_handler(37, hal_interrupt_handler_37);
     hal_set_interrupt_handler(38, hal_interrupt_handler_38);
     hal_set_interrupt_handler(39, hal_interrupt_handler_39);
-
     return;
 }
 
@@ -178,7 +178,6 @@ int32_t KAPI hal_interrupt_init(void)
 //        hal_printf("IDT%d: %d,%d,%d,%d",i, (uint64_t)g_idt);
 //    }
     hal_trigger_interrupt(33);
-    hal_halt_cpu();
     hal_enable_interrupt();
 
     return 0;

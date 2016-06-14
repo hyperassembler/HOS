@@ -24,14 +24,13 @@ pop rax
 push rax ; eflags
 
 push rsi ; cs
-push qword .reload ;eip
+push qword .reload ;rip
 iretq
 .reload:
 mov es,dx
 mov fs,dx
 mov gs,dx
 mov ds,dx
-mov rsp,rbp
 pop rbp
 ret
 
@@ -47,6 +46,12 @@ ret
 global hal_flush_idt
 hal_flush_idt:
 lidt [rdi]
+ret
+
+;======================
+global hal_read_idt
+hal_read_idt:
+sidt [rdi]
 ret
 
 ;======================

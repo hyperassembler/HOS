@@ -27,7 +27,6 @@ static void KAPI _hal_obtain_cpu_info(k_hal_info_t *hal_info)
 
 static void KAPI _hal_init_gdt()
 {
-    text_pos = get_pos(0, 0);
 
     // get gdt ready
     hal_write_segment_descriptor((void *) &g_gdt[0], 0, 0, 0);
@@ -62,11 +61,13 @@ k_hal_info_t *KAPI hal_init(char *m_info)
     if (m_info == NULL || (uint64_t) m_info & bit_field_mask_64(0, 2))
         return NULL;
 
-    // set up kernel heap;
-    hal_alloc_init();
+    text_pos = get_pos(0, 0);
 
     // set up GDT
     _hal_init_gdt();
+
+    // set up kernel heap;
+    hal_alloc_init();
 
     // init interrupt
     if(hal_interrupt_init() != 0)
