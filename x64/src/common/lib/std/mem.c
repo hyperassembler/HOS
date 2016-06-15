@@ -3,8 +3,8 @@
  * See COPYING under root for details
  */
 
-#include "k_type.h"
-#include "k_def.h"
+#include "s_type.h"
+#include "s_def.h"
 #include "std_lib.h"
 
 void KAPI mem_cpy(void *src, void *dst, uint64_t size)

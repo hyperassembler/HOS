@@ -66,6 +66,17 @@ hal_write_cr3:
 mov cr3,rdi
 ret
 
+;======================
+global hal_read_cr8
+hal_read_cr8:
+mov rax,cr8
+ret
+
+;======================
+global hal_write_cr8
+hal_write_cr8:
+mov cr8,rdi
+ret
 
 ; ============================
 ; uint64_t KAPI hal_interlocked_exchange(uint64_t* dst, uint64_t val);
@@ -200,12 +211,6 @@ hal_halt_cpu:
 .loop:
 hlt
 jmp .loop
-
-;====================
-global hal_bochs_magic_breakpoint
-hal_bochs_magic_breakpoint:
-xchg bx,bx
-ret
 
 ;====================
 ;(uint32_t *ecx, uint32_t* edx, uint32_t* eax)

@@ -6,8 +6,8 @@
 #ifndef _HAL_MEM_H_
 #define _HAL_MEM_H_
 
-#include "k_def.h"
-#include "k_type.h"
+#include "s_def.h"
+#include "s_type.h"
 #include "linked_list.h"
 
 #define GDT_ENTRY_SIZE 8

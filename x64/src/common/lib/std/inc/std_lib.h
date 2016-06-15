@@ -6,8 +6,8 @@
 #ifndef _STD_LIB_H_
 #define _STD_LIB_H_
 
-#include "k_def.h"
-#include "k_type.h"
+#include "s_def.h"
+#include "s_type.h"
 
 uint32_t KAPI rand( void );
 

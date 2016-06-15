@@ -3,7 +3,7 @@
  * See COPYING under root for details
  */
 
-#include "k_def.h"
+#include "s_def.h"
 #include "std_lib.h"
 #include "hal_print.h"
 #include "hal_var.h"

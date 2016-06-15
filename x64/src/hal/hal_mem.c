@@ -3,8 +3,8 @@
  * See COPYING under root for details
  */
 
-#include "k_def.h"
-#include "k_type.h"
+#include "s_def.h"
+#include "s_type.h"
 #include "hal_mem.h"
 #include "salloc.h"
 

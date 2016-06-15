@@ -17,5 +17,7 @@ extern void (*g_intr_handler_table[IDT_ENTRY_NUM])(uint64_t pc, uint64_t sp, uin
 extern hal_gdt_ptr_t g_gdt_ptr;
 extern hal_idt_ptr_t g_idt_ptr;
 extern uint64_t text_pos;
+extern char kernel_start[];
+extern char kernel_end[];
 
 #endif

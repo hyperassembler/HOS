@@ -3,4 +3,9 @@
  * See COPYING under root for details
  */
 
-#include "k_proc.h"
+#ifndef _S_TYPE_H_
+#define _S_TYPE_H_
+#include <stdint.h>
+#include <stdbool.h>
+
+#endif

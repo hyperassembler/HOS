@@ -3,7 +3,7 @@
  * See COPYING under root for details
  */
 
-#include "k_def.h"
+#include "s_def.h"
 #include "bit_ops.h"
 
 typedef union

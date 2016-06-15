@@ -1,5 +1,5 @@
 #include "k_atomic.h"
-#include "k_hal.h"
+#include "s_hal.h"
 
 void KAPI k_spin_lock(k_spin_lock_t *lock)
 {

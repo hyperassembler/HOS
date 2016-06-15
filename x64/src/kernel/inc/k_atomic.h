@@ -1,7 +1,7 @@
 #ifndef _ATOMIC_H_
 #define _ATOMIC_H_
 
-#include "k_def.h"
+#include "s_def.h"
 #include "k_intr.h"
 
 typedef struct

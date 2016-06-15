@@ -1,7 +1,7 @@
 #ifndef _HAL_ARCH_H_
 #define _HAL_ARCH_H_
 
-#include "k_def.h"
+#include "s_def.h"
 
 typedef struct
 {
@@ -50,8 +50,6 @@ extern void KAPI hal_flush_gdt(hal_gdt_ptr_t *gdt_ptr, uint64_t code_slct, uint6
 
 extern void KAPI hal_flush_tlb();
 
-#define hal_trigger_interrupt(x) __asm__ __volatile__ ("int "#x);
-
 extern void KAPI hal_flush_idt(hal_idt_ptr_t *idt_ptr);
 
 extern void KAPI hal_read_idt(hal_idt_ptr_t **idt_ptr);
@@ -59,5 +57,9 @@ extern void KAPI hal_read_idt(hal_idt_ptr_t **idt_ptr);
 extern void KAPI hal_write_cr3(uint64_t base);
 
 extern uint64_t KAPI hal_read_cr3();
+
+extern void KAPI hal_write_cr8(uint64_t pri);
+
+extern uint64_t KAPI hal_read_cr8();
 
 #endif
