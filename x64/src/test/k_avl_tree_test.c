@@ -16,8 +16,8 @@ static int_tree_node *create_tree_node(int val)
 
 static int compare(avl_tree_node_t *root, avl_tree_node_t *node)
 {
-    int_tree_node *rooti = OBTAIN_STRUCT_ADDR(root, tree_entry, int_tree_node);
-    int_tree_node *nodei = OBTAIN_STRUCT_ADDR(node, tree_entry, int_tree_node);
+    int_tree_node *rooti = OBTAIN_STRUCT_ADDR(root, int_tree_node, tree_entry);
+    int_tree_node *nodei = OBTAIN_STRUCT_ADDR(node, int_tree_node, tree_entry);
     return rooti->val - nodei->val;
 }
 
@@ -48,7 +48,7 @@ static bool _pre_order_assert(avl_tree_node_t *node, int order[], int size)
         return false;
 
     bool result = true;
-    int_tree_node *my_node = OBTAIN_STRUCT_ADDR(node, tree_entry, int_tree_node);
+    int_tree_node *my_node = OBTAIN_STRUCT_ADDR(node, int_tree_node, tree_entry);
     if (order[counter] != my_node->val)
     {
         result = false;
@@ -831,7 +831,7 @@ static bool test_apocalypse()
     avl_tree_node_t* entry = avl_tree_smallest(&tree);
     uint32_t size = 0;
     int32_t prev = -1;
-    int32_t cur = OBTAIN_STRUCT_ADDR(entry, tree_entry,int_tree_node)->val;
+    int32_t cur = OBTAIN_STRUCT_ADDR(entry, int_tree_node, tree_entry)->val;
     while(entry != NULL)
     {
         if(cur < prev)
@@ -844,7 +844,7 @@ static bool test_apocalypse()
         prev = cur;
         if(entry != NULL)
         {
-            cur = OBTAIN_STRUCT_ADDR(entry, tree_entry, int_tree_node)->val;
+            cur = OBTAIN_STRUCT_ADDR(entry, int_tree_node, tree_entry)->val;
         }
     }
 
@@ -853,7 +853,7 @@ static bool test_apocalypse()
     // larger test
     entry = avl_tree_largest(&tree);
     size = 0;
-    cur = OBTAIN_STRUCT_ADDR(entry, tree_entry,int_tree_node)->val;
+    cur = OBTAIN_STRUCT_ADDR(entry, int_tree_node, tree_entry)->val;
     prev = cur;
     while(entry != NULL)
     {
@@ -867,7 +867,7 @@ static bool test_apocalypse()
         prev = cur;
         if(entry != NULL)
         {
-            cur = OBTAIN_STRUCT_ADDR(entry, tree_entry, int_tree_node)->val;
+            cur = OBTAIN_STRUCT_ADDR(entry, int_tree_node, tree_entry)->val;
         }
     }
 
