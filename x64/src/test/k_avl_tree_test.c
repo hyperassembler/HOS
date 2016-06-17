@@ -77,18 +77,18 @@ static bool insert_simple_l()
 
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
-    avl_tree_insert(&tree, &create_tree_node(1)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(1)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry);
     int val1[] = {1, 2};
     result = result && pre_order_assert(&tree, val1, 2);
 
-    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry);
 
     int val2[] = {2, 1, 3};
     result = result && pre_order_assert(&tree, val2, 3);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool insert_simple_r()
@@ -101,18 +101,18 @@ static bool insert_simple_r()
 
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
-    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry);
     int val1[] = {3, 2};
     result = result && pre_order_assert(&tree, val1, 2);
 
-    avl_tree_insert(&tree, &create_tree_node(1)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(1)->tree_entry);
 
     int val2[] = {2, 1, 3};
     result = result && pre_order_assert(&tree, val2, 3);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool insert_simple_ll()
@@ -124,18 +124,18 @@ static bool insert_simple_ll()
     //3
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
-    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry);
     int val1[] = {2, 4};
     result = result && pre_order_assert(&tree, val1, 2);
 
-    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry);
 
     int val2[] = {3, 2, 4};
     result = result && pre_order_assert(&tree, val2, 3);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool insert_simple_rr()
@@ -147,18 +147,18 @@ static bool insert_simple_rr()
     //  3
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
-    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry);
     int val1[] = {4, 2};
     result = result && pre_order_assert(&tree, val1, 2);
 
-    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry);
 
     int val2[] = {3, 2, 4};
     result = result && pre_order_assert(&tree, val2, 3);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool insert_complex_1()
@@ -172,21 +172,21 @@ static bool insert_complex_1()
     //                    15    3
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
-    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(26)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(9)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(26)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(9)->tree_entry);
     int val1[] = {20, 4, 3, 9, 26};
     result = result && pre_order_assert(&tree, val1, 5);
 
-    avl_tree_insert(&tree, &create_tree_node(15)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(15)->tree_entry);
 
     int val2[] = {9, 4, 3, 20, 15, 26};
     result = result && pre_order_assert(&tree, val2, 6);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool insert_complex_2()
@@ -200,21 +200,21 @@ static bool insert_complex_2()
     //               8          3   8
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
-    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(26)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(9)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(26)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(9)->tree_entry);
     int val1[] = {20, 4, 3, 9, 26};
     result = result && pre_order_assert(&tree, val1, 5);
 
-    avl_tree_insert(&tree, &create_tree_node(8)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(8)->tree_entry);
 
     int val2[] = {9, 4, 3, 8, 20, 26};
     result = result && pre_order_assert(&tree, val2, 6);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool insert_complex_3()
@@ -230,26 +230,26 @@ static bool insert_complex_3()
     //                                  15         2
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
-    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(26)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(9)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(21)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(7)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(11)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(26)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(9)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(21)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(7)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(11)->tree_entry);
     int val1[] = {20, 4, 3, 2, 9, 7, 11, 26, 21, 30};
     result = result && pre_order_assert(&tree, val1, 10);
 
-    avl_tree_insert(&tree, &create_tree_node(15)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(15)->tree_entry);
 
     int val2[] = {9, 4, 3, 2, 7, 20, 11, 15, 26, 21, 30};
     result = result && pre_order_assert(&tree, val2, 11);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool insert_complex_4()
@@ -265,26 +265,26 @@ static bool insert_complex_4()
     //                             8               2       8
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
-    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(26)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(9)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(21)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(7)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(11)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(26)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(9)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(21)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(7)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(11)->tree_entry);
     int val1[] = {20, 4, 3, 2, 9, 7, 11, 26, 21, 30};
     result = result && pre_order_assert(&tree, val1, 10);
 
-    avl_tree_insert(&tree, &create_tree_node(8)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(8)->tree_entry);
 
     int val2[] = {9, 4, 3, 2, 7, 8, 20, 11, 26, 21, 30};
     result = result && pre_order_assert(&tree, val2, 11);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool insert_duplicate()
@@ -300,28 +300,28 @@ static bool insert_duplicate()
     //                             8               2       8
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
-    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(26)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(9)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(21)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(7)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(11)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(26)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(9)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(21)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(7)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(11)->tree_entry);
     int val1[] = {20, 4, 3, 2, 9, 7, 11, 26, 21, 30};
     result = result && pre_order_assert(&tree, val1, 10);
 
-    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(7)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(7)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry);
 
     result = result && pre_order_assert(&tree, val1, 10);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 
@@ -335,22 +335,22 @@ static bool delete_simple_l()
 
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
     int_tree_node *deleted = create_tree_node(1);
 
-    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry, compare);
-    avl_tree_insert(&tree, &deleted->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry);
+    avl_tree_insert(&tree, &deleted->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry);
     int val1[] = {2, 1, 3, 4};
     result = result && pre_order_assert(&tree, val1, 4);
 
-    avl_tree_delete(&tree, &deleted->tree_entry, compare);
+    avl_tree_delete(&tree, &deleted->tree_entry);
 
     int val2[] = {3, 2, 4};
     result = result && pre_order_assert(&tree, val2, 3);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool delete_simple_r()
@@ -363,22 +363,22 @@ static bool delete_simple_r()
 
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
     int_tree_node *deleted = create_tree_node(4);
 
-    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry, compare);
-    avl_tree_insert(&tree, &deleted->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(1)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry);
+    avl_tree_insert(&tree, &deleted->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(1)->tree_entry);
     int val1[] = {3, 2, 1, 4};
     result = result && pre_order_assert(&tree, val1, 4);
 
-    avl_tree_delete(&tree, &deleted->tree_entry, compare);
+    avl_tree_delete(&tree, &deleted->tree_entry);
 
     int val2[] = {2, 1, 3};
     result = result && pre_order_assert(&tree, val2, 3);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool delete_simple_ll()
@@ -390,22 +390,22 @@ static bool delete_simple_ll()
     //  3
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
     int_tree_node *deleted = create_tree_node(1);
 
-    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry, compare);
-    avl_tree_insert(&tree, &deleted->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(4)->tree_entry);
+    avl_tree_insert(&tree, &deleted->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry);
     int val1[] = {2, 1, 4, 3};
     result = result && pre_order_assert(&tree, val1, 4);
 
-    avl_tree_delete(&tree, &deleted->tree_entry, compare);
+    avl_tree_delete(&tree, &deleted->tree_entry);
 
     int val2[] = {3, 2, 4};
     result = result && pre_order_assert(&tree, val2, 3);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool delete_simple_rr()
@@ -417,22 +417,22 @@ static bool delete_simple_rr()
     //  1
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
     int_tree_node *deleted = create_tree_node(4);
 
-    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry, compare);
-    avl_tree_insert(&tree, &deleted->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(1)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(3)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(2)->tree_entry);
+    avl_tree_insert(&tree, &deleted->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(1)->tree_entry);
     int val1[] = {3, 2, 1, 4};
     result = result && pre_order_assert(&tree, val1, 4);
 
-    avl_tree_delete(&tree, &deleted->tree_entry, compare);
+    avl_tree_delete(&tree, &deleted->tree_entry);
 
     int val2[] = {2, 1, 3};
     result = result && pre_order_assert(&tree, val2, 3);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool delete_complex_1()
@@ -448,18 +448,18 @@ static bool delete_complex_1()
     //                    empty tree
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
     int_tree_node *deleted = create_tree_node(10);
 
-    avl_tree_insert(&tree, &deleted->tree_entry, compare);
+    avl_tree_insert(&tree, &deleted->tree_entry);
     int val1[] = {10};
     result = result && pre_order_assert(&tree, val1, 1);
 
-    avl_tree_delete(&tree, &deleted->tree_entry, compare);
+    avl_tree_delete(&tree, &deleted->tree_entry);
 
     result = result && pre_order_assert(&tree, val1, 0);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool delete_complex_2()
@@ -486,23 +486,23 @@ static bool delete_complex_2()
     //
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
     int_tree_node *deleted = create_tree_node(20);
 
-    avl_tree_insert(&tree, &deleted->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(10)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(25)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(35)->tree_entry, compare);
+    avl_tree_insert(&tree, &deleted->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(10)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(25)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(35)->tree_entry);
     int val1[] = {20, 10, 30, 25, 35};
     result = result && pre_order_assert(&tree, val1, 5);
 
-    avl_tree_delete(&tree, &deleted->tree_entry, compare);
+    avl_tree_delete(&tree, &deleted->tree_entry);
 
     int val2[] = {25, 10, 30, 35};
     result = result && pre_order_assert(&tree, val2, 4);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool delete_complex_3()
@@ -525,24 +525,24 @@ static bool delete_complex_3()
     //                5     25
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
     int_tree_node *deleted = create_tree_node(10);
 
-    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry, compare);
-    avl_tree_insert(&tree, &deleted->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(5)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(15)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(25)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
+    avl_tree_insert(&tree, &deleted->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(5)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(15)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(25)->tree_entry);
     int val1[] = {20, 10, 5, 15, 30, 25};
     result = result && pre_order_assert(&tree, val1, 6);
 
-    avl_tree_delete(&tree, &deleted->tree_entry, compare);
+    avl_tree_delete(&tree, &deleted->tree_entry);
 
     int val2[] = {20, 15, 5, 30, 25};
     result = result && pre_order_assert(&tree, val2, 5);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool delete_complex_4()
@@ -564,7 +564,7 @@ static bool delete_complex_4()
     //
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
     int_tree_node *delete5 = create_tree_node(5);
     int_tree_node *delete10 = create_tree_node(10);
@@ -573,25 +573,25 @@ static bool delete_complex_4()
     int_tree_node *delete30 = create_tree_node(30);
 
 
-    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry, compare);
-    avl_tree_insert(&tree, &delete10->tree_entry, compare);
-    avl_tree_insert(&tree, &delete30->tree_entry, compare);
-    avl_tree_insert(&tree, &delete5->tree_entry, compare);
-    avl_tree_insert(&tree, &delete15->tree_entry, compare);
-    avl_tree_insert(&tree, &delete25->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
+    avl_tree_insert(&tree, &delete10->tree_entry);
+    avl_tree_insert(&tree, &delete30->tree_entry);
+    avl_tree_insert(&tree, &delete5->tree_entry);
+    avl_tree_insert(&tree, &delete15->tree_entry);
+    avl_tree_insert(&tree, &delete25->tree_entry);
 
     int val1[] = {20, 10, 5, 15, 30, 25};
     result = result && pre_order_assert(&tree, val1, 6);
 
-    avl_tree_delete(&tree, &delete5->tree_entry, compare);
-    avl_tree_delete(&tree, &delete15->tree_entry, compare);
-    avl_tree_delete(&tree, &delete25->tree_entry, compare);
-    avl_tree_delete(&tree, &delete10->tree_entry, compare);
-    avl_tree_delete(&tree, &delete30->tree_entry, compare);
+    avl_tree_delete(&tree, &delete5->tree_entry);
+    avl_tree_delete(&tree, &delete15->tree_entry);
+    avl_tree_delete(&tree, &delete25->tree_entry);
+    avl_tree_delete(&tree, &delete10->tree_entry);
+    avl_tree_delete(&tree, &delete30->tree_entry);
 
     int val2[] = {20};
     result = result && pre_order_assert(&tree, val2, 1);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool delete_complex_single_rotation()
@@ -623,30 +623,30 @@ static bool delete_complex_single_rotation()
     //
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
     int_tree_node *deleted = create_tree_node(50);
 
-    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(10)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(5)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(15)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(25)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(40)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(12)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(22)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(35)->tree_entry, compare);
-    avl_tree_insert(&tree, &deleted->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(31)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(10)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(5)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(15)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(25)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(40)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(12)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(22)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(35)->tree_entry);
+    avl_tree_insert(&tree, &deleted->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(31)->tree_entry);
     int val1[] = {20, 10, 5, 15, 12, 30, 25, 22, 40, 35, 31, 50};
     result = result && pre_order_assert(&tree, val1, 12);
 
-    avl_tree_delete(&tree, &deleted->tree_entry, compare);
+    avl_tree_delete(&tree, &deleted->tree_entry);
 
     int val2[] = {20, 10, 5, 15, 12, 30, 25, 22, 35, 31, 40};
     result = result && pre_order_assert(&tree, val2, 11);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool delete_complex_double_rotation()
@@ -678,30 +678,30 @@ static bool delete_complex_double_rotation()
     //
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
     int_tree_node *deleted = create_tree_node(22);
 
-    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(10)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(5)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(15)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(25)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(40)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(12)->tree_entry, compare);
-    avl_tree_insert(&tree, &deleted->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(35)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(50)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(31)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(10)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(5)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(15)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(25)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(40)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(12)->tree_entry);
+    avl_tree_insert(&tree, &deleted->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(35)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(50)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(31)->tree_entry);
     int val1[] = {20, 10, 5, 15, 12, 30, 25, 22, 40, 35, 31, 50};
     result = result && pre_order_assert(&tree, val1, 12);
 
-    avl_tree_delete(&tree, &deleted->tree_entry, compare);
+    avl_tree_delete(&tree, &deleted->tree_entry);
 
     int val2[] = {20, 10, 5, 15, 12, 35, 30, 25, 31, 40, 50};
     result = result && pre_order_assert(&tree, val2, 11);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool delete_complex_multiple_rotation()
@@ -733,30 +733,30 @@ static bool delete_complex_multiple_rotation()
     //
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
     int_tree_node *deleted = create_tree_node(5);
 
-    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(10)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry, compare);
-    avl_tree_insert(&tree, &deleted->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(15)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(25)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(40)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(12)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(22)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(35)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(50)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(31)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(10)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry);
+    avl_tree_insert(&tree, &deleted->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(15)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(25)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(40)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(12)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(22)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(35)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(50)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(31)->tree_entry);
     int val1[] = {20, 10, 5, 15, 12, 30, 25, 22, 40, 35, 31, 50};
     result = result && pre_order_assert(&tree, val1, 12);
 
-    avl_tree_delete(&tree, &deleted->tree_entry, compare);
+    avl_tree_delete(&tree, &deleted->tree_entry);
 
     int val2[] = {30, 20, 12, 10, 15, 25, 22, 40, 35, 31, 50};
     result = result && pre_order_assert(&tree, val2, 11);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 static bool delete_DNE()
@@ -781,25 +781,25 @@ static bool delete_DNE()
     //
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
     int_tree_node *delete100 = create_tree_node(100);
     int_tree_node *delete24 = create_tree_node(24);
 
-    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(10)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(5)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(15)->tree_entry, compare);
-    avl_tree_insert(&tree, &create_tree_node(25)->tree_entry, compare);
+    avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(10)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(30)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(5)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(15)->tree_entry);
+    avl_tree_insert(&tree, &create_tree_node(25)->tree_entry);
 
     int val1[] = {20, 10, 5, 15, 30, 25};
     result = result && pre_order_assert(&tree, val1, 6);
 
-    avl_tree_delete(&tree, &delete24->tree_entry, compare);
-    avl_tree_delete(&tree, &delete100->tree_entry, compare);
+    avl_tree_delete(&tree, &delete24->tree_entry);
+    avl_tree_delete(&tree, &delete100->tree_entry);
     result = result && pre_order_assert(&tree, val1, 6);
-    return result && avl_tree_validate(&tree, compare);
+    return result && avl_tree_validate(&tree);
 }
 
 #define AVL_APOCALYPSE_NUM 500
@@ -810,21 +810,21 @@ static bool test_apocalypse()
 {
     bool result = true;
     avl_tree_t tree;
-    avl_tree_init(&tree);
+    avl_tree_init(&tree, compare);
 
     // insert test
     for(int i = 0; i < AVL_APOCALYPSE_NUM; i++)
     {
         apocalypse[i].val = rand();
-        while(avl_tree_search(&tree, &apocalypse[i].tree_entry,compare) != NULL)
+        while(avl_tree_search(&tree, &apocalypse[i].tree_entry) != NULL)
         {
             apocalypse[i].val += rand() % 32765;
         }
-        avl_tree_insert(&tree, &apocalypse[i].tree_entry, compare);
+        avl_tree_insert(&tree, &apocalypse[i].tree_entry);
     }
 
     // integrity test
-    result = result && avl_tree_validate(&tree, compare);
+    result = result && avl_tree_validate(&tree);
     result = result && avl_tree_size(&tree) == AVL_APOCALYPSE_NUM;
 
     // smaller and bigger test
@@ -877,10 +877,10 @@ static bool test_apocalypse()
     // delete and search test
     for(int i = 0; i < AVL_APOCALYPSE_NUM; i++)
     {
-        result = result && (avl_tree_search(&tree,&apocalypse[i].tree_entry, compare) != NULL);
-        avl_tree_delete(&tree,&apocalypse[i].tree_entry, compare);
-        result = result && (avl_tree_search(&tree,&apocalypse[i].tree_entry, compare) == NULL);
-        result = result && avl_tree_validate(&tree, compare);
+        result = result && (avl_tree_search(&tree,&apocalypse[i].tree_entry) != NULL);
+        avl_tree_delete(&tree,&apocalypse[i].tree_entry);
+        result = result && (avl_tree_search(&tree,&apocalypse[i].tree_entry) == NULL);
+        result = result && avl_tree_validate(&tree);
     }
 
     result = result && (avl_tree_size(&tree) == 0);

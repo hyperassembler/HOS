@@ -20,6 +20,12 @@ typedef struct _linked_list_t
     linked_list_node_t *tail;
 } linked_list_t;
 
+/*
+ * Returns true if other == your node
+ * false otherwise
+ */
+typedef _Bool (*linked_list_node_equals_func_t)(linked_list_node_t * others, linked_list_node_t * yours);
+
 void KAPI linked_list_init(linked_list_t *list);
 
 int KAPI linked_list_size(linked_list_t *list);
@@ -50,6 +56,6 @@ linked_list_node_t *KAPI linked_list_first(linked_list_t *list);
 
 linked_list_node_t *KAPI linked_list_last(linked_list_t *list);
 
-int32_t KAPI linked_list_search(linked_list_t *list, linked_list_node_t* target, bool (*equals)(linked_list_node_t*, linked_list_node_t*));
+int32_t KAPI linked_list_search(linked_list_t *list, linked_list_node_t* target, linked_list_node_equals_func_t equals);
 
 #endif

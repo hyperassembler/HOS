@@ -283,7 +283,7 @@ linked_list_node_t *KAPI linked_list_last(linked_list_t *list)
     return result;
 }
 
-int32_t KAPI linked_list_search(linked_list_t *list, linked_list_node_t *target, bool (*equals)(linked_list_node_t *, linked_list_node_t *))
+int32_t KAPI linked_list_search(linked_list_t *list, linked_list_node_t *target, linked_list_node_equals_func_t equals)
 {
     if(list == NULL || target == NULL)
         return -1;
@@ -291,9 +291,9 @@ int32_t KAPI linked_list_search(linked_list_t *list, linked_list_node_t *target,
     linked_list_node_t* node = linked_list_first(list);
     while(node != NULL)
     {
-        if(equals !=NULL)
+        if(equals != NULL)
         {
-            if (equals(target, node))
+            if (equals(node, target))
             {
                 return result;
             }
