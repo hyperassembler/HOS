@@ -22,7 +22,7 @@ static void _set_salloc_header_size(_salloc_header *header, uint32_t size)
     size <<= ALLOC_FLAG_NUM;
 
     // clear ALLOC_FLAG_NUM-th to 31-th bits
-    header->size &= ~bit_field_mask_32(ALLOC_FLAG_NUM, 31);
+    header->size &= ~(uint32_t) bit_field_mask(ALLOC_FLAG_NUM, 31);
     // set bits
     header->size |= size;
     return;
@@ -35,19 +35,19 @@ static uint32_t _read_salloc_header_size(_salloc_header *header)
 
 static uint32_t _read_salloc_header_flag(_salloc_header *header, uint32_t bit)
 {
-    return (header->flags & bit_mask_32(bit)) == 0 ? 0 : 1;
+    return (header->flags & (uint32_t) bit_mask(bit)) == 0 ? 0 : 1;
 }
 
 static void _set_salloc_header_flag(_salloc_header *header, uint32_t bit, uint32_t value)
 {
-    value &= bit_mask_32(0);
+    value &= (uint32_t) bit_mask(0);
     if (value == 1)
     {
-        header->flags |= bit_mask_32(bit);
+        header->flags |= (uint32_t) bit_mask(bit);
     }
     else
     {
-        header->flags &= ~bit_mask_32(bit);
+        header->flags &= ~(uint32_t) bit_mask(bit);
     }
     return;
 }
