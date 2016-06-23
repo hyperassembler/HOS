@@ -54,10 +54,10 @@ static void KAPI _hal_init_gdt()
     hal_flush_gdt(&g_gdt_ptr, seg_selector(1, 0), seg_selector(2, 0));
 };
 
-int32_t KAPI hal_init(void *m_info, k_boot_info_t* boot_info)
+void KAPI hal_init(void *m_info)
 {
-    if (m_info == NULL || boot_info == NULL || (uint64_t) m_info & bit_field_mask_64(0, 2))
-        return 1;
+    if (m_info == NULL || (uint64_t) m_info & bit_field_mask(0, 2))
+        return;
 
     text_pos = get_pos(0, 0);
 
@@ -66,6 +66,8 @@ int32_t KAPI hal_init(void *m_info, k_boot_info_t* boot_info)
 
     // set up HAL heap;
     hal_alloc_init();
+
+    k_boot_info_t* boot_info = halloc(sizeof(k_boot_info_t));
 
     // set up HAL def
     boot_info->krnl_start = (uint64_t)kernel_start;
