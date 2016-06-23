@@ -1,4 +1,5 @@
 My Hobby OS.
 
-Far from completion.
-Documents coming soon...
+12.986% done.
+
+If interested, checkout the Wiki. It contains designs of the OS.
