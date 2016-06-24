@@ -37,12 +37,12 @@ void KAPI hal_write_gate(void *const gate,
 
 void KAPI hal_set_interrupt_priority(uint64_t priority)
 {
-    hal_write_cr8(priority & bit_field_mask_32(0,3));
+    hal_write_cr8(priority & bit_field_mask(0,3));
 }
 
 uint64_t KAPI hal_read_interrupt_priority()
 {
-    return (uint64_t)hal_read_cr8() & bit_field_mask_32(0,3);
+    return (uint64_t)hal_read_cr8() & bit_field_mask(0,3);
 }
 
 void KAPI hal_set_interrupt_handler(uint64_t index,
@@ -61,25 +61,39 @@ void KAPI hal_issue_interrupt(uint32_t target_core, uint32_t vector)
     // TODO
 }
 
-int32_t KAPI hal_register_interrupt_handler(k_handler_type_t type,
-                                            uint32_t priority,
-                                            void (*handler)(uint64_t pc,
-                                                            uint64_t sp,
-                                                            uint64_t error))
+void KAPI hal_register_interrupt_handler(uint32_t index, k_intr_handler_t handler, void* context)
 {
-    if (type == K_INTR_SOFTWARE)
+    if (index < IDT_ENTRY_NUM && index >= 0)
     {
-        // TODO
-        g_intr_handler_table[0] = handler;
+        g_intr_handler_table[index] = handler;
+        g_intr_handler_context_table[index] = handler;
     }
-    return 0;
+    return;
 }
 
-void KAPI hal_deregister_interrupt_handler(int32_t index)
+void KAPI hal_deregister_interrupt_handler(uint32_t index)
 {
     if (index < IDT_ENTRY_NUM && index >= 0)
     {
         g_intr_handler_table[index] = NULL;
+    }
+    return;
+}
+
+void KAPI hal_register_exception_handler(uint32_t index, k_exc_handler_t handler)
+{
+    if (index < IDT_ENTRY_NUM && index >= 0)
+    {
+        g_exc_handler_table[index] = handler;
+    }
+    return;
+}
+
+void KAPI hal_deregister_exception_handler(uint32_t index)
+{
+    if (index < IDT_ENTRY_NUM && index >= 0)
+    {
+        g_exc_handler_table[index] = NULL;
     }
     return;
 }

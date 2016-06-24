@@ -554,13 +554,9 @@ extern void KAPI hal_interrupt_handler_254(void);
 
 extern void KAPI hal_interrupt_handler_255(void);
 
-int32_t KAPI hal_register_interrupt_handler(k_handler_type_t type,
-                                            uint32_t priority,
-                                            void (*handler)(uint64_t pc,
-                                                            uint64_t sp,
-                                                            uint64_t error));
+void KAPI hal_register_interrupt_handler(uint32_t index, k_intr_handler_t handler, void* context);
 
-void KAPI hal_deregister_interrupt_handler(int32_t index);
+void KAPI hal_deregister_interrupt_handler(uint32_t index);
 
 void KAPI hal_issue_interrupt(uint32_t target_core, uint32_t vector);
 

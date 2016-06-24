@@ -17,6 +17,8 @@ typedef struct
 
 extern uint64_t KAPI hal_interlocked_exchange(uint64_t *dst, uint64_t val);
 
+extern uint64_t KAPI hal_interlocked_compare_exchange(uint64_t *dst, uint64_t val, uint64_t compare);
+
 extern void KAPI hal_cpuid(uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx);
 
 #define MSR_IA32_APIC_BASE 0x1B
