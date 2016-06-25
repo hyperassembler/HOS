@@ -4,7 +4,6 @@
  */
 
 #include "k_alloc.h"
-#include "s_hal.h"
 #include "k_lib_test.h"
 
 // returning from this function results in halting the cpu

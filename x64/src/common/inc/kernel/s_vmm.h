@@ -1,11 +1,29 @@
 #ifndef _S_VMM_H_
 #define _S_VMM_H_
+#include "g_abi.h"
+#include "g_type.h"
+#include "s_pmm.h"
 
-#include "s_abi.h"
-#include "s_type.h"
+typedef uint64_t k_virtual_addr_t;
+
 
 #define K_BASE_VADDR 0xFF
 #define K_END_VADDR 0xFF
+
+//
+// all the address spaces passed by the kernel would be initialized by k_create_address_space
+// which means the kernel area/ as well as the HAL reserved vaddr ranges would be properly mapped
+//
+
+typedef k_physical_addr_t (KAPI *k_physical_page_alloc)();
+
+typedef void (KAPI *k_physical_page_free)(k_physical_addr_t page);
+
+// this function should map the v_addr to p_addr for the target address space
+extern void KAPI k_map_virtual_addr(k_physical_addr_t addr_space,
+                                    k_virtual_addr_t v_addr,
+                                    k_physical_addr_t p_addr,
+                                    k_physical_page_alloc alloc);
 
 typedef struct
 {

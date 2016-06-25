@@ -1,7 +1,7 @@
 #ifndef _S_INTR_H_
 #define _S_INTR_H_
 
-#include "s_abi.h"
+#include "g_abi.h"
 
 typedef struct
 {
@@ -23,15 +23,12 @@ typedef enum
 
 // IRQL APIs
 typedef uint64_t k_irql_t;
-#define K_IRQL_HIGH 4
-#define K_IRQL_IO 3
-#define K_IRQL_DPC 2
-#define K_IRQL_APC 1
-#define K_IRQL_LOW 0
+#define K_IRQL_DISABLED_LEVEL 3
+#define K_IRQL_DPC_LEVEL 2
+#define K_IRQL_APC_LEVEL 1
+#define K_IRQL_PASSIVE_LEVEL 0
 
-extern KAPI k_irql_t k_raise_irql(k_irql_t irql);
-
-extern KAPI k_irql_t k_lower_irql(k_irql_t irql);
+extern KAPI k_irql_t k_set_irql(k_irql_t irql);
 
 extern KAPI k_irql_t k_get_irql();
 
@@ -50,5 +47,7 @@ typedef void ( KAPI *k_exc_handler_t)(uint64_t exc_addr, uint64_t exc_stack, uin
 extern void KAPI k_register_exc_handler(k_exc_type_t type, k_exc_handler_t handler);
 
 extern k_exc_handler_t KAPI k_deregister_exc_handler(uint64_t index);
+
+extern void KAPI k_halt_cpu();
 
 #endif

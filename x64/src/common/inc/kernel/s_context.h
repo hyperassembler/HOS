@@ -1,8 +1,8 @@
 #ifndef _S_CONTEXT_H_
 #define _S_CONTEXT_H_
 
-#include "s_abi.h"
-#include "s_mm.h"
+#include "g_abi.h"
+#include "s_vmm.h"
 #include "s_intr.h"
 
 // This function should never return and directly context switches to the target

@@ -3,8 +3,8 @@
  * See COPYING under root for details
  */
 
-#include "s_abi.h"
-#include "s_type.h"
+#include "g_abi.h"
+#include "g_type.h"
 #include "hal_mem.h"
 #include "salloc.h"
 

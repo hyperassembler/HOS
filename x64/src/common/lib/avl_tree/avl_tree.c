@@ -238,18 +238,21 @@ static void _avl_tree_swap_nodes(avl_tree_node_t *node1, avl_tree_node_t *node2)
     return;
 }
 
-static avl_tree_node_t *KAPI _avl_tree_node_delete(avl_tree_node_t *root, avl_tree_node_t *node,
-                                                   avl_tree_node_compare_func_t compare)
+static avl_tree_node_t *KAPI _avl_tree_node_delete(avl_tree_node_t *root,
+                                                   avl_tree_node_t *node,
+                                                   avl_tree_node_compare_func_t compare,
+                                                   avl_tree_node_t **deleted_node)
 {
-    if (root == NULL || node == NULL || compare == NULL)
+    if (root == NULL || node == NULL || compare == NULL || deleted_node == NULL)
         return root;
     const int32_t comp = compare(root, node);
     if (comp < 0)
-        root->right = _avl_tree_node_delete(root->right, node, compare);
+        root->right = _avl_tree_node_delete(root->right, node, compare, deleted_node);
     else if (comp > 0)
-        root->left = _avl_tree_node_delete(root->left, node, compare);
+        root->left = _avl_tree_node_delete(root->left, node, compare, deleted_node);
     else
     {
+        *deleted_node = root;
         // node with only one child or no child
         if ((root->left == NULL) || (root->right == NULL))
         {
@@ -274,7 +277,7 @@ static avl_tree_node_t *KAPI _avl_tree_node_delete(avl_tree_node_t *root, avl_tr
             _avl_tree_swap_nodes(successor, root);
 
             // Detach the inorder successor
-            successor->right = _avl_tree_node_delete(successor->right, root, compare);
+            successor->right = _avl_tree_node_delete(successor->right, root, compare, deleted_node);
 
             root = successor;
         }
@@ -403,13 +406,14 @@ void KAPI avl_tree_insert(avl_tree_t *tree, avl_tree_node_t *data)
     return;
 }
 
-void KAPI avl_tree_delete(avl_tree_t *tree, avl_tree_node_t *data)
+avl_tree_node_t *KAPI avl_tree_delete(avl_tree_t *tree, avl_tree_node_t *data)
 {
+    avl_tree_node_t *node = NULL;
     if (tree != NULL && data != NULL)
     {
-        tree->root = _avl_tree_node_delete(tree->root, data, tree->compare);
+        tree->root = _avl_tree_node_delete(tree->root, data, tree->compare, &node);
     }
-    return;
+    return node;
 }
 
 int32_t KAPI avl_tree_size(avl_tree_t *tree)

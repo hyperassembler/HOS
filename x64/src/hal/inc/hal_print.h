@@ -5,8 +5,8 @@
 
 #ifndef _HAL_PRINT_H_
 #define _HAL_PRINT_H_
-#include "s_abi.h"
-#include "s_type.h"
+#include "g_abi.h"
+#include "g_type.h"
 
 #define get_column(pos) (pos % 80)
 #define get_row(pos) (pos / 80)

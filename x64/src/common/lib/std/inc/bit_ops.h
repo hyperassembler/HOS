@@ -6,8 +6,8 @@
 #ifndef _BIT_OPERATION_H_
 #define _BIT_OPERATION_H_
 
-#include "s_type.h"
-#include "s_abi.h"
+#include "g_type.h"
+#include "g_abi.h"
 
 static inline uint64_t KAPI bit_mask(uint32_t bit)
 {

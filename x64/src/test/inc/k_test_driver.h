@@ -1,8 +1,8 @@
 #ifndef _K_TEST_DRIVER_H_
 #define _K_TEST_DRIVER_H_
 
-#include "s_type.h"
-#include "s_abi.h"
+#include "g_type.h"
+#include "g_abi.h"
 
 void KAPI test_begin(char *name);
 

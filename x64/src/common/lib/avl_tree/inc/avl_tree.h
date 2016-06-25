@@ -39,7 +39,7 @@ avl_tree_node_t *KAPI avl_tree_search(avl_tree_t *tree, avl_tree_node_t *entry);
 
 void KAPI avl_tree_insert(avl_tree_t *tree, avl_tree_node_t *entry);
 
-void KAPI avl_tree_delete(avl_tree_t *tree, avl_tree_node_t *entry);
+avl_tree_node_t* KAPI avl_tree_delete(avl_tree_t *tree, avl_tree_node_t *entry);
 
 void KAPI avl_tree_init(avl_tree_t *tree, avl_tree_node_compare_func_t);
 

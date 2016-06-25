@@ -6,7 +6,7 @@
 #ifndef _LINKED_LIST_H_
 #define _LINKED_LIST_H_
 
-#include "s_abi.h"
+#include "g_abi.h"
 
 typedef struct _linked_list_node_t
 {
