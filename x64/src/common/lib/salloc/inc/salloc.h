@@ -6,7 +6,7 @@
 #ifndef _SALLOC_H_
 #define _SALLOC_H_
 
-#include "s_def.h"
+#include "s_abi.h"
 
 void KAPI salloc_init(void *base, uint32_t size);
 

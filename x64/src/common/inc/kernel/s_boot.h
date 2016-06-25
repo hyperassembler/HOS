@@ -1,6 +1,6 @@
 #ifndef _S_BOOT_H_
 #define _S_BOOT_H_
-#include "s_def.h"
+#include "s_abi.h"
 //
 // HAL Boot Info
 //

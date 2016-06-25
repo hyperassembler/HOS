@@ -3,7 +3,7 @@
 #include "s_boot.h"
 #include "s_context.h"
 #include "s_intr.h"
-#include "s_vmm.h"
+#include "s_asm.h"
 
 uint64_t KAPI k_interlocked_exchange(uint64_t* target, uint64_t val)
 {

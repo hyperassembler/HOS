@@ -5,7 +5,7 @@
 
 #ifndef _HAL_PRINT_H_
 #define _HAL_PRINT_H_
-#include "s_def.h"
+#include "s_abi.h"
 #include "s_type.h"
 
 #define get_column(pos) (pos % 80)

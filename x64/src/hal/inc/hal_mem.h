@@ -6,7 +6,7 @@
 #ifndef _HAL_MEM_H_
 #define _HAL_MEM_H_
 
-#include "s_def.h"
+#include "s_abi.h"
 #include "s_type.h"
 #include "linked_list.h"
 

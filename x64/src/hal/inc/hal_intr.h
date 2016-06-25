@@ -7,7 +7,7 @@
 #define _HAL_IO_H_
 
 #include "s_intr.h"
-#include "s_def.h"
+#include "s_abi.h"
 #include "s_type.h"
 
 #define GATE_DPL_0 (0ull << 13)

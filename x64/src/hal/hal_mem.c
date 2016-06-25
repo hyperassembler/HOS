@@ -3,7 +3,7 @@
  * See COPYING under root for details
  */
 
-#include "s_def.h"
+#include "s_abi.h"
 #include "s_type.h"
 #include "hal_mem.h"
 #include "salloc.h"

@@ -1,6 +1,6 @@
 #ifndef _K_ALLOC_H_
 #define _K_ALLOC_H_
-#include "s_def.h"
+#include "s_abi.h"
 
 void KAPI k_alloc_init();
 

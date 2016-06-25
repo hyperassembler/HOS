@@ -1,7 +1,7 @@
 #ifndef _HAL_ARCH_H_
 #define _HAL_ARCH_H_
 
-#include "s_def.h"
+#include "s_abi.h"
 
 typedef struct
 {

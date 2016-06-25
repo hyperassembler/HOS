@@ -2,7 +2,7 @@
 #define _K_TEST_DRIVER_H_
 
 #include "s_type.h"
-#include "s_def.h"
+#include "s_abi.h"
 
 void KAPI test_begin(char *name);
 

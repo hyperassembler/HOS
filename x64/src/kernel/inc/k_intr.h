@@ -3,7 +3,7 @@
 
 #include "s_intr.h"
 #include "s_type.h"
-#include "s_def.h"
+#include "s_abi.h"
 
 typedef uint64_t k_irql_t;
 

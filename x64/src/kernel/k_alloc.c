@@ -1,4 +1,4 @@
-#include "s_def.h"
+#include "s_abi.h"
 #include "salloc.h"
 
 #define K_KERNEL_HEAP_SIZE 8192
