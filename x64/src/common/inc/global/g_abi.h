@@ -3,8 +3,8 @@
  * See COPYING under root for details
  */
 
-#ifndef _S_ABI_H_
-#define _S_ABI_H_
+#ifndef _G_ABI_H_
+#define _G_ABI_H_
 
 #include <stddef.h>
 #include <stdarg.h>

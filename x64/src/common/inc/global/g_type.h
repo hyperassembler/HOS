@@ -3,8 +3,8 @@
  * See COPYING under root for details
  */
 
-#ifndef _S_TYPE_H_
-#define _S_TYPE_H_
+#ifndef _G_TYPE_H_
+#define _G_TYPE_H_
 #include <stdint.h>
 #include <stdbool.h>
 

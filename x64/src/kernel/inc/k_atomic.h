@@ -1,5 +1,5 @@
-#ifndef _ATOMIC_H_
-#define _ATOMIC_H_
+#ifndef _K_ATOMIC_H_
+#define _K_ATOMIC_H_
 
 #include "g_abi.h"
 #include "k_intr.h"

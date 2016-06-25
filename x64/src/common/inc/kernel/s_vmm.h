@@ -5,10 +5,14 @@
 #include "s_pmm.h"
 
 typedef uint64_t k_virtual_addr_t;
+typedef k_physical_addr_t k_address_space_t;
 
+#define K_BASE_VADDR 0xFFFF800000000000
+#define K_END_VADDR  0xFFFFFFFFFFFFFFFF
 
-#define K_BASE_VADDR 0xFF
-#define K_END_VADDR 0xFF
+//U_BASE = 1MB
+#define U_BASE_VADDR 0x0000000000100000
+#define U_END_BADDR  0x7FFFFFFFFFFFFFFF
 
 //
 // all the address spaces passed by the kernel would be initialized by k_create_address_space
@@ -42,19 +46,16 @@ typedef struct
 // so that these pages are global (modifying the mapping in this area affects everyone)
 // the K_BASE_VADDR to K_END_VADDR includes the reserved virtual addr space by the HAL
 // if HAL's reserved virtual addr will be mapped to different physical pages, the HAL should make the change
-k_physical_addr_t KAPI k_create_address_space(k_physical_addr_t addr_space,
+k_address_space_t KAPI k_create_address_space(k_address_space_t address_space,
                                               k_physical_page_alloc alloc);
 
 // this function destroys the target address space without destroying the K_BASE_VADDR to K_END_VADDR
 // target_addr_space is guaranteed to be not the same as the current address space
 // when the function returns, the current address space must stay unchanged
-void KAPI k_destroy_address_space(k_physical_addr_t target_addr_space,
+void KAPI k_destroy_address_space(k_address_space_t address_space,
                                   k_physical_page_free free);
 
 // as the name implies
-void KAPI k_switch_address_space(k_physical_addr_t target_addr_space);
-
-// as the name implies
-k_physical_addr_t KAPI k_get_current_address_space();
+void KAPI k_switch_address_space(k_address_space_t target_addr_space);
 
 #endif
