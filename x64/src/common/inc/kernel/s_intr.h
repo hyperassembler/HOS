@@ -32,6 +32,8 @@ extern KAPI k_irql_t k_set_irql(k_irql_t irql);
 
 extern KAPI k_irql_t k_get_irql();
 
+extern KAPI void k_set_timer_timeout(uint64_t timeout);
+
 // Interrupt handler registration
 // context is a parameter passed by the kernel. HAL must pass back.
 // intr_stack is a parameter passed by the HAL. Used by some HAL interrupt context functions.

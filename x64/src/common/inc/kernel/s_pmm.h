@@ -14,15 +14,10 @@ typedef uint64_t k_physical_addr_t;
 // if unalignment is detected, the kernel bug checks.
 typedef struct
 {
+    linked_list_node_t list_node;
     k_physical_addr_t base;
     uint64_t size;
     uint32_t attr;
 } k_pmm_node_t;
-
-typedef struct
-{
-    uint64_t num_of_nodes;
-    k_pmm_node_t nodes[];
-} k_pmm_info_t;
 
 #endif
