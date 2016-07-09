@@ -2,6 +2,9 @@
 #define _HAL_ARCH_H_
 
 #include "g_abi.h"
+#include "g_type.h"
+
+#define HAL_CORE_COUNT 1
 
 typedef struct
 {

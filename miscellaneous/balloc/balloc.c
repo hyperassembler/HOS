@@ -1,69 +1,67 @@
-#include <balloc.h>
-#include "linked_list.h"
+/* Copyright 2016 secXsQuared
+ * Distributed under GPL license
+ * See COPYING under root for details
+ */
+
 #include "balloc.h"
+#include "std_lib.h"
+#include "bit_ops.h"
 
-typedef struct
+int32_t balloc_init(balloc_desc_t *desc,
+                    uint64_t base,
+                    uint64_t end,
+                    uint64_t page_size,
+                    balloc_alloc_func alloc,
+                    balloc_free_func free,
+                    balloc_lock_func lock,
+                    balloc_unlock_func unlock)
 {
-    linked_list_node_t list_node;
-} balloc_header_t;
+    if(desc == NULL || base >= end || page_size == 0 || alloc == 0
+            || free == 0 || lock == 0 || unlock == 0)
+        return BALLOC_STATUS_INVALID_ARGUMENTS;
 
-static inline uint32_t _get_min_granularity()
-{
-     return sizeof(balloc_header_t);
-}
+    if(((end - base) % page_size) != 0)
+        return BALLOC_STATUS_INVALID_ALIGNMENT;
 
-static inline int32_t _order_of_two(uint32_t num)
-{
-    int32_t result = -1;
-    if(num == 1)
-    {
-        result = 0;
-    }
-    else if(num % 2 == 0 && num != 0)
-    {
-        result = 1;
-        while((num >> result) != 1)
-        {
-            result++;
-        }
-    }
-    return result;
-}
+    desc->alloc = alloc;
+    desc->free = free;
+    desc->lock = lock;
+    desc->unlock = unlock;
 
-static inline int32_t _get_max_order(uint32_t size, uint32_t granularity)
-{
-    if(size == 0 || granularity == 0 || granularity > size || size % granularity != 0)
-        return -1;
-    return _order_of_two(size/granularity);
-}
-
-int32_t balloc_free_list_size(uint32_t size, uint32_t granularity)
-{
-    int32_t result = _get_max_order(size,granularity);
-    return result == -1 ? (result) : (result) * ((int32_t)sizeof(linked_list_t));
-}
-
-int32_t balloc_bit_map_size(uint32_t size, uint32_t granularity)
-{
-
-}
-
-int32_t balloc_init(balloc_desc_t* desc,
-                    void* base,
-                    uint32_t size,
-                    uint32_t granularity)
-{
-    if( desc == NULL || base == NULL || granularity == 0 || size == 0 ||
-            granularity < _get_min_granularity() ||
-            size < granularity ||
-            size % granularity != 0)
-    {
-        return 1;
-    }
-
-    desc->size = size;
     desc->base = base;
-    desc->granularity = granularity;
-    desc->bit_map = bit_map;
-    desc->free_list = free_list;
+    desc->page_size = page_size;
+    uint64_t quot = (end-base) / page_size;
+    uint32_t order = log_base_2(quot);
+    if(quot & bit_mask_64(order) != 0)
+    {
+        order++;
+    }
+    desc->order = order;
+
+    // allocate linked lists and bit maps
+    desc->free_lists = (linked_list_t*)desc->alloc((order + 1) * sizeof(linked_list_t));
+    if(desc->free_lists == NULL || desc->bit_map == NULL)
+        return BALLOC_STATUS_CANT_ALLOC_MEM;
+    
+    return BALLOC_STATUS_SUCCESS;
+}
+
+int32_t balloc_alloc(balloc_desc_t* desc, uint32_t page_num, uint64_t* out)
+{
+
+}
+
+int32_t balloc_free(balloc_desc_t* desc, uint64_t addr)
+{
+
+}
+
+int32_t balloc_mark_used(balloc_desc_t* desc, uint64_t start, uint64_t end)
+{
+
+}
+
+int32_t balloc_mark_free(balloc_desc_t* desc, uint64_t start, uint64_t end)
+{
+
 }

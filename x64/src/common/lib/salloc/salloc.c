@@ -4,6 +4,7 @@
  */
 
 #include "g_abi.h"
+#include "g_type.h"
 #include "bit_ops.h"
 
 typedef union

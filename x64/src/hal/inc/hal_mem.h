@@ -85,7 +85,7 @@ void* KAPI halloc(uint32_t size);
 
 void KAPI hfree(void *ptr);
 
-void KAPI hal_alloc_init();
+void KAPI hal_mem_init();
 
 void KAPI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 

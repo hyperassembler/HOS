@@ -72,10 +72,10 @@ int32_t k_alloc_virtual_address(k_vmm_descriptor_t *desc,
 
 int64_t k_query_virtual_address(k_vmm_descriptor_t *desc, k_virtual_addr_t v_addr, uint64_t *out)
 {
-
+    return 0;
 }
 
 int64_t k_free_virtual_address(k_vmm_descriptor_t *desc, k_virtual_addr_t base)
 {
-
+    return 0;
 }

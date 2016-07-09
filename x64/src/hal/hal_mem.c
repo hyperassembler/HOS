@@ -7,6 +7,11 @@
 #include "g_type.h"
 #include "hal_mem.h"
 #include "salloc.h"
+#include "hal_arch.h"
+#include "hal_intr.h"
+
+static uint8_t _gdts[HAL_CORE_COUNT][GDT_ENTRY_NUM*GDT_ENTRY_SIZE];
+static hal_gdt_ptr_t _gdt_ptrs[HAL_CORE_COUNT];
 
 #define KERNEL_HEAP_SIZE 8192
 
@@ -106,8 +111,40 @@ void KAPI hfree(void *ptr)
     return;
 }
 
-void KAPI hal_alloc_init()
+static void KAPI _hal_init_gdt()
 {
+    uint32_t coreid = hal_get_core_id();
+    // get gdt ready
+    hal_write_segment_descriptor((void *) &_gdts[coreid][0], 0, 0, 0);
+    hal_write_segment_descriptor((void *) &_gdts[coreid][8], 0, 0,
+                                 SEG_DPL_0 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_CODE_X);
+    hal_write_segment_descriptor((void *) &_gdts[coreid][16], 0, 0,
+                                 SEG_DPL_0 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_DATA_RW);
+    hal_write_segment_descriptor((void *) &_gdts[coreid][24], 0, 0,
+                                 SEG_DPL_3 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_CODE_X);
+    hal_write_segment_descriptor((void *) &_gdts[coreid][32], 0, 0,
+                                 SEG_DPL_3 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_DATA_RW);
+
+    hal_write_segment_descriptor((void *) &_gdts[coreid][40], 0, 0xFFFFF,
+                                 SEG_DPL_0 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
+                                 SEG_TYPE_CODE_X);
+    hal_write_segment_descriptor((void *) &_gdts[coreid][48], 0, 0xFFFFF,
+                                 SEG_DPL_0 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
+                                 SEG_TYPE_DATA_RW);
+    hal_write_segment_descriptor((void *) &_gdts[coreid][56], 0, 0xFFFFF,
+                                 SEG_DPL_3 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
+                                 SEG_TYPE_CODE_X);
+    hal_write_segment_descriptor((void *) &_gdts[coreid][64], 0, 0xFFFFF,
+                                 SEG_DPL_3 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
+                                 SEG_TYPE_DATA_RW);
+    _gdt_ptrs[coreid].base = (uint64_t) &_gdts[coreid];
+    _gdt_ptrs[coreid].limit = GDT_ENTRY_NUM * GDT_ENTRY_SIZE - 1;
+    hal_flush_gdt(&_gdt_ptrs[coreid], seg_selector(1, 0), seg_selector(2, 0));
+};
+
+void KAPI hal_mem_init()
+{
+    _hal_init_gdt();
     salloc_init(kernel_heap, KERNEL_HEAP_SIZE);
     return;
 }

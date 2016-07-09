@@ -3,28 +3,25 @@
  * See COPYING under root for details
  */
 
+#include "s_boot.h"
 #include "k_alloc.h"
+#include "k_intr.h"
 #include "k_lib_test.h"
 
+extern void KAPI hal_printf(char const *, ...);
+
 // returning from this function results in halting the cpu
-void KAPI kmain(void *multiboot_info)
+void KAPI k_main(k_hal_boot_info_t *boot_info)
 {
-    // init kernel heap
-    k_alloc_init();
-
-    k_boot_info_t* boot_info = (k_boot_info_t*)k_alloc(sizeof(boot_info));
-
     if(boot_info == NULL)
     {
-        hal_printf("KERNEL: Unable to allocated memory for boot info struct.\n");
-        hal_halt_cpu();
+        // failed.
+        hal_printf("KERNEL: HAL init failed.\n");
+        return;
     }
 
-    if(hal_init(multiboot_info, boot_info) != 0)
-    {
-        hal_printf("KERNEL: HAL initialization failed.\n");
-        hal_halt_cpu();
-    }
+    // init kernel heap
+    k_alloc_init();
 
     hal_printf("KERNEL: Base Addr is 0x%X. Size is %uB, %uKB.\n",
                boot_info->krnl_start,
@@ -38,5 +35,6 @@ void KAPI kmain(void *multiboot_info)
     salloc_test();
 
     hal_printf("KERNEL: Kernel tasks finished.\n");
-    hal_halt_cpu();
+
+    return;
 }

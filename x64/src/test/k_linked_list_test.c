@@ -400,7 +400,7 @@ static bool push_pop_back_test()
 
 static bool equals(linked_list_node_t *a, linked_list_node_t *b)
 {
-    return (int64_t) a == OBTAIN_STRUCT_ADDR(b, my_list_node, lnode)->val;
+    return (int64_t) b == OBTAIN_STRUCT_ADDR(a, my_list_node, lnode)->val;
 }
 
 static bool search_test()

@@ -8,8 +8,14 @@
 #include "hal_intr.h"
 #include "hal_print.h"
 #include "hal_mem.h"
-#include "hal_var.h"
-#include "s_intr.h"
+
+
+static uint8_t _idts[HAL_CORE_COUNT][IDT_ENTRY_NUM*IDT_ENTRY_SIZE];
+hal_idt_ptr_t _idt_ptrs[HAL_CORE_COUNT];
+static k_intr_handler_t _intr_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
+static void* _intr_handler_context_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
+static k_exc_handler_t _exc_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
+
 
 void KAPI hal_write_gate(void *const gate,
                          uint64_t const offset,
@@ -35,22 +41,12 @@ void KAPI hal_write_gate(void *const gate,
     return;
 }
 
-void KAPI hal_set_interrupt_priority(uint64_t priority)
-{
-    hal_write_cr8(priority & bit_field_mask(0,3));
-}
-
-uint64_t KAPI hal_read_interrupt_priority()
-{
-    return (uint64_t)hal_read_cr8() & bit_field_mask(0,3);
-}
-
 void KAPI hal_set_interrupt_handler(uint64_t index,
                                     void (*handler)(void))
 {
     if (index < IDT_ENTRY_NUM)
     {
-        hal_write_gate(g_idt + 16 * index, (uint64_t) handler, seg_selector(1, 0),
+        hal_write_gate(_idts[hal_get_core_id()] + 16 * index, (uint64_t) handler, seg_selector(1, 0),
                        GATE_DPL_0 | GATE_PRESENT | GATE_TYPE_INTERRUPT);
     }
     return;
@@ -61,39 +57,39 @@ void KAPI hal_issue_interrupt(uint32_t target_core, uint32_t vector)
     // TODO
 }
 
-void KAPI hal_register_interrupt_handler(uint32_t index, hal_intr_handler_t handler, void* context)
+void KAPI hal_register_interrupt_handler(uint32_t coreid, uint32_t index, k_intr_handler_t handler, void* context)
 {
-    if (index < IDT_ENTRY_NUM && index >= 0)
+    if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
     {
-        g_intr_handler_table[index] = handler;
-        g_intr_handler_context_table[index] = handler;
+        _intr_handler_table[coreid][index] = handler;
+        _intr_handler_context_table[coreid][index] = context;
     }
     return;
 }
 
-void KAPI hal_deregister_interrupt_handler(uint32_t index)
+void KAPI hal_deregister_interrupt_handler(uint32_t coreid, uint32_t index)
 {
-    if (index < IDT_ENTRY_NUM && index >= 0)
+    if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
     {
-        g_intr_handler_table[index] = NULL;
+        _intr_handler_table[coreid][index] = NULL;
     }
     return;
 }
 
-void KAPI hal_register_exception_handler(uint32_t index, k_exc_handler_t handler)
+void KAPI hal_register_exception_handler(uint32_t coreid, uint32_t index, k_exc_handler_t handler)
 {
-    if (index < IDT_ENTRY_NUM && index >= 0)
+    if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
     {
-        g_exc_handler_table[index] = handler;
+        _exc_handler_table[coreid][index] = handler;
     }
     return;
 }
 
-void KAPI hal_deregister_exception_handler(uint32_t index)
+void KAPI hal_deregister_exception_handler(uint32_t coreid, uint32_t index)
 {
-    if (index < IDT_ENTRY_NUM && index >= 0)
+    if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
     {
-        g_exc_handler_table[index] = NULL;
+        _exc_handler_table[coreid][index] = NULL;
     }
     return;
 }
@@ -109,15 +105,30 @@ void KAPI hal_assert(int64_t expression,
     return;
 }
 
-void KAPI hal_interrupt_dispatcher(uint64_t int_vec, hal_intr_context_t *context, uint64_t error_code)
+void KAPI hal_interrupt_dispatcher(uint64_t int_vec, hal_intr_context_t *context)
 {
-    if (g_intr_handler_table[int_vec] == NULL)
+    uint32_t coreid = hal_get_core_id();
+    if (_intr_handler_table[int_vec] == NULL)
     {
-        hal_printf("Unhandled interrupt %d at 0x%X. Err: %d.\n", int_vec, context->rip, error_code);
+        hal_printf("Unhandled interrupt %d at 0x%X.\n", int_vec, context->rip);
     }
     else
     {
-        g_intr_handler_table[int_vec](context->rip, context->rsp, int_vec);
+        _intr_handler_table[coreid][int_vec](context, _intr_handler_context_table[coreid][int_vec]);
+    }
+    return;
+}
+
+void KAPI hal_exception_dispatcher(uint64_t exc_vec, hal_intr_context_t* context, uint64_t errorcode)
+{
+    uint32_t coreid = hal_get_core_id();
+    if (_exc_handler_table[exc_vec] == NULL)
+    {
+        hal_printf("Unhandled exception %d at 0x%X.\n", exc_vec, context->rip);
+    }
+    else
+    {
+        _exc_handler_table[coreid][exc_vec](context->rip, context->rsp, errorcode);
     }
     return;
 }
@@ -383,31 +394,39 @@ static void KAPI _hal_populate_idt()
     return;
 }
 
+uint32_t KAPI hal_get_core_id(void)
+{
+    return 0;
+}
+
 int32_t KAPI hal_interrupt_init(void)
 {
+    uint32_t coreid = hal_get_core_id();
     uint32_t eax = 0, ebx = 0, ecx = 0, edx = 0;
     eax = 1;
     hal_cpuid(&eax, &ebx, &ecx, &edx);
-    if (!(edx & bit_mask_32(9)))
+    if (!(edx & bit_mask(9)))
     {
         hal_printf("ERROR: APIC not supported by CPU.\n");
         return 1;
     }
 
     // get idt ptr ready
-    g_idt_ptr.base = (uint64_t) g_idt;
-    g_idt_ptr.limit = IDT_ENTRY_NUM * IDT_ENTRY_SIZE - 1;
+    _idt_ptrs[coreid].base = (uint64_t) &_idts[coreid];
+    _idt_ptrs[coreid].limit = IDT_ENTRY_NUM * IDT_ENTRY_SIZE - 1;
 
     // clear dispatch table
     for (uint64_t i = 0; i < IDT_ENTRY_NUM; i++)
     {
-        g_intr_handler_table[i] = NULL;
+        _intr_handler_table[coreid][i] = NULL;
+        _exc_handler_table[coreid][i] = NULL;
+        _intr_handler_context_table[coreid][i] = NULL;
     }
 
     // hook asm interrupt handlers
     _hal_populate_idt();
 
-    hal_flush_idt(&g_idt_ptr);
+    hal_flush_idt(&_idt_ptrs[coreid]);
 
     // disable PIC
     hal_write_port_8(0xa1, 0xff);
@@ -418,19 +437,19 @@ int32_t KAPI hal_interrupt_init(void)
     ecx = MSR_IA32_APIC_BASE;
     hal_read_msr(&ecx, &edx, &eax);
     apic_base_reg = ((uint64_t) edx << 32) + (uint64_t) eax;
-    apic_base = apic_base_reg & bit_field_mask_64(12, 35);
+    apic_base = apic_base_reg & bit_field_mask(12, 35);
     //hal_printf("APIC Base: 0x%X\n", apic_base);
     //hal_printf("APIC Enabled: %s\n", apic_base_reg & bit_mask_64(11) ? "Yes" : "No");
     //hal_printf("BSP: %s\n", apic_base_reg & bit_mask_64(8) ? "Yes" : "No");
     //hal_printf("APIC Spour: 0x%X\n", *(uint32_t *) ((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET));
     // hardware enable APIC
     ecx = MSR_IA32_APIC_BASE;
-    eax = (uint32_t) (apic_base_reg & bit_field_mask_64(0, 31)) | bit_mask_32(11);
+    eax = (uint32_t) ((apic_base_reg & bit_field_mask(0, 31)) | bit_mask(11));
     hal_write_msr(&ecx, &edx, &eax);
 
     // software enable APIC
     hal_write_mem_32((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET,
-                     *(uint32_t *) ((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET) | bit_mask_32(8));
+                     *(uint32_t *) ((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET) | bit_mask(8));
 
 //    hal_issue_interrupt(1, 255);
 //    hal_enable_interrupt();

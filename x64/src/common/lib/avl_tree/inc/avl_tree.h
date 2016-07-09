@@ -6,8 +6,9 @@
 #ifndef _AVL_TREE_H_
 #define _AVL_TREE_H_
 
+#include "g_type.h"
+#include "g_abi.h"
 #include "std_lib.h"
-
 
 typedef struct _avl_tree_node_t
 {

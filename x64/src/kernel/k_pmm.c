@@ -42,7 +42,7 @@ int32_t KAPI k_pmm_init(k_pmm_info_t *info, k_pmm_descriptor_t *desc)
 
     linked_list_init(&desc->free_list);
     avl_tree_init(&desc->active_tree, _avl_compare);
-    for (int i = 0; i < info->num_of_nodes; i++)
+    for (uint32_t i = 0; i < info->num_of_nodes; i++)
     {
         k_pmm_node_t *each_node = &info->nodes[i];
 
@@ -52,7 +52,7 @@ int32_t KAPI k_pmm_init(k_pmm_info_t *info, k_pmm_descriptor_t *desc)
             return PMM_STATUS_INIT_UNALIGNED;
         }
 
-        for (int j = 0; j <= each_node->size; j++)
+        for (uint64_t j = 0; j <= each_node->size; j++)
         {
             // note that k_alloc function here might trigger page fault
             // however it's fine as long as we don't touch linked list just yet

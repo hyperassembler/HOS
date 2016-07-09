@@ -2,7 +2,7 @@
 ; Distributed under GPL license
 ; See COPYING under root for details
 
-extern kmain
+extern hal_main
 
 ; IMPORTANT: This module should be 4k-page aliened
 [SECTION .entry]
@@ -232,7 +232,7 @@ mov ss,ax
 ; align 16 bytes like this for now
 mov rsp,KERNEL_STACK
 mov rdi,rsi ; multiboot_info*
-call kmain
+call hal_main
 hlt
 
 align 4096 ;4k alignment

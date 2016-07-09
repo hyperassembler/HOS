@@ -7,6 +7,7 @@
 #define _LINKED_LIST_H_
 
 #include "g_abi.h"
+#include "g_type.h"
 
 typedef struct _linked_list_node_t
 {

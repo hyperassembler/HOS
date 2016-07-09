@@ -29,18 +29,20 @@ typedef uint64_t k_irql_t;
 #define K_IRQL_APC_LEVEL 1
 #define K_IRQL_PASSIVE_LEVEL 0
 
-extern KAPI k_irql_t k_set_irql(k_irql_t irql);
+extern k_irql_t KAPI  k_set_irql(k_irql_t irql);
 
-extern KAPI k_irql_t k_get_irql();
+extern k_irql_t KAPI  k_get_irql();
 
-extern KAPI void k_set_timer_timeout(uint64_t timeout);
+extern void KAPI k_halt_cpu();
+
+extern void KAPI k_set_timer_timeout(uint64_t timeout);
 
 // Interrupt handler registration
 // context is a parameter passed by the kernel. HAL must pass back.
 // intr_stack is a parameter passed by the HAL. Used by some HAL interrupt context functions.
 typedef void ( KAPI *k_intr_handler_t)(void *context, void *intr_stack);
 
-extern void KAPI k_register_intr_handler(uint32_t index, k_intr_handler_t handler);
+extern void KAPI k_register_intr_handler(uint32_t index, k_intr_handler_t handler, void* context);
 
 extern k_intr_handler_t KAPI k_deregister_intr_handler(uint32_t index);
 
@@ -50,7 +52,5 @@ typedef void ( KAPI *k_exc_handler_t)(uint64_t exc_addr, uint64_t exc_stack, uin
 extern void KAPI k_register_exc_handler(k_exc_type_t type, k_exc_handler_t handler);
 
 extern k_exc_handler_t KAPI k_deregister_exc_handler(uint64_t index);
-
-extern void KAPI k_halt_cpu();
 
 #endif

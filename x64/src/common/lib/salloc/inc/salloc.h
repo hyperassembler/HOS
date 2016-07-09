@@ -7,6 +7,7 @@
 #define _SALLOC_H_
 
 #include "g_abi.h"
+#include "g_type.h"
 
 void KAPI salloc_init(void *base, uint32_t size);
 

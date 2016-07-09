@@ -6,7 +6,13 @@
 #include "g_abi.h"
 #include "std_lib.h"
 #include "hal_print.h"
-#include "hal_var.h"
+
+static uint64_t text_pos;
+
+void KAPI hal_print_init()
+{
+    text_pos = 0;
+}
 
 void KAPI _hal_print_scroll()
 {

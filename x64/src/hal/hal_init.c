@@ -7,11 +7,14 @@
 #include "hal_print.h"
 #include "hal_mem.h"
 #include "hal_intr.h"
-#include "hal_var.h"
+#include "hal_arch.h"
 #include "std_lib.h"
 #include "s_boot.h"
 
-static void KAPI _hal_obtain_cpu_info(k_boot_info_t *hal_info)
+extern char kernel_start[];
+extern char kernel_end[];
+
+static void KAPI _hal_obtain_cpu_info(k_hal_boot_info_t *hal_info)
 {
     if(hal_info == NULL)
         return;
@@ -23,51 +26,17 @@ static void KAPI _hal_obtain_cpu_info(k_boot_info_t *hal_info)
     hal_info->cpu_vd_str[12] = 0;
 }
 
-static void KAPI _hal_init_gdt()
-{
-
-    // get gdt ready
-    hal_write_segment_descriptor((void *) &g_gdt[0], 0, 0, 0);
-    hal_write_segment_descriptor((void *) &g_gdt[8], 0, 0,
-                                 SEG_DPL_0 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_CODE_X);
-    hal_write_segment_descriptor((void *) &g_gdt[16], 0, 0,
-                                 SEG_DPL_0 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_DATA_RW);
-    hal_write_segment_descriptor((void *) &g_gdt[24], 0, 0,
-                                 SEG_DPL_3 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_CODE_X);
-    hal_write_segment_descriptor((void *) &g_gdt[32], 0, 0,
-                                 SEG_DPL_3 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_DATA_RW);
-
-    hal_write_segment_descriptor((void *) &g_gdt[40], 0, 0xFFFFF,
-                                 SEG_DPL_0 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
-                                 SEG_TYPE_CODE_X);
-    hal_write_segment_descriptor((void *) &g_gdt[48], 0, 0xFFFFF,
-                                 SEG_DPL_0 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
-                                 SEG_TYPE_DATA_RW);
-    hal_write_segment_descriptor((void *) &g_gdt[56], 0, 0xFFFFF,
-                                 SEG_DPL_3 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
-                                 SEG_TYPE_CODE_X);
-    hal_write_segment_descriptor((void *) &g_gdt[64], 0, 0xFFFFF,
-                                 SEG_DPL_3 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
-                                 SEG_TYPE_DATA_RW);
-    g_gdt_ptr.base = (uint64_t) g_gdt;
-    g_gdt_ptr.limit = GDT_ENTRY_NUM * GDT_ENTRY_SIZE - 1;
-    hal_flush_gdt(&g_gdt_ptr, seg_selector(1, 0), seg_selector(2, 0));
-};
-
-void KAPI hal_init(void *m_info)
+void KAPI hal_main(void *m_info)
 {
     if (m_info == NULL || (uint64_t) m_info & bit_field_mask(0, 2))
         return;
 
-    text_pos = get_pos(0, 0);
+    // init HAL infrastructures
+    hal_print_init();
+    hal_mem_init();
 
-    // set up GDT
-    _hal_init_gdt();
 
-    // set up HAL heap;
-    hal_alloc_init();
-
-    k_boot_info_t* boot_info = halloc(sizeof(k_boot_info_t));
+    k_hal_boot_info_t* boot_info = halloc(sizeof(k_hal_boot_info_t));
 
     // set up HAL def
     boot_info->krnl_start = (uint64_t)kernel_start;
@@ -79,8 +48,9 @@ void KAPI hal_init(void *m_info)
     // init interrupt
     if(hal_interrupt_init() != 0)
     {
-        return 1;
+        return;
     }
-
-    return 0;
+    // pass the control to the kernel
+    k_main(boot_info);
+    return;
 }

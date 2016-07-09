@@ -1,4 +1,5 @@
 #include "g_abi.h"
+#include "g_type.h"
 #include "k_alloc.h"
 #include "salloc.h"
 
