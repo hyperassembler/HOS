@@ -6,7 +6,7 @@
 #ifndef _HAL_IO_H_
 #define _HAL_IO_H_
 
-#include "s_intr.h"
+#include <s_intr.h>
 #include "g_abi.h"
 #include "g_type.h"
 
@@ -30,6 +30,8 @@
 #define APIC_LVT_LINT0_REG 0x350
 #define APIC_LVT_LINT1_REG 0x360
 #define APIC_LVT_ERROR_REG 0x370
+
+typedef k_intr_handler_t hal_intr_handler_t;
 
 typedef struct
 {
@@ -554,7 +556,7 @@ extern void KAPI hal_interrupt_handler_254(void);
 
 extern void KAPI hal_interrupt_handler_255(void);
 
-void KAPI hal_register_interrupt_handler(uint32_t index, k_intr_handler_t handler, void* context);
+void KAPI hal_register_interrupt_handler(uint32_t index, hal_intr_handler_t handler, void* context);
 
 void KAPI hal_deregister_interrupt_handler(uint32_t index);
 

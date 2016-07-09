@@ -2,6 +2,7 @@
 #define _S_INTR_H_
 
 #include "g_abi.h"
+#include "g_type.h"
 
 typedef struct
 {

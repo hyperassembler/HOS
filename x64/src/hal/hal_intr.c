@@ -61,7 +61,7 @@ void KAPI hal_issue_interrupt(uint32_t target_core, uint32_t vector)
     // TODO
 }
 
-void KAPI hal_register_interrupt_handler(uint32_t index, k_intr_handler_t handler, void* context)
+void KAPI hal_register_interrupt_handler(uint32_t index, hal_intr_handler_t handler, void* context)
 {
     if (index < IDT_ENTRY_NUM && index >= 0)
     {
