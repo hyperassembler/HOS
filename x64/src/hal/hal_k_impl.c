@@ -4,6 +4,11 @@
 #include "s_context.h"
 #include "s_intr.h"
 
+void KAPI k_interlocked_increment(uint64_t* target)
+{
+    return hal_interlocked_increment(target);
+}
+
 uint64_t KAPI k_interlocked_exchange(uint64_t* target, uint64_t val)
 {
     return hal_interlocked_exchange(target, val);

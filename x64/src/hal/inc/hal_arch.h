@@ -16,11 +16,12 @@ typedef struct
 {
     uint16_t limit;
     uint64_t base;
+
 } __attribute__ ((packed)) hal_idt_ptr_t;
 
-extern uint64_t KAPI hal_interlocked_exchange(uint64_t *dst, uint64_t val);
+extern void KAPI hal_interlocked_increment(uint64_t* dst);
 
-extern uint64_t KAPI hal_interlocked_compare_exchange(uint64_t *dst, uint64_t val, uint64_t compare);
+extern uint64_t KAPI hal_interlocked_exchange(uint64_t *dst, uint64_t val);
 
 extern void KAPI hal_cpuid(uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx);
 

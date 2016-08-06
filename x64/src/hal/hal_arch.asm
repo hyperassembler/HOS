@@ -87,6 +87,13 @@ mov rax, rsi
 ret
 
 ; ============================
+; uint64_t KAPI hal_interlocked_increment(uint64_t* dst);
+global hal_interlocked_increment
+hal_interlocked_increment:
+lock inc qword [rdi]
+ret
+
+; ============================
 ; extern void KAPI hal_cpuid(uint32_t* eax, uint32_t* ebx, uint32_t* ecx, uint32_t* edx);
 global hal_cpuid
 hal_cpuid:

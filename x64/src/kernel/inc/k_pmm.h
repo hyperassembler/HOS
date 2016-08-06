@@ -22,27 +22,17 @@
 //    uint32_t attr;
 //} k_physical_page_attr_t;
 
-typedef struct
-{
-    avl_tree_t active_tree;
-    linked_list_t free_list;
-    k_spin_lock_t lock;
-    _Bool initialized;
-} k_pmm_descriptor_t;
+int32_t KAPI k_pmm_init(k_pmm_info_t *info);
 
-int32_t KAPI k_pmm_init(k_pmm_info_t *info, k_pmm_descriptor_t *desc);
+int32_t KAPI k_alloc_page(k_physical_addr_t *out);
 
-int32_t KAPI k_alloc_page(k_pmm_descriptor_t *desc, k_physical_addr_t *out);
-
-int32_t KAPI k_free_page(k_pmm_descriptor_t *desc, k_physical_addr_t base);
+int32_t KAPI k_free_page(k_physical_addr_t base);
 
 // TODO: implement these somehow, i might just reserve the first 16MB for these
-int32_t KAPI k_alloc_contiguous_pages(k_pmm_descriptor_t *desc,
-                                      uint64_t num_of_page,
+int32_t KAPI k_alloc_contiguous_pages(uint64_t num_of_page,
                                       k_physical_addr_t highest_p_addr,
                                       k_physical_addr_t *out);
 
-int32_t KAPI k_free_contiguous_pages(k_pmm_descriptor_t *desc,
-                                     k_physical_addr_t base);
+int32_t KAPI k_free_contiguous_pages(k_physical_addr_t base);
 
 #endif

@@ -10,6 +10,16 @@ typedef struct
     //k_physical_page_attr_t attr;
 } k_physical_page_descriptor_t;
 
+typedef struct
+{
+    avl_tree_t active_tree;
+    linked_list_t free_list;
+    k_spin_lock_t lock;
+    _Bool initialized;
+} k_pmm_descriptor_t;
+
+static k_pmm_descriptor_t _pmm_desc;
+
 /*
  * A comparison function between tree_node and your_node
  * Returns:
@@ -33,7 +43,7 @@ static int32_t _avl_compare(avl_tree_node_t *tree_node, avl_tree_node_t *my_node
         return 0;
 }
 
-int32_t KAPI k_pmm_init(k_pmm_info_t *info, k_pmm_descriptor_t *desc)
+int32_t KAPI k_pmm_init(k_pmm_info_t *info)
 {
     if (info == NULL || desc == NULL || desc->initialized)
     {
