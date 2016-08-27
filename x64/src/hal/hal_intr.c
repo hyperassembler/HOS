@@ -3,7 +3,7 @@
  * See COPYING under root for details
  */
 
-#include "bit_ops.h"
+#include "k_bit_ops.h"
 #include "hal_arch.h"
 #include "hal_intr.h"
 #include "hal_print.h"
@@ -405,7 +405,7 @@ int32_t KAPI hal_interrupt_init(void)
     uint32_t eax = 0, ebx = 0, ecx = 0, edx = 0;
     eax = 1;
     hal_cpuid(&eax, &ebx, &ecx, &edx);
-    if (!(edx & bit_mask(9)))
+    if (!(edx & ke_bit_mask(9)))
     {
         hal_printf("ERROR: APIC not supported by CPU.\n");
         return 1;
@@ -437,19 +437,19 @@ int32_t KAPI hal_interrupt_init(void)
     ecx = MSR_IA32_APIC_BASE;
     hal_read_msr(&ecx, &edx, &eax);
     apic_base_reg = ((uint64_t) edx << 32) + (uint64_t) eax;
-    apic_base = apic_base_reg & bit_field_mask(12, 35);
+    apic_base = apic_base_reg & ke_bit_field_mask(12, 35);
     //hal_printf("APIC Base: 0x%X\n", apic_base);
     //hal_printf("APIC Enabled: %s\n", apic_base_reg & bit_mask_64(11) ? "Yes" : "No");
     //hal_printf("BSP: %s\n", apic_base_reg & bit_mask_64(8) ? "Yes" : "No");
     //hal_printf("APIC Spour: 0x%X\n", *(uint32_t *) ((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET));
     // hardware enable APIC
     ecx = MSR_IA32_APIC_BASE;
-    eax = (uint32_t) ((apic_base_reg & bit_field_mask(0, 31)) | bit_mask(11));
+    eax = (uint32_t) ((apic_base_reg & ke_bit_field_mask(0, 31)) | ke_bit_mask(11));
     hal_write_msr(&ecx, &edx, &eax);
 
     // software enable APIC
     hal_write_mem_32((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET,
-                     *(uint32_t *) ((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET) | bit_mask(8));
+                     *(uint32_t *) ((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET) | ke_bit_mask(8));
 
 //    hal_issue_interrupt(1, 255);
 //    hal_enable_interrupt();

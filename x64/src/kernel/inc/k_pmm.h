@@ -1,8 +1,8 @@
 #ifndef _K_PMM_H_
 #define _K_PMM_H_
 
-#include "avl_tree.h"
-#include "linked_list.h"
+#include "k_avl_tree.h"
+#include "k_linked_list.h"
 #include "g_abi.h"
 #include "s_pmm.h"
 #include "k_atomic.h"

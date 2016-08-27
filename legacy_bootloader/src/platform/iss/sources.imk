@@ -1,0 +1,16 @@
+######################################################
+#
+#    sources.imk
+#
+#  Contains all C source information
+#  which is specific to this platform.
+#
+#  Copyright (C) 2016  Microsoft Corporation
+#  All Rights Reserved
+#  Confidential and Proprietary
+#
+######################################################
+
+PLAT_SOURCES := $(BF_SRC_ROOT)/platform/iss/platform_init.c \
+                $(BF_SRC_ROOT)/platform/iss/platform_functions.c
+

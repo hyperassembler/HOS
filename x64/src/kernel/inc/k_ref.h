@@ -3,7 +3,7 @@
 
 #include "g_abi.h"
 #include "g_type.h"
-#include "avl_tree.h"
+#include "k_avl_tree.h"
 #include "k_atomic.h"
 
 typedef void (*k_ref_callback_func_t)(void* ptr, void* context);

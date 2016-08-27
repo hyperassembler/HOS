@@ -1,0 +1,104 @@
+######################################################
+#
+#    sources.imk
+#
+#  Contains all C source information for the
+#  Bifrost build for x86 architecture.
+#
+#  Copyright (C) 2016  Microsoft Corporation
+#  All Rights Reserved
+#  Confidential and Proprietary
+#
+######################################################
+
+
+ARCHTYPE := x86
+
+#
+# Kernel CFLAGS
+#
+X86_KERNEL_CFLAGS = $(DEFAULT_CFLAGS) $(WARNING_CFLAGS)
+
+
+#
+# Kernel binary selection--if CUSTOM_KERNEL_CFLAGS
+# is specified, build a testsuite-specific
+# version of the kernel under BIN_DIR--otherwise,
+# use the shared kernel.
+#
+X86_KERNEL_BINARY = $(if $(CUSTOM_KERNEL_CFLAGS),$(BIN_DIR)/obj/x86/kernel/bifrost_kernel.so,$(OBJ_ROOT)/x86/$(BFCOMP_MODE)/kernel/bifrost_kernel.so)
+
+# These files will be compiled as Assembly instead of C++.
+# Apply the appropriate COMPILE_LANGUAGE override for them
+X86_ASM_SOURCES := $(BF_SRC_ROOT)/arch/x86/context.s
+
+X86_O3OPT_SOURCES := $(SHARED_KERNEL_O3OPT_SOURCES) \
+                     $(DRIVER_O3OPT_SOURCES)
+
+X86_SOURCES := $(SHARED_KERNEL_SOURCES) \
+               $(DRIVER_SOURCES) \
+               $(X86_ASM_SOURCES) \
+               $(X86_O3OPT_SOURCES) \
+               $(X86_SYS_SOURCES) \
+               $(BF_SRC_ROOT)/arch/x86/atomic.c \
+               $(BF_SRC_ROOT)/arch/x86/context.c \
+               $(BF_SRC_ROOT)/arch/x86/exception.c \
+               $(BF_SRC_ROOT)/arch/x86/interrupt.c \
+               $(BF_SRC_ROOT)/arch/x86/main.c \
+               $(BF_SRC_ROOT)/arch/x86/preemption.c \
+               $(BF_SRC_ROOT)/arch/x86/suspend.c \
+               $(BF_SRC_ROOT)/arch/x86/terminate.c \
+               $(BF_SRC_ROOT)/arch/x86/time.c
+
+X86_HEADERS := $(SHARED_HEADERS) \
+               $(BF_SRC_ROOT)/system/include/bifrost_system_api_x86.h \
+               $(BF_SRC_ROOT)/system/include/bifrost_system_constants_x86.h
+
+X86_IDIRS   := $(BF_SRC_ROOT)/arch/x86/include
+
+# Add library IDIRS
+ARCHTYPE := x86
+$(eval $(kernel_lib_template))
+
+
+define kernel_objs_template
+
+FLAG := $$(call TOLOWER,$$(FLAG_UPPER))
+
+#
+# x86 kernel objects and rules
+#
+
+X86_KERNEL_OBJS := $$(X86_SOURCES:$(BF_SRC_ROOT)/%=$(OBJ_ROOT)/x86/$$(FLAG)/kernel/%.o)
+X86_O3OPT_OBJS := $$(X86_O3OPT_SOURCES:$(BF_SRC_ROOT)/%=$(OBJ_ROOT)/x86/$$(FLAG)/kernel/%.o)
+
+$$(filter %.s.o %.S.o,$$(X86_KERNEL_OBJS)): COMPILE_LANGUAGE := assembler-with-cpp
+
+# Specify -O3 optimization on a per-file basis
+$$(X86_O3OPT_OBJS): X86_KERNEL_CFLAGS += -O3
+
+$$(X86_KERNEL_OBJS) $$(X86_PLAT_$(FLAG_UPPER)_OBJS): $(OBJ_ROOT)/x86/$$(FLAG)/kernel/%.o : $(BF_SRC_ROOT)/% $(X86_HEADERS)
+	@echo Compiling $$< to $$@...
+	@mkdir -p $$(@D)
+	@$(COMPILE) -c -static -shared \
+	-x $$(COMPILE_LANGUAGE) \
+	$$(X86_KERNEL_CFLAGS) $(FLAG_UPPER:%=-D%) \
+	-D__X86__ \
+	$(BIFROST_IDIRS:%=-I%) \
+	$(X86_IDIRS:%=-I%) \
+	$(X86_SYS_IDIRS:%=-I%) \
+	$$< -o $$@
+
+#
+# Bifrost kernel binary for this architecture
+#
+$(OBJ_ROOT)/x86/$$(FLAG)/kernel/bifrost_kernel.so: $$(X86_KERNEL_OBJS)
+	@echo Linking $$@...
+	@mkdir -p $$(@D)
+	ld -r $$^ -o $$@
+
+
+endef
+
+$(foreach FLAG_UPPER,$(BFCOMP_FLAGS_UPPER),$(eval $(kernel_objs_template)))
+

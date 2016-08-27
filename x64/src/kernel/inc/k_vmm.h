@@ -2,7 +2,7 @@
 #define _K_VMM_H_
 
 #include "s_vmm.h"
-#include "avl_tree.h"
+#include "k_avl_tree.h"
 #include "k_atomic.h"
 
 #define VMM_STATUS_SUCCESS 0

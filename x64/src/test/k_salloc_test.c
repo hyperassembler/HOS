@@ -1,5 +1,5 @@
 #include "k_test_driver.h"
-#include "salloc.h"
+#include "k_salloc.h"
 
 typedef union
 {

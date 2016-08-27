@@ -11,7 +11,7 @@
 extern void KAPI hal_printf(char const *, ...);
 
 // returning from this function results in halting the cpu
-void KAPI k_main(k_hal_boot_info_t *boot_info)
+void KAPI ke_main(k_hal_boot_info_t *boot_info)
 {
     if(boot_info == NULL)
     {

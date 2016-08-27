@@ -8,7 +8,7 @@
 
 #include "g_abi.h"
 #include "g_type.h"
-#include "linked_list.h"
+#include "k_linked_list.h"
 
 #define GDT_ENTRY_SIZE 8
 #define GDT_ENTRY_NUM 9

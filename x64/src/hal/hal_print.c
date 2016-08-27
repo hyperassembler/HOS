@@ -4,7 +4,7 @@
  */
 
 #include "g_abi.h"
-#include "std_lib.h"
+#include "k_stdlib.h"
 #include "hal_print.h"
 
 static uint64_t text_pos;
@@ -16,7 +16,7 @@ void KAPI hal_print_init()
 
 void KAPI _hal_print_scroll()
 {
-    mem_move((void *) (0xb8000 + get_pos(1, 0) * 2), (void *) (0xb8000 + get_pos(0, 0) * 2), (80 * 24) * 2);
+    ke_mem_move((void *) (0xb8000 + get_pos(1, 0) * 2), (void *) (0xb8000 + get_pos(0, 0) * 2), (80 * 24) * 2);
     return;
 }
 
@@ -33,7 +33,7 @@ void KAPI _hal_print_str(char const *str)
             {
                 //can't hold
                 _hal_print_scroll();
-                mem_set((void *) (0xb8000 + 80 * 24 * 2), 0, 80 * 2); // clear last row
+                ke_mem_set((void *) (0xb8000 + 80 * 24 * 2), 0, 80 * 2); // clear last row
                 text_pos = 80 * 24;
             }
             str++;
@@ -128,7 +128,7 @@ void KAPI _hal_print_hex(uint64_t number, uint64_t capital)
 void KAPI hal_clear_screen(void)
 {
     text_pos = 0; // reset text_pos
-    mem_set((void *) 0xb8000, 0, 25 * 80 * 2);
+    ke_mem_set((void *) 0xb8000, 0, 25 * 80 * 2);
     return;
 }
 

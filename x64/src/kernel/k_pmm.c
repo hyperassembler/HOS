@@ -93,7 +93,7 @@ int32_t KAPI k_alloc_page(k_pmm_descriptor_t *desc, k_physical_addr_t *out)
     if (desc == NULL || !desc->initialized)
         return PMM_STATUS_INVALID_ARGUMENTS;
 
-    k_irql_t irql = k_spin_lock_irql_set(&desc->lock, K_IRQL_DISABLED_LEVEL);
+    k_irql_t irql = ke_spin_lock_raise_irql(&desc->lock, K_IRQL_DISABLED_LEVEL);
     int32_t result = PMM_STATUS_SUCCESS;
     linked_list_node_t *node = NULL;
     k_physical_page_descriptor_t *page_info = NULL;
@@ -111,7 +111,7 @@ int32_t KAPI k_alloc_page(k_pmm_descriptor_t *desc, k_physical_addr_t *out)
         result = PMM_STATUS_NOT_ENOUGH_PAGE;
     }
 
-    k_spin_unlock_irql_restore(&desc->lock, irql);
+    ke_spin_unlock_lower_irql(&desc->lock, irql);
 
     return result;
 }
@@ -154,7 +154,7 @@ int32_t KAPI k_free_page(k_pmm_descriptor_t* desc, k_physical_addr_t base)
         return PMM_STATUS_INVALID_ARGUMENTS;
 
     // just lock since not sharing with anyone
-    k_irql_t irql = k_spin_lock_irql_set(&desc->lock, K_IRQL_DISABLED_LEVEL);
+    k_irql_t irql = ke_spin_lock_raise_irql(&desc->lock, K_IRQL_DISABLED_LEVEL);
     int32_t result = PMM_STATUS_SUCCESS;
     avl_tree_node_t *node = NULL;
     // search for dummy
@@ -172,7 +172,7 @@ int32_t KAPI k_free_page(k_pmm_descriptor_t* desc, k_physical_addr_t base)
         result = PMM_STATUS_PAGE_NOT_FOUND;
     }
 
-    k_spin_unlock_irql_restore(&desc->lock, irql);
+    ke_spin_unlock_lower_irql(&desc->lock, irql);
 
     return result;
 }

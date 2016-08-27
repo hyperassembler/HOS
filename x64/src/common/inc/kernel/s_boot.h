@@ -17,6 +17,6 @@ typedef struct
     char cpu_vd_str[13];
 } k_hal_boot_info_t;
 
-extern void KAPI k_main(k_hal_boot_info_t* info);
+extern void KAPI ke_main(k_hal_boot_info_t *info);
 
 #endif

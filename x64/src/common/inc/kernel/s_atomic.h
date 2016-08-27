@@ -3,8 +3,10 @@
 #include "g_abi.h"
 #include "g_type.h"
 
-extern uint64_t KAPI k_interlocked_exchange(uint64_t* target, uint64_t val);
+extern int32_t KAPI ke_interlocked_exchange(int32_t *target, int32_t val);
 
-extern void KAPI k_interlocked_increment(uint64_t* target);
+extern int32_t KAPI ke_interlocked_increment(int32_t *target, int32_t val);
+
+extern int32_t KAPI ke_interlocked_compare_exchange(int32_t *target, int32_t compare, int32_t val);
 
 #endif

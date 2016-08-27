@@ -1,0 +1,64 @@
+######################################################
+#
+#    sources.imk
+#
+#  Contains all C source information
+#  which is specific to this project.
+#
+#  Copyright (C) 2016  Microsoft Corporation
+#  All Rights Reserved
+#  Confidential and Proprietary
+#
+######################################################
+
+
+#
+# System specific sources
+#
+
+SHARED_SYS_SOURCES := \
+                      $(BF_SRC_ROOT)/system/hooks/heap_hooks.c \
+                      $(BF_SRC_ROOT)/system/time/sys_time.c
+
+SHARED_SYS_HEADERS := \
+                      $(BF_SRC_ROOT)/system/include/bifrost_system_constants.h \
+                      $(BF_SRC_ROOT)/system/include/conf_defs.h \
+                      ${PROJECT_PATH}/${PROJECT_NAME}/chip/top/rtl/regs/hup_chip.h
+
+SHARED_SYS_IDIRS := \
+                    $(BF_SRC_ROOT)/system/include \
+                    $(BF_SRC_ROOT)/system/pcie/include \
+                    $(BF_SRC_ROOT)/system/perfmon/include \
+                    $(BF_SRC_ROOT)/system/tempmon/include \
+                    ${PROJECT_PATH}/${PROJECT_NAME}/chip/top/rtl/regs
+
+X86_SYS_SOURCES := \
+                   $(BF_SRC_ROOT)/system/init/linux_stubs.c \
+                   $(BF_SRC_ROOT)/system/tables/ddr_sram_bak_table.c \
+                   $(BF_SRC_ROOT)/system/tables/linux_tables.c
+
+X86_SYS_IDIRS :=
+
+
+$(BF_SRC_ROOT)/system/init/stall.s_FLAGS := -x assembler-with-cpp
+
+#XTENSA_SYS_SOURCES := \
+                      $(BF_SRC_ROOT)/system/init/stall.c \
+                      $(BF_SRC_ROOT)/system/init/stall.s \
+                      $(BF_SRC_ROOT)/system/init/system_init.c \
+                      $(BF_SRC_ROOT)/system/hooks/init_hooks.c \
+                      $(BF_SRC_ROOT)/system/hooks/td_hooks.c \
+                      $(BF_SRC_ROOT)/system/pcie/pcie.c \
+                      $(BF_SRC_ROOT)/system/tables/bss_table.c \
+                      $(BF_SRC_ROOT)/system/tables/ctor_table.c \
+                      $(BF_SRC_ROOT)/system/tables/ddr_sram_bak_table.c \
+                      $(BF_SRC_ROOT)/system/tables/heap_table.c \
+                      $(BF_SRC_ROOT)/system/error_diag/error_diag.c \
+                      # TODO: system specific sources
+                      #$(BF_SRC_ROOT)/system/tempmon/td_tempmon.c \
+                      $(BF_SRC_ROOT)/system/i2c/i2c9_fpga.c \
+
+XTENSA_SYS_IDIRS := \
+                    $(BF_SRC_ROOT)/arch/xtensa/boot/init/include \
+                    $(BF_SRC_ROOT)/../../test/src/pcie/include
+

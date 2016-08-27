@@ -1,7 +1,7 @@
 #include "g_abi.h"
 #include "g_type.h"
 #include "k_alloc.h"
-#include "salloc.h"
+#include "k_salloc.h"
 
 #define K_KERNEL_HEAP_SIZE 8192
 

@@ -4,5 +4,5 @@
 
 void KAPI k_bug_check(uint64_t reason)
 {
-    k_halt_cpu();
+    ke_halt_cpu();
 }

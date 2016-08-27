@@ -26,7 +26,7 @@ static int32_t _avl_compare(avl_tree_node_t *tree_node, avl_tree_node_t *my_node
                                                            tree_node);
 
     // if overlap, consider them to be the same
-    if (is_overlap(that->base, that->base + that->size, mine->base, mine->base + mine->size) == 1)
+    if (ke_is_overlap(that->base, that->base + that->size, mine->base, mine->base + mine->size) == 1)
         return 0;
     else if (that->base < mine->base)
         return -1;
