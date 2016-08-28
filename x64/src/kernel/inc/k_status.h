@@ -15,9 +15,6 @@
 // bits 15-29 - Facility 32768 in total
 //
 
-
-typedef uint32_t k_status_t;
-
 #define SX_SUCCESS(status) (((status) >> 30) == 0)
 #define SX_RETURN(status) (((status) & ke_bit_field_mask(15,29)) >> 15)
 #define SX_FACILITY(status) ((status) & ke_bit_field_mask(0,14))
@@ -28,11 +25,12 @@ typedef uint32_t k_status_t;
 #define SEVERITY_SUCCESS 0x0
 
 #define FACILITY_GENERIC 0
+#define FACILITY_REF 1
 
-typedef enum
+typedef enum _k_status_t
 {
     STATUS_SUCCESS = SX_MAKE_STATUS(SEVERITY_SUCCESS, FACILITY_GENERIC, 0),
     
-};
+} k_status_t;
 
 #endif

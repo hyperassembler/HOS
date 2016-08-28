@@ -1,31 +1,38 @@
 #ifndef _K_REF_H_
 #define _K_REF_H_
 
-#include "g_abi.h"
 #include "g_type.h"
-#include "k_avl_tree.h"
-#include "k_atomic.h"
-
-typedef void (*k_ref_callback_func_t)(void* ptr, void* context);
+#include "k_status.h"
 
 typedef struct
 {
-    avl_tree_t* avl_tree;
-    _Bool initialized;
-    k_spin_lock_t lock;
-} k_ref_desc_t;
+    int32_t ref_count;
+    k_callback_func_t free_routine;
+} k_ref_node_t;
 
-#define K_REF_STATUS_SUCCESS 0
-#define K_REF_STATUS_INVALID_ARGUMENTS 1
-#define K_REF_STATUS_CANNOT_ALLOCATE_MEM 2
-#define K_REF_STATUS_REF_NOT_FOUND 3
+#define K_HANDLE_BASE 0x80000000
 
-int32_t KAPI k_ref_init(k_ref_desc_t* desc);
+//#define K_HANDLE_CURRENT_THREAD 0x1
 
-int32_t KAPI k_ref_create(void* ptr, k_ref_callback_func_t callback, void* context);
+//
+// All functions are hw since users or kernel devs should not be
+// specifying where the allocations take place
+//
 
-int32_t KAPI k_ref_inc(void* ptr);
+k_status_t ke_reference_setup();
 
-int32_t KAPI k_ref_dec(void* ptr);
+k_status_t ke_reference_create(k_ref_node_t *ref,
+                               k_callback_func_t free_func);
+
+k_status_t ke_reference_obj(k_ref_node_t *ref);
+
+k_status_t ke_dereference_obj(k_ref_node_t *ref);
+
+// HANDLES
+k_status_t sx_open_obj_by_handle(k_handle_t handle, k_ref_node_t **out);
+
+k_status_t sx_create_handle(k_ref_node_t *ref, k_handle_t *out);
+
+k_status_t sx_close_handle(k_handle_t handle);
 
 #endif

@@ -5,11 +5,11 @@
 
 typedef struct
 {
-    linked_list_node_t lnode;
+    k_linked_list_node_t lnode;
     int val;
 } my_list_node;
 
-static bool validate_list(linked_list_t *list)
+static bool validate_list(k_linked_list_t *list)
 {
     bool result = true;
     // list_head_test
@@ -35,9 +35,9 @@ static bool validate_list(linked_list_t *list)
 }
 
 
-static bool assert_list(linked_list_t *list, int val[], int size)
+static bool assert_list(k_linked_list_t *list, int val[], int size)
 {
-    linked_list_node_t *node = linked_list_first(list);
+    k_linked_list_node_t *node = ke_linked_list_first(list);
     int i = 0;
 
     if (!validate_list(list))
@@ -51,7 +51,7 @@ static bool assert_list(linked_list_t *list, int val[], int size)
             return false;
         }
         i++;
-        node = linked_list_next(node);
+        node = ke_linked_list_next(node);
     }
 
     if (i != size)
@@ -59,7 +59,7 @@ static bool assert_list(linked_list_t *list, int val[], int size)
         return false;
     }
 
-    node = linked_list_last(list);
+    node = ke_linked_list_last(list);
     while (node != NULL && i >= 0)
     {
         my_list_node *enode = OBTAIN_STRUCT_ADDR(node, my_list_node, lnode);
@@ -68,7 +68,7 @@ static bool assert_list(linked_list_t *list, int val[], int size)
             return false;
         }
         i--;
-        node = linked_list_prev(node);
+        node = ke_linked_list_prev(node);
     }
 
     return i == 0;
@@ -96,32 +96,32 @@ static bool assert_list(linked_list_t *list, int val[], int size)
 //    return;
 //}
 
-static void insert_val(linked_list_t *list, int index, int val)
+static void insert_val(k_linked_list_t *list, int index, int val)
 {
     my_list_node *a = (my_list_node *) talloc(sizeof(my_list_node));
     a->val = val;
-    linked_list_insert_idx(list, index, &a->lnode);
+    ke_linked_list_insert(list, index, &a->lnode);
 }
 
-static void push_back_val(linked_list_t *list, int val)
+static void push_back_val(k_linked_list_t *list, int val)
 {
     my_list_node *a = (my_list_node *) talloc(sizeof(my_list_node));
     a->val = val;
-    linked_list_push_back(list, &a->lnode);
+    ke_linked_list_push_back(list, &a->lnode);
 }
 
-static void push_front_val(linked_list_t *list, int val)
+static void push_front_val(k_linked_list_t *list, int val)
 {
     my_list_node *a = (my_list_node *) talloc(sizeof(my_list_node));
     a->val = val;
-    linked_list_push_front(list, &a->lnode);
+    ke_linked_list_push_front(list, &a->lnode);
 }
 
 
 static bool insert_test_beginning()
 {
-    linked_list_t list;
-    linked_list_init(&list);
+    k_linked_list_t list;
+    ke_linked_list_init(&list);
     insert_val(&list, 0, 0);
     insert_val(&list, 0, 1);
     insert_val(&list, 0, 2);
@@ -134,8 +134,8 @@ static bool insert_test_beginning()
 
 static bool insert_test_middle()
 {
-    linked_list_t list;
-    linked_list_init(&list);
+    k_linked_list_t list;
+    ke_linked_list_init(&list);
 
     insert_val(&list, 0, 0);
     insert_val(&list, 0, 1);
@@ -151,8 +151,8 @@ static bool insert_test_middle()
 
 static bool insert_test_end()
 {
-    linked_list_t list;
-    linked_list_init(&list);
+    k_linked_list_t list;
+    ke_linked_list_init(&list);
 
     insert_val(&list, 0, 0);
     insert_val(&list, 1, 1);
@@ -165,8 +165,8 @@ static bool insert_test_end()
 
 static bool insert_test_invalid()
 {
-    linked_list_t list;
-    linked_list_init(&list);
+    k_linked_list_t list;
+    ke_linked_list_init(&list);
 
     insert_val(&list, 0, 3);
     insert_val(&list, 0, 2);
@@ -185,8 +185,8 @@ static bool insert_test_invalid()
 
     // NULL
     insert_val(NULL, 1, 4);
-    linked_list_insert_ref(NULL, list.head, list.tail);
-    linked_list_insert_ref(&list, list.head, NULL);
+    ke_linked_list_insert_ref(NULL, list.head, list.tail);
+    ke_linked_list_insert_ref(&list, list.head, NULL);
 
     int val[] = {0, 1, 2, 3};
     return assert_list(&list, val, 4);
@@ -195,15 +195,15 @@ static bool insert_test_invalid()
 
 static bool remove_test_beginning()
 {
-    linked_list_t list;
-    linked_list_init(&list);
+    k_linked_list_t list;
+    ke_linked_list_init(&list);
     insert_val(&list, 0, 0);
     insert_val(&list, 0, 1);
     insert_val(&list, 0, 2);
     insert_val(&list, 0, 3);
 
-    linked_list_remove_idx(&list, 0);
-    linked_list_remove_idx(&list, 0);
+    ke_linked_list_remove(&list, 0);
+    ke_linked_list_remove(&list, 0);
 
     // 10==01
     int val[] = {1, 0};
@@ -212,8 +212,8 @@ static bool remove_test_beginning()
 
 static bool remove_test_middle()
 {
-    linked_list_t list;
-    linked_list_init(&list);
+    k_linked_list_t list;
+    ke_linked_list_init(&list);
 
     insert_val(&list, 0, 0);
     insert_val(&list, 0, 1);
@@ -223,8 +223,8 @@ static bool remove_test_middle()
     insert_val(&list, 0, 4);
     insert_val(&list, 0, 5);
 
-    linked_list_remove_idx(&list, 1);
-    linked_list_remove_idx(&list, 2);
+    ke_linked_list_remove(&list, 1);
+    ke_linked_list_remove(&list, 2);
 
     // 5310=====0135
     int val[] = {5, 3, 1, 0};
@@ -233,16 +233,16 @@ static bool remove_test_middle()
 
 static bool remove_test_end()
 {
-    linked_list_t list;
-    linked_list_init(&list);
+    k_linked_list_t list;
+    ke_linked_list_init(&list);
 
     insert_val(&list, 0, 0);
     insert_val(&list, 1, 1);
     insert_val(&list, 2, 2);
     insert_val(&list, 3, 3);
 
-    linked_list_remove_idx(&list, 3);
-    linked_list_remove_idx(&list, 2);
+    ke_linked_list_remove(&list, 3);
+    ke_linked_list_remove(&list, 2);
 
     int val[] = {0, 1};
     return assert_list(&list, val, 2);
@@ -251,18 +251,18 @@ static bool remove_test_end()
 static bool remove_test_all()
 {
     bool result = true;
-    linked_list_t list;
-    linked_list_init(&list);
+    k_linked_list_t list;
+    ke_linked_list_init(&list);
 
     insert_val(&list, 0, 0);
     insert_val(&list, 1, 1);
     insert_val(&list, 2, 2);
     insert_val(&list, 3, 3);
 
-    linked_list_remove_idx(&list, 0);
-    linked_list_remove_idx(&list, 0);
-    linked_list_remove_idx(&list, 0);
-    linked_list_remove_idx(&list, 0);
+    ke_linked_list_remove(&list, 0);
+    ke_linked_list_remove(&list, 0);
+    ke_linked_list_remove(&list, 0);
+    ke_linked_list_remove(&list, 0);
 
     result = result && assert_list(&list, NULL, 0);
 
@@ -271,10 +271,10 @@ static bool remove_test_all()
     insert_val(&list, 2, 2);
     insert_val(&list, 3, 3);
 
-    linked_list_remove_idx(&list, 3);
-    linked_list_remove_idx(&list, 2);
-    linked_list_remove_idx(&list, 1);
-    linked_list_remove_idx(&list, 0);
+    ke_linked_list_remove(&list, 3);
+    ke_linked_list_remove(&list, 2);
+    ke_linked_list_remove(&list, 1);
+    ke_linked_list_remove(&list, 0);
 
     result = result && assert_list(&list, NULL, 0);
 
@@ -283,10 +283,10 @@ static bool remove_test_all()
     insert_val(&list, 2, 2);
     insert_val(&list, 3, 3);
 
-    linked_list_remove_idx(&list, 1);
-    linked_list_remove_idx(&list, 1);
-    linked_list_remove_idx(&list, 1);
-    linked_list_remove_idx(&list, 0);
+    ke_linked_list_remove(&list, 1);
+    ke_linked_list_remove(&list, 1);
+    ke_linked_list_remove(&list, 1);
+    ke_linked_list_remove(&list, 0);
 
     result = result && assert_list(&list, NULL, 0);
 
@@ -295,8 +295,8 @@ static bool remove_test_all()
 
 static bool remove_test_invalid()
 {
-    linked_list_t list;
-    linked_list_init(&list);
+    k_linked_list_t list;
+    ke_linked_list_init(&list);
 
     insert_val(&list, 0, 3);
     insert_val(&list, 0, 2);
@@ -304,19 +304,19 @@ static bool remove_test_invalid()
     insert_val(&list, 0, 0);
 
     // large index
-    linked_list_remove_idx(&list, 5);
-    linked_list_remove_idx(&list, 6);
-    linked_list_remove_idx(&list, 999);
+    ke_linked_list_remove(&list, 5);
+    ke_linked_list_remove(&list, 6);
+    ke_linked_list_remove(&list, 999);
 
     // small index
-    linked_list_remove_idx(&list, -1);
-    linked_list_remove_idx(&list, -2);
-    linked_list_remove_idx(&list, -999);
+    ke_linked_list_remove(&list, -1);
+    ke_linked_list_remove(&list, -2);
+    ke_linked_list_remove(&list, -999);
 
     // NULL
-    linked_list_remove_idx(NULL, 1);
-    linked_list_remove_ref(NULL, list.head);
-    linked_list_remove_ref(&list, NULL);
+    ke_linked_list_remove(NULL, 1);
+    ke_linked_list_remove_ref(NULL, list.head);
+    ke_linked_list_remove_ref(&list, NULL);
 
     // 0123=====3210
     int val[] = {0, 1, 2, 3};
@@ -326,17 +326,17 @@ static bool remove_test_invalid()
 static bool size_test()
 {
     bool result = true;
-    linked_list_t list;
-    linked_list_init(&list);
-    linked_list_t list2;
-    linked_list_init(&list2);
+    k_linked_list_t list;
+    ke_linked_list_init(&list);
+    k_linked_list_t list2;
+    ke_linked_list_init(&list2);
 
     insert_val(&list, 0, 0);
     insert_val(&list, 1, 1);
     insert_val(&list, 2, 2);
     insert_val(&list, 3, 3);
 
-    result = result && (linked_list_size(&list) == 4 && linked_list_size(&list2) == 0 && linked_list_size(NULL) == -1);
+    result = result && (ke_linked_list_size(&list) == 4 && ke_linked_list_size(&list2) == 0 && ke_linked_list_size(NULL) == -1);
     int val[] = {0, 1, 2, 3};
     result = result && assert_list(&list, val, 4);
     return result;
@@ -345,8 +345,8 @@ static bool size_test()
 static bool push_pop_front_test()
 {
     bool result = true;
-    linked_list_t list;
-    linked_list_init(&list);
+    k_linked_list_t list;
+    ke_linked_list_init(&list);
 
     push_front_val(&list, 1);
     push_front_val(&list, 2);
@@ -357,14 +357,14 @@ static bool push_pop_front_test()
     int val1[] = {4, 3, 2, 1};
     result = result && assert_list(&list, val1, 4);
 
-    linked_list_pop_front(&list);
+    ke_linked_list_pop_front(&list);
     //321==123
     int val2[] = {3, 2, 1};
     result = result && assert_list(&list, val2, 3);
 
-    linked_list_pop_front(&list);
-    linked_list_pop_front(&list);
-    linked_list_pop_front(&list);
+    ke_linked_list_pop_front(&list);
+    ke_linked_list_pop_front(&list);
+    ke_linked_list_pop_front(&list);
 
     result = result && assert_list(&list, NULL, 0);
     return result;
@@ -373,8 +373,8 @@ static bool push_pop_front_test()
 static bool push_pop_back_test()
 {
     bool result = true;
-    linked_list_t list;
-    linked_list_init(&list);
+    k_linked_list_t list;
+    ke_linked_list_init(&list);
 
     push_back_val(&list, 1);
     push_back_val(&list, 2);
@@ -385,20 +385,20 @@ static bool push_pop_back_test()
     int val1[] = {1, 2, 3, 4};
     result = result && assert_list(&list, val1, 4);
 
-    linked_list_pop_back(&list);
+    ke_linked_list_pop_back(&list);
     //123==321
     int val2[] = {1, 2, 3};
     result = result && assert_list(&list, val2, 3);
 
-    linked_list_pop_back(&list);
-    linked_list_pop_back(&list);
-    linked_list_pop_back(&list);
+    ke_linked_list_pop_back(&list);
+    ke_linked_list_pop_back(&list);
+    ke_linked_list_pop_back(&list);
 
     result = result && assert_list(&list, NULL, 0);
     return result;
 }
 
-static bool equals(linked_list_node_t *a, linked_list_node_t *b)
+static bool equals(k_linked_list_node_t *a, k_linked_list_node_t *b)
 {
     return (int64_t) b == OBTAIN_STRUCT_ADDR(a, my_list_node, lnode)->val;
 }
@@ -406,8 +406,8 @@ static bool equals(linked_list_node_t *a, linked_list_node_t *b)
 static bool search_test()
 {
     bool result = true;
-    linked_list_t list;
-    linked_list_init(&list);
+    k_linked_list_t list;
+    ke_linked_list_init(&list);
 
     push_back_val(&list, 1);
     push_back_val(&list, 2);
@@ -417,16 +417,16 @@ static bool search_test()
     int val1[] = {1, 2, 3, 4};
     result = result && assert_list(&list, val1, 4);
 
-    result = result && (linked_list_search(&list, (linked_list_node_t *) 4, equals) == 3);
-    result = result && (linked_list_search(&list, (linked_list_node_t *) 3, equals) == 2);
-    result = result && (linked_list_search(&list, (linked_list_node_t *) 2, equals) == 1);
-    result = result && (linked_list_search(&list, (linked_list_node_t *) 1, equals) == 0);
+    result = result && (ke_linked_list_search(&list, (k_linked_list_node_t *) 4, equals) == 3);
+    result = result && (ke_linked_list_search(&list, (k_linked_list_node_t *) 3, equals) == 2);
+    result = result && (ke_linked_list_search(&list, (k_linked_list_node_t *) 2, equals) == 1);
+    result = result && (ke_linked_list_search(&list, (k_linked_list_node_t *) 1, equals) == 0);
 
-    result = result && (linked_list_search(&list, NULL, equals) == -1);
-    result = result && (linked_list_search(NULL, (linked_list_node_t *) 1, equals) == -1);
+    result = result && (ke_linked_list_search(&list, NULL, equals) == -1);
+    result = result && (ke_linked_list_search(NULL, (k_linked_list_node_t *) 1, equals) == -1);
 
-    linked_list_node_t *node = linked_list_get(&list, 1);
-    result = result && (linked_list_search(&list, node, NULL) == 1);
+    k_linked_list_node_t *node = ke_linked_list_get(&list, 1);
+    result = result && (ke_linked_list_search(&list, node, NULL) == 1);
 
 
     result = result && assert_list(&list, val1, 4);

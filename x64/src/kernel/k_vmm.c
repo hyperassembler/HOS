@@ -3,7 +3,7 @@
 
 typedef struct
 {
-    avl_tree_node_t tree_node;
+    k_avl_tree_node_t tree_node;
     k_virtual_addr_attribute_t attribute;
     k_virtual_addr_t base;
     uint64_t size;
@@ -16,7 +16,7 @@ typedef struct
  * = 0 if tree_node == your_node
  * > 0 if tree_node > your_node
  */
-static int32_t _avl_compare(avl_tree_node_t *tree_node, avl_tree_node_t *my_node)
+static int32_t _avl_compare(k_avl_tree_node_t *tree_node, k_avl_tree_node_t *my_node)
 {
     k_virtual_addr_descriptor_t *that = OBTAIN_STRUCT_ADDR(tree_node,
                                                            k_virtual_addr_descriptor_t,
@@ -40,7 +40,7 @@ int32_t k_vmm_init(k_vmm_descriptor_t *desc)
     {
         return VMM_STATUS_INVALID_ARGUMENTS;
     }
-    avl_tree_init(&desc->region_tree, _avl_compare);
+    ke_avl_tree_init(&desc->region_tree, _avl_compare);
 
     return VMM_STATUS_SUCCESS;
 }
@@ -65,7 +65,7 @@ int32_t k_alloc_virtual_address(k_vmm_descriptor_t *desc,
     node->size = size;
     node->attribute = attr;
 
-    avl_tree_insert(&desc->region_tree, &node->tree_node);
+    ke_avl_tree_insert(&desc->region_tree, &node->tree_node);
 
     return VMM_STATUS_SUCCESS;
 }

@@ -16,7 +16,7 @@ typedef struct
 
 typedef struct
 {
-    avl_tree_t region_tree;
+    k_avl_tree_t region_tree;
     _Bool initialized;
     k_spin_lock_t lock;
 } k_vmm_descriptor_t;

@@ -5,6 +5,8 @@
 #include "g_type.h"
 #include "g_abi.h"
 
-void KAPI k_exc_handler_page_fault(void *context, void *intr_stack);
+k_irql_t KAPI ke_raise_irql(k_irql_t irql);
+
+k_irql_t KAPI ke_lower_irql(k_irql_t irql);
 
 #endif

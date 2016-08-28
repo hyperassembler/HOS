@@ -5,21 +5,21 @@
 
 #include "k_avl_tree.h"
 
-static inline int32_t KAPI _avl_tree_node_get_height(avl_tree_node_t *node)
+static inline int32_t KAPI _avl_tree_node_get_height(k_avl_tree_node_t *node)
 {
     return node == NULL ? -1 : node->height;
 }
 
-static inline int32_t KAPI _avl_tree_node_get_balance_factor(avl_tree_node_t *node)
+static inline int32_t KAPI _avl_tree_node_get_balance_factor(k_avl_tree_node_t *node)
 {
     if (node == NULL)
         return 0;
     return _avl_tree_node_get_height(node->left) - _avl_tree_node_get_height(node->right);
 }
 
-static avl_tree_node_t *KAPI _avl_tree_node_right_rotate(avl_tree_node_t *root)
+static k_avl_tree_node_t *KAPI _avl_tree_node_right_rotate(k_avl_tree_node_t *root)
 {
-    avl_tree_node_t *left_children = root->left;
+    k_avl_tree_node_t *left_children = root->left;
     //adjust parents first
     left_children->parent = root->parent;
     root->parent = left_children;
@@ -35,9 +35,9 @@ static avl_tree_node_t *KAPI _avl_tree_node_right_rotate(avl_tree_node_t *root)
     return left_children;
 }
 
-static avl_tree_node_t *KAPI _avl_tree_node_left_rotate(avl_tree_node_t *root)
+static k_avl_tree_node_t *KAPI _avl_tree_node_left_rotate(k_avl_tree_node_t *root)
 {
-    avl_tree_node_t *right_children = root->right;
+    k_avl_tree_node_t *right_children = root->right;
     //adjust parents
     right_children->parent = root->parent;
     root->parent = right_children;
@@ -54,7 +54,7 @@ static avl_tree_node_t *KAPI _avl_tree_node_left_rotate(avl_tree_node_t *root)
     return right_children;
 }
 
-static avl_tree_node_t *KAPI _avl_tree_node_balance(avl_tree_node_t *node)
+static k_avl_tree_node_t *KAPI _avl_tree_node_balance(k_avl_tree_node_t *node)
 {
     const int32_t bf = _avl_tree_node_get_balance_factor(node);
 
@@ -91,9 +91,9 @@ static avl_tree_node_t *KAPI _avl_tree_node_balance(avl_tree_node_t *node)
 
 }
 
-static avl_tree_node_t *KAPI _avl_tree_node_insert(avl_tree_node_t *root, avl_tree_node_t *node,
-                                                   avl_tree_node_compare_func_t compare,
-                                                   avl_tree_node_t *parent)
+static k_avl_tree_node_t *KAPI _avl_tree_node_insert(k_avl_tree_node_t *root, k_avl_tree_node_t *node,
+                                                   k_callback_func_t compare,
+                                                   k_avl_tree_node_t *parent)
 {
     if (node == NULL || compare == NULL)
         return root;
@@ -116,13 +116,13 @@ static avl_tree_node_t *KAPI _avl_tree_node_insert(avl_tree_node_t *root, avl_tr
     return _avl_tree_node_balance(root);
 }
 
-static void _avl_tree_swap_nodes(avl_tree_node_t *node1, avl_tree_node_t *node2)
+static void _avl_tree_swap_nodes(k_avl_tree_node_t *node1, k_avl_tree_node_t *node2)
 {
     if (node1 == NULL || node2 == NULL)
         return;
-    avl_tree_node_t *parent = NULL;
-    avl_tree_node_t *child = NULL;
-    avl_tree_node_t *temp = NULL;
+    k_avl_tree_node_t *parent = NULL;
+    k_avl_tree_node_t *child = NULL;
+    k_avl_tree_node_t *temp = NULL;
     //swap node but does not change anything else other than node1,node2
     if (node1->parent != NULL && node1->parent == node2)
     {
@@ -238,10 +238,10 @@ static void _avl_tree_swap_nodes(avl_tree_node_t *node1, avl_tree_node_t *node2)
     return;
 }
 
-static avl_tree_node_t *KAPI _avl_tree_node_delete(avl_tree_node_t *root,
-                                                   avl_tree_node_t *node,
-                                                   avl_tree_node_compare_func_t compare,
-                                                   avl_tree_node_t **deleted_node)
+static k_avl_tree_node_t *KAPI _avl_tree_node_delete(k_avl_tree_node_t *root,
+                                                   k_avl_tree_node_t *node,
+                                                   k_callback_func_t compare,
+                                                   k_avl_tree_node_t **deleted_node)
 {
     if (root == NULL || node == NULL || compare == NULL || deleted_node == NULL)
         return root;
@@ -256,7 +256,7 @@ static avl_tree_node_t *KAPI _avl_tree_node_delete(avl_tree_node_t *root,
         // node with only one child or no child
         if ((root->left == NULL) || (root->right == NULL))
         {
-            avl_tree_node_t *child = root->left != NULL ? root->left : root->right;
+            k_avl_tree_node_t *child = root->left != NULL ? root->left : root->right;
 
             if (child == NULL)
             {   // 0 child
@@ -272,7 +272,7 @@ static avl_tree_node_t *KAPI _avl_tree_node_delete(avl_tree_node_t *root,
         {
             // node with two children: Get the inorder successor (smallest
             // in the right subtree)
-            avl_tree_node_t *successor = avl_tree_larger(root);
+            k_avl_tree_node_t *successor = ke_avl_tree_larger(root);
             //swap fields
             _avl_tree_swap_nodes(successor, root);
 
@@ -289,8 +289,8 @@ static avl_tree_node_t *KAPI _avl_tree_node_delete(avl_tree_node_t *root,
     return root;
 }
 
-static avl_tree_node_t *KAPI _avl_tree_node_search(avl_tree_node_t *root, avl_tree_node_t *node,
-                                                   avl_tree_node_compare_func_t compare)
+static k_avl_tree_node_t *KAPI _avl_tree_node_search(k_avl_tree_node_t *root, k_avl_tree_node_t *node,
+                                                   k_callback_func_t compare)
 {
     if (root == NULL || compare == NULL)
         return NULL;
@@ -304,7 +304,7 @@ static avl_tree_node_t *KAPI _avl_tree_node_search(avl_tree_node_t *root, avl_tr
 }
 
 
-static void KAPI _avl_tree_node_init(avl_tree_node_t *it)
+static void KAPI _avl_tree_node_init(k_avl_tree_node_t *it)
 {
     if (it != NULL)
     {
@@ -317,11 +317,11 @@ static void KAPI _avl_tree_node_init(avl_tree_node_t *it)
 }
 
 
-avl_tree_node_t *KAPI avl_tree_smallest(avl_tree_t *tree)
+k_avl_tree_node_t *KAPI ke_avl_tree_smallest(k_avl_tree_t *tree)
 {
     if (tree == NULL)
         return NULL;
-    avl_tree_node_t *entry = tree->root;
+    k_avl_tree_node_t *entry = tree->root;
     if (entry == NULL)
         return NULL;
     while (entry->left != NULL)
@@ -329,11 +329,11 @@ avl_tree_node_t *KAPI avl_tree_smallest(avl_tree_t *tree)
     return entry;
 }
 
-avl_tree_node_t *KAPI avl_tree_largest(avl_tree_t *tree)
+k_avl_tree_node_t *KAPI ke_avl_tree_largest(k_avl_tree_t *tree)
 {
     if (tree == NULL)
         return NULL;
-    avl_tree_node_t *entry = tree->root;
+    k_avl_tree_node_t *entry = tree->root;
     if (entry == NULL)
         return NULL;
     while (entry->right != NULL)
@@ -342,11 +342,11 @@ avl_tree_node_t *KAPI avl_tree_largest(avl_tree_t *tree)
 }
 
 
-avl_tree_node_t *KAPI avl_tree_larger(avl_tree_node_t *it)
+k_avl_tree_node_t *KAPI ke_avl_tree_larger(k_avl_tree_node_t *it)
 {
     if (it == NULL)
         return NULL;
-    avl_tree_node_t *root = it;
+    k_avl_tree_node_t *root = it;
     if (root->right != NULL)
     {
         root = root->right;
@@ -366,11 +366,11 @@ avl_tree_node_t *KAPI avl_tree_larger(avl_tree_node_t *it)
     }
 }
 
-avl_tree_node_t *KAPI avl_tree_smaller(avl_tree_node_t *it)
+k_avl_tree_node_t *KAPI ke_avl_tree_smaller(k_avl_tree_node_t *it)
 {
     if (it == NULL)
         return NULL;
-    avl_tree_node_t *root = it;
+    k_avl_tree_node_t *root = it;
     if (root->left != NULL)
     {
         root = root->left;
@@ -390,13 +390,13 @@ avl_tree_node_t *KAPI avl_tree_smaller(avl_tree_node_t *it)
     }
 }
 
-avl_tree_node_t *KAPI avl_tree_search(avl_tree_t *tree, avl_tree_node_t *node)
+k_avl_tree_node_t *KAPI ke_avl_tree_search(k_avl_tree_t *tree, k_avl_tree_node_t *node)
 {
     return _avl_tree_node_search(tree->root, node, tree->compare);
 }
 
 
-void KAPI avl_tree_insert(avl_tree_t *tree, avl_tree_node_t *data)
+void KAPI ke_avl_tree_insert(k_avl_tree_t *tree, k_avl_tree_node_t *data)
 {
     if (tree != NULL && data != NULL)
     {
@@ -406,9 +406,9 @@ void KAPI avl_tree_insert(avl_tree_t *tree, avl_tree_node_t *data)
     return;
 }
 
-avl_tree_node_t *KAPI avl_tree_delete(avl_tree_t *tree, avl_tree_node_t *data)
+k_avl_tree_node_t *KAPI ke_avl_tree_delete(k_avl_tree_t *tree, k_avl_tree_node_t *data)
 {
-    avl_tree_node_t *node = NULL;
+    k_avl_tree_node_t *node = NULL;
     if (tree != NULL && data != NULL)
     {
         tree->root = _avl_tree_node_delete(tree->root, data, tree->compare, &node);
@@ -416,23 +416,23 @@ avl_tree_node_t *KAPI avl_tree_delete(avl_tree_t *tree, avl_tree_node_t *data)
     return node;
 }
 
-int32_t KAPI avl_tree_size(avl_tree_t *tree)
+int32_t KAPI ke_avl_tree_size(k_avl_tree_t *tree)
 {
     if (tree == NULL)
         return -1;
     if (tree->root == NULL)
         return 0;
     int32_t size = 0;
-    avl_tree_node_t *entry = avl_tree_smallest(tree);
+    k_avl_tree_node_t *entry = ke_avl_tree_smallest(tree);
     while (entry != NULL)
     {
         size++;
-        entry = avl_tree_larger(entry);
+        entry = ke_avl_tree_larger(entry);
     }
     return size;
 }
 
-void KAPI avl_tree_init(avl_tree_t *tree, avl_tree_node_compare_func_t compare)
+void KAPI ke_avl_tree_init(k_avl_tree_t *tree, k_callback_func_t compare)
 {
     if (tree != NULL)
     {
@@ -446,14 +446,14 @@ void KAPI avl_tree_init(avl_tree_t *tree, avl_tree_node_compare_func_t compare)
 
 // TESTING STUFF
 
-static int32_t KAPI _avl_tree_node_calculate_height(avl_tree_node_t *tree)
+static int32_t KAPI _avl_tree_node_calculate_height(k_avl_tree_node_t *tree)
 {
     if (tree == NULL)
         return -1;
     return ke_max_32(_avl_tree_node_calculate_height(tree->left), _avl_tree_node_calculate_height(tree->right)) + 1;
 }
 
-static bool KAPI _avl_tree_node_test(avl_tree_node_t *tree, int32_t (*compare)(avl_tree_node_t *, avl_tree_node_t *))
+static bool KAPI _avl_tree_node_test(k_avl_tree_node_t *tree, int32_t (*compare)(k_avl_tree_node_t *, k_avl_tree_node_t *))
 {
     if (tree == NULL)
         return true;
@@ -479,7 +479,7 @@ static bool KAPI _avl_tree_node_test(avl_tree_node_t *tree, int32_t (*compare)(a
     return _avl_tree_node_test(tree->left, compare) && _avl_tree_node_test(tree->right, compare);
 }
 
-bool KAPI avl_tree_validate(avl_tree_t *tree)
+bool KAPI ke_avl_tree_validate(k_avl_tree_t *tree)
 {
     if (tree == NULL)
         return true;
