@@ -34,7 +34,7 @@ static int32_t _avl_compare(k_avl_tree_node_t *tree_node, k_avl_tree_node_t *my_
         return 1;
 }
 
-int32_t k_vmm_init(k_vmm_descriptor_t *desc)
+int32_t KAPI k_vmm_init(k_vmm_descriptor_t *desc)
 {
     if (desc == NULL || desc->initialized)
     {
@@ -45,7 +45,7 @@ int32_t k_vmm_init(k_vmm_descriptor_t *desc)
     return VMM_STATUS_SUCCESS;
 }
 
-int32_t k_alloc_virtual_address(k_vmm_descriptor_t *desc,
+int32_t KAPI k_alloc_virtual_address(k_vmm_descriptor_t *desc,
                                 k_virtual_addr_t base,
                                 uint64_t size,
                                 k_virtual_addr_attribute_t attr)
@@ -70,12 +70,12 @@ int32_t k_alloc_virtual_address(k_vmm_descriptor_t *desc,
     return VMM_STATUS_SUCCESS;
 }
 
-int64_t k_query_virtual_address(k_vmm_descriptor_t *desc, k_virtual_addr_t v_addr, uint64_t *out)
+int64_t KAPI k_query_virtual_address(k_vmm_descriptor_t *desc, k_virtual_addr_t v_addr, uint64_t *out)
 {
     return 0;
 }
 
-int64_t k_free_virtual_address(k_vmm_descriptor_t *desc, k_virtual_addr_t base)
+int64_t KAPI k_free_virtual_address(k_vmm_descriptor_t *desc, k_virtual_addr_t base)
 {
     return 0;
 }

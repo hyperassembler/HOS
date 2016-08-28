@@ -102,12 +102,12 @@ void KAPI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uin
 
 void *KAPI halloc(uint32_t size)
 {
-    return salloc(kernel_heap, size);
+    return ke_salloc(kernel_heap, size);
 }
 
 void KAPI hfree(void *ptr)
 {
-    sfree(kernel_heap, ptr);
+    ke_sfree(kernel_heap, ptr);
     return;
 }
 
@@ -145,6 +145,6 @@ static void KAPI _hal_init_gdt()
 void KAPI hal_mem_init()
 {
     _hal_init_gdt();
-    salloc_init(kernel_heap, KERNEL_HEAP_SIZE);
+    ke_salloc_init(kernel_heap, KERNEL_HEAP_SIZE);
     return;
 }

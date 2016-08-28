@@ -9,13 +9,13 @@
 #include "g_abi.h"
 #include "g_type.h"
 
-void KAPI salloc_init(void *base, uint32_t size);
+void KAPI ke_salloc_init(void *base, uint32_t size);
 
-void* KAPI salloc(void *base, uint32_t size);
+void* KAPI ke_salloc(void *base, uint32_t size);
 
-void KAPI sfree(void *base, void *ptr);
+void KAPI ke_sfree(void *base, void *ptr);
 
-bool KAPI salloc_assert(void *base, uint32_t blk_size[], bool blk_free[], uint32_t size);
+bool KAPI ke_salloc_assert(void *base, uint32_t *blk_size, bool *blk_free, uint32_t size);
 
 
 #endif

@@ -12,27 +12,25 @@ typedef struct
 
 #define K_HANDLE_BASE 0x80000000
 
-//#define K_HANDLE_CURRENT_THREAD 0x1
-
 //
-// All functions are hw since users or kernel devs should not be
+// All functions are sx since users or kernel devs should not be
 // specifying where the allocations take place
 //
 
-k_status_t ke_reference_setup();
+k_status_t KAPI ke_reference_setup();
 
-k_status_t ke_reference_create(k_ref_node_t *ref,
+k_status_t KAPI ke_reference_create(k_ref_node_t *ref,
                                k_callback_func_t free_func);
 
-k_status_t ke_reference_obj(k_ref_node_t *ref);
+k_status_t KAPI ke_reference_obj(k_ref_node_t *ref);
 
-k_status_t ke_dereference_obj(k_ref_node_t *ref);
+k_status_t KAPI ke_dereference_obj(k_ref_node_t *ref);
 
 // HANDLES
-k_status_t sx_open_obj_by_handle(k_handle_t handle, k_ref_node_t **out);
+k_status_t KAPI sx_open_obj_by_handle(k_handle_t handle, k_ref_node_t **out);
 
-k_status_t sx_create_handle(k_ref_node_t *ref, k_handle_t *out);
+k_status_t KAPI sx_create_handle(k_ref_node_t *ref, k_handle_t *out);
 
-k_status_t sx_close_handle(k_handle_t handle);
+k_status_t KAPI sx_close_handle(k_handle_t handle);
 
 #endif

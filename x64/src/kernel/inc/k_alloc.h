@@ -7,6 +7,6 @@ void KAPI k_alloc_init();
 
 void* KAPI k_alloc(uint32_t size);
 
-void KAPI k_free(void* ptr);
+void KAPI ke_free(void *ptr);
 
 #endif

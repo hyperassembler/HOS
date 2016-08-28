@@ -92,7 +92,7 @@ static void _salloc_join(void *base)
     }
 }
 
-bool KAPI salloc_assert(void *base, uint32_t blk_size[], bool blk_free[], uint32_t size)
+bool KAPI ke_salloc_assert(void *base, uint32_t *blk_size, bool *blk_free, uint32_t size)
 {
     if (base == NULL || blk_free == NULL || blk_size == NULL)
         return NULL;
@@ -119,7 +119,7 @@ bool KAPI salloc_assert(void *base, uint32_t blk_size[], bool blk_free[], uint32
     }
 }
 
-void KAPI salloc_init(void *base, uint32_t size)
+void KAPI ke_salloc_init(void *base, uint32_t size)
 {
     if (base != NULL && size >= sizeof(_salloc_header))
     {
@@ -131,7 +131,7 @@ void KAPI salloc_init(void *base, uint32_t size)
     return;
 }
 
-void *KAPI salloc(void *base, uint32_t size)
+void *KAPI ke_salloc(void *base, uint32_t size)
 {
     void *result = NULL;
     if (base != NULL && size != 0)
@@ -186,7 +186,7 @@ void *KAPI salloc(void *base, uint32_t size)
     return result;
 }
 
-void KAPI sfree(void *base, void *ptr)
+void KAPI ke_sfree(void *base, void *ptr)
 {
     if (base != NULL && ptr != NULL)
     {

@@ -1,4 +1,8 @@
 #include <k_ref.h>
+#include <k_alloc.h>
+#include <k_spin_lock.h>
+#include <k_assert.h>
+#include <k_atomic.h>
 #include "k_avl_tree.h"
 
 typedef struct
@@ -7,11 +11,12 @@ typedef struct
     k_handle_t handle;
     k_ref_node_t *ref;
     k_callback_func_t free_routine;
-} hw_handle_node_t;
+} k_handle_node_t;
 
-static void handle_node_free(void *node, void *up)
+static int32_t handle_node_free(void *node, void *up)
 {
-    hw_free(node);
+    ke_free(node);
+    return 0;
 }
 
 // ===========================
@@ -20,13 +25,13 @@ static void handle_node_free(void *node, void *up)
 
 static k_avl_tree_t _handle_tree;
 static bool _initialized;
-static hw_spin_lock_t _handle_tree_lock;
+static k_spin_lock_t _handle_tree_lock;
 static int32_t _handle_base;
 
-static int32_t handle_compare(k_avl_tree_node_t *tree_node, k_avl_tree_node_t *my_node)
+static int32_t handle_compare(void *tree_node, void *my_node)
 {
-    hw_handle_node_t *tcb = OBTAIN_STRUCT_ADDR(tree_node, tree_node, hw_handle_node_t);
-    hw_handle_node_t *my_tcb = OBTAIN_STRUCT_ADDR(my_node, tree_node, hw_handle_node_t);
+    k_handle_node_t *tcb = OBTAIN_STRUCT_ADDR(tree_node, k_handle_node_t, tree_node);
+    k_handle_node_t *my_tcb = OBTAIN_STRUCT_ADDR(my_node, k_handle_node_t, tree_node);
 
     if ((uintptr_t) tcb->handle > (uintptr_t) my_tcb->handle)
         return -1;
@@ -36,88 +41,80 @@ static int32_t handle_compare(k_avl_tree_node_t *tree_node, k_avl_tree_node_t *m
         return 1;
 }
 
-static hw_handle_node_t *search_handle_node(hw_handle_t handle)
+static k_handle_node_t *search_handle_node(k_handle_t handle)
 {
     k_avl_tree_node_t *result;
-    hw_handle_node_t temp;
+    k_handle_node_t temp;
     temp.handle = handle;
     result = ke_avl_tree_search(&_handle_tree, &temp.tree_node);
-    return result == NULL ? NULL : OBTAIN_STRUCT_ADDR(result, tree_node, hw_handle_node_t);
+    return result == NULL ? NULL : OBTAIN_STRUCT_ADDR(result, k_handle_node_t, tree_node);
 }
 
-k_status_t ke_reference_setup()
+k_status_t KAPI ke_reference_setup()
 {
     if (!_initialized)
     {
         ke_avl_tree_init(&_handle_tree, handle_compare);
         ke_spin_lock_init(&_handle_tree_lock);
-        _handle_base = HW_HANDLE_BASE;
+        _handle_base = K_HANDLE_BASE;
         _initialized = true;
     }
     return STATUS_SUCCESS;
 }
 
-k_status_t ke_reference_create(hw_ref_node_t *ref,
-                                hw_callback_func_t free_func)
+k_status_t KAPI ke_reference_create(k_ref_node_t *ref,
+                                    k_callback_func_t free_func)
 {
-    hw_assert(ke_get_irql() <= HW_IRQL_DPC_LEVEL);
-
-    if (!_initialized)
-        return REF_STATUS_UNINITIALIZED;
+    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
 
     if (ref == NULL || free_func == NULL)
         return REF_STATUS_INVALID_ARGUMENTS;
 
-    ref->callback = free_func;
+    ref->free_routine = free_func;
     ref->ref_count = 1;
 
     return STATUS_SUCCESS;
 }
 
-hw_result_t ke_reference_obj(hw_ref_node_t *ref_node)
+k_status_t KAPI ke_reference_obj(k_ref_node_t *ref_node)
 {
-    hw_assert(ke_get_irql() <= HW_IRQL_DPC_LEVEL);
-
-    if (!_initialized)
-        return REF_STATUS_UNINITIALIZED;
+    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
 
     if (ref_node == NULL)
         return REF_STATUS_INVALID_ARGUMENTS;
 
     int32_t old_ref_count = ke_interlocked_increment(&ref_node->ref_count, 1);
 
-    hw_assert(old_ref_count >= 1);
+    ke_assert(old_ref_count >= 1);
 
     return STATUS_SUCCESS;
 }
 
-hw_result_t ke_dereference_obj(hw_ref_node_t *ref_node)
+k_status_t KAPI ke_dereference_obj(k_ref_node_t *ref_node)
 {
-    hw_assert(ke_get_irql() <= HW_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
 
-    if (!_initialized)
-        return REF_STATUS_UNINITIALIZED;
     if (ref_node == NULL)
         return REF_STATUS_INVALID_ARGUMENTS;
 
-    hw_result_t result = STATUS_SUCCESS;
+    k_status_t result = STATUS_SUCCESS;
 
     int32_t old_ref_count = ke_interlocked_increment(&ref_node->ref_count, -1);
 
-    hw_assert(old_ref_count >= 1);
+    ke_assert(old_ref_count >= 1);
 
     if (old_ref_count == 1)
     {
-        ref_node->callback(ref_node, NULL);
+        ref_node->free_routine(ref_node, NULL);
     }
 
     return result;
 }
 
 
-static hw_result_t ke_open_obj_by_handle(hw_handle_t handle, hw_ref_node_t **out)
+static k_status_t KAPI ke_open_obj_by_handle(k_handle_t handle, k_ref_node_t **out)
 {
-    hw_assert(ke_get_irql() <= HW_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
 
     if (!_initialized)
     {
@@ -129,44 +126,40 @@ static hw_result_t ke_open_obj_by_handle(hw_handle_t handle, hw_ref_node_t **out
         return REF_STATUS_INVALID_ARGUMENTS;
     }
 
-    hw_irql_t irql;
-    hw_result_t result = STATUS_SUCCESS;
-    hw_ref_node_t *ref = NULL;
+    k_irql_t irql;
+    k_status_t status = STATUS_SUCCESS;
+    k_ref_node_t *ref = NULL;
 
 
-    irql = ke_spin_lock_raise_irql(&_handle_tree_lock, HW_IRQL_DPC_LEVEL);
-    hw_handle_node_t *handle_node = search_handle_node(handle);
+    irql = ke_spin_lock_raise_irql(&_handle_tree_lock, K_IRQL_DPC_LEVEL);
+    k_handle_node_t *handle_node = search_handle_node(handle);
     if (handle_node == NULL)
     {
-        result = REF_STATUS_HANDLE_NOT_FOUND;
-    }
-    else
+        status = REF_STATUS_INVALID_HANDLE;
+    } else
     {
         ref = handle_node->ref;
     }
 
     // PREREQUISITE: Having a handle -> having a reference
     // MUST GUARANTEE that handle exists while we reference
-    if (HW_SUCCESS(result))
+    if (SX_SUCCESS(status))
     {
         // reference the object then return the reference
-        result = ke_reference_obj(ref);
-        if (HW_SUCCESS(result))
-        {
-            *out = ref;
-        }
+        ke_reference_obj(ref);
+        *out = ref;
     }
 
     ke_spin_unlock_lower_irql(&_handle_tree_lock, irql);
 
-    return result;
+    return status;
 }
 
-static hw_result_t ke_create_handle(hw_ref_node_t *ref,
-                                    hw_handle_node_t *node,
-                                    hw_handle_t *out)
+static k_status_t KAPI ke_create_handle(k_ref_node_t *ref,
+                                        k_handle_node_t *node,
+                                        k_handle_t *out)
 {
-    hw_assert(ke_get_irql() <= HW_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
 
     if (!_initialized)
         return REF_STATUS_UNINITIALIZED;
@@ -174,75 +167,78 @@ static hw_result_t ke_create_handle(hw_ref_node_t *ref,
     if (ref == NULL || node == NULL || out == NULL)
         return REF_STATUS_INVALID_ARGUMENTS;
 
-    hw_result_t result = STATUS_SUCCESS;
-    hw_irql_t irql;
+    k_status_t result = STATUS_SUCCESS;
+    k_irql_t irql;
 
 
-    if (HW_SUCCESS(result))
+    if (SX_SUCCESS(result))
     {
         // TODO: CHECK OVERFLOW
-        node->handle = (hw_handle_t) ke_interlocked_increment(&_handle_base, 1);
+        node->handle = (k_handle_t) ke_interlocked_increment(&_handle_base, 1);
         node->ref = ref;
-        irql = ke_spin_lock_raise_irql(&_handle_tree_lock, HW_IRQL_DPC_LEVEL);
-        hw_handle_node_t *existing_node = search_handle_node(node->handle);
+        irql = ke_spin_lock_raise_irql(&_handle_tree_lock, K_IRQL_DPC_LEVEL);
+        k_handle_node_t *existing_node = search_handle_node(node->handle);
         if (existing_node == NULL)
         {
             ke_avl_tree_insert(&_handle_tree, &node->tree_node);
-        }
-        else
+        } else
         {
-            result = REF_STATUS_HANDLE_DUPLICATE;
+            result = REF_STATUS_DUPLICATED_HANDLE;
         }
 
         ke_spin_unlock_lower_irql(&_handle_tree_lock, irql);
     }
 
 
-    if (HW_SUCCESS(result))
+    if (SX_SUCCESS(result))
     {
         ke_reference_obj(ref);
         *out = node->handle;
-    }
-    else
+    } else
     {
-        node->free_func(node, NULL);
+        node->free_routine(node, NULL);
     }
 
     return result;
 }
 
-static hw_result_t ke_close_handle(hw_handle_t handle)
+static k_status_t KAPI ke_close_handle(k_handle_t handle)
 {
-    hw_assert(ke_get_irql() <= HW_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
 
     if (!_initialized)
         return REF_STATUS_UNINITIALIZED;
 
-    hw_irql_t irql;
-    hw_result_t result = STATUS_SUCCESS;
-    hw_ref_node_t *ref = NULL;
+    k_irql_t irql;
+    k_status_t status = STATUS_SUCCESS;
+    k_ref_node_t *ref = NULL;
+    bool free = false;
 
-    irql = ke_spin_lock_raise_irql(&_handle_tree_lock, HW_IRQL_DPC_LEVEL);
-    hw_handle_node_t *handle_node = search_handle_node(handle);
+    irql = ke_spin_lock_raise_irql(&_handle_tree_lock, K_IRQL_DPC_LEVEL);
+    k_handle_node_t *handle_node = search_handle_node(handle);
     if (handle_node == NULL)
     {
-        result = REF_STATUS_HANDLE_NOT_FOUND;
-    }
-    else
+        status = REF_STATUS_INVALID_HANDLE;
+    } else
     {
         ref = handle_node->ref;
         ke_avl_tree_delete(&_handle_tree, &handle_node->tree_node);
-        handle_node->free_func(handle_node, NULL);
+        free = true;
     }
     ke_spin_unlock_lower_irql(&_handle_tree_lock, irql);
 
-    if (HW_SUCCESS(result))
+    if (free)
     {
-        // dereference the object
-        result = ke_dereference_obj(ref);
+        handle_node->free_routine(handle_node, NULL);
     }
 
-    return result;
+    if (SX_SUCCESS(status))
+    {
+        // dereference the object
+        ke_dereference_obj(ref);
+    }
+
+    return status;
 }
 
 
@@ -250,45 +246,40 @@ static hw_result_t ke_close_handle(hw_handle_t handle)
 // HW Functions
 // ===========================
 
-hw_result_t hw_create_handle(hw_ref_node_t *ref, hw_handle_t *out)
+k_status_t KAPI sx_create_handle(k_ref_node_t *ref, k_handle_t *out)
 {
-    hw_assert(ke_get_irql() <= HW_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
 
     if (!_initialized)
         return REF_STATUS_UNINITIALIZED;
 
-    hw_handle_node_t *node;
-    node = (hw_handle_node_t *) hw_alloc(sizeof(hw_handle_node_t));
+    k_handle_node_t *node;
+    node = (k_handle_node_t *) k_alloc(sizeof(k_handle_node_t));
     if (node == NULL)
     {
-        return REF_STATUS_CANNOT_ALLOCATE_MEM;
+        return REF_STATUS_ALLOCATION_FAILED;
     }
 
-    node->free_func = handle_node_free;
+    node->free_routine = handle_node_free;
 
     return ke_create_handle(ref, node, out);
 }
 
-hw_result_t hw_close_handle(hw_handle_t handle)
+k_status_t KAPI sx_close_handle(k_handle_t handle)
 {
-    hw_assert(ke_get_irql() <= HW_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
 
     if (!_initialized)
         return REF_STATUS_UNINITIALIZED;
 
-    if (handle == HW_HANDLE_CURRENT_THREAD)
-    {
-        return REF_STATUS_NO_EFFECT;
-    }
+    // need to keep sx version since need to do handle check here
 
-    hw_result_t result = ke_close_handle(handle);
-
-    return result;
+    return ke_close_handle(handle);
 }
 
-hw_result_t hw_open_obj_by_handle(hw_handle_t handle, hw_ref_node_t **out)
+k_status_t KAPI sx_open_obj_by_handle(k_handle_t handle, k_ref_node_t **out)
 {
-    hw_assert(ke_get_irql() <= HW_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
 
     if (!_initialized)
         return REF_STATUS_UNINITIALIZED;
@@ -297,14 +288,14 @@ hw_result_t hw_open_obj_by_handle(hw_handle_t handle, hw_ref_node_t **out)
         return REF_STATUS_INVALID_ARGUMENTS;
 
     // check special handles first
-    if (handle == HW_HANDLE_CURRENT_THREAD)
-    {
-        // no need to ref first since definitely current thread context
-        hw_tcb_t *tcb = ke_current_thread();
-        ke_reference_obj(&tcb->ref_node);
-        *out = &tcb->ref_node;
-        return STATUS_SUCCESS;
-    }
+//    if (handle == K_HANDLE_CURRENT_THREAD)
+//    {
+//        // no need to ref first since definitely current thread context
+//        hw_tcb_t *tcb = ke_current_thread();
+//        ke_reference_obj(&tcb->ref_node);
+//        *out = &tcb->ref_node;
+//        return STATUS_SUCCESS;
+//    }
 
     return ke_open_obj_by_handle(handle, out);
 }

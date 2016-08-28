@@ -10,14 +10,14 @@ typedef struct
 {
     uint16_t limit;
     uint64_t base;
-} __attribute__ ((packed)) hal_gdt_ptr_t;
+} STRUCT_PACKED hal_gdt_ptr_t;
 
 typedef struct
 {
     uint16_t limit;
     uint64_t base;
 
-} __attribute__ ((packed)) hal_idt_ptr_t;
+} STRUCT_PACKED hal_idt_ptr_t;
 
 extern void KAPI hal_interlocked_increment(uint64_t* dst);
 
