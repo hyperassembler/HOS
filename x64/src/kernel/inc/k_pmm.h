@@ -7,13 +7,6 @@
 #include "s_pmm.h"
 #include "k_atomic.h"
 
-#define PMM_STATUS_SUCCESS 0
-#define PMM_STATUS_CANNOT_ALLOC_NODE 1
-#define PMM_STATUS_PAGE_NOT_FOUND 2
-#define PMM_STATUS_INVALID_ARGUMENTS 3
-#define PMM_STATUS_INIT_UNALIGNED 4
-#define PMM_STATUS_NOT_ENOUGH_PAGE 5
-
 //#define PMM_PAGE_ATTR_FREE_BIT 0
 //#define PMM_PAGE_ATTR_PAGED_BIT 1
 //
@@ -22,11 +15,11 @@
 //    uint32_t attr;
 //} k_physical_page_attr_t;
 
-int32_t KAPI k_pmm_init(k_pmm_info_t *info);
+k_status_t KAPI ke_pmm_init(k_pmm_info_t *info);
 
-int32_t KAPI k_alloc_page(k_physical_addr_t *out);
+k_status_t KAPI k_alloc_page(k_physical_addr_t *out);
 
-int32_t KAPI k_free_page(k_physical_addr_t base);
+k_status_t KAPI k_free_page(k_physical_addr_t base);
 
 // TODO: implement these somehow, i might just reserve the first 16MB for these
 int32_t KAPI k_alloc_contiguous_pages(uint64_t num_of_page,

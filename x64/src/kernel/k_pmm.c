@@ -1,3 +1,5 @@
+#include <k_spin_lock.h>
+#include <k_status.h>
 #include "k_alloc.h"
 #include "k_bug_check.h"
 #include "k_pmm.h"
@@ -10,15 +12,10 @@ typedef struct
     //k_physical_page_attr_t attr;
 } k_physical_page_descriptor_t;
 
-typedef struct
-{
-    k_avl_tree_t active_tree;
-    k_linked_list_t free_list;
-    k_spin_lock_t lock;
-    _Bool initialized;
-} k_pmm_descriptor_t;
-
-static k_pmm_descriptor_t _pmm_desc;
+static k_avl_tree_t active_tree;
+static k_linked_list_t free_list;
+static k_spin_lock_t lock;
+static _Bool initialized;
 
 /*
  * A comparison function between tree_node and your_node
@@ -27,7 +24,7 @@ static k_pmm_descriptor_t _pmm_desc;
  * = 0 if tree_node == your_node
  * > 0 if tree_node > your_node
  */
-static int32_t _avl_compare(k_avl_tree_node_t *tree_node, k_avl_tree_node_t *my_node)
+static int32_t base_addr_compare(k_avl_tree_node_t *tree_node, k_avl_tree_node_t *my_node)
 {
     k_physical_addr_t tree_base = OBTAIN_STRUCT_ADDR(tree_node,
                                                      k_physical_page_descriptor_t,
@@ -43,7 +40,7 @@ static int32_t _avl_compare(k_avl_tree_node_t *tree_node, k_avl_tree_node_t *my_
         return 0;
 }
 
-int32_t KAPI k_pmm_init(k_pmm_info_t *info)
+k_status_t KAPI ke_pmm_init(k_pmm_info_t *info)
 {
     if (info == NULL || desc == NULL || desc->initialized)
     {
@@ -51,7 +48,7 @@ int32_t KAPI k_pmm_init(k_pmm_info_t *info)
     }
 
     ke_linked_list_init(&desc->free_list);
-    ke_avl_tree_init(&desc->active_tree, _avl_compare);
+    ke_avl_tree_init(&desc->active_tree, base_addr_compare);
     for (uint32_t i = 0; i < info->num_of_nodes; i++)
     {
         k_pmm_node_t *each_node = &info->nodes[i];
@@ -88,7 +85,7 @@ int32_t KAPI k_pmm_init(k_pmm_info_t *info)
 // potential callers of these, since timer/interrupts queue DPC, which might trigger
 // page fault (kernel heap), therefore, it must set IRQL to DISABLED
 
-int32_t KAPI k_alloc_page(k_pmm_descriptor_t *desc, k_physical_addr_t *out)
+k_status_t KAPI ke_alloc_page(k_pmm_descriptor_t *desc, k_physical_addr_t *out)
 {
     if (desc == NULL || !desc->initialized)
         return PMM_STATUS_INVALID_ARGUMENTS;
@@ -105,8 +102,7 @@ int32_t KAPI k_alloc_page(k_pmm_descriptor_t *desc, k_physical_addr_t *out)
                                        free_list_node);
         ke_avl_tree_insert(&desc->active_tree, &page_info->avl_tree_node);
         *out = page_info->base;
-    }
-    else
+    } else
     {
         result = PMM_STATUS_NOT_ENOUGH_PAGE;
     }
@@ -148,7 +144,7 @@ int32_t KAPI k_alloc_page(k_pmm_descriptor_t *desc, k_physical_addr_t *out)
 //    return result;
 //}
 
-int32_t KAPI k_free_page(k_pmm_descriptor_t* desc, k_physical_addr_t base)
+k_status_t KAPI ke_free_page(k_pmm_descriptor_t *desc, k_physical_addr_t base)
 {
     if (desc == NULL || !desc->initialized)
         return PMM_STATUS_INVALID_ARGUMENTS;
@@ -166,8 +162,7 @@ int32_t KAPI k_free_page(k_pmm_descriptor_t* desc, k_physical_addr_t base)
     {
         page_info = OBTAIN_STRUCT_ADDR(node, k_physical_page_descriptor_t, avl_tree_node);
         ke_linked_list_push_back(&desc->free_list, &page_info->free_list_node);
-    }
-    else
+    } else
     {
         result = PMM_STATUS_PAGE_NOT_FOUND;
     }

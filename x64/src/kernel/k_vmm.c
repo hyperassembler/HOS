@@ -40,7 +40,7 @@ int32_t KAPI k_vmm_init(k_vmm_descriptor_t *desc)
     {
         return VMM_STATUS_INVALID_ARGUMENTS;
     }
-    ke_avl_tree_init(&desc->region_tree, _avl_compare);
+    ke_avl_tree_init(&desc->region_tree, base_addr_compare);
 
     return VMM_STATUS_SUCCESS;
 }

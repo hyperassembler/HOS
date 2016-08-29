@@ -3,12 +3,10 @@
  * See COPYING under root for details
  */
 
-#include "k_bit_ops.h"
 #include "hal_arch.h"
 #include "hal_intr.h"
 #include "hal_print.h"
 #include "hal_mem.h"
-
 
 static uint8_t _idts[HAL_CORE_COUNT][IDT_ENTRY_NUM*IDT_ENTRY_SIZE];
 hal_idt_ptr_t _idt_ptrs[HAL_CORE_COUNT];
