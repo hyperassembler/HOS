@@ -5,7 +5,7 @@
 
 #include "g_abi.h"
 #include "g_type.h"
-#include "k_bit_ops.h"
+#include "k_stdlib.h"
 
 typedef union
 {

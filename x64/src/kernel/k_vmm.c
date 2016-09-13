@@ -16,7 +16,7 @@ typedef struct
  * = 0 if tree_node == your_node
  * > 0 if tree_node > your_node
  */
-static int32_t _avl_compare(k_avl_tree_node_t *tree_node, k_avl_tree_node_t *my_node)
+static int32_t base_addr_compare(void *tree_node, void *my_node)
 {
     k_virtual_addr_descriptor_t *that = OBTAIN_STRUCT_ADDR(tree_node,
                                                            k_virtual_addr_descriptor_t,
@@ -54,7 +54,7 @@ int32_t KAPI k_alloc_virtual_address(k_vmm_descriptor_t *desc,
     {
         return VMM_STATUS_INVALID_ARGUMENTS;
     }
-    k_virtual_addr_descriptor_t* node = k_alloc(sizeof(k_virtual_addr_descriptor_t));
+    k_virtual_addr_descriptor_t* node = ke_alloc(sizeof(k_virtual_addr_descriptor_t));
 
     if(node == NULL)
     {

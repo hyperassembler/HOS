@@ -19,9 +19,11 @@ typedef struct
 
 } STRUCT_PACKED hal_idt_ptr_t;
 
-extern void KAPI hal_interlocked_increment(uint64_t* dst);
+extern int32_t KAPI hal_interlocked_increment_32(int32_t *target, int32_t increment);
 
-extern uint64_t KAPI hal_interlocked_exchange(uint64_t *dst, uint64_t val);
+extern int32_t KAPI hal_interlocked_compare_exchange_32(int32_t *dst, int32_t compare, int32_t val);
+
+extern int32_t KAPI hal_interlocked_exchange_32(int32_t *target, int32_t val);
 
 extern void KAPI hal_cpuid(uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx);
 

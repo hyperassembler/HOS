@@ -15,7 +15,7 @@
 //    uint32_t attr;
 //} k_physical_page_attr_t;
 
-k_status_t KAPI ke_pmm_init(k_pmm_info_t *info);
+k_status_t KAPI sx_pmm_init(k_pmm_info_t *info);
 
 k_status_t KAPI k_alloc_page(k_physical_addr_t *out);
 

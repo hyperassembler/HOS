@@ -8,6 +8,6 @@
 #define K_BUG_CHECK_IRQL_MISMATCH 0
 #define K_BUG_CHECK_PMM_UNALIGNED 1
 
-void KAPI k_bug_check(uint64_t reason);
+void KAPI ke_bug_check(uint64_t reason);
 
 #endif

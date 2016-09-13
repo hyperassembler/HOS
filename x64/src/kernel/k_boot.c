@@ -3,7 +3,8 @@
  * See COPYING under root for details
  */
 
-#include "s_boot.h"
+#include "k_pmm.h"
+#include "k_boot.h"
 #include "k_alloc.h"
 #include "k_intr.h"
 #include "k_lib_test.h"
@@ -21,7 +22,8 @@ void KAPI ke_main(k_hal_boot_info_t *boot_info)
     }
 
     // init kernel heap
-    k_alloc_init();
+    sx_pmm_init(boot_info->pmm_info);
+    ke_alloc_init();
 
     hal_printf("KERNEL: Base Addr is 0x%X. Size is %uB, %uKB.\n",
                boot_info->krnl_start,

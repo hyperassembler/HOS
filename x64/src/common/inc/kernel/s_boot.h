@@ -13,7 +13,7 @@ typedef struct
     uint64_t krnl_start;
     uint64_t krnl_end;
     k_hal_intr_info_t intr_info;
-    k_linked_list_t pmm_info;
+    k_pmm_info_t* pmm_info;
     char cpu_vd_str[13];
 } k_hal_boot_info_t;
 

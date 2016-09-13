@@ -23,10 +23,10 @@ typedef enum
 } k_exc_type_t;
 
 // IRQL APIs
-typedef uint64_t k_irql_t;
-#define K_IRQL_DISABLED_LEVEL 3
-#define K_IRQL_DPC_LEVEL 2
-#define K_IRQL_APC_LEVEL 1
+typedef uint32_t k_irql_t;
+#define K_IRQL_DISABLED_LEVEL 15
+#define K_IRQL_DPC_LEVEL 4
+#define K_IRQL_APC_LEVEL 2
 #define K_IRQL_PASSIVE_LEVEL 0
 
 extern k_irql_t KAPI  ke_set_irql(k_irql_t irql);
@@ -36,6 +36,10 @@ extern k_irql_t KAPI  ke_get_irql();
 extern void KAPI ke_halt_cpu();
 
 extern void KAPI ke_set_timer_timeout(uint64_t timeout);
+
+extern int32_t KAPI ke_get_core_id();
+
+extern int32_t KAPI ke_issue_interrupt(int32_t core_id, uint32_t vector);
 
 // Interrupt handler registration
 // context is a parameter passed by the kernel. HAL must pass back.

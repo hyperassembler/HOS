@@ -83,7 +83,7 @@ k_status_t KAPI ke_reference_obj(k_ref_node_t *ref_node)
     if (ref_node == NULL)
         return REF_STATUS_INVALID_ARGUMENTS;
 
-    int32_t old_ref_count = ke_interlocked_increment(&ref_node->ref_count, 1);
+    int32_t old_ref_count = ke_interlocked_increment_32(&ref_node->ref_count, 1);
 
     ke_assert(old_ref_count >= 1);
 
@@ -99,7 +99,7 @@ k_status_t KAPI ke_dereference_obj(k_ref_node_t *ref_node)
 
     k_status_t result = STATUS_SUCCESS;
 
-    int32_t old_ref_count = ke_interlocked_increment(&ref_node->ref_count, -1);
+    int32_t old_ref_count = ke_interlocked_increment_32(&ref_node->ref_count, -1);
 
     ke_assert(old_ref_count >= 1);
 
@@ -174,7 +174,7 @@ static k_status_t KAPI ke_create_handle(k_ref_node_t *ref,
     if (SX_SUCCESS(result))
     {
         // TODO: CHECK OVERFLOW
-        node->handle = (k_handle_t) ke_interlocked_increment(&_handle_base, 1);
+        node->handle = (k_handle_t) ke_interlocked_increment_32(&_handle_base, 1);
         node->ref = ref;
         irql = ke_spin_lock_raise_irql(&_handle_tree_lock, K_IRQL_DPC_LEVEL);
         k_handle_node_t *existing_node = search_handle_node(node->handle);
@@ -254,7 +254,7 @@ k_status_t KAPI sx_create_handle(k_ref_node_t *ref, k_handle_t *out)
         return REF_STATUS_UNINITIALIZED;
 
     k_handle_node_t *node;
-    node = (k_handle_node_t *) k_alloc(sizeof(k_handle_node_t));
+    node = (k_handle_node_t *) ke_alloc(sizeof(k_handle_node_t));
     if (node == NULL)
     {
         return REF_STATUS_ALLOCATION_FAILED;

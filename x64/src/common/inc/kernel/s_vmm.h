@@ -24,10 +24,16 @@ typedef k_physical_addr_t (KAPI *k_physical_page_alloc)();
 
 typedef void (KAPI *k_physical_page_free)(k_physical_addr_t page);
 
+#define K_PAGE_ATTR_KERNEL (1 << 2)
+#define K_PAGE_ATTR_CACHED (1 << 3)
+#define K_PAGE_ATTR_NOT_EXECUTABLE (1 << 63)
+#define K_PAGE_ATTR_WRITABLE (1 << 1)
+
 // this function should map the v_addr to p_addr for the target address space
 extern void KAPI ke_map_virtual_addr(k_physical_addr_t addr_space,
                                      k_virtual_addr_t v_addr,
                                      k_physical_addr_t p_addr,
+                                     uint64_t attribute,
                                      k_physical_page_alloc alloc);
 
 typedef struct

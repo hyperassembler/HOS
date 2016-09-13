@@ -14,7 +14,7 @@ void KAPI ke_spin_lock(k_spin_lock_t *lock)
 {
     if (lock != NULL)
     {
-        while (ke_interlocked_compare_exchange(&lock->val, 0, 1) != 0);
+        while (ke_interlocked_compare_exchange_32(&lock->val, 0, 1) != 0);
     }
     return;
 }

@@ -79,18 +79,29 @@ mov cr8,rdi
 ret
 
 ; ============================
-; uint64_t KAPI hal_interlocked_exchange(uint64_t* dst, uint64_t val);
-global hal_interlocked_exchange
-hal_interlocked_exchange:
-lock xchg qword [rdi], rsi
-mov rax, rsi
+; int32_t KAPI hal_interlocked_exchange_32(int32_t *target, int32_t val)
+global hal_interlocked_exchange_32
+hal_interlocked_exchange_32:
+lock xchg dword [rdi], esi
+xor rax, rax
+mov eax, esi
 ret
 
 ; ============================
-; uint64_t KAPI hal_interlocked_increment(uint64_t* dst);
-global hal_interlocked_increment
+; int32_t KAPI hal_interlocked_compare_exchange_32(int32_t *dst, int32_t compare, int32_t val);
+global hal_interlocked_compare_exchange_32
+hal_interlocked_exchange:
+mov eax, esi; eax = compare
+lock cmpxchg dword [rdi], edx ; edx = val, rdi = ptr to dst
+ret
+
+; ============================
+; int32_t KAPI hal_interlocked_increment_32(int32_t *target, int32_t increment);
+global hal_interlocked_increment_32
 hal_interlocked_increment:
-lock inc qword [rdi]
+lock xadd dword [rdi], esi ; [rdi] = [rdi] + esi, esi = old [rdi]
+xor rax, rax
+mov eax, esi
 ret
 
 ; ============================

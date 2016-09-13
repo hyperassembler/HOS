@@ -8,7 +8,7 @@
 static _Bool _k_alloc_initialized;
 static uint8_t _k_alloc_heap[K_KERNEL_HEAP_SIZE];
 
-void KAPI k_alloc_init()
+void KAPI ke_alloc_init()
 {
     if (!_k_alloc_initialized)
     {
@@ -17,7 +17,7 @@ void KAPI k_alloc_init()
     }
 }
 
-void *KAPI k_alloc(uint32_t size)
+void *KAPI ke_alloc(uint32_t size)
 {
     return _k_alloc_initialized ? ke_salloc(_k_alloc_heap, size) : NULL;
 }

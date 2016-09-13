@@ -3,7 +3,6 @@
  * See COPYING under root for details
  */
 
-#include "k_bit_ops.h"
 #include "hal_print.h"
 #include "hal_mem.h"
 #include "hal_intr.h"
