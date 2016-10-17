@@ -10,7 +10,7 @@
 #include "hal_arch.h"
 #include "hal_intr.h"
 
-static uint8_t _gdts[HAL_CORE_COUNT][GDT_ENTRY_NUM*GDT_ENTRY_SIZE];
+static uint8_t _gdts[HAL_CORE_COUNT][GDT_ENTRY_NUM * GDT_ENTRY_SIZE];
 static hal_gdt_ptr_t _gdt_ptrs[HAL_CORE_COUNT];
 
 #define KERNEL_HEAP_SIZE 8192
