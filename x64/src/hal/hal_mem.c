@@ -6,7 +6,7 @@
 #include "g_abi.h"
 #include "g_type.h"
 #include "hal_mem.h"
-#include "k_salloc.h"
+#include "../lib/inc/salloc.h"
 #include "hal_arch.h"
 #include "hal_intr.h"
 
@@ -17,7 +17,7 @@ static hal_gdt_ptr_t _gdt_ptrs[HAL_CORE_COUNT];
 
 char kernel_heap[KERNEL_HEAP_SIZE];
 
-void KAPI hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr)
+void KABI hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr)
 {
     if (base == NULL)
         return;
@@ -33,7 +33,7 @@ void KAPI hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t c
     return;
 }
 
-void KAPI hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr)
+void KABI hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr)
 {
     if (base == NULL)
         return;
@@ -49,7 +49,7 @@ void KAPI hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t 
     return;
 }
 
-void KAPI hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr)
+void KABI hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr)
 {
     if (base == NULL)
         return;
@@ -65,7 +65,7 @@ void KAPI hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_
     return;
 }
 
-void KAPI hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr)
+void KABI hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr)
 {
     if (base == NULL)
         return;
@@ -81,7 +81,7 @@ void KAPI hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint6
     return;
 }
 
-void KAPI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit,
+void KABI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit,
                                        uint64_t const attr)
 {
     if (gdt == NULL)
@@ -100,18 +100,18 @@ void KAPI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uin
     return;
 }
 
-void *KAPI halloc(uint32_t size)
+void *KABI halloc(uint32_t size)
 {
-    return ke_salloc(kernel_heap, size);
+    return lb_salloc(kernel_heap, size);
 }
 
-void KAPI hfree(void *ptr)
+void KABI hfree(void *ptr)
 {
-    ke_sfree(kernel_heap, ptr);
+    lb_sfree(kernel_heap, ptr);
     return;
 }
 
-static void KAPI _hal_init_gdt()
+static void KABI _hal_init_gdt()
 {
     uint32_t coreid = hal_get_core_id();
     // get gdt ready
@@ -142,9 +142,9 @@ static void KAPI _hal_init_gdt()
     hal_flush_gdt(&_gdt_ptrs[coreid], seg_selector(1, 0), seg_selector(2, 0));
 };
 
-void KAPI hal_mem_init()
+void KABI hal_mem_init()
 {
     _hal_init_gdt();
-    ke_salloc_init(kernel_heap, KERNEL_HEAP_SIZE);
+    lb_salloc_init(kernel_heap, KERNEL_HEAP_SIZE);
     return;
 }

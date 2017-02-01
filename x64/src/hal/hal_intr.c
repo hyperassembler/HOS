@@ -7,6 +7,7 @@
 #include "hal_intr.h"
 #include "hal_print.h"
 #include "hal_mem.h"
+#include "sxtdlib.h"
 
 static uint8_t _idts[HAL_CORE_COUNT][IDT_ENTRY_NUM*IDT_ENTRY_SIZE];
 hal_idt_ptr_t _idt_ptrs[HAL_CORE_COUNT];
@@ -15,7 +16,7 @@ static void* _intr_handler_context_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
 static k_exc_handler_t _exc_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
 
 
-void KAPI hal_write_gate(void *const gate,
+void KABI hal_write_gate(void *const gate,
                          uint64_t const offset,
                          uint32_t const selector,
                          uint32_t const attr)
@@ -39,7 +40,7 @@ void KAPI hal_write_gate(void *const gate,
     return;
 }
 
-void KAPI hal_set_interrupt_handler(uint64_t index,
+void KABI hal_set_interrupt_handler(uint64_t index,
                                     void (*handler)(void))
 {
     if (index < IDT_ENTRY_NUM)
@@ -50,12 +51,15 @@ void KAPI hal_set_interrupt_handler(uint64_t index,
     return;
 }
 
-void KAPI hal_issue_interrupt(uint32_t target_core, uint32_t vector)
+void KABI hal_issue_interrupt(uint32_t target_core, uint32_t vector)
 {
     // TODO
+    UNREFERENCED(target_core);
+    UNREFERENCED(vector);
+    return;
 }
 
-void KAPI hal_register_interrupt_handler(uint32_t coreid, uint32_t index, k_intr_handler_t handler, void* context)
+void KABI hal_register_interrupt_handler(uint32_t coreid, uint32_t index, k_intr_handler_t handler, void* context)
 {
     if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
     {
@@ -65,7 +69,7 @@ void KAPI hal_register_interrupt_handler(uint32_t coreid, uint32_t index, k_intr
     return;
 }
 
-void KAPI hal_deregister_interrupt_handler(uint32_t coreid, uint32_t index)
+void KABI hal_deregister_interrupt_handler(uint32_t coreid, uint32_t index)
 {
     if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
     {
@@ -74,7 +78,7 @@ void KAPI hal_deregister_interrupt_handler(uint32_t coreid, uint32_t index)
     return;
 }
 
-void KAPI hal_register_exception_handler(uint32_t coreid, uint32_t index, k_exc_handler_t handler)
+void KABI hal_register_exception_handler(uint32_t coreid, uint32_t index, k_exc_handler_t handler)
 {
     if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
     {
@@ -83,7 +87,7 @@ void KAPI hal_register_exception_handler(uint32_t coreid, uint32_t index, k_exc_
     return;
 }
 
-void KAPI hal_deregister_exception_handler(uint32_t coreid, uint32_t index)
+void KABI hal_deregister_exception_handler(uint32_t coreid, uint32_t index)
 {
     if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
     {
@@ -92,7 +96,7 @@ void KAPI hal_deregister_exception_handler(uint32_t coreid, uint32_t index)
     return;
 }
 
-void KAPI hal_assert(int64_t expression,
+void KABI hal_assert(int64_t expression,
                      char *message)
 {
     if (!expression)
@@ -103,7 +107,7 @@ void KAPI hal_assert(int64_t expression,
     return;
 }
 
-void KAPI hal_interrupt_dispatcher(uint64_t int_vec, hal_intr_context_t *context)
+void KABI hal_interrupt_dispatcher(uint64_t int_vec, hal_intr_context_t *context)
 {
     uint32_t coreid = hal_get_core_id();
     if (_intr_handler_table[int_vec] == NULL)
@@ -117,7 +121,7 @@ void KAPI hal_interrupt_dispatcher(uint64_t int_vec, hal_intr_context_t *context
     return;
 }
 
-void KAPI hal_exception_dispatcher(uint64_t exc_vec, hal_intr_context_t* context, uint64_t errorcode)
+void KABI hal_exception_dispatcher(uint64_t exc_vec, hal_intr_context_t* context, uint64_t errorcode)
 {
     uint32_t coreid = hal_get_core_id();
     if (_exc_handler_table[exc_vec] == NULL)
@@ -131,7 +135,7 @@ void KAPI hal_exception_dispatcher(uint64_t exc_vec, hal_intr_context_t* context
     return;
 }
 
-static void KAPI _hal_populate_idt()
+static void KABI _hal_populate_idt()
 {
     hal_set_interrupt_handler(0, hal_interrupt_handler_0);
     hal_set_interrupt_handler(1, hal_interrupt_handler_1);
@@ -392,18 +396,18 @@ static void KAPI _hal_populate_idt()
     return;
 }
 
-uint32_t KAPI hal_get_core_id(void)
+uint32_t KABI hal_get_core_id(void)
 {
     return 0;
 }
 
-int32_t KAPI hal_interrupt_init(void)
+int32_t KABI hal_interrupt_init(void)
 {
     uint32_t coreid = hal_get_core_id();
     uint32_t eax = 0, ebx = 0, ecx = 0, edx = 0;
     eax = 1;
     hal_cpuid(&eax, &ebx, &ecx, &edx);
-    if (!(edx & ke_bit_mask(9)))
+    if (!(edx & lb_bit_mask(9)))
     {
         hal_printf("ERROR: APIC not supported by CPU.\n");
         return 1;
@@ -435,19 +439,18 @@ int32_t KAPI hal_interrupt_init(void)
     ecx = MSR_IA32_APIC_BASE;
     hal_read_msr(&ecx, &edx, &eax);
     apic_base_reg = ((uint64_t) edx << 32) + (uint64_t) eax;
-    apic_base = apic_base_reg & ke_bit_field_mask(12, 35);
+    apic_base = apic_base_reg & lb_bit_field_mask(12, 35);
     //hal_printf("APIC Base: 0x%X\n", apic_base);
     //hal_printf("APIC Enabled: %s\n", apic_base_reg & bit_mask_64(11) ? "Yes" : "No");
     //hal_printf("BSP: %s\n", apic_base_reg & bit_mask_64(8) ? "Yes" : "No");
     //hal_printf("APIC Spour: 0x%X\n", *(uint32_t *) ((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET));
     // hardware enable APIC
     ecx = MSR_IA32_APIC_BASE;
-    eax = (uint32_t) ((apic_base_reg & ke_bit_field_mask(0, 31)) | ke_bit_mask(11));
+    eax = (uint32_t) ((apic_base_reg & lb_bit_field_mask(0, 31)) | lb_bit_mask(11));
     hal_write_msr(&ecx, &edx, &eax);
 
     // software enable APIC
-    hal_write_mem_32((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET,
-                     *(uint32_t *) ((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET) | ke_bit_mask(8));
+    hal_write_mem_32((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET, *(uint32_t *) (apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET) | (uint32_t)lb_bit_mask(8));
 
 //    hal_issue_interrupt(1, 255);
 //    hal_enable_interrupt();

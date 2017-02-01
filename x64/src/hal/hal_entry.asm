@@ -90,14 +90,14 @@ GDT64:                           ; Global Descriptor Table (64-bit).
     db 0                         ; Access.
     db 0                         ; Granularity.
     db 0                         ; Base (high).
-    SLCT_CODE equ $ - GDT64         ; The code descriptor.
+    SLCT_CODE equ $ - GDT64      ; The code descriptor.
     dw 0                         ; Limit (low).
     dw 0                         ; Base (low).
     db 0                         ; Base (middle)
     db 10011010b                 ; Access.
     db 00100000b                 ; Granularity.
     db 0                         ; Base (high).
-    SLCT_DATA equ $ - GDT64         ; The data descriptor.
+    SLCT_DATA equ $ - GDT64      ; The data descriptor.
     dw 0                         ; Limit (low).
     dw 0                         ; Base (low).
     db 0                         ; Base (middle)
@@ -127,7 +127,7 @@ mov esp, KERNEL_STACK
 mov esi,ebx
 
 ; check x64 support
-call ensure_support_x64
+call _ensure_support_x64
 cmp eax,1
 je .init_x64
 hlt
@@ -186,7 +186,7 @@ lgdt [GDT64.GDT64_PTR]
 jmp SLCT_CODE:entry
 hlt
 
-ensure_support_x64:
+_ensure_support_x64:
 push ebp
 mov ebp,esp
 pushfd
@@ -235,6 +235,16 @@ mov rdi,rsi ; multiboot_info*
 call hal_main
 hlt
 
+KERNEL_HEAP_SIZE equ 8192
+KERNEL_STACK_SIZE equ 8192
+
+[SECTION .heap]
+[BITS 64]
 align 4096 ;4k alignment
-times 8192 db 0
+times KERNEL_HEAP_SIZE db 0 ; initially 8k heap
+
+[SECTION .stack]
+[BITS 64]
+align 4096 ;4k alignment
+times KERNEL_STACK_SIZE db 0 ; initially 8k stack
 KERNEL_STACK:

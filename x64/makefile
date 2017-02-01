@@ -15,9 +15,9 @@ TEMP_DIR := tmp
 HEADER_DIRS := $(call rdircardex, *,*.h)
 ALL_TEMP_DIRS := $(addprefix $(TEMP_DIR)/,$(call rdircard,*))
 
-C_FLAGS := -m64 -std=c11 -g -c $(addprefix -I, $(HEADER_DIRS)) -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Wextra -Wno-comment
+C_FLAGS := -m64 -std=c11 -g -c $(addprefix -I, $(HEADER_DIRS)) -mcmodel=kernel -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Werror -Wextra -Wno-comment
 ASM_FLAGS := -g -f elf64 -I $(ASM_SRC_PATH_64)/
-LD_FLAGS := -melf_x86_64
+LD_FLAGS := -melf_x86_64 -I
 
 C_SRC := $(call rwildcard, ./, *.c)
 ASM_SRC := $(call rwildcard, ./, *.asm)

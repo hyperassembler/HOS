@@ -8,13 +8,13 @@
 
 #include "g_abi.h"
 #include "g_type.h"
-#include "k_linked_list.h"
+#include "../../lib/inc/linked_list.h"
 
 #define GDT_ENTRY_SIZE 8
 #define GDT_ENTRY_NUM 9
 
 
-static inline uint32_t KAPI seg_selector(uint32_t index, uint32_t rpl)
+static inline uint32_t KABI seg_selector(uint32_t index, uint32_t rpl)
 {
     return (index << 3) + rpl;
 }
@@ -81,20 +81,20 @@ static inline uint32_t KAPI seg_selector(uint32_t index, uint32_t rpl)
 
 #define PHYSICAL_PAGE_SIZE 4096
 
-void* KAPI halloc(uint32_t size);
+void* KABI halloc(uint32_t size);
 
-void KAPI hfree(void *ptr);
+void KABI hfree(void *ptr);
 
-void KAPI hal_mem_init();
+void KABI hal_mem_init();
 
-void KAPI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
+void KABI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 
-void KAPI hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr);
+void KABI hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr);
 
-void KAPI hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr);
+void KABI hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr);
 
-void KAPI hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr);
+void KABI hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr);
 
-void KAPI hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr);
+void KABI hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr);
 
 #endif

@@ -11,10 +11,12 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-typedef int32_t (*k_callback_func_t)(void *kernel_args, void *user_args);
+typedef int32_t (*callback_func_t)(void *kernel_args, void *user_args);
 
-typedef uint32_t k_handle_t;
+typedef uint32_t handle_t;
 
 #define STRUCT_PACKED __attribute__((packed))
+
+#define UNREFERENCED(x) {(x) = (x);}
 
 #endif

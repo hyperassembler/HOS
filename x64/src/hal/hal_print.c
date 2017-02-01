@@ -4,23 +4,23 @@
  */
 
 #include "g_abi.h"
-#include "k_stdlib.h"
+#include "../lib/inc/sxtdlib.h"
 #include "hal_print.h"
 
 static uint64_t text_pos;
 
-void KAPI hal_print_init()
+void KABI hal_print_init()
 {
     text_pos = 0;
 }
 
-void KAPI _hal_print_scroll()
+void KABI _hal_print_scroll()
 {
-    ke_mem_move((void *) (0xb8000 + get_pos(1, 0) * 2), (void *) (0xb8000 + get_pos(0, 0) * 2), (80 * 24) * 2);
+    lb_mem_move((void *) (0xb8000 + get_pos(1, 0) * 2), (void *) (0xb8000 + get_pos(0, 0) * 2), (80 * 24) * 2);
     return;
 }
 
-void KAPI _hal_print_str(char const *str)
+void KABI _hal_print_str(char const *str)
 {
     if(str == NULL)
         return;
@@ -33,7 +33,7 @@ void KAPI _hal_print_str(char const *str)
             {
                 //can't hold
                 _hal_print_scroll();
-                ke_mem_set((void *) (0xb8000 + 80 * 24 * 2), 0, 80 * 2); // clear last row
+                lb_mem_set((void *) (0xb8000 + 80 * 24 * 2), 0, 80 * 2); // clear last row
                 text_pos = 80 * 24;
             }
             str++;
@@ -55,7 +55,7 @@ void KAPI _hal_print_str(char const *str)
     return;
 }
 
-void KAPI _hal_print_uint(uint64_t number)
+void KABI _hal_print_uint(uint64_t number)
 {
     char arr[21]; // do not need to initialize
     arr[20] = 0; //zero-terminated
@@ -74,7 +74,7 @@ void KAPI _hal_print_uint(uint64_t number)
     return;
 }
 
-void KAPI _hal_print_int(int64_t number)
+void KABI _hal_print_int(int64_t number)
 {
     char arr[21]; // do not need to initialize
     arr[20] = 0; //zero-terminated
@@ -103,7 +103,7 @@ void KAPI _hal_print_int(int64_t number)
     return;
 }
 
-void KAPI _hal_print_hex(uint64_t number, uint64_t capital)
+void KABI _hal_print_hex(uint64_t number, uint64_t capital)
 {
     char const lookup_table_cap[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     char const lookup_table[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
@@ -125,14 +125,14 @@ void KAPI _hal_print_hex(uint64_t number, uint64_t capital)
     return;
 }
 
-void KAPI hal_clear_screen(void)
+void KABI hal_clear_screen(void)
 {
     text_pos = 0; // reset text_pos
-    ke_mem_set((void *) 0xb8000, 0, 25 * 80 * 2);
+    lb_mem_set((void *) 0xb8000, 0, 25 * 80 * 2);
     return;
 }
 
-void KAPI hal_printf(char const *format, ...)
+void KABI hal_printf(char const *format, ...)
 {
     va_list args;
     va_start(args, format);

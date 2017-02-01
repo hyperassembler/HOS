@@ -4,12 +4,12 @@
 #include "g_type.h"
 #include "g_abi.h"
 
-void KAPI test_begin(char *name);
+void KABI test_begin(char *name);
 
-void KAPI test_end();
+void KABI test_end();
 
-void *KAPI talloc(uint32_t size);
+void *KABI talloc(uint32_t size);
 
-void KAPI run_case(char *name, bool result);
+void KABI run_case(char *name, bool result);
 
 #endif

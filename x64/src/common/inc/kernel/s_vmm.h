@@ -5,8 +5,8 @@
 #include "g_type.h"
 #include "s_pmm.h"
 
-typedef uint64_t k_virtual_addr_t;
-typedef k_physical_addr_t k_address_space_t;
+typedef uint64_t virtual_addr_t;
+typedef physical_addr_t address_space_t;
 
 #define K_BASE_VADDR 0xFFFF800000000000
 #define K_END_VADDR  0xFFFFFFFFFFFFFFFF
@@ -20,9 +20,9 @@ typedef k_physical_addr_t k_address_space_t;
 // which means the kernel area/ as well as the HAL reserved vaddr ranges would be properly mapped
 //
 
-typedef k_physical_addr_t (KAPI *k_physical_page_alloc)();
+typedef physical_addr_t (KABI *page_alloc_func_t)();
 
-typedef void (KAPI *k_physical_page_free)(k_physical_addr_t page);
+typedef void (KABI *page_free_func_t)(physical_addr_t page);
 
 #define K_PAGE_ATTR_KERNEL (1 << 2)
 #define K_PAGE_ATTR_CACHED (1 << 3)
@@ -30,18 +30,18 @@ typedef void (KAPI *k_physical_page_free)(k_physical_addr_t page);
 #define K_PAGE_ATTR_WRITABLE (1 << 1)
 
 // this function should map the v_addr to p_addr for the target address space
-extern void KAPI ke_map_virtual_addr(k_physical_addr_t addr_space,
-                                     k_virtual_addr_t v_addr,
-                                     k_physical_addr_t p_addr,
+extern void KABI ke_map_virtual_addr(physical_addr_t addr_space,
+                                     virtual_addr_t v_addr,
+                                     physical_addr_t p_addr,
                                      uint64_t attribute,
-                                     k_physical_page_alloc alloc);
+                                     page_alloc_func_t alloc);
 
 typedef struct
 {
     // the kernel always reserves this much virtual space for HAL
     // this is mainly used for recursive page tables or other HAL actions
-    k_virtual_addr_t reserved_vaddr_base;
-    k_virtual_addr_t reserved_vaddr_end;
+    virtual_addr_t reserved_vaddr_base;
+    virtual_addr_t reserved_vaddr_end;
 
     // the k_vaddr_alignment determines the alignment of the kernel's address space
     // the reserved virtual address spaces above is also subject to the alignment
@@ -53,16 +53,16 @@ typedef struct
 // so that these pages are global (modifying the mapping in this area affects everyone)
 // the K_BASE_VADDR to K_END_VADDR includes the reserved virtual addr space by the HAL
 // if HAL's reserved virtual addr will be mapped to different physical pages, the HAL should make the change
-k_address_space_t KAPI ke_create_address_space(k_address_space_t address_space,
-                                               k_physical_page_alloc alloc);
+address_space_t KABI ke_create_address_space(address_space_t address_space,
+                                               page_alloc_func_t alloc);
 
 // this function destroys the target address space without destroying the K_BASE_VADDR to K_END_VADDR
 // target_addr_space is guaranteed to be not the same as the current address space
 // when the function returns, the current address space must stay unchanged
-void KAPI ke_destroy_address_space(k_address_space_t address_space,
-                                   k_physical_page_free free);
+void KABI ke_destroy_address_space(address_space_t address_space,
+                                   page_free_func_t free);
 
 // as the name implies
-void KAPI ke_switch_address_space(k_address_space_t target_addr_space);
+void KABI ke_switch_address_space(address_space_t target_addr_space);
 
 #endif

@@ -12,11 +12,11 @@ typedef struct
 {
     uint64_t krnl_start;
     uint64_t krnl_end;
-    k_hal_intr_info_t intr_info;
-    k_pmm_info_t* pmm_info;
+    intr_info_t intr_info;
+    pmm_info_t* pmm_info;
     char cpu_vd_str[13];
-} k_hal_boot_info_t;
+} boot_info_t;
 
-extern void KAPI ke_main(k_hal_boot_info_t *info);
+extern void KABI ke_main(boot_info_t *info);
 
 #endif

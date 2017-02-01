@@ -6,7 +6,7 @@
 #ifndef _G_ABI_H_
 #define _G_ABI_H_
 
-#define KAPI __attribute__((sysv_abi))
+#define KABI __attribute__((sysv_abi))
 #define UAPI __attribute__((sysv_abi))
 
 #endif
