@@ -1,9 +1,10 @@
-#include <hal_intr.h>
+#include "hal_intr.h"
 #include "hal_arch.h"
 #include "s_atomic.h"
 #include "s_boot.h"
 #include "s_context.h"
 #include "s_intr.h"
+#include "s_print.h"
 
 int32_t KABI ke_interlocked_increment_32(int32_t *target, int32_t increment)
 {

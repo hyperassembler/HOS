@@ -4,6 +4,9 @@
 #include "g_abi.h"
 #include "g_type.h"
 
-extern void KABI ke_printf(const char*, ...);
+//TODO: Get rid of this
+#include "hal_print.h"
+
+#define ke_printf(x, ...) hal_printf(x, __VA_ARGS__)
 
 #endif

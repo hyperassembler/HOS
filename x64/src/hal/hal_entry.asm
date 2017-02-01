@@ -13,7 +13,7 @@ MULTIBOOT_HEADER_ALIGNMENT equ 8
 MULTIBOOT_LOADED_MAGIC equ 0x36d76289
 MULTIBOOT_MAGIC_NUMBER equ 0xE85250D6
 MULTIBOOT_ARCH equ 0
-MULTIBOOT_CHECK_SUM equ -(MULTIBOOT_MAGIC_NUMBER + MULTIBOOT_HEADER_SIZE + MULTIBOOT_ARCH)
+MULTIBOOT_CHECK_SUM equ (0xFFFFFFFF - (MULTIBOOT_MAGIC_NUMBER + MULTIBOOT_HEADER_SIZE + MULTIBOOT_ARCH) + 1)
 
 ;align MULTIBOOT_HEADER_ALIGNMENT
 MULTIBOOT_HEADER:
@@ -121,7 +121,7 @@ hlt
 .loaded_by_grub:
 
 ; set stack pointer
-mov esp, KERNEL_STACK
+mov esp, 0
 
 ; save multiboot_info*
 mov esi,ebx
@@ -230,7 +230,7 @@ mov gs,ax
 mov ss,ax
 
 ; align 16 bytes like this for now
-mov rsp,KERNEL_STACK
+mov rsp, 0
 mov rdi,rsi ; multiboot_info*
 call hal_main
 hlt
@@ -247,4 +247,3 @@ times KERNEL_HEAP_SIZE db 0 ; initially 8k heap
 [BITS 64]
 align 4096 ;4k alignment
 times KERNEL_STACK_SIZE db 0 ; initially 8k stack
-KERNEL_STACK:

@@ -1,5 +1,5 @@
 #include "k_test_driver.h"
-#include "../lib/inc/avl_tree.h"
+#include "avl_tree.h"
 
 typedef struct
 {

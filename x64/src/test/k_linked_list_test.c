@@ -1,7 +1,7 @@
 #include "k_test_driver.h"
-#include "../lib/inc/linked_list.h"
+#include "linked_list.h"
 #include "k_lib_test.h"
-#include "../lib/inc/sxtdlib.h"
+#include "sxtdlib.h"
 
 typedef struct
 {

@@ -7,7 +7,7 @@
 #include "hal_mem.h"
 #include "hal_intr.h"
 #include "hal_arch.h"
-#include "../lib/inc/sxtdlib.h"
+#include "sxtdlib.h"
 #include "s_boot.h"
 
 extern char kernel_start[];
