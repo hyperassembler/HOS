@@ -1,38 +1,33 @@
+OUTPUT_FORMAT(elf64-x86-64)
+ENTRY(HAL_ENTRY32_PADDR)
+OUTPUT_ARCH(i386:x86-64)
+
 SECTIONS
 {
-  . = 0xFFFFFFFF80000000;
+  . = HAL_KERNEL_BASE_VADDR + HAL_KERNEL_BASE_PADDR;
 
   kernel_start = .;
 
-  .entry ALIGN(0x1000) : AT(ADDR(.entry) - 0xFFFFFFFF80000000)
+  .multiboot_header ALIGN(0x1000) : AT(ADDR(.multiboot_header) - HAL_KERNEL_BASE_VADDR)
   {
-    *(.entry)
+    *(.multiboot_header)
   }
 
-  .text ALIGN(0x1000) : AT(ADDR(.text) - 0xFFFFFFFF80000000)
+  .text ALIGN(0x1000) : AT(ADDR(.text) - HAL_KERNEL_BASE_VADDR)
   {
     *(.text)
   }
 
-  .data ALIGN(0x1000) : AT(ADDR(.data) - 0xFFFFFFFF80000000)
+  .data ALIGN(0x1000) : AT(ADDR(.data) - HAL_KERNEL_BASE_VADDR)
   {
     *(.data)
-    *(.rodata)
+    *(.rodata*)
   }
 
-  .bss ALIGN(0x1000) : AT(ADDR(.bss) - 0xFFFFFFFF80000000)
+  .bss ALIGN(0x1000) : AT(ADDR(.bss) - HAL_KERNEL_BASE_VADDR)
   {
     *(.bss)
-  }
-
-  .heap ALIGN(0x1000) : AT(ADDR(.heap) - 0xFFFFFFFF80000000)
-  {
-    *(.heap)
-  }
-
-  .stack ALIGN(0x1000) : AT(ADDR(.stack) - 0xFFFFFFFF80000000)
-  {
-    *(.stack)
+    *(COMMON)
   }
 
   kernel_end = .;

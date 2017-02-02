@@ -4,63 +4,52 @@
 
 extern hal_main
 
-; IMPORTANT: This module should be 4k-page aliened
-[SECTION .entry]
-[BITS 32]
-; MultiBoot Header
+HAL_KERNEL_BASE_VADDR equ 0xFFFFFFFF80000000
+global HAL_KERNEL_BASE_VADDR 
+
+HAL_KERNEL_BASE_PADDR equ 0x4000000
+global HAL_KERNEL_BASE_PADDR
+
+HAL_ENTRY32_PADDR equ hal_entry_32 - HAL_KERNEL_BASE_VADDR
+global HAL_ENTRY32_PADDR
+
 MULTIBOOT_TAG_ALIGNMENT equ 8
 MULTIBOOT_HEADER_ALIGNMENT equ 8
 MULTIBOOT_LOADED_MAGIC equ 0x36d76289
 MULTIBOOT_MAGIC_NUMBER equ 0xE85250D6
 MULTIBOOT_ARCH equ 0
-MULTIBOOT_CHECK_SUM equ (0xFFFFFFFF - (MULTIBOOT_MAGIC_NUMBER + MULTIBOOT_HEADER_SIZE + MULTIBOOT_ARCH) + 1)
+MULTIBOOT_CHECK_SUM equ (0 - (MULTIBOOT_MAGIC_NUMBER + MULTIBOOT_HEADER_SIZE + MULTIBOOT_ARCH))
+MULTIBOOT_REQ_MINFO equ 4
+MULTIBOOT_REQ_MMAP equ 6
+MULTIBOOT_REQ_APM equ 10
 
-;align MULTIBOOT_HEADER_ALIGNMENT
-MULTIBOOT_HEADER:
+[SECTION .multiboot_header]
+[BITS 32]
+;====================
+;header tag
+align MULTIBOOT_HEADER_ALIGNMENT
+multiboot_header_tag:
 dd MULTIBOOT_MAGIC_NUMBER
 dd MULTIBOOT_ARCH
 dd MULTIBOOT_HEADER_SIZE
 dd MULTIBOOT_CHECK_SUM
 ;====================
 ;INFO_REQUEST_TAG
-MULTIBOOT_REQ_MINFO equ 4
-MULTIBOOT_REQ_MMAP equ 6
-MULTIBOOT_REQ_APM equ 10
-MULTIBOOT_INFO_TAG:
+align MULTIBOOT_TAG_ALIGNMENT
+multiboot_info_tag:
 dw 0x1 ; type=1
 dw 0x0 ; flag=0
 dd MULTIBOOT_INFO_TAG_SIZE
 ;dd MULTIBOOT_REQ_MINFO
 dd MULTIBOOT_REQ_MMAP
 dd MULTIBOOT_REQ_APM
-MULTIBOOT_INFO_TAG_SIZE equ ($ - MULTIBOOT_INFO_TAG)
-;====================
-;Address_tag
-align MULTIBOOT_TAG_ALIGNMENT
-MULTIBOOT_ADDRESS_TAG:
-dw 0x2 ;type=2
-dw 0x0 ;flag=0
-dd MULTIBOOT_ADDRESS_TAG_SIZE; size
-dd MULTIBOOT_HEADER ; Since at the beginning of the file
-dd MULTIBOOT_HEADER ; load start
-dd 0 ; load end
-dd 0 ; bss
-MULTIBOOT_ADDRESS_TAG_SIZE equ ( $ - MULTIBOOT_ADDRESS_TAG)
-;====================
-;Entry_tag
-align MULTIBOOT_TAG_ALIGNMENT
-MULTIBOOT_ENTRY_TAG:
-dw 0x3; type=3
-dw 0x0; flag=0
-dd MULTIBOOT_ENTRY_TAG_SIZE
-dd entry_32
-MULTIBOOT_ENTRY_TAG_SIZE equ ($ - MULTIBOOT_ENTRY_TAG)
+MULTIBOOT_INFO_TAG_SIZE equ ($ - multiboot_info_tag)
 ;====================
 ;MODULE ALIGNMENT TAG
 align MULTIBOOT_TAG_ALIGNMENT
 dw 0x6; type=6
 dw 0x0; flag=0
-dd 8
+dd 0x8
 ;====================
 ;End_tag
 align MULTIBOOT_TAG_ALIGNMENT
@@ -68,48 +57,13 @@ dw 0x0
 dw 0x0
 dd 0x8
 ;====================
-MULTIBOOT_HEADER_SIZE equ ($ - MULTIBOOT_HEADER)
+MULTIBOOT_HEADER_SIZE equ ($ - multiboot_header_tag)
 
-
-align 4096
-; temporary page table
-PML4_BASE:
-times 512 dq 0 ;reserved the rest for page entries
+[SECTION .text]
+[BITS 32]
 
 align 4096
-PDPT_BASE:
-times 512 dq 0 ;reserved the rest for page entries
-
-align 4096
-; long mode gdt
-GDT64:                           ; Global Descriptor Table (64-bit).
-    ; NULL
-    dw 0                         ; Limit (low).
-    dw 0                         ; Base (low).
-    db 0                         ; Base (middle)
-    db 0                         ; Access.
-    db 0                         ; Granularity.
-    db 0                         ; Base (high).
-    SLCT_CODE equ $ - GDT64      ; The code descriptor.
-    dw 0                         ; Limit (low).
-    dw 0                         ; Base (low).
-    db 0                         ; Base (middle)
-    db 10011010b                 ; Access.
-    db 00100000b                 ; Granularity.
-    db 0                         ; Base (high).
-    SLCT_DATA equ $ - GDT64      ; The data descriptor.
-    dw 0                         ; Limit (low).
-    dw 0                         ; Base (low).
-    db 0                         ; Base (middle)
-    db 10010010b                 ; Access.
-    db 00000000b                 ; Granularity.
-    db 0                         ; Base (high).
-    .GDT64_PTR:                  ; The GDT-pointer.
-    dw $ - GDT64 - 1             ; Limit.
-    dq GDT64                     ; Base.
-
-align 4096
-entry_32:
+hal_entry_32:
 ; close interrupt
 cli
 cld
@@ -127,7 +81,7 @@ mov esp, 0
 mov esi,ebx
 
 ; check x64 support
-call _ensure_support_x64
+call halp_ensure_support_x64
 cmp eax,1
 je .init_x64
 hlt
@@ -183,10 +137,10 @@ mov cr0, eax                                   ; Set control register 0 to the A
 
 ; enter x64
 lgdt [GDT64.GDT64_PTR]
-jmp SLCT_CODE:entry
+jmp SLCT_CODE:halp_entry_64
 hlt
 
-_ensure_support_x64:
+halp_ensure_support_x64:
 push ebp
 mov ebp,esp
 pushfd
@@ -220,7 +174,7 @@ ret
 
 [SECTION .text]
 [BITS 64]
-entry:
+halp_entry_64:
 cli
 mov ax,SLCT_DATA
 mov ds,ax
@@ -235,15 +189,50 @@ mov rdi,rsi ; multiboot_info*
 call hal_main
 hlt
 
+[SECTION .data]
+[BITS 64]
 KERNEL_HEAP_SIZE equ 8192
 KERNEL_STACK_SIZE equ 8192
 
-[SECTION .heap]
-[BITS 64]
 align 4096 ;4k alignment
 times KERNEL_HEAP_SIZE db 0 ; initially 8k heap
 
-[SECTION .stack]
-[BITS 64]
 align 4096 ;4k alignment
 times KERNEL_STACK_SIZE db 0 ; initially 8k stack
+
+align 4096
+; temporary page table
+PML4_BASE:
+times 512 dq 0 ;reserved the rest for page entries
+
+align 4096
+PDPT_BASE:
+times 512 dq 0 ;reserved the rest for page entries
+
+align 4096
+; long mode gdt
+GDT64:                           ; Global Descriptor Table (64-bit).
+    ; NULL
+    dw 0                         ; Limit (low).
+    dw 0                         ; Base (low).
+    db 0                         ; Base (middle)
+    db 0                         ; Access.
+    db 0                         ; Granularity.
+    db 0                         ; Base (high).
+    SLCT_CODE equ $ - GDT64      ; The code descriptor.
+    dw 0                         ; Limit (low).
+    dw 0                         ; Base (low).
+    db 0                         ; Base (middle)
+    db 10011010b                 ; Access.
+    db 00100000b                 ; Granularity.
+    db 0                         ; Base (high).
+    SLCT_DATA equ $ - GDT64      ; The data descriptor.
+    dw 0                         ; Limit (low).
+    dw 0                         ; Base (low).
+    db 0                         ; Base (middle)
+    db 10010010b                 ; Access.
+    db 00000000b                 ; Granularity.
+    db 0                         ; Base (high).
+    .GDT64_PTR:                  ; The GDT-pointer.
+    dw $ - GDT64 - 1             ; Limit.
+    dq GDT64                     ; Base.

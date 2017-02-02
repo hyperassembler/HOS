@@ -15,14 +15,13 @@ TEMP_DIR := tmp
 HEADER_DIRS := $(call rdircardex, *,*.h)
 ALL_TEMP_DIRS := $(addprefix $(TEMP_DIR)/,$(call rdircard,*))
 
-C_FLAGS := -m64 -std=c11 -g -c $(addprefix -I, $(HEADER_DIRS)) -mcmodel=kernel -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Werror -Wextra -Wno-comment
-ASM_FLAGS := -g -f elf64 -I $(ASM_SRC_PATH_64)/
+C_FLAGS := -m64 -std=c11 -g -c $(addprefix -I, $(HEADER_DIRS)) -mcmodel=kernel -ffreestanding -nostdlib -lgcc -fno-stack-protector -fno-builtin -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Werror -Wextra -Wno-comment
+ASM_FLAGS := -f elf64 -g -I $(ASM_SRC_PATH_64)/
 LD_FLAGS := -melf_x86_64 -I
 
 C_SRC := $(call rwildcard, ./, *.c)
 ASM_SRC := $(call rwildcard, ./, *.asm)
 
-KERNEL_BIN := kernel.bin
 KERNEL_ELF := kernel.elf
 KERNEL_DASM := kernel.dasm
 
@@ -40,13 +39,14 @@ init:
 
 compile: $(C_OBJ) $(ASM_OBJ)
 
-link: $(KERNEL_BIN) $(KERNEL_ELF)
+link: $(KERNEL_ELF)
 
 buildiso:
 	mkdir -p $(TEMP_DIR)/temp_iso/secX
 	mkdir -p $(TEMP_DIR)/temp_iso/boot
 	mkdir -p $(TEMP_DIR)/temp_iso/boot/grub
-	cp $(TEMP_DIR)/$(KERNEL_BIN) $(TEMP_DIR)/temp_iso/secX/$(KERNEL_BIN)
+	cp $(TEMP_DIR)/$(KERNEL_ELF) $(TEMP_DIR)/temp_iso/secX/$(KERNEL_ELF)
+	cp $(TEMP_DIR)/$(KERNEL_ELF) ./
 	cp $(GRUB_CFG) $(TEMP_DIR)/temp_iso/boot/grub/
 	grub-mkrescue -o secX.iso $(TEMP_DIR)/temp_iso
 
@@ -57,6 +57,7 @@ clean: clean_temp
 	rm -rf $(KERNEL_DASM)
 	rm -rf secX.iso
 	rm -rf *.log
+	rm -rf $(KERNEL_ELF)
 
 %.o: %.c
 	$(CC) $(C_FLAGS) -o $(TEMP_DIR)/$@ $^
@@ -64,11 +65,8 @@ clean: clean_temp
 %.oasm: %.asm
 	$(ASM) $(ASM_FLAGS) -o $(TEMP_DIR)/$@ $^
 
-$(KERNEL_BIN): $(ALL_OBJ)
-	$(LD) $(LD_FLAGS) -T $(LD_SCRIPT) --oformat binary -o $(TEMP_DIR)/$(KERNEL_BIN) $(ALL_OBJ)
-
 $(KERNEL_ELF): $(ALL_OBJ)
-	$(LD) $(LD_FLAGS) -T $(LD_SCRIPT) --oformat elf64-x86-64 -o $(TEMP_DIR)/$(KERNEL_ELF) $(ALL_OBJ)
+	$(LD) $(LD_FLAGS) -T $(LD_SCRIPT) -o $(TEMP_DIR)/$(KERNEL_ELF) $(ALL_OBJ)
 
 disasm:
 	objdump -M intel -D $(TEMP_DIR)/$(KERNEL_ELF) > $(KERNEL_DASM)
