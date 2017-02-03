@@ -1,6 +1,6 @@
 ASM := nasm
-CC := x86_64-linux-gnu-gcc
-LD := x86_64-linux-gnu-gcc
+CC := x86_64-elf-gcc
+LD := x86_64-elf-gcc
 
 #Recursive Wildcard
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))

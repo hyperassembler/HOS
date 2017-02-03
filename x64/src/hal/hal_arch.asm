@@ -24,7 +24,8 @@ pop rax
 push rax ; eflags
 
 push rsi ; cs
-push qword .reload ;rip
+mov rax, .reload
+push rax ;rip
 iretq
 .reload:
 mov es,dx
