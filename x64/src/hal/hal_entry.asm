@@ -2,23 +2,15 @@
 ; Distributed under GPL license
 ; See COPYING under root for details
 
-extern hal_main
-
-HAL_KERNEL_BASE_VADDR equ 0xFFFFFFFF80000000
-global HAL_KERNEL_BASE_VADDR 
-
-HAL_KERNEL_BASE_PADDR equ 0x4000000
-global HAL_KERNEL_BASE_PADDR
-
-HAL_ENTRY32_PADDR equ hal_entry_32 - HAL_KERNEL_BASE_VADDR
-global HAL_ENTRY32_PADDR
+%include "hal_addr.inc"
 
 MULTIBOOT_TAG_ALIGNMENT equ 8
 MULTIBOOT_HEADER_ALIGNMENT equ 8
 MULTIBOOT_LOADED_MAGIC equ 0x36d76289
 MULTIBOOT_MAGIC_NUMBER equ 0xE85250D6
 MULTIBOOT_ARCH equ 0
-MULTIBOOT_CHECK_SUM equ (0 - (MULTIBOOT_MAGIC_NUMBER + MULTIBOOT_HEADER_SIZE + MULTIBOOT_ARCH))
+; NASM does not like 
+MULTIBOOT_CHECK_SUM equ (0xFFFFFFFF - (MULTIBOOT_MAGIC_NUMBER + MULTIBOOT_HEADER_SIZE + MULTIBOOT_ARCH) + 1)
 MULTIBOOT_REQ_MINFO equ 4
 MULTIBOOT_REQ_MMAP equ 6
 MULTIBOOT_REQ_APM equ 10
@@ -61,8 +53,8 @@ MULTIBOOT_HEADER_SIZE equ ($ - multiboot_header_tag)
 
 [SECTION .text]
 [BITS 32]
-
 align 4096
+global hal_entry_32
 hal_entry_32:
 ; close interrupt
 cli
@@ -93,14 +85,14 @@ and eax, 01111111111111111111111111111111b     ; Clear the PG-bit, which is bit 
 mov cr0, eax                                   ; Set control register 0 to the A-register.
 
 ; write values for pml4
-mov eax,PML4_BASE
-mov dword [eax], PDPT_BASE + 3
+mov eax,PML4_BASE - HAL_KERNEL_BASE_VADDR
+mov dword [eax], PDPT_BASE + 3 - HAL_KERNEL_BASE_VADDR
 
 ; write values for pdpt
 xor ecx, ecx
 add ecx, 131
 
-mov eax, PDPT_BASE
+mov eax, PDPT_BASE- HAL_KERNEL_BASE_VADDR
 mov dword [eax], ecx
 
 add eax,8
@@ -127,7 +119,7 @@ or eax, 1 << 8               ; Set the LM-bit which is the 9th bit (bit 8).
 wrmsr                        ; Write to the model-specific register.
 
 ; let cr3 point at page table
-mov eax, PML4_BASE
+mov eax, PML4_BASE- HAL_KERNEL_BASE_VADDR
 mov cr3,eax
 
 ; enable paging, enter compatibility mode
@@ -136,8 +128,8 @@ or eax, 1 << 31                                ; Set the PG-bit, which is bit 31
 mov cr0, eax                                   ; Set control register 0 to the A-register.
 
 ; enter x64
-lgdt [GDT64.GDT64_PTR]
-jmp SLCT_CODE:halp_entry_64
+lgdt [GDT64.GDT64_PTR - HAL_KERNEL_BASE_VADDR]
+jmp $ ;SLCT_CODE:halp_entry_64 - HAL_KERNEL_BASE_VADDR
 hlt
 
 halp_ensure_support_x64:
@@ -174,6 +166,7 @@ ret
 
 [SECTION .text]
 [BITS 64]
+extern hal_main
 halp_entry_64:
 cli
 mov ax,SLCT_DATA

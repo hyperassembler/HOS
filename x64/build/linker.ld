@@ -1,14 +1,14 @@
 OUTPUT_FORMAT(elf64-x86-64)
-ENTRY(HAL_ENTRY32_PADDR)
 OUTPUT_ARCH(i386:x86-64)
+ENTRY(hal_entry_32)
 
 SECTIONS
 {
   . = HAL_KERNEL_BASE_VADDR + HAL_KERNEL_BASE_PADDR;
 
-  kernel_start = .;
+  HAL_KERNEL_START_VADDR = .;
 
-  .multiboot_header ALIGN(0x1000) : AT(ADDR(.multiboot_header) - HAL_KERNEL_BASE_VADDR)
+  .multiboot_header : AT(ADDR(.multiboot_header) - HAL_KERNEL_BASE_VADDR)
   {
     *(.multiboot_header)
   }
@@ -30,5 +30,15 @@ SECTIONS
     *(COMMON)
   }
 
-  kernel_end = .;
+  HAL_KERNEL_END_VADDR = .;
+
+    /DISCARD/ :
+	{
+		*(.gcc_except_table)
+		*(.eh_frame)
+		*(.note)
+		*(.comment)
+		*(.rel.*)
+		*(.rela.*)
+	}
 }

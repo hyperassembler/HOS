@@ -10,8 +10,8 @@
 #include "sxtdlib.h"
 #include "s_boot.h"
 
-extern char kernel_start[];
-extern char kernel_end[];
+extern char HAL_KERNEL_START_VADDR[];
+extern char HAL_KERNEL_END_VADDR[];
 
 static void KABI _hal_obtain_cpu_info(boot_info_t *hal_info)
 {
@@ -38,8 +38,8 @@ void KABI hal_main(void *m_info)
     boot_info_t* boot_info = halloc(sizeof(boot_info_t));
 
     // set up HAL def
-    boot_info->krnl_start = (uint64_t)kernel_start;
-    boot_info->krnl_end = (uint64_t)kernel_end;
+    boot_info->krnl_start = (uint64_t)HAL_KERNEL_START_VADDR;
+    boot_info->krnl_end = (uint64_t)HAL_KERNEL_END_VADDR;
 
     // obtain cpu info
     _hal_obtain_cpu_info(boot_info);
