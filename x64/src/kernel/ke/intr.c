@@ -1,4 +1,4 @@
-#include <assert.h>
+#include "assert.h"
 #include "intr.h"
 
 irql_t KABI ke_raise_irql(irql_t irql)

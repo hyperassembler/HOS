@@ -1,4 +1,3 @@
-#include <spin_lock.h>
 #include "atomic.h"
 #include "spin_lock.h"
 
