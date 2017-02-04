@@ -64,10 +64,10 @@ cld
 cmp eax,MULTIBOOT_LOADED_MAGIC
 je .loaded_by_grub
 hlt
-.loaded_by_grub:
 
+.loaded_by_grub:
 ; set stack pointer
-mov esp, 0
+mov esp, GET_PADDR(hal_temp_stack)
 
 ; save multiboot_info*
 mov esi,ebx
@@ -81,7 +81,7 @@ hlt
 .init_x64:
 ; disable paging first
 mov eax, cr0                                   ; Set the A-register to control register 0.
-and eax, 01111111111111111111111111111111b     ; Clear the PG-bit, which is bit 31.
+and eax, 0x7FFFFFFF                            ; Clear the PG-bit, which is bit 31.
 mov cr0, eax                                   ; Set control register 0 to the A-register.
 
 ; write values for pml4
@@ -188,13 +188,14 @@ KERNEL_HEAP_SIZE equ 8192
 KERNEL_STACK_SIZE equ 8192
 
 align 4096 ;4k alignment
+hal_temp_heap:
 times KERNEL_HEAP_SIZE db 0 ; initially 8k heap
-
 align 4096 ;4k alignment
 times KERNEL_STACK_SIZE db 0 ; initially 8k stack
+hal_temp_stack:
 
+; PAGE TABLES YA BOI GUZMA YO!
 align 4096
-; temporary page table
 PML4_BASE:
 times 512 dq 0 ;reserved the rest for page entries
 
