@@ -1,7 +1,7 @@
 ASM := nasm
 CC := x86_64-elf-gcc
 LD := x86_64-elf-gcc
-
+OBJDUMP := x86_64-elf-objdump
 #Recursive Wildcard
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
 rdircard=$(sort $(dir $(call rwildcard,$1,*)))
@@ -64,4 +64,4 @@ $(KERNEL_ELF): $(ALL_OBJ)
 	$(LD) $(LD_FLAGS) -T $(LD_SCRIPT) -o $(TARGET_DIR)/$(KERNEL_ELF) $(ALL_OBJ)
 
 disasm:
-	objdump -M intel -D $(TARGET_DIR)/$(KERNEL_ELF) > $(TARGET_DIR)/$(KERNEL_DASM)
+	$(OBJDUMP) -M intel -D $(TARGET_DIR)/$(KERNEL_ELF) > $(TARGET_DIR)/$(KERNEL_DASM)

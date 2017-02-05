@@ -2,7 +2,6 @@
  * Distributed under GPL license
  * See COPYING under root for details
  */
-
 #include "g_abi.h"
 #include "g_type.h"
 #include "hal_mem.h"

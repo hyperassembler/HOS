@@ -67,7 +67,7 @@ hlt
 
 .loaded_by_grub:
 ; set stack pointer
-mov esp, GET_PADDR(hal_temp_stack)
+mov esp, GET_PADDR(kernel_stack_end)
 
 ; save multiboot_info*
 mov esi,ebx
@@ -84,28 +84,53 @@ mov eax, cr0                                   ; Set the A-register to control r
 and eax, 0x7FFFFFFF                            ; Clear the PG-bit, which is bit 31.
 mov cr0, eax                                   ; Set control register 0 to the A-register.
 
-; write values for pml4
-mov eax,PML4_BASE - HAL_KERNEL_BASE_VADDR
-mov dword [eax], PDPT_BASE + 3 - HAL_KERNEL_BASE_VADDR
+; for pages mapped here, attributes are always:
+; PRESENT - 1 << 0
+; RW - 1 << 1
+; RING0 - 0 << 2
+; Page Level Write Back - 0 << 3
+; Page Cache Enabled - 0 << 4
+; Not Accessed - 0 << 5
+; Not dirty - 0 << 6 
+; No PAT - 0 << 7 (must be 0 for recursive)
+; Not Global - 0 << 8
+; Execution Enabled - 0 << 63
+; To summary - 3 + ADDR
+; since 4k aligned, we can just add the attribute
+PAGE_TABLE_ATTRIBUTE equ 0011b
 
-; write values for pdpt
-xor ecx, ecx
-add ecx, 131
+; need to map the PDE (1GB region) of the identity mapping + 2 * PTE (identity + vaddr)
+; also need to map the kernel itself to the VIRT_ADDR + PHYS_ADDR
+; calculate the Nth 2MB within the first 1GB
+mov eax, HAL_KERNEL_BASE_PADDR
+mov ecx, 1*1024*1024*1024;
+xor edx, edx
+div ecx ; we need the remainder here (EDX)
+mov eax, edx
+mov ecx, 2*1024*1024 ; 2MB
+xor edx, edx
+div ecx ; divide ecx:eax by ecx EAX = quotient, EDX = remainder, 0 in this case
+mov edx, eax
 
-mov eax, PDPT_BASE- HAL_KERNEL_BASE_VADDR
-mov dword [eax], ecx
+; map the identity PDE
+mov eax, GET_PADDR(pde_base_kernel_static_identity)
+mov dword [eax + edx * 8], GET_PADDR(pte_base_kernel_static) + PAGE_TABLE_ATTRIBUTE
 
-add eax,8
-add ecx,0x40000000 ;1G
-mov dword [eax], ecx
+; map the kernel static PDE
+mov eax, GET_PADDR(pde_base_kernel_static)
+; map the first 2MB of the last 1GB to kernel static pte
+mov dword [eax + edx * 8], GET_PADDR(pte_base_kernel_static) + PAGE_TABLE_ATTRIBUTE
 
-add eax,8
-add ecx,0x40000000 ;1G
-mov dword [eax], ecx
-
-add eax,8
-add ecx,0x40000000 ;1G
-mov dword [eax], ecx
+; map everything from the start of the kernel (0MB)
+mov eax, GET_PADDR(pte_base_kernel_static)
+mov edx, 0 ;512 times
+mov ecx, HAL_KERNEL_BASE_PADDR + PAGE_TABLE_ATTRIBUTE
+.pte_static_loop:
+mov dword [eax + edx * 8], ecx
+add ecx, 4096 ;4k per entry
+inc edx
+cmp edx, 512
+jne .pte_static_loop
 
 ; enable PAE
 mov eax, cr4                 ; Set the A-register to control register 4.
@@ -119,8 +144,8 @@ or eax, 1 << 8               ; Set the LM-bit which is the 9th bit (bit 8).
 wrmsr                        ; Write to the model-specific register.
 
 ; let cr3 point at page table
-mov eax, PML4_BASE- HAL_KERNEL_BASE_VADDR
-mov cr3,eax
+mov eax, GET_PADDR(pml4_base)
+mov cr3, eax
 
 ; enable paging, enter compatibility mode
 mov eax, cr0                                   ; Set the A-register to control register 0.
@@ -128,8 +153,8 @@ or eax, 1 << 31                                ; Set the PG-bit, which is bit 31
 mov cr0, eax                                   ; Set control register 0 to the A-register.
 
 ; enter x64
-lgdt [GDT64.GDT64_PTR - HAL_KERNEL_BASE_VADDR]
-jmp $ ;SLCT_CODE:halp_entry_64 - HAL_KERNEL_BASE_VADDR
+lgdt [GET_PADDR(GDT64.GDT64_PTR)]
+jmp SLCT_CODE:GET_PADDR(halp_entry_64)
 hlt
 
 halp_ensure_support_x64:
@@ -168,7 +193,10 @@ ret
 [BITS 64]
 extern hal_main
 halp_entry_64:
-cli
+; note that we are still at the identity mapping
+mov rax, .entry_64
+jmp rax
+.entry_64:
 mov ax,SLCT_DATA
 mov ds,ax
 mov es,ax
@@ -176,32 +204,95 @@ mov fs,ax
 mov gs,ax
 mov ss,ax
 
-; align 16 bytes like this for now
-mov rsp, 0
-mov rdi,rsi ; multiboot_info*
+; set correct rsp to the new kernel stack vaddr, the top of which is the start of the kernel 
+mov rsp, HAL_KERNEL_BASE_VADDR 
+mov rdi, rsi ; multiboot_info*
+add rdi, HAL_KERNEL_BASE_VADDR
 call hal_main
 hlt
 
 [SECTION .data]
 [BITS 64]
-KERNEL_HEAP_SIZE equ 8192
-KERNEL_STACK_SIZE equ 8192
-
-align 4096 ;4k alignment
-hal_temp_heap:
-times KERNEL_HEAP_SIZE db 0 ; initially 8k heap
-align 4096 ;4k alignment
-times KERNEL_STACK_SIZE db 0 ; initially 8k stack
-hal_temp_stack:
-
-; PAGE TABLES YA BOI GUZMA YO!
-align 4096
-PML4_BASE:
-times 512 dq 0 ;reserved the rest for page entries
+; we only map two sections: the last 512 GB for kernel and the second last 512 GB for 
+; recursive page table. YA BOI GUZMA
+; 0xFFFF 8000 0000 0000 unmapped kernel
+; 0xFFFF FF00 0000 0000 512 GB Recursive page table (MAP THIS)
+; 0xFFFF FF80 0000 0000 510 GB Kernel Dynamic
+; inside dynamic, the lowest addr is for heap and the highest is for the stack
+; 0xFFFF FFFF 8000 0000 to 0xFFFF FFFF FFFF FFFF 2 GB Kernel static (MAP THIS)
 
 align 4096
-PDPT_BASE:
-times 512 dq 0 ;reserved the rest for page entries
+pml4_base:
+; 512 GB per entry, we need 4 ENTRIES, BUT ONE IS MAPPED TO ITSELF
+; within the first 512G (Definitely since grub does not load to more than 4G), identity map the kernel
+dq GET_PADDR(pdpt_base_identity) + PAGE_TABLE_ATTRIBUTE
+times 509 dq 0
+; 511th entry for 2nd last 512G
+dq GET_PADDR(pml4_base) + PAGE_TABLE_ATTRIBUTE
+; 512th entry for last 512G (kernel space)
+dq GET_PADDR(pdpt_base) + PAGE_TABLE_ATTRIBUTE
+ 
+align 4096
+; 1GB per entry
+pdpt_base:
+; this pdpt is for the pml4 last 512 GB entry 
+; we need 3 ENTRIES, 1 for kernel and 2 for kernel dynamics (first 1GB heap + last 1GB stack)
+; map the 1st GB to kernel dynamic heap
+dq GET_PADDR(pde_base_kernel_dynamic_heap) + PAGE_TABLE_ATTRIBUTE
+times 508 dq 0
+; map the 510th GB to kernel dynamic stack
+dq GET_PADDR(pde_base_kernel_dynamic_stack) + PAGE_TABLE_ATTRIBUTE
+; map the 511th GB to kernel static space
+dq GET_PADDR(pde_base_kernel_static) + PAGE_TABLE_ATTRIBUTE
+; the 512th GB is unmapped
+dq 0
+
+pdpt_base_identity:
+; this pdpt is for the kernel identity mapping
+; the kernel is definitely loaded to the first 1GB
+dq GET_PADDR(pde_base_kernel_static_identity) + PAGE_TABLE_ATTRIBUTE
+times 511 dq 0
+
+align 4096
+; 2MB per entry
+pde_base_kernel_dynamic_heap:
+; this pde is for the kernel dynamic pdpt entry (kernel heap), we need 1 entry to map the initial 2M
+; map the first 2MB of the 510 GB to kernel heap
+dq GET_PADDR(pte_base_kernel_dynamic_heap) + PAGE_TABLE_ATTRIBUTE
+times 511 dq 0
+
+pde_base_kernel_dynamic_stack:
+; this pde is for the kernel dynamic pdpt entry (kernel stack), we need 1 entry to map the last 2M
+times 511 dq 0
+; map the last 2MB of the 510 GB to kernel stack
+dq GET_PADDR(pte_base_kernel_dynamic_stack) + PAGE_TABLE_ATTRIBUTE
+
+pde_base_kernel_static:
+; this pde is for the kernel static pdpt entry (kernel core), we need 1 entry to map the initial 2M
+; map the first 2MB of the last 1GB to kernel static pte
+times 512 dq 0
+
+pde_base_kernel_static_identity:
+; this pde is for the kernel static identity pdpt entry (kernel core), we need 1 entry to map the initial 2M
+times 512 dq 0
+
+align 4096
+; 4KB per entry
+pte_base_kernel_dynamic_heap:
+; this pte is for the kernel dynamic heap pde entry, we need 1 entry to map the kernel heap (4k)
+; map the heap segment (first 4k)
+dq GET_PADDR(kernel_heap) + PAGE_TABLE_ATTRIBUTE
+times 511 dq 0
+
+pte_base_kernel_dynamic_stack:
+; this pte is for the kernel dynamic stack pde entry, we need 1 entry to map the kernel stack (4k)
+times 511 dq 0
+; map the stack segment (last 4k)
+dq GET_PADDR(kernel_stack) + PAGE_TABLE_ATTRIBUTE
+
+pte_base_kernel_static:
+; this pte is for the kernel static pde entry, we need 512 entries, map the complete 1st 2MB (TODO: calculate kernel size)
+times 512 dq 0
 
 align 4096
 ; long mode gdt
@@ -225,8 +316,17 @@ GDT64:                           ; Global Descriptor Table (64-bit).
     dw 0                         ; Base (low).
     db 0                         ; Base (middle)
     db 10010010b                 ; Access.
-    db 00000000b                 ; Granularity.
+    db 00100000b                 ; Granularity.
     db 0                         ; Base (high).
     .GDT64_PTR:                  ; The GDT-pointer.
     dw $ - GDT64 - 1             ; Limit.
-    dq GDT64                     ; Base.
+    dq GET_PADDR(GDT64)          ; Base.
+
+align 4096
+kernel_stack:
+times 4096 db 0
+kernel_stack_end:
+
+align 4096
+kernel_heap:
+times 4096 db 0
