@@ -3,6 +3,7 @@
 #################
 x64/target
 x64/*.ini
+x64/cmake-build-debug/*
 
 #################
 ## Eclipse
