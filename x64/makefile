@@ -26,6 +26,7 @@ ASM_SRC := $(call rwildcard, $(SOURCE_DIR), *.asm)
 
 KERNEL_ELF := kernel.elf
 KERNEL_DASM := kernel.dasm
+KERNEL_SYM := kernel.sym
 
 #Object files
 C_OBJ := $(C_SRC:.c=.o)
@@ -34,7 +35,7 @@ ALL_OBJ := $(addprefix $(TARGET_DIR)/,$(C_OBJ)) $(addprefix $(TARGET_DIR)/,$(ASM
 
 
 #Commands
-all: init compile link buildiso disasm
+all: init compile link buildiso disasm gensym
 
 init:
 	mkdir -p $(ALL_TARGET_DIRS)
@@ -51,6 +52,8 @@ buildiso:
 	cp $(GRUB_CFG) $(TARGET_DIR)/temp_iso/boot/grub/
 	grub-mkrescue -o $(TARGET_DIR)/secX.iso $(TARGET_DIR)/temp_iso
 
+gensym:
+	nm $(TARGET_DIR)/$(KERNEL_ELF) | grep " T " | awk '{print $$1" "$$3}' > $(TARGET_DIR)/$(KERNEL_SYM)
 clean:
 	rm -rf $(TARGET_DIR)
 
