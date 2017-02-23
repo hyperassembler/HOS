@@ -6,7 +6,7 @@
 #include "g_abi.h"
 #include "s_pmm.h"
 #include "atomic.h"
-#include "status.h"
+#include "g_status.h"
 
 //#define PMM_PAGE_ATTR_FREE_BIT 0
 //#define PMM_PAGE_ATTR_PAGED_BIT 1

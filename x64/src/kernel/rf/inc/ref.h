@@ -2,7 +2,9 @@
 #define _K_REF_H_
 
 #include "g_type.h"
-#include "status.h"
+#include "g_status.h"
+
+typedef uint32_t handle_t;
 
 typedef struct
 {

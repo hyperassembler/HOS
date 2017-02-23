@@ -1,6 +1,6 @@
 #include "assert.h"
 #include "rwwlock.h"
-#include "status.h"
+#include "g_status.h"
 #include "alloc.h"
 #include "pmm.h"
 

@@ -4,6 +4,7 @@
 #include "g_abi.h"
 #include "s_pmm.h"
 #include "s_intr.h"
+#include "g_status.h"
 
 //
 // HAL Boot Info
@@ -17,6 +18,7 @@ typedef struct
     char cpu_vd_str[13];
 } boot_info_t;
 
-extern void KABI ke_main(boot_info_t *info);
+extern status_t KABI hal_init (_IN  void* multiboot_info,
+                               _OUT boot_info_t** boot_info);
 
 #endif

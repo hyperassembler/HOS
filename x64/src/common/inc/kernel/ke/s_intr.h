@@ -24,33 +24,41 @@ typedef enum
 
 // IRQL APIs
 typedef uint32_t irql_t;
-#define K_IRQL_DISABLED_LEVEL 15
-#define K_IRQL_DPC_LEVEL 4
-#define K_IRQL_APC_LEVEL 2
-#define K_IRQL_PASSIVE_LEVEL 0
+#define K_IRQL_DISABLED_LEVEL (1 << 3)
+#define K_IRQL_DPC_LEVEL (1 << 2)
+#define K_IRQL_APC_LEVEL (1 << 1)
+#define K_IRQL_PASSIVE_LEVEL (1 << 0)
 
-extern irql_t KABI  ke_set_irql(irql_t irql);
+//
+// interrupt functions
+//
+extern void KABI hal_disable_interrupt(uint32_t interrupts);
 
-extern irql_t KABI  ke_get_irql();
+extern void KABI hal_enable_interrupt(uint32_t interrupts);
 
-extern void KABI ke_halt_cpu();
+extern void KABI hal_set_timer_timeout(uint64_t millis);
 
-extern void KABI ke_set_timer_timeout(uint64_t timeout);
+extern void KABI hal_halt_cpu();
 
-extern int32_t KABI ke_get_core_id();
+extern uint32_t KABI hal_get_current_core();
 
-extern int32_t KABI ke_issue_interrupt(int32_t core_id, uint32_t vector);
+extern void KABI hal_issue_interrupt(uint32_t core_id, uint32_t vector);
 
+//
 // Interrupt handler registration
+//
 // context is a parameter passed by the kernel. HAL must pass back.
 // intr_stack is a parameter passed by the HAL. Used by some HAL interrupt context functions.
+//
 typedef void ( KABI *k_intr_handler_t)(void *context, void *intr_stack);
 
-extern void KABI ke_register_intr_handler(uint32_t index, k_intr_handler_t handler, void *context);
+extern void KABI hal_register_intr_handler(uint32_t index, k_intr_handler_t handler, void *context);
 
-extern k_intr_handler_t KABI ke_deregister_intr_handler(uint32_t index);
+extern k_intr_handler_t KABI hal_deregister_intr_handler(uint32_t index);
 
+//
 // Exception handler registration
+//
 typedef void ( KABI *k_exc_handler_t)(uint64_t exc_addr, uint64_t exc_stack, uint64_t error_code);
 
 extern void KABI ke_register_exc_handler(exc_type_t type, k_exc_handler_t handler);

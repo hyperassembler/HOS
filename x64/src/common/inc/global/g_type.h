@@ -13,10 +13,14 @@
 
 typedef int32_t (*callback_func_t)(void *kernel_args, void *user_args);
 
-typedef uint32_t handle_t;
-
 #define STRUCT_PACKED __attribute__((packed))
 
 #define UNREFERENCED(x) {(x) = (x);}
+
+#define _OUT
+#define _IN
+#define _IN_OUT
+#define _IN_OPT
+#define _OUT_OPT
 
 #endif

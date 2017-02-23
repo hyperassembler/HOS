@@ -4,9 +4,9 @@
  */
 
 #include "hal_arch.h"
-#include "hal_intr.h"
-#include "hal_print.h"
-#include "hal_mem.h"
+#include "intr.h"
+#include "print.h"
+#include "mem.h"
 #include "sxtdlib.h"
 
 static uint8_t _idts[HAL_CORE_COUNT][IDT_ENTRY_NUM*IDT_ENTRY_SIZE];

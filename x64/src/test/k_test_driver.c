@@ -1,6 +1,6 @@
-#include "hal_print.h"
+#include "print.h"
 #include "k_test_driver.h"
-#include "hal_mem.h"
+#include "mem.h"
 
 #define GAT_SIZE 256
 #define CASE_NUM 32

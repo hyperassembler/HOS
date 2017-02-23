@@ -5,7 +5,7 @@
 
 #include "g_abi.h"
 #include "sxtdlib.h"
-#include "hal_print.h"
+#include "print.h"
 
 static uint64_t text_pos;
 

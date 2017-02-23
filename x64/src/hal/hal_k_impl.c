@@ -1,4 +1,4 @@
-#include "hal_intr.h"
+#include "intr.h"
 #include "hal_arch.h"
 #include "s_atomic.h"
 #include "s_boot.h"

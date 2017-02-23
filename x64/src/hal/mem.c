@@ -4,10 +4,10 @@
  */
 #include "g_abi.h"
 #include "g_type.h"
-#include "hal_mem.h"
+#include "mem.h"
 #include "salloc.h"
 #include "hal_arch.h"
-#include "hal_intr.h"
+#include "intr.h"
 
 static uint8_t _gdts[HAL_CORE_COUNT][GDT_ENTRY_NUM * GDT_ENTRY_SIZE];
 static hal_gdt_ptr_t _gdt_ptrs[HAL_CORE_COUNT];

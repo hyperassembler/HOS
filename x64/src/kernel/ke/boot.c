@@ -3,15 +3,15 @@
  * See COPYING under root for details
  */
 
+#include "s_boot.h"
 #include "pmm.h"
-#include "boot.h"
 #include "alloc.h"
 #include "k_lib_test.h"
 
 extern void KABI hal_printf(char const *, ...);
 
 // returning from this function results in halting the cpu
-void KABI ke_main(boot_info_t *boot_info)
+void KABI ke_system_startup(void *boot_info)
 {
     if (boot_info == NULL)
     {
