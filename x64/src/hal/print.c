@@ -9,18 +9,18 @@
 
 static uint64_t text_pos;
 
-void KABI hal_print_init()
+static void KABI hal_print_init()
 {
     text_pos = 0;
 }
 
-void KABI _hal_print_scroll()
+static void KABI halp_print_scroll()
 {
     lb_mem_move((void *) (0xb8000 + get_pos(1, 0) * 2), (void *) (0xb8000 + get_pos(0, 0) * 2), (80 * 24) * 2);
     return;
 }
 
-void KABI _hal_print_str(char const *str)
+static void KABI halp_print_str(char const *str)
 {
     if(str == NULL)
         return;
@@ -32,7 +32,7 @@ void KABI _hal_print_str(char const *str)
             if(text_pos > 80 * 25 - 1)
             {
                 //can't hold
-                _hal_print_scroll();
+                halp_print_scroll();
                 lb_mem_set((void *) (0xb8000 + 80 * 24 * 2), 0, 80 * 2); // clear last row
                 text_pos = 80 * 24;
             }
@@ -43,7 +43,7 @@ void KABI _hal_print_str(char const *str)
             if (text_pos > 80 * 25 - 1)
             {
                 //can't hold
-                _hal_print_scroll();
+                halp_print_scroll();
                 text_pos = 80 * 24;
             }
             *((char*)(0xb8000) + text_pos*2) = *str;
@@ -55,7 +55,7 @@ void KABI _hal_print_str(char const *str)
     return;
 }
 
-void KABI _hal_print_uint(uint64_t number)
+static void KABI halp_print_uint(uint64_t number)
 {
     char arr[21]; // do not need to initialize
     arr[20] = 0; //zero-terminated
@@ -70,11 +70,11 @@ void KABI _hal_print_uint(uint64_t number)
         if (number == 0)
             break;
     }
-    _hal_print_str(&(arr[index + 1]));
+    halp_print_str(&(arr[index + 1]));
     return;
 }
 
-void KABI _hal_print_int(int64_t number)
+static void KABI halp_print_int(int64_t number)
 {
     char arr[21]; // do not need to initialize
     arr[20] = 0; //zero-terminated
@@ -99,11 +99,11 @@ void KABI _hal_print_int(int64_t number)
     {
         arr[index--] = '-';
     }
-    _hal_print_str(&(arr[index + 1]));
+    halp_print_str(&(arr[index + 1]));
     return;
 }
 
-void KABI _hal_print_hex(uint64_t number, uint64_t capital)
+static void KABI halp_print_hex(uint64_t number, uint64_t capital)
 {
     char const lookup_table_cap[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     char const lookup_table[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
@@ -121,7 +121,7 @@ void KABI _hal_print_hex(uint64_t number, uint64_t capital)
         if (number == 0)
             break;
     }
-    _hal_print_str(&(arr[index + 1]));
+    halp_print_str(&(arr[index + 1]));
     return;
 }
 
@@ -146,7 +146,7 @@ void KABI hal_printf(char const *format, ...)
         if (*format != '%')
         {
             buf[0] = *format;
-            _hal_print_str(buf);
+            halp_print_str(buf);
             continue;
         }
         format++;
@@ -154,36 +154,36 @@ void KABI hal_printf(char const *format, ...)
         {
             case 'd':
                 d = va_arg(args, int64_t);
-                _hal_print_int(d);
+                halp_print_int(d);
                 break;
             case 'u':
                 u = va_arg(args, uint64_t);
-                _hal_print_uint(u);
+                halp_print_uint(u);
                 break;
             case 's':
                 s = va_arg(args, char *);
-                _hal_print_str(s);
+                halp_print_str(s);
                 break;
             case 'c':
                 c = va_arg(args, int64_t);
                 buf[0] = c;
-                _hal_print_str(buf);
+                halp_print_str(buf);
                 break;
             case 'x':
                 u = va_arg(args, uint64_t);
-                _hal_print_hex(u, 0);
+                halp_print_hex(u, 0);
                 break;
             case 'X':
                 u = va_arg(args, uint64_t);
-                _hal_print_hex(u, 1);
+                halp_print_hex(u, 1);
                 break;
             case '%':
                 buf[0] = '%';
-                _hal_print_str(buf);
+                halp_print_str(buf);
                 break;
             default:
                 buf[0] = '%';
-                _hal_print_str(buf);
+                halp_print_str(buf);
                 format--;
                 break;
         }

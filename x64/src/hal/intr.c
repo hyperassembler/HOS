@@ -3,7 +3,7 @@
  * See COPYING under root for details
  */
 
-#include "hal_arch.h"
+#include "arch.h"
 #include "intr.h"
 #include "print.h"
 #include "mem.h"
@@ -135,7 +135,7 @@ void KABI hal_exception_dispatcher(uint64_t exc_vec, hal_intr_context_t* context
     return;
 }
 
-static void KABI _hal_populate_idt()
+static void KABI halp_populate_idt()
 {
     hal_set_interrupt_handler(0, hal_interrupt_handler_0);
     hal_set_interrupt_handler(1, hal_interrupt_handler_1);
@@ -426,7 +426,7 @@ int32_t KABI hal_interrupt_init(void)
     }
 
     // hook asm interrupt handlers
-    _hal_populate_idt();
+    halp_populate_idt();
 
     hal_flush_idt(&_idt_ptrs[coreid]);
 

@@ -6,7 +6,7 @@
 #include "g_type.h"
 #include "mem.h"
 #include "salloc.h"
-#include "hal_arch.h"
+#include "arch.h"
 #include "intr.h"
 
 static uint8_t _gdts[HAL_CORE_COUNT][GDT_ENTRY_NUM * GDT_ENTRY_SIZE];

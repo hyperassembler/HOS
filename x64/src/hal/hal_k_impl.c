@@ -1,5 +1,5 @@
 #include "intr.h"
-#include "hal_arch.h"
+#include "arch.h"
 #include "s_atomic.h"
 #include "s_boot.h"
 #include "s_context.h"
@@ -26,11 +26,6 @@ irql_t KABI ke_set_irql(irql_t irql)
     irql_t old_irql = (irql_t)hal_read_cr8();
     hal_write_cr8((irql_t)irql);
     return old_irql;
-}
-
-irql_t KABI ke_get_irql()
-{
-    return (irql_t)hal_read_cr8();
 }
 
 void KABI ke_halt_cpu()

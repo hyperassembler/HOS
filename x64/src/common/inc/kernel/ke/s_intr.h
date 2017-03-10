@@ -40,7 +40,11 @@ extern void KABI hal_set_timer_timeout(uint64_t millis);
 
 extern void KABI hal_halt_cpu();
 
-extern uint32_t KABI hal_get_current_core();
+extern int32_t KABI hal_get_current_core();
+
+extern void KABI hal_set_irql(irql_t irql);
+
+extern irql_t KABI hal_get_irql();
 
 extern void KABI hal_issue_interrupt(uint32_t core_id, uint32_t vector);
 

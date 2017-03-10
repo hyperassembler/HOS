@@ -6,14 +6,14 @@
 #include "print.h"
 #include "mem.h"
 #include "intr.h"
-#include "hal_arch.h"
+#include "arch.h"
 #include "sxtdlib.h"
 #include "s_boot.h"
 
 extern char HAL_KERNEL_START_VADDR[];
 extern char HAL_KERNEL_END_VADDR[];
 
-static void KABI _hal_obtain_cpu_info(boot_info_t *hal_info)
+static void KABI halp_obtain_cpu_info(boot_info_t *hal_info)
 {
     if(hal_info == NULL)
         return;
@@ -42,7 +42,7 @@ void KABI hal_main(void *m_info)
     boot_info->krnl_end = (uint64_t)HAL_KERNEL_END_VADDR;
 
     // obtain cpu info
-    _hal_obtain_cpu_info(boot_info);
+    halp_obtain_cpu_info(boot_info);
 
     // init interrupt
     if(hal_interrupt_init() != 0)
