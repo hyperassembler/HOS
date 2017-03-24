@@ -17,9 +17,73 @@ HEADER_DIRS := $(call rdircardex, $(SOURCE_DIR), *.h)
 ALL_TARGET_DIRS := $(addprefix $(TARGET_DIR)/,$(call rdircard, $(SOURCE_DIR)))
 ASM_HEADER_DIRS := $(call rdircardex, $(SOURCE_DIR), *.inc)
 
-C_FLAGS := -std=c11 -g -c -mcmodel=kernel -fno-exceptions -ffreestanding -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Werror -Wextra -Wno-comment $(addprefix -I, $(HEADER_DIRS))
-ASM_FLAGS := -w+all -f elf64 -F dwarf -g $(addprefix -I, $(ASM_HEADER_DIRS))
-LD_FLAGS := -lgcc -nodefaultlibs -nostartfiles -nostdlib -Wl,-n -Wl,--build-id=none
+C_WARNINGS := -Wall \
+			  -Werror \
+			  -Wextra \
+			  -Wpedantic \
+			  -pedantic-errors \
+			  -Wdouble-promotion \
+			  -Winit-self \
+			  -Wmissing-include-dirs \
+			  -Wswitch-default \
+			  -Wunused-parameter \
+			  -Wuninitialized \
+			  -Wsuggest-attribute=const \
+			  -Wfloat-equal \
+			  -Wdeclaration-after-statement \
+			  -Wtraditional-conversion \
+			  -Wshadow \
+			  -Wundef \
+			  -Wbad-function-cast \
+			  -Wc++-compat \
+			  -Wcast-qual \
+			  -Wcast-align \
+			  -Wwrite-strings \
+			  -Wconversion \
+			  -Wjump-misses-init \
+			  -Wlogical-op \
+			  -Waggregate-return \
+			  -Wno-aggressive-loop-optimizations \
+			  -Wstrict-prototypes \
+			  -Wold-style-definition \
+			  -Wold-style-declaration \
+			  -Wmissing-prototypes \
+			  -Wmissing-declarations \
+			  -Wredundant-decls \
+			  -Wlong-long \
+			  -Wvarargs \
+			  -Wvla \
+			  -Woverlength-strings \
+			  -Wunsuffixed-float-constants \
+			  -Wno-comment
+
+C_FLAGS := -std=c11 \
+		   -g \
+		   -c \
+		   -O2 \
+		   -mcmodel=kernel \
+		   -fno-exceptions \
+		   -ffreestanding \
+		   -mno-red-zone \
+		   -mno-mmx \
+		   -mno-sse \
+		   -mno-sse2 \
+		   -masm=intel \
+		   $(C_WARNINGS) \
+		   $(addprefix -I, $(HEADER_DIRS))
+
+ASM_FLAGS := -w+all \
+			 -f elf64 \
+			 -F dwarf \
+			 -g \
+			 $(addprefix -I, $(ASM_HEADER_DIRS))
+
+LD_FLAGS := -lgcc \
+            -nodefaultlibs \
+			-nostartfiles \
+			-nostdlib \
+			-Wl,-n \
+			-Wl,--build-id=none
 
 C_SRC := $(call rwildcard, $(SOURCE_DIR), *.c)
 ASM_SRC := $(call rwildcard, $(SOURCE_DIR), *.asm)
