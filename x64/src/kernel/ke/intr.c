@@ -1,6 +1,10 @@
 #include "assert.h"
 #include "intr.h"
 
+//
+// End HAL
+//
+
 irql_t KABI ke_raise_irql(irql_t irql)
 {
     ke_assert(ke_get_irql() <= irql);
