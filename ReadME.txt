@@ -1,5 +1,3 @@
-My Hobby OS.
+My Hobby OS kernel.
 
-12.986% done.
-
-If interested, checkout the Wiki. It contains designs of the OS.
+The main purpose is to understand OS kernel design choices and develop reverse-engineering experiences - stick to the assembly debugger.
