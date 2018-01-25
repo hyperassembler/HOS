@@ -1,8 +1,8 @@
 #ifndef _HAL_ARCH_H_
 #define _HAL_ARCH_H_
 
-#include "../../common/inc/abi.h"
-#include "../../common/inc/type.h"
+#include "abi.h"
+#include "type.h"
 
 #define HAL_CORE_COUNT 1
 
@@ -48,10 +48,6 @@ extern void KABI hal_write_port_8(uint16_t port, uint8_t data);
 extern void KABI hal_write_port_16(uint16_t port, uint16_t data);
 
 extern void KABI hal_write_port_32(uint16_t port, uint32_t data);
-
-extern void KABI hal_write_mem_32(void* target, uint32_t data);
-
-extern void KABI hal_write_mem_64(void* target, uint64_t data);
 
 extern void KABI hal_flush_gdt(hal_gdt_ptr_t *gdt_ptr, uint64_t code_slct, uint64_t data_slct);
 

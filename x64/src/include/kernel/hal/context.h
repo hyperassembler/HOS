@@ -1,7 +1,7 @@
 #ifndef _S_CONTEXT_H_
 #define _S_CONTEXT_H_
 
-#include "../../abi.h"
+#include "abi.h"
 #include "../../../mm/arch/amd64/mem.h"
 #include "intr.h"
 

@@ -7,6 +7,10 @@
 #include "sxtdlib.h"
 #include "print.h"
 
+#define get_column(pos) (pos % 80)
+#define get_row(pos) (pos / 80)
+#define get_pos(row,col) ((row) * 80 + (col))
+
 static uint64_t text_pos;
 
 static void KABI hal_print_init()

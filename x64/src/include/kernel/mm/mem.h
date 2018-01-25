@@ -4,9 +4,9 @@
 #include "abi.h"
 #include "type.h"
 
+typedef uintptr_t address_space_t;
 typedef uintptr_t physical_addr_t;
 typedef uintptr_t virtual_addr_t;
-typedef uintptr_t address_space_t;
 
 #define KERNEL_PAGE_SIZE (0x1000ull)
 

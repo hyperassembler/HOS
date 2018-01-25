@@ -14,7 +14,7 @@ ENDMACRO()
 
 HEADER_DIRECTORIES(header_dirs)
 
-include_directories(${header_dirs})
+include_directories(src/include)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 

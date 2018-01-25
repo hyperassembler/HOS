@@ -1,7 +1,7 @@
 #ifndef _ALLOC_H_
 #define _ALLOC_H_
-#include "../../../common/inc/abi.h"
-#include "../../../common/inc/type.h"
+#include "abi.h"
+#include "type.h"
 
 void KABI ke_alloc_init();
 

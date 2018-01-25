@@ -4,10 +4,12 @@
  */
 
 #include "arch.h"
+#include "abi.h"
+#include "type.h"
 #include "intr.h"
 #include "print.h"
 #include "mem.h"
-#include "sxtdlib.h"
+#include "lib/sxtdlib.h"
 
 static uint8_t _idts[HAL_CORE_COUNT][IDT_ENTRY_NUM*IDT_ENTRY_SIZE];
 hal_idt_ptr_t _idt_ptrs[HAL_CORE_COUNT];
