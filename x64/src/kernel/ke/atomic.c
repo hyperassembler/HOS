@@ -1,5 +1,5 @@
-#include "atomic.h"
-#include "../arch/amd64/atomic.h"
+#include "kernel/ke/atomic.h"
+#include "kernel/hal/atomic.h"
 
 int32_t KABI ke_interlocked_exchange_32(int32_t *target, int32_t val)
 {

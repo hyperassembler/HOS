@@ -4,8 +4,8 @@
  */
 
 #include "../arch/amd64/boot.h"
-#include "pmm.h"
-#include "alloc.h"
+#include "kernel/mm/pmm.h"
+#include "kernel/ke/alloc.h"
 #include "test_case.h"
 
 extern void KABI hal_printf(char const *, ...);

@@ -3,8 +3,9 @@
  * See COPYING under root for details
  */
 
-#include "../common/inc/abi.h"
-#include "sxtdlib.h"
+#include "abi.h"
+#include "type.h"
+#include "lib/sxtdlib.h"
 #include "print.h"
 
 #define get_column(pos) (pos % 80)
@@ -136,9 +137,8 @@ void KABI hal_clear_screen(void)
     return;
 }
 
-void KABI hal_printf(char const *format, ...)
+void KABI hal_vprintf(char const * format, va_list args)
 {
-    va_list args;
     va_start(args, format);
     char buf[2] = {0, 0};
     int32_t d;
@@ -192,4 +192,12 @@ void KABI hal_printf(char const *format, ...)
                 break;
         }
     }
+}
+
+void KABI hal_printf(char const *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    hal_vprintf(format, args);
+    va_end(args);
 }
