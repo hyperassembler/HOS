@@ -1,5 +1,5 @@
-#include "g_abi.h"
-#include "g_type.h"
+#include "../../common/inc/abi.h"
+#include "../../common/inc/type.h"
 #include "alloc.h"
 #include "salloc.h"
 #include "atomic.h"

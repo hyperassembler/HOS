@@ -1,6 +1,6 @@
 #include "print.h"
-#include "g_abi.h"
-#include "g_type.h"
+#include "../../common/inc/abi.h"
+#include "../../common/inc/type.h"
 #include "bug_check.h"
 
 void KABI ke_bug_check(uint64_t reason)

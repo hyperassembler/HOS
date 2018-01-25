@@ -3,8 +3,8 @@
  * See COPYING under root for details
  */
 
-#include "g_abi.h"
-#include "g_type.h"
+#include "../common/inc/abi.h"
+#include "../common/inc/type.h"
 #include "sxtdlib.h"
 
 typedef union
@@ -95,7 +95,9 @@ static void lbp_salloc_join(void *base)
 bool KABI lb_salloc_assert(void *base, uint32_t *blk_size, bool *blk_free, uint32_t size)
 {
     if (base == NULL || blk_free == NULL || blk_size == NULL)
+    {
         return NULL;
+    }
     uint32_t i = 0;
     char *c_ptr = (char *) base;
     while (1)
@@ -148,10 +150,14 @@ void *KABI lb_salloc(void *base, uint32_t size)
                 //if cur block not a free block
                 //or the current block size is less than the size we want
                 if (cur_blk_last == 1)
+                {
                     //if last one, break and fail.
                     break;
+                }
                 else
+                {
                     c_ptr += cur_blk_size;
+                }
             }
             else
             {

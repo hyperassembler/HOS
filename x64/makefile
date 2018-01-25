@@ -2,6 +2,7 @@ ASM := nasm
 CC := x86_64-elf-gcc
 LD := x86_64-elf-gcc
 OBJDUMP := x86_64-elf-objdump
+
 #Recursive Wildcard
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
 rdircard=$(sort $(dir $(call rwildcard,$1,*)))
@@ -17,9 +18,48 @@ HEADER_DIRS := $(call rdircardex, $(SOURCE_DIR), *.h)
 ALL_TARGET_DIRS := $(addprefix $(TARGET_DIR)/,$(call rdircard, $(SOURCE_DIR)))
 ASM_HEADER_DIRS := $(call rdircardex, $(SOURCE_DIR), *.inc)
 
-C_FLAGS := -std=c11 -g -c -mcmodel=kernel -fno-exceptions -ffreestanding -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -masm=intel -Wall -Werror -Wextra -Wno-comment $(addprefix -I, $(HEADER_DIRS))
-ASM_FLAGS := -w+all -f elf64 -F dwarf -g $(addprefix -I, $(ASM_HEADER_DIRS))
-LD_FLAGS := -lgcc -nodefaultlibs -nostartfiles -nostdlib -Wl,-n -Wl,--build-id=none
+C_WARNINGS := -Wall \
+			  -Werror \
+			  -Wextra \
+			  -Wpedantic \
+			  -Winit-self \
+			  -Wunused-parameter \
+			  -Wuninitialized \
+			  -Wfloat-equal \
+			  -Wshadow \
+			  -Wcast-qual \
+			  -Wcast-align \
+			  -Wstrict-prototypes \
+			  -Wpointer-arith \
+			  -Wno-comment
+
+C_FLAGS := -std=c11 \
+		   -g \
+		   -c \
+		   -O2 \
+		   -mcmodel=kernel \
+		   -fno-exceptions \
+		   -ffreestanding \
+		   -mno-red-zone \
+		   -mno-mmx \
+		   -mno-sse \
+		   -mno-sse2 \
+		   -masm=intel \
+		   $(C_WARNINGS) \
+		   $(addprefix -I, $(HEADER_DIRS))
+
+ASM_FLAGS := -w+all \
+			 -f elf64 \
+			 -F dwarf \
+			 -g \
+			 $(addprefix -I, $(ASM_HEADER_DIRS))
+
+LD_FLAGS := -lgcc \
+            -nodefaultlibs \
+			-nostartfiles \
+			-nostdlib \
+			-Wl,-n \
+			-Wl,--build-id=none
 
 C_SRC := $(call rwildcard, $(SOURCE_DIR), *.c)
 ASM_SRC := $(call rwildcard, $(SOURCE_DIR), *.asm)
