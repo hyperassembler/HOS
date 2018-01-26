@@ -3,13 +3,13 @@
  * See COPYING under root for details
  */
 
-#include "abi.h"
 #include "type.h"
 #include "lib/sxtdlib.h"
-#include "print.h"
+#include "hal/print.h"
+#include "hal/cpu.h"
 
-#define get_column(pos) (pos % 80)
-#define get_row(pos) (pos / 80)
+#define get_column(pos) ((pos) % 80)
+#define get_row(pos) ((pos) / 80)
 #define get_pos(row,col) ((row) * 80 + (col))
 
 static uint64_t text_pos;
@@ -200,4 +200,14 @@ void KABI hal_printf(char const *format, ...)
     va_start(args, format);
     hal_vprintf(format, args);
     va_end(args);
+}
+
+void KABI hal_assert(uint32_t expression, char *message)
+{
+    if (!expression)
+    {
+        hal_printf("HAL: Assertion failed. Detail: %s", message == NULL ? "NULL" : message);
+        hal_halt_cpu();
+    }
+    return;
 }

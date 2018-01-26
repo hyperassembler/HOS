@@ -1,8 +1,8 @@
-#include "assert.h"
-#include "rwwlock.h"
-#include "../../common/inc/status.h"
-#include "alloc.h"
-#include "pmm.h"
+#include "kernel/ke/assert.h"
+#include "kernel/ke/rwwlock.h"
+#include "kernel/ke/status.h"
+#include "kernel/ke/alloc.h"
+#include "kernel/mm/pmm.h"
 
 typedef struct
 {
@@ -60,7 +60,7 @@ status_t KABI sx_pmm_init(pmm_info_t *info)
     {
         pmm_node_t *each_node = &info->nodes[i];
 
-        ke_assert (each_node->base % K_PAGE_SIZE != 0);
+        ke_assert (each_node->base % KERNEL_PAGE_SIZE != 0);
 
         for (uint64_t j = 0; j <= each_node->size; j++)
         {
@@ -100,7 +100,7 @@ status_t KABI mm_alloc_page(physical_addr_t *out)
         return PMM_STATUS_INVALID_ARGUMENTS;
     }
 
-    irql_t irql = ke_rwwlock_writer_lock_raise_irql(&lock, K_IRQL_DISABLED_LEVEL);
+    irql_t irql = ke_rwwlock_writer_lock_raise_irql(&lock, IRQL_DISABLED_LEVEL);
     status_t result = STATUS_SUCCESS;
     linked_list_node_t *node = NULL;
     physical_page_descriptor_t *page_info = NULL;
@@ -134,7 +134,7 @@ status_t KABI mm_query_page_attr(physical_addr_t base,
         return PMM_STATUS_INVALID_ARGUMENTS;
     }
 
-    irql_t irql = ke_rwwlock_reader_lock_raise_irql(&lock, K_IRQL_DISABLED_LEVEL);
+    irql_t irql = ke_rwwlock_reader_lock_raise_irql(&lock, IRQL_DISABLED_LEVEL);
     status_t result = STATUS_SUCCESS;
     avl_tree_node_t *node = NULL;
     // search for dummy
@@ -165,7 +165,7 @@ status_t KABI mm_free_page(physical_addr_t base)
     }
 
     // just lock since not sharing with anyone
-    irql_t irql = ke_rwwlock_writer_lock_raise_irql(&lock, K_IRQL_DISABLED_LEVEL);
+    irql_t irql = ke_rwwlock_writer_lock_raise_irql(&lock, IRQL_DISABLED_LEVEL);
     status_t result = STATUS_SUCCESS;
     avl_tree_node_t *node = NULL;
     // search for dummy

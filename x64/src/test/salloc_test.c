@@ -1,5 +1,5 @@
-#include "driver.h"
-#include "salloc.h"
+#include "test/driver.h"
+#include "lib/salloc.h"
 
 typedef union
 {

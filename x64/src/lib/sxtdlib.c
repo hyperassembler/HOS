@@ -3,9 +3,9 @@
  * See COPYING under root for details
  */
 
-#include "../common/inc/type.h"
-#include "../common/inc/abi.h"
-#include "sxtdlib.h"
+#include "type.h"
+#include "abi.h"
+#include "lib/sxtdlib.h"
 
 void KABI lb_mem_copy(void *src, void *dst, uint64_t size)
 {

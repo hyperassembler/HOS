@@ -1,9 +1,8 @@
-#ifndef _SPIN_LOCK_H_
-#define _SPIN_LOCK_H_
+#ifndef _KERNEL_KE_SPIN_LOCK_H_
+#define _KERNEL_KE_SPIN_LOCK_H_
 
-#include "../../../common/inc/type.h"
-#include "../../../common/inc/abi.h"
-#include "intr.h"
+#include "type.h"
+#include "kernel/ke/intr.h"
 
 typedef struct
 {

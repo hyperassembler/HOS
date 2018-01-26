@@ -1,7 +1,11 @@
-#ifndef _S_ATOMIC_H_
-#define _S_ATOMIC_H_
-#include "abi.h"
+#ifndef _KERNEL_HAL_ATOMIC_H_
+#define _KERNEL_HAL_ATOMIC_H_
+
 #include "type.h"
+
+/**
+ * Atomic operations
+ */
 
 extern int32_t KABI hal_interlocked_exchange_32(int32_t *target, int32_t val);
 

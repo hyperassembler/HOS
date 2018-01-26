@@ -1,4 +1,5 @@
-#include "rwwlock.h"
+
+#include "kernel/ke/rwwlock.h"
 
 void ke_rwwlock_init(k_rwwlock_t *lock)
 {

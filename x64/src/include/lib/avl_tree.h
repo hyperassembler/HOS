@@ -3,12 +3,11 @@
  * See COPYING under root for details
  */
 
-#ifndef _K_AVL_TREE_H_
-#define _K_AVL_TREE_H_
+#ifndef _LIB_AVL_TREE_H_
+#define _LIB_AVL_TREE_H_
 
-#include "../../common/inc/type.h"
-#include "../../common/inc/abi.h"
-#include "sxtdlib.h"
+#include "type.h"
+#include "lib/sxtdlib.h"
 
 typedef struct _k_avl_tree_node_t
 {

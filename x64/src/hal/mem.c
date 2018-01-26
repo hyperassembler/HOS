@@ -1,13 +1,9 @@
-/* Copyright 2016 secXsQuared
- * Distributed under GPL license
- * See COPYING under root for details
- */
-#include "../common/inc/abi.h"
-#include "../common/inc/type.h"
-#include "mem.h"
-#include "salloc.h"
-#include "arch.h"
-#include "intr.h"
+
+#include "type.h"
+#include "hal/mem.h"
+#include "hal/cpu.h"
+#include "lib/salloc.h"
+#include "hal/intr.h"
 
 static uint8_t _gdts[HAL_CORE_COUNT][GDT_ENTRY_NUM * GDT_ENTRY_SIZE];
 static hal_gdt_ptr_t _gdt_ptrs[HAL_CORE_COUNT];

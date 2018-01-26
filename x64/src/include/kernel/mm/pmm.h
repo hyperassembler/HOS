@@ -1,12 +1,12 @@
 #ifndef _PMM_H_
 #define _PMM_H_
 
-#include "avl_tree.h"
-#include "linked_list.h"
-#include "../../../common/inc/abi.h"
-#include "../arch/amd64/mm.h"
-#include "atomic.h"
-#include "../../../common/inc/status.h"
+#include "type.h"
+#include "lib/avl_tree.h"
+#include "lib/linked_list.h"
+#include "kernel/mm/mem.h"
+#include "kernel/ke/atomic.h"
+#include "kernel/ke/status.h"
 
 //#define PMM_PAGE_ATTR_FREE_BIT 0
 //#define PMM_PAGE_ATTR_PAGED_BIT 1

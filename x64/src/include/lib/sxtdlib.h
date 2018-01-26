@@ -3,11 +3,10 @@
  * See COPYING under root for details
  */
 
-#ifndef _STD_LIB_H_
-#define _STD_LIB_H_
+#ifndef _LIB_SXTDLIB_H_
+#define _LIB_SXTDLIB_H_
 
-#include "../../common/inc/abi.h"
-#include "../../common/inc/type.h"
+#include "type.h"
 
 uint32_t KABI rand( void );
 

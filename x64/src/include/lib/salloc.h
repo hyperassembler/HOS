@@ -3,11 +3,10 @@
  * See COPYING under root for details
  */
 
-#ifndef _SALLOC_H_
-#define _SALLOC_H_
+#ifndef _LIB_SALLOC_H_
+#define _LIB_SALLOC_H_
 
-#include "../../common/inc/abi.h"
-#include "../../common/inc/type.h"
+#include "type.h"
 
 void KABI lb_salloc_init(void *base, uint32_t size);
 

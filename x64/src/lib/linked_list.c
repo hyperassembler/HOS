@@ -3,7 +3,7 @@
  * See COPYING under root for details
  */
 
-#include "linked_list.h"
+#include "lib/linked_list.h"
 
 static void KABI lbp_init_linked_list_node(linked_list_node_t *node)
 {

@@ -1,8 +1,6 @@
-#include "abi.h"
 #include "type.h"
 #include "kernel/ke/alloc.h"
 #include "lib/salloc.h"
-#include "kernel/ke/atomic.h"
 
 #define K_KERNEL_HEAP_SIZE 8192
 

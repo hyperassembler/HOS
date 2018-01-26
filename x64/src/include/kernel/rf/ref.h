@@ -1,8 +1,8 @@
 #ifndef _K_REF_H_
 #define _K_REF_H_
 
-#include "../../../common/inc/type.h"
-#include "../../../common/inc/status.h"
+#include "type.h"
+#include "kernel/ke/status.h"
 
 typedef uint32_t handle_t;
 

@@ -1,12 +1,10 @@
-#ifndef _BUG_CHECK_H_
-#define _BUG_CHECK_H_
+#ifndef _KERNEL_KE_BUG_CHECK_H_
+#define _KERNEL_KE_BUG_CHECK_H_
 
-#include "../../../common/inc/type.h"
-#include "../../../common/inc/abi.h"
-#include "intr.h"
+#include "type.h"
 
-#define K_BUG_CHECK_IRQL_MISMATCH 0
-#define K_BUG_CHECK_PMM_UNALIGNED 1
+#define BUG_CHECK_IRQL_MISMATCH 0
+#define BUG_CHECK_PMM_UNALIGNED 1
 
 void KABI ke_bug_check(uint64_t reason);
 

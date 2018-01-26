@@ -1,21 +1,28 @@
-/* Copyright 2016 secXsQuared
- * Distributed under GPL license
- * See COPYING under root for details
- */
 
-#include "arch.h"
-#include "abi.h"
 #include "type.h"
-#include "intr.h"
-#include "print.h"
-#include "mem.h"
+#include "hal/cpu.h"
+#include "hal/intr.h"
+#include "hal/print.h"
+#include "hal/mem.h"
 #include "lib/sxtdlib.h"
 
 static uint8_t _idts[HAL_CORE_COUNT][IDT_ENTRY_NUM*IDT_ENTRY_SIZE];
-hal_idt_ptr_t _idt_ptrs[HAL_CORE_COUNT];
-static k_intr_handler_t _intr_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
+static hal_idt_ptr_t _idt_ptrs[HAL_CORE_COUNT];
+static intr_handler_t _intr_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
 static void* _intr_handler_context_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
-static k_exc_handler_t _exc_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
+static exc_handler_t _exc_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
+
+irql_t KABI hal_set_irql(irql_t irql)
+{
+    hal_assert(false,"Unimplemented function called.");
+    return 0;
+}
+
+irql_t KABI hal_get_irql(void)
+{
+    hal_assert(false,"Unimplemented function called.");
+    return 0;
+}
 
 
 void KABI hal_write_gate(void *const gate,
@@ -55,13 +62,13 @@ void KABI hal_set_interrupt_handler(uint64_t index,
 
 void KABI hal_issue_interrupt(uint32_t target_core, uint32_t vector)
 {
-    // TODO
     UNREFERENCED(target_core);
     UNREFERENCED(vector);
+    hal_assert(false,"Unimplemented function called.");
     return;
 }
 
-void KABI hal_register_interrupt_handler(uint32_t coreid, uint32_t index, k_intr_handler_t handler, void* context)
+void KABI hal_register_interrupt_handler(uint32_t coreid, uint32_t index, intr_handler_t handler, void* context)
 {
     if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
     {
@@ -80,7 +87,7 @@ void KABI hal_deregister_interrupt_handler(uint32_t coreid, uint32_t index)
     return;
 }
 
-void KABI hal_register_exception_handler(uint32_t coreid, uint32_t index, k_exc_handler_t handler)
+void KABI hal_register_exception_handler(uint32_t coreid, uint32_t index, exc_handler_t handler)
 {
     if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
     {
@@ -98,18 +105,7 @@ void KABI hal_deregister_exception_handler(uint32_t coreid, uint32_t index)
     return;
 }
 
-void KABI hal_assert(int64_t expression,
-                     char *message)
-{
-    if (!expression)
-    {
-        hal_printf("HAL: Assertion failed. Detail: %s", message == NULL ? "NULL" : message);
-        hal_halt_cpu();
-    }
-    return;
-}
-
-void KABI hal_interrupt_dispatcher(uint64_t int_vec, hal_intr_context_t *context)
+static void KABI hal_interrupt_dispatcher(uint64_t int_vec, hal_interrupt_context_t *context)
 {
     uint32_t coreid = hal_get_core_id();
     if (_intr_handler_table[int_vec] == NULL)
@@ -123,7 +119,7 @@ void KABI hal_interrupt_dispatcher(uint64_t int_vec, hal_intr_context_t *context
     return;
 }
 
-void KABI hal_exception_dispatcher(uint64_t exc_vec, hal_intr_context_t* context, uint64_t errorcode)
+static void KABI hal_exception_dispatcher(uint64_t exc_vec, hal_interrupt_context_t* context, uint64_t errorcode)
 {
     uint32_t coreid = hal_get_core_id();
     if (_exc_handler_table[exc_vec] == NULL)
@@ -400,6 +396,7 @@ static void KABI halp_populate_idt()
 
 uint32_t KABI hal_get_core_id(void)
 {
+    // TODO
     return 0;
 }
 
@@ -442,17 +439,19 @@ int32_t KABI hal_interrupt_init(void)
     hal_read_msr(&ecx, &edx, &eax);
     apic_base_reg = ((uint64_t) edx << 32) + (uint64_t) eax;
     apic_base = apic_base_reg & lb_bit_field_mask(12, 35);
+
     //hal_printf("APIC Base: 0x%X\n", apic_base);
     //hal_printf("APIC Enabled: %s\n", apic_base_reg & bit_mask_64(11) ? "Yes" : "No");
     //hal_printf("BSP: %s\n", apic_base_reg & bit_mask_64(8) ? "Yes" : "No");
     //hal_printf("APIC Spour: 0x%X\n", *(uint32_t *) ((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET));
+
     // hardware enable APIC
     ecx = MSR_IA32_APIC_BASE;
     eax = (uint32_t) ((apic_base_reg & lb_bit_field_mask(0, 31)) | lb_bit_mask(11));
     hal_write_msr(&ecx, &edx, &eax);
 
     // software enable APIC
-    hal_write_mem_32((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET, *(uint32_t *) (apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET) | (uint32_t)lb_bit_mask(8));
+    // hal_write_mem_32((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET, *(uint32_t *) (apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET) | (uint32_t)lb_bit_mask(8));
 
 //    hal_issue_interrupt(1, 255);
 //    hal_enable_interrupt();

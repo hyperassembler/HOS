@@ -1,5 +1,5 @@
-#include "atomic.h"
-#include "spin_lock.h"
+#include "kernel/ke/atomic.h"
+#include "kernel/ke/spin_lock.h"
 
 void KABI ke_spin_lock_init(k_spin_lock_t *lock)
 {

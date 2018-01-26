@@ -1,6 +1,6 @@
-#include "print.h"
-#include "driver.h"
-#include "mem.h"
+#include "kernel/ke/print.h"
+#include "test/driver.h"
+#include "kernel/ke/alloc.h"
 
 #define GAT_SIZE 256
 #define CASE_NUM 32
@@ -18,17 +18,17 @@ static char *test_name;
 
 static void test_info()
 {
-    hal_printf("[TD-INFO][%s] - ", test_name);
+    ke_printf("[TD-INFO][%s] - ", test_name);
 }
 
 static void test_warning()
 {
-    hal_printf("[TD-WARN][%s] - ", test_name);
+    ke_printf("[TD-WARN][%s] - ", test_name);
 }
 
 static void test_error()
 {
-    hal_printf("[TD-ERR][%s] - ", test_name);
+    ke_printf("[TD-ERR][%s] - ", test_name);
 }
 
 static void gat_push(void *ptr)
@@ -61,7 +61,7 @@ static void gat_free()
     {
         if (gat[i] != NULL)
         {
-            hfree(gat[i]);
+            ke_free(gat[i]);
             gat[i] = NULL;
         }
     }
@@ -81,7 +81,7 @@ static void ginfo_push(char *case_name, bool success)
         }
     }
     test_warning();
-    hal_printf("GINFO full, [%s] result not recorded.\n", r_case_name);
+    ke_printf("GINFO full, [%s] result not recorded.\n", r_case_name);
 }
 
 void KABI test_begin(char *name)
@@ -117,15 +117,15 @@ void KABI test_end()
         }
     }
     test_info();
-    hal_printf("%s\n", failed > 0 ? "FAIL" : "PASS");
-    hal_printf("    %d cases executed. S: %d. F: %d.\n", total, success, failed);
+    ke_printf("%s\n", failed > 0 ? "FAIL" : "PASS");
+    ke_printf("    %d cases executed. S: %d. F: %d.\n", total, success, failed);
     if (failed > 0)
     {
         for (int i = 0; i < CASE_NUM; i++)
         {
             if (ginfo[i].used && !ginfo[i].success)
             {
-                hal_printf("        %s FAILED\n", ginfo[i].case_name);
+                ke_printf("        %s FAILED\n", ginfo[i].case_name);
             }
         }
     }
@@ -139,14 +139,14 @@ void KABI *talloc(uint32_t size)
 {
     if (!gat_full())
     {
-        void *result = halloc(size);
+        void *result = ke_alloc(size);
         gat_push(result);
         return result;
     }
     else
     {
         test_error();
-        hal_printf("GAT full, rejecting further allocations.\n");
+        ke_printf("GAT full, rejecting further allocations.\n");
     }
     return NULL;
 }

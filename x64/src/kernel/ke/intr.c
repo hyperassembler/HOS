@@ -1,9 +1,5 @@
-#include "assert.h"
-#include "intr.h"
-
-//
-// End HAL
-//
+#include "kernel/ke/assert.h"
+#include "kernel/ke/intr.h"
 
 irql_t KABI ke_raise_irql(irql_t irql)
 {
@@ -25,5 +21,5 @@ irql_t KABI ke_get_irql()
 
 int KABI ke_get_current_core()
 {
-    return hal_get_current_core();
+    return hal_get_core_id();
 }

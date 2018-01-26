@@ -3,11 +3,10 @@
  * See COPYING under root for details
  */
 
-#ifndef _K_LINKED_LIST_H_
-#define _K_LINKED_LIST_H_
+#ifndef _LIB_LINKED_LIST_H_
+#define _LIB_LINKED_LIST_H_
 
-#include "../../common/inc/abi.h"
-#include "../../common/inc/type.h"
+#include "type.h"
 
 typedef struct _linked_list_node_t
 {

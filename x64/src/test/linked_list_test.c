@@ -1,7 +1,7 @@
-#include "driver.h"
-#include "linked_list.h"
-#include "test_case.h"
-#include "sxtdlib.h"
+#include "test/driver.h"
+#include "lib/linked_list.h"
+#include "test/test_case.h"
+#include "lib/sxtdlib.h"
 
 typedef struct
 {

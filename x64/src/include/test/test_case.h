@@ -1,5 +1,7 @@
-#ifndef _LIB_TEST_H_
-#define _LIB_TEST_H_
+#ifndef _TEST_TEST_H_
+#define _TEST_TEST_H_
+
+#include "type.h"
 
 void KABI linked_list_test(void);
 

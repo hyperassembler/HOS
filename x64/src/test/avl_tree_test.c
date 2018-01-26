@@ -1,5 +1,5 @@
-#include "driver.h"
-#include "avl_tree.h"
+#include "test/driver.h"
+#include "lib/avl_tree.h"
 
 typedef struct
 {

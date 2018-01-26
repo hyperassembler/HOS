@@ -3,12 +3,12 @@
  * See COPYING under root for details
  */
 
-#include "print.h"
-#include "mem.h"
-#include "intr.h"
-#include "arch.h"
-#include "sxtdlib.h"
-#include "../../sxkrnl/arch/amd64/boot.h"
+#include "hal/print.h"
+#include "hal/mem.h"
+#include "hal/intr.h"
+#include "hal/cpu.h"
+#include "lib/sxtdlib.h"
+#include "hal/boot.h"
 
 extern char HAL_KERNEL_START_VADDR[];
 extern char HAL_KERNEL_END_VADDR[];
@@ -38,8 +38,8 @@ void KABI hal_main(void *m_info)
     boot_info_t* boot_info = halloc(sizeof(boot_info_t));
 
     // set up HAL def
-    boot_info->krnl_start = (uint64_t)HAL_KERNEL_START_VADDR;
-    boot_info->krnl_end = (uint64_t)HAL_KERNEL_END_VADDR;
+    boot_info->krnl_start = (virtual_addr_t)HAL_KERNEL_START_VADDR;
+    boot_info->krnl_end = (virtual_addr_t)HAL_KERNEL_END_VADDR;
 
     // obtain cpu info
     halp_obtain_cpu_info(boot_info);

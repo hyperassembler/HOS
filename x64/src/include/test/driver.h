@@ -1,8 +1,7 @@
-#ifndef _K_TEST_DRIVER_H_
-#define _K_TEST_DRIVER_H_
+#ifndef _TEST_DRIVER_H_
+#define _TEST_DRIVER_H_
 
-#include "../../common/inc/type.h"
-#include "../../common/inc/abi.h"
+#include "type.h"
 
 void KABI test_begin(char *name);
 

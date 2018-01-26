@@ -3,15 +3,14 @@
  * See COPYING under root for details
  */
 
-#include "../arch/amd64/boot.h"
-#include "kernel/mm/pmm.h"
+#include "kernel/ke/boot.h"
 #include "kernel/ke/alloc.h"
-#include "test_case.h"
+#include "test/test_case.h"
 
 extern void KABI hal_printf(char const *, ...);
 
 // returning from this function results in halting the cpu
-void KABI ke_system_startup(void *boot_info)
+void KABI ke_main(boot_info_t *boot_info)
 {
     if (boot_info == NULL)
     {

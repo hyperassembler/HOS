@@ -1,7 +1,7 @@
-#ifndef _RWLOCK_H_
-#define _RWLOCK_H_
-#include "spin_lock.h"
-#include "../../../common/inc/type.h"
+#ifndef _KERNEL_KE_RWLOCK_H_
+#define _KERNEL_KE_RWLOCK_H_
+#include "kernel/ke/spin_lock.h"
+#include "type.h"
 
 typedef struct
 {

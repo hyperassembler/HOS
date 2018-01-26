@@ -1,24 +1,22 @@
-#ifndef _S_BOOT_H_
-#define _S_BOOT_H_
+#ifndef _KERNEL_HAL_BOOT_H_
+#define _KERNEL_HAL_BOOT_H_
 
-#include "../../abi.h"
-#include "../../../mm/arch/amd64/mm.h"
-#include "intr.h"
-#include "../../status.h"
+#include "type.h"
+#include "kernel/hal/intr.h"
+#include "kernel/hal/mem.h"
 
-//
-// HAL Boot Info
-//
+/**
+ * Required OS boot info
+ */
+
 typedef struct
 {
-    uint64_t krnl_start;
-    uint64_t krnl_end;
+    virtual_addr_t krnl_start;
+    virtual_addr_t krnl_end;
     intr_info_t intr_info;
-    pmm_info_t* pmm_info;
     char cpu_vd_str[13];
 } boot_info_t;
 
-extern status_t KABI hal_init (_IN  void* multiboot_info,
-                               _OUT boot_info_t** boot_info);
+void KABI ke_main(boot_info_t* info);
 
 #endif

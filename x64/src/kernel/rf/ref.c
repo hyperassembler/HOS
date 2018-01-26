@@ -1,9 +1,9 @@
-#include "ref.h"
-#include "alloc.h"
-#include "spin_lock.h"
-#include "assert.h"
-#include "atomic.h"
-#include "avl_tree.h"
+#include "kernel/rf/ref.h"
+#include "kernel/ke/alloc.h"
+#include "kernel/ke/spin_lock.h"
+#include "kernel/ke/assert.h"
+#include "kernel/ke/atomic.h"
+#include "lib/avl_tree.h"
 
 typedef struct
 {
@@ -66,7 +66,7 @@ status_t KABI rf_reference_setup()
 status_t KABI rf_reference_create(ref_node_t *ref,
                                   callback_func_t free_func)
 {
-    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
     if (ref == NULL || free_func == NULL)
         return REF_STATUS_INVALID_ARGUMENTS;
@@ -79,7 +79,7 @@ status_t KABI rf_reference_create(ref_node_t *ref,
 
 status_t KABI rf_reference_obj(ref_node_t *ref_node)
 {
-    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
     if (ref_node == NULL)
         return REF_STATUS_INVALID_ARGUMENTS;
@@ -93,7 +93,7 @@ status_t KABI rf_reference_obj(ref_node_t *ref_node)
 
 status_t KABI rf_dereference_obj(ref_node_t *ref_node)
 {
-    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
     if (ref_node == NULL)
         return REF_STATUS_INVALID_ARGUMENTS;
@@ -115,7 +115,7 @@ status_t KABI rf_dereference_obj(ref_node_t *ref_node)
 
 static status_t KABI rf_open_obj_by_handle(handle_t handle, ref_node_t **out)
 {
-    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
     if (!initialized)
     {
@@ -132,7 +132,7 @@ static status_t KABI rf_open_obj_by_handle(handle_t handle, ref_node_t **out)
     ref_node_t *ref = NULL;
 
 
-    irql = ke_spin_lock_raise_irql(&handle_tree_lock, K_IRQL_DPC_LEVEL);
+    irql = ke_spin_lock_raise_irql(&handle_tree_lock, IRQL_DPC_LEVEL);
     handle_node_t *handle_node = rfp_search_handle_node(handle);
     if (handle_node == NULL)
     {
@@ -160,7 +160,7 @@ static status_t KABI rf_create_handle(ref_node_t *ref,
                                       handle_node_t *node,
                                       handle_t *out)
 {
-    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
     if (!initialized)
         return REF_STATUS_UNINITIALIZED;
@@ -177,7 +177,7 @@ static status_t KABI rf_create_handle(ref_node_t *ref,
         // TODO: CHECK OVERFLOW
         node->handle = (handle_t) ke_interlocked_increment_32(&handle_base, 1);
         node->ref = ref;
-        irql = ke_spin_lock_raise_irql(&handle_tree_lock, K_IRQL_DPC_LEVEL);
+        irql = ke_spin_lock_raise_irql(&handle_tree_lock, IRQL_DPC_LEVEL);
         handle_node_t *existing_node = rfp_search_handle_node(node->handle);
         if (existing_node == NULL)
         {
@@ -205,7 +205,7 @@ static status_t KABI rf_create_handle(ref_node_t *ref,
 
 static status_t KABI rf_close_handle(handle_t handle)
 {
-    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
     if (!initialized)
         return REF_STATUS_UNINITIALIZED;
@@ -215,7 +215,7 @@ static status_t KABI rf_close_handle(handle_t handle)
     ref_node_t *ref = NULL;
     bool free = false;
 
-    irql = ke_spin_lock_raise_irql(&handle_tree_lock, K_IRQL_DPC_LEVEL);
+    irql = ke_spin_lock_raise_irql(&handle_tree_lock, IRQL_DPC_LEVEL);
     handle_node_t *handle_node = rfp_search_handle_node(handle);
     if (handle_node == NULL)
     {
@@ -249,7 +249,7 @@ static status_t KABI rf_close_handle(handle_t handle)
 
 status_t KABI sx_create_handle(ref_node_t *ref, handle_t *out)
 {
-    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
     if (!initialized)
         return REF_STATUS_UNINITIALIZED;
@@ -268,7 +268,7 @@ status_t KABI sx_create_handle(ref_node_t *ref, handle_t *out)
 
 status_t KABI sx_close_handle(handle_t handle)
 {
-    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
     if (!initialized)
         return REF_STATUS_UNINITIALIZED;
@@ -280,7 +280,7 @@ status_t KABI sx_close_handle(handle_t handle)
 
 status_t KABI sx_open_obj_by_handle(handle_t handle, ref_node_t **out)
 {
-    ke_assert(ke_get_irql() <= K_IRQL_DPC_LEVEL);
+    ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
     if (!initialized)
         return REF_STATUS_UNINITIALIZED;

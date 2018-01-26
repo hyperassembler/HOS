@@ -1,4 +1,3 @@
-#include "kernel/hal/print.h"
 #include "kernel/ke/print.h"
 
 void KABI ke_printf(const char* str, ...)

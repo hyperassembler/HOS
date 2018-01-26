@@ -1,8 +1,11 @@
-#ifndef _STATUS_H_
-#define _STATUS_H_
+#ifndef _KERNEL_KE_STATUS_H_
+#define _KERNEL_KE_STATUS_H_
 
 #include "type.h"
-#include "sxtdlib.h"
+#include "lib/sxtdlib.h"
+#include "kernel/hal/status.h"
+
+typedef uint32_t status_t;
 
 //
 // 32 bit ints
@@ -50,7 +53,5 @@ enum _status_t
 
     PMM_STATUS_NOT_ENOUGH_PAGE = SX_MAKE_STATUS(SEVERITY_ERROR, FACILITY_PMM, 5),
 };
-
-typedef uint32_t status_t;
 
 #endif

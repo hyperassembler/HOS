@@ -3,9 +3,9 @@
  * See COPYING under root for details
  */
 
-#include "../common/inc/abi.h"
-#include "../common/inc/type.h"
-#include "sxtdlib.h"
+#include "abi.h"
+#include "type.h"
+#include "lib/sxtdlib.h"
 
 typedef union
 {

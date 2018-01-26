@@ -1,8 +1,8 @@
-#ifndef _ATOMIC_H_
-#define _ATOMIC_H_
+#ifndef _KERNEL_KE_ATOMIC_H_
+#define _KERNEL_KE_ATOMIC_H_
 
-#include "../../../common/inc/type.h"
-#include "../../../common/inc/abi.h"
+#include "type.h"
+#include "kernel/hal/atomic.h"
 
 int32_t KABI ke_interlocked_exchange_32(int32_t *target, int32_t val);
 

@@ -1,6 +1,6 @@
-#ifndef _ALLOC_H_
-#define _ALLOC_H_
-#include "abi.h"
+#ifndef _KERNEL_KE_ALLOC_H_
+#define _KERNEL_KE_ALLOC_H_
+
 #include "type.h"
 
 void KABI ke_alloc_init();
