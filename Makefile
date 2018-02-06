@@ -3,10 +3,13 @@ CC := /opt/x86_64-elf-gcc
 LD := /opt/x86_64-elf-gcc
 DUMP := /opt/x86_64-elf-objdump
 
-LD_SCRIPT := build/linker.ld
-GRUB_CFG := build/grub.cfg
-SOURCE_DIR := src
-HEADER_DIRS := include
+LD_SCRIPT := linker.ld
+
+GRUB_CFG := grub.cfg
+
+INCLUDE_DIR := include
+
+MK := mk
 
 C_WARNINGS := -Wall \
 			  -Werror \
@@ -36,7 +39,7 @@ C_FLAGS := -std=c11 \
 		   -mno-sse2 \
 		   -masm=intel \
 		   $(C_WARNINGS) \
-		   $(addprefix -I, $(HEADER_DIRS))
+		   $(addprefix -I, $(INCLUDE_DIR))
 
 ASM_FLAGS := -w+all \
 			 -f elf64 \
@@ -51,5 +54,9 @@ LD_FLAGS := -lgcc \
 			-Wl,-n \
 			-Wl,--build-id=none
 
+COMP :=
+LINK :=
+COMPAS :=
+PACK := 
 
 include Rules.mk

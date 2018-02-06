@@ -2,7 +2,7 @@
 ; Distributed under GPL license
 ; See COPYING under root for details
 
-%include "addr.inc"
+%include "hal/addr.inc"
 
 MULTIBOOT_TAG_ALIGNMENT equ 8
 MULTIBOOT_HEADER_ALIGNMENT equ 8
