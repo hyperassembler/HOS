@@ -98,6 +98,6 @@ void *KABI halloc(uint32_t size);
 
 void KABI hfree(void *ptr);
 
-void KABI hal_mem_init();
+void KABI hal_mem_init(void);
 
 #endif

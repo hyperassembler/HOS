@@ -7,7 +7,7 @@
 static _Bool alloc_initialized;
 static uint8_t alloc_heap[K_KERNEL_HEAP_SIZE];
 
-void KABI ke_alloc_init()
+void KABI ke_alloc_init(void)
 {
     if (!alloc_initialized)
     {

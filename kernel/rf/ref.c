@@ -51,7 +51,7 @@ static handle_node_t *rfp_search_handle_node(handle_t handle)
     return result == NULL ? NULL : OBTAIN_STRUCT_ADDR(result, handle_node_t, tree_node);
 }
 
-status_t KABI rf_reference_setup()
+status_t KABI rf_reference_setup(void)
 {
     if (!initialized)
     {

@@ -11,7 +11,7 @@ const uint32_t salloc_header_size = sizeof(_salloc_header);
 
 static char buffer[1024];
 
-static bool salloc_init_test()
+static bool salloc_init_test(void)
 {
     lb_salloc_init(buffer, 1024);
     uint32_t blk_size[] = {1024};
@@ -19,7 +19,7 @@ static bool salloc_init_test()
     return lb_salloc_assert(buffer, blk_size, blk_free, 1);
 }
 
-static bool salloc_basic_alloc()
+static bool salloc_basic_alloc(void)
 {
     bool result = true;
     lb_salloc_init(buffer, 1024);
@@ -30,7 +30,7 @@ static bool salloc_basic_alloc()
     return result;
 }
 
-static bool salloc_full_alloc()
+static bool salloc_full_alloc(void)
 {
     bool result = true;
     lb_salloc_init(buffer, 1024);
@@ -41,7 +41,7 @@ static bool salloc_full_alloc()
     return result;
 }
 
-static bool salloc_overflow_alloc()
+static bool salloc_overflow_alloc(void)
 {
     bool result = true;
     lb_salloc_init(buffer, 1024);
@@ -52,7 +52,7 @@ static bool salloc_overflow_alloc()
     return result;
 }
 
-static bool salloc_multiple_alloc()
+static bool salloc_multiple_alloc(void)
 {
     bool result = true;
     lb_salloc_init(buffer, 1024);
@@ -68,7 +68,7 @@ static bool salloc_multiple_alloc()
     return result;
 }
 
-static bool salloc_alloc_not_enough()
+static bool salloc_alloc_not_enough(void)
 {
     void* ptr;
     bool result = true;
@@ -82,7 +82,7 @@ static bool salloc_alloc_not_enough()
 }
 
 
-static bool salloc_basic_free()
+static bool salloc_basic_free(void)
 {
     void* ptr;
     bool result = true;
@@ -97,7 +97,7 @@ static bool salloc_basic_free()
     return result;
 }
 
-static bool salloc_full_free()
+static bool salloc_full_free(void)
 {
     void* ptr;
     bool result = true;
@@ -112,7 +112,7 @@ static bool salloc_full_free()
     return result;
 }
 
-static bool salloc_multiple_free()
+static bool salloc_multiple_free(void)
 {
     void* ptr1, *ptr2, *ptr3, *ptr4;
     bool result = true;
@@ -135,7 +135,7 @@ static bool salloc_multiple_free()
     return result;
 }
 
-static bool salloc_free_join_tail()
+static bool salloc_free_join_tail(void)
 {
     void* ptr1, *ptr2, *ptr3, *ptr4;
     bool result = true;
@@ -156,7 +156,7 @@ static bool salloc_free_join_tail()
     return result;
 }
 
-static bool salloc_free_join_head()
+static bool salloc_free_join_head(void)
 {
     void* ptr1, *ptr2, *ptr3, *ptr4;
     bool result = true;
@@ -178,7 +178,7 @@ static bool salloc_free_join_head()
     return result;
 }
 
-static bool salloc_free_join_mid()
+static bool salloc_free_join_mid(void)
 {
     void* ptr1, *ptr2, *ptr3, *ptr4;
     bool result = true;
@@ -200,7 +200,7 @@ static bool salloc_free_join_mid()
     return result;
 }
 
-static bool salloc_free_join_consecutive()
+static bool salloc_free_join_consecutive(void)
 {
     void* ptr1, *ptr2, *ptr3, *ptr4, *ptr5;
     bool result = true;
@@ -234,7 +234,7 @@ static bool salloc_free_join_consecutive()
     return result;
 }
 
-static bool salloc_free_all()
+static bool salloc_free_all(void)
 {
     void* ptr1, *ptr2, *ptr3, *ptr4;
     bool result = true;
@@ -256,7 +256,7 @@ static bool salloc_free_all()
 }
 
 
-void KABI salloc_test()
+void KABI salloc_test(void)
 {
     test_begin("salloc test");
 

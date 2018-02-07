@@ -14,12 +14,12 @@ irql_t KABI ke_lower_irql(irql_t irql)
     return hal_set_irql(irql);
 }
 
-irql_t KABI ke_get_irql()
+irql_t KABI ke_get_irql(void)
 {
     return hal_get_irql();
 }
 
-int KABI ke_get_current_core()
+int KABI ke_get_current_core(void)
 {
     return hal_get_core_id();
 }

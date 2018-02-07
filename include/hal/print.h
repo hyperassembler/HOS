@@ -8,8 +8,8 @@ void KABI hal_assert(uint32_t expression, char *message);
 
 void KABI hal_printf(const char *str, ...);
 
-void KABI hal_clear_screen();
+void KABI hal_clear_screen(void);
 
-void KABI hal_print_init();
+void KABI hal_print_init(void);
 
 #endif

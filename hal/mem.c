@@ -106,7 +106,7 @@ void KABI hfree(void *ptr)
     return;
 }
 
-static void KABI _hal_init_gdt()
+static void KABI _hal_init_gdt(void)
 {
     uint32_t coreid = hal_get_core_id();
     // get gdt ready
@@ -135,7 +135,7 @@ static void KABI _hal_init_gdt()
     _gdt_ptrs[coreid].base = (uint64_t) &_gdts[coreid];
     _gdt_ptrs[coreid].limit = GDT_ENTRY_NUM * GDT_ENTRY_SIZE - 1;
     hal_flush_gdt(&_gdt_ptrs[coreid], seg_selector(1, 0), seg_selector(2, 0));
-};
+}
 
 void KABI hal_mem_init()
 {

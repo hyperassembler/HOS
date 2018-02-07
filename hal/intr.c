@@ -14,6 +14,7 @@ static exc_handler_t _exc_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
 
 irql_t KABI hal_set_irql(irql_t irql)
 {
+    UNREFERENCED(irql)
     hal_assert(false,"Unimplemented function called.");
     return 0;
 }
@@ -105,7 +106,7 @@ void KABI hal_deregister_exception_handler(uint32_t coreid, uint32_t index)
     return;
 }
 
-static void KABI hal_interrupt_dispatcher(uint64_t int_vec, hal_interrupt_context_t *context)
+void KABI hal_interrupt_dispatcher(uint64_t int_vec, hal_interrupt_context_t *context)
 {
     uint32_t coreid = hal_get_core_id();
     if (_intr_handler_table[int_vec] == NULL)
@@ -119,7 +120,7 @@ static void KABI hal_interrupt_dispatcher(uint64_t int_vec, hal_interrupt_contex
     return;
 }
 
-static void KABI hal_exception_dispatcher(uint64_t exc_vec, hal_interrupt_context_t* context, uint64_t errorcode)
+void KABI hal_exception_dispatcher(uint64_t exc_vec, hal_interrupt_context_t* context, uint64_t errorcode)
 {
     uint32_t coreid = hal_get_core_id();
     if (_exc_handler_table[exc_vec] == NULL)
@@ -133,7 +134,7 @@ static void KABI hal_exception_dispatcher(uint64_t exc_vec, hal_interrupt_contex
     return;
 }
 
-static void KABI halp_populate_idt()
+static void KABI halp_populate_idt(void)
 {
     hal_set_interrupt_handler(0, hal_interrupt_handler_0);
     hal_set_interrupt_handler(1, hal_interrupt_handler_1);
@@ -439,6 +440,7 @@ int32_t KABI hal_interrupt_init(void)
     hal_read_msr(&ecx, &edx, &eax);
     apic_base_reg = ((uint64_t) edx << 32) + (uint64_t) eax;
     apic_base = apic_base_reg & lb_bit_field_mask(12, 35);
+    UNREFERENCED(apic_base);
 
     //hal_printf("APIC Base: 0x%X\n", apic_base);
     //hal_printf("APIC Enabled: %s\n", apic_base_reg & bit_mask_64(11) ? "Yes" : "No");

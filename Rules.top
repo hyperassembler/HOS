@@ -1,0 +1,49 @@
+include $(MK)/prologue.mk
+
+.DEFAULT_GOAL := all
+
+#OBJ var holds all object files
+
+dir	:= hal
+include	$(dir)/Rules.mk
+dir	:= kernel
+include	$(dir)/Rules.mk
+dir := lib
+include $(dir)/Rules.mk
+dir := test
+include $(dir)/Rules.mk
+
+TGT := secxkrnl.elf
+DMP := secxkrnl.dmp
+ISO := secxkrnl.iso
+
+$(TGT): $(OBJ)
+	$(LINK) -T $(LD_SCRIPT)
+
+$(DMP): $(TGT)
+	$(DUMP)
+
+.PHONY: clean
+clean:
+	rm $(OBJ) $(TGT) $(DMP) $(ISO)
+
+.PHONY: compile
+compile: $(TGT)
+
+.PHONY: dump
+dump: $(DMP)
+
+.PHONY: iso
+iso: $(TGT)
+	mkdir -p temp/secX
+	mkdir -p temp/boot
+	mkdir -p temp/boot/grub
+	cp $(TGT) temp/secX/
+	cp $(GRUB_CFG) temp/boot/grub/
+	grub-mkrescue -o $(ISO) temp
+	rm -r temp
+
+.PHONY: all
+all: compile dump iso
+
+include $(MK)/epilogue.mk

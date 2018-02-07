@@ -14,12 +14,12 @@
 
 static uint64_t text_pos;
 
-static void KABI hal_print_init()
+void KABI hal_print_init(void)
 {
     text_pos = 0;
 }
 
-static void KABI halp_print_scroll()
+static void KABI halp_print_scroll(void)
 {
     lb_mem_move((void *) (0xb8000 + get_pos(1, 0) * 2), (void *) (0xb8000 + get_pos(0, 0) * 2), (80 * 24) * 2);
     return;
@@ -139,10 +139,9 @@ void KABI hal_clear_screen(void)
 
 void KABI hal_vprintf(char const * format, va_list args)
 {
-    va_start(args, format);
     char buf[2] = {0, 0};
-    int32_t d;
-    uint32_t u;
+    int64_t d;
+    uint64_t u;
     char* s;
     char c;
     for(;*format != '\0';format++)
@@ -169,7 +168,7 @@ void KABI hal_vprintf(char const * format, va_list args)
                 halp_print_str(s);
                 break;
             case 'c':
-                c = va_arg(args, int64_t);
+                c = (char)va_arg(args, int64_t);
                 buf[0] = c;
                 halp_print_str(buf);
                 break;

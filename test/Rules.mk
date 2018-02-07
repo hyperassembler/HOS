@@ -1,14 +1,9 @@
 include $(MK)/prologue.mk
 
-SRC_$(d) := alloc.c \
-			assert.c \
-			atomic.c \
-			boot.c \
-			bug_check.c \
-			intr.c \
-			print.c \
-			rwwlock.c \
-			spin_lock.c
+SRC_$(d) := avl_tree_test.c \
+			driver.c \
+			linked_list_test.c \
+			salloc_test.c
 
 SRC_$(d) := $(addprefix $(d)/, $(SRC_$(d)))
 

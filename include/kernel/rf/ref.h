@@ -19,7 +19,7 @@ typedef struct
 // specifying where the allocations take place
 //
 
-status_t KABI rf_reference_setup();
+status_t KABI rf_reference_setup(void);
 
 status_t KABI rf_reference_create(ref_node_t *ref,
                                   callback_func_t free_func);

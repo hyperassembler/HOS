@@ -13,7 +13,9 @@ SRCAS_$(d) := boot.asm \
 			  cpu.asm \
 			  intr.asm 
 
-OBJAS_$(d) := $(SRCAS_$(d):.c=.a)
+SRCAS_$(d) := $(addprefix $(d)/, $(SRCAS_$(d)))
+
+OBJAS_$(d) := $(SRCAS_$(d):.asm=.a)
 
 $(OBJ_$(d)): %.o: %.c
 	$(COMP)

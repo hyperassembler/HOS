@@ -1,17 +1,16 @@
-ASM := nasm
-CC := /opt/x86_64-elf-gcc
-LD := /opt/x86_64-elf-gcc
-DUMP := /opt/x86_64-elf-objdump
+CROSS_DIR = ~/opt/cross/bin
+AS = nasm
+CC = $(CROSS_DIR)/x86_64-elf-gcc
+LD = $(CROSS_DIR)/x86_64-elf-gcc
+DAS = $(CROSS_DIR)/x86_64-elf-objdump
 
-LD_SCRIPT := linker.ld
+INCLUDE_DIR = include
+MK = mk
 
-GRUB_CFG := grub.cfg
+LD_SCRIPT = $(MK)/linker.ld
+GRUB_CFG = $(MK)/grub.cfg
 
-INCLUDE_DIR := include
-
-MK := mk
-
-C_WARNINGS := -Wall \
+C_WARNINGS = -Wall \
 			  -Werror \
 			  -Wextra \
 			  -Wpedantic \
@@ -26,7 +25,7 @@ C_WARNINGS := -Wall \
 			  -Wpointer-arith \
 			  -Wno-comment
 
-C_FLAGS := -std=c11 \
+C_FLAGS = -std=c11 \
 		   -g \
 		   -c \
 		   -O2 \
@@ -41,22 +40,22 @@ C_FLAGS := -std=c11 \
 		   $(C_WARNINGS) \
 		   $(addprefix -I, $(INCLUDE_DIR))
 
-ASM_FLAGS := -w+all \
+AS_FLAGS = -w+all \
 			 -f elf64 \
 			 -F dwarf \
 			 -g \
-			 $(addprefix -I, $(ASM_HEADER_DIRS))
+			 $(addprefix -I, $(INCLUDE_DIR)/)
 
-LD_FLAGS := -lgcc \
+LD_FLAGS = -lgcc \
             -nodefaultlibs \
 			-nostartfiles \
 			-nostdlib \
 			-Wl,-n \
 			-Wl,--build-id=none
 
-COMP :=
-LINK :=
-COMPAS :=
-PACK := 
+COMP = $(CC) $(C_FLAGS) $^ -o $@
+COMPAS = $(AS) $(AS_FLAGS) $^ -o $@
+LINK = $(LD) $(LD_FLAGS) $^ -o $@
+DUMP = $(DAS) -M intel -D $^ > $@
 
-include Rules.mk
+include Rules.top

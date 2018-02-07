@@ -16,17 +16,17 @@ static case_info ginfo[CASE_NUM];
 static void *gat[GAT_SIZE];
 static char *test_name;
 
-static void test_info()
+static void test_info(void)
 {
     ke_printf("[TD-INFO][%s] - ", test_name);
 }
 
-static void test_warning()
+static void test_warning(void)
 {
     ke_printf("[TD-WARN][%s] - ", test_name);
 }
 
-static void test_error()
+static void test_error(void)
 {
     ke_printf("[TD-ERR][%s] - ", test_name);
 }
@@ -43,7 +43,7 @@ static void gat_push(void *ptr)
     }
 }
 
-static bool gat_full()
+static bool gat_full(void)
 {
     for (int i = 0; i < GAT_SIZE; i++)
     {
@@ -55,7 +55,7 @@ static bool gat_full()
     return true;
 }
 
-static void gat_free()
+static void gat_free(void)
 {
     for (int i = 0; i < GAT_SIZE; i++)
     {
@@ -97,7 +97,7 @@ void KABI test_begin(char *name)
     }
 }
 
-void KABI test_end()
+void KABI test_end(void)
 {
     gat_free();
     int32_t total = 0, failed = 0, success = 0;

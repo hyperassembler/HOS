@@ -8,11 +8,11 @@
 
 #include "type.h"
 
-uint32_t KABI rand( void );
+uint32_t KABI lb_rand(void);
 
-void KABI srand(uint32_t _seed );
+void KABI lb_srand(uint32_t _seed);
 
-void KABI mrand(uint32_t max);
+void KABI lb_mrand(uint32_t max);
 
 uint64_t KABI lb_str_len(char const *str);
 
@@ -22,7 +22,7 @@ void KABI lb_mem_copy(void *src, void *dst, uint64_t size);
 
 void KABI lb_mem_move(void *src, void *dst, uint64_t size);
 
-void KABI lb_mem_set(void *src, int8_t const val, uint64_t size);
+void KABI lb_mem_set(void *src, uint8_t const val, uint64_t size);
 
 static inline uint64_t KABI lb_align_down(uint64_t val, uint64_t alignment)
 {
@@ -61,32 +61,34 @@ static inline int32_t KABI lb_min_32(int32_t a, int32_t b)
     return (a) < (b) ? a : b;
 }
 
-//static inline uint64_t KAPI round_up_power_of_2(uint64_t num)
-//{
-//    num--;
-//    num |= num >> 1;
-//    num |= num >> 2;
-//    num |= num >> 4;
-//    num |= num >> 8;
-//    num |= num >> 16;
-//    num |= num >> 32;
-//    num++;
-//    return (uint64_t)num;
-//}
-//
-//static inline uint32_t KAPI log_base_2(uint64_t num)
-//{
-//    uint32_t result = 0;
-//
-//    while (num >>= 1)
-//    {
-//        result++;
-//    }
-//
-//    return result;
-//}
+/*
+static inline uint64_t KAPI round_up_power_of_2(uint64_t num)
+{
+    num--;
+    num |= num >> 1;
+    num |= num >> 2;
+    num |= num >> 4;
+    num |= num >> 8;
+    num |= num >> 16;
+    num |= num >> 32;
+    num++;
+    return (uint64_t)num;
+}
 
-#define OBTAIN_STRUCT_ADDR(member_addr, struct_name, member_name) ((struct_name*)((void*)(member_addr)-(void*)(&(((struct_name*)0)->member_name))))
+static inline uint32_t KAPI log_base_2(uint64_t num)
+{
+    uint32_t result = 0;
+
+    while (num >>= 1)
+    {
+        result++;
+    }
+
+    return result;
+}
+*/
+
+#define OBTAIN_STRUCT_ADDR(member_addr, struct_name, member_name) ((struct_name*)((uintptr_t)(member_addr) - (uintptr_t)(&(((struct_name*)0)->member_name))))
 
 static inline uint64_t KABI lb_bit_mask(uint32_t bit)
 {

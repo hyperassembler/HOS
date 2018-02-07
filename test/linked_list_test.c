@@ -118,7 +118,7 @@ static void push_front_val(linked_list_t *list, int val)
 }
 
 
-static bool insert_test_beginning()
+static bool insert_test_beginning(void)
 {
     linked_list_t list;
     lb_linked_list_init(&list);
@@ -132,7 +132,7 @@ static bool insert_test_beginning()
     return assert_list(&list, val, 4);
 }
 
-static bool insert_test_middle()
+static bool insert_test_middle(void)
 {
     linked_list_t list;
     lb_linked_list_init(&list);
@@ -149,7 +149,7 @@ static bool insert_test_middle()
     return assert_list(&list, val, 6);
 }
 
-static bool insert_test_end()
+static bool insert_test_end(void)
 {
     linked_list_t list;
     lb_linked_list_init(&list);
@@ -163,7 +163,7 @@ static bool insert_test_end()
     return assert_list(&list, val, 4);
 }
 
-static bool insert_test_invalid()
+static bool insert_test_invalid(void)
 {
     linked_list_t list;
     lb_linked_list_init(&list);
@@ -193,7 +193,7 @@ static bool insert_test_invalid()
 }
 
 
-static bool remove_test_beginning()
+static bool remove_test_beginning(void)
 {
     linked_list_t list;
     lb_linked_list_init(&list);
@@ -210,7 +210,7 @@ static bool remove_test_beginning()
     return assert_list(&list, val, 2);
 }
 
-static bool remove_test_middle()
+static bool remove_test_middle(void)
 {
     linked_list_t list;
     lb_linked_list_init(&list);
@@ -231,7 +231,7 @@ static bool remove_test_middle()
     return assert_list(&list, val, 4);
 }
 
-static bool remove_test_end()
+static bool remove_test_end(void)
 {
     linked_list_t list;
     lb_linked_list_init(&list);
@@ -248,7 +248,7 @@ static bool remove_test_end()
     return assert_list(&list, val, 2);
 }
 
-static bool remove_test_all()
+static bool remove_test_all(void)
 {
     bool result = true;
     linked_list_t list;
@@ -293,7 +293,7 @@ static bool remove_test_all()
     return result;
 }
 
-static bool remove_test_invalid()
+static bool remove_test_invalid(void)
 {
     linked_list_t list;
     lb_linked_list_init(&list);
@@ -323,7 +323,7 @@ static bool remove_test_invalid()
     return assert_list(&list, val, 4);
 }
 
-static bool size_test()
+static bool size_test(void)
 {
     bool result = true;
     linked_list_t list;
@@ -343,7 +343,7 @@ static bool size_test()
     return result;
 }
 
-static bool push_pop_front_test()
+static bool push_pop_front_test(void)
 {
     bool result = true;
     linked_list_t list;
@@ -371,7 +371,7 @@ static bool push_pop_front_test()
     return result;
 }
 
-static bool push_pop_back_test()
+static bool push_pop_back_test(void)
 {
     bool result = true;
     linked_list_t list;
@@ -405,7 +405,7 @@ static int32_t equals(void *a, void *b)
            OBTAIN_STRUCT_ADDR((linked_list_node_t*)a, my_list_node, lnode)->val;
 }
 
-static bool search_test()
+static bool search_test(void)
 {
     bool result = true;
     linked_list_t list;

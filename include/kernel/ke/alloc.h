@@ -3,7 +3,7 @@
 
 #include "type.h"
 
-void KABI ke_alloc_init();
+void KABI ke_alloc_init(void);
 
 void* KABI ke_alloc(uint32_t size);
 

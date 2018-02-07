@@ -8,10 +8,8 @@ irql_t KABI ke_raise_irql(irql_t irql);
 
 irql_t KABI ke_lower_irql(irql_t irql);
 
-int KABI ke_get_current_core();
+int KABI ke_get_current_core(void);
 
-irql_t KABI ke_get_irql();
-
-void KABI ke_halt_cpu();
+irql_t KABI ke_get_irql(void);
 
 #endif

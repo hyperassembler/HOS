@@ -69,7 +69,7 @@ static bool pre_order_assert(avl_tree_t *node, int order[], int size)
 
 //////// TESTS/////////
 
-static bool insert_simple_l()
+static bool insert_simple_l(void)
 {
     //1                   2
     // \                 / \
@@ -93,7 +93,7 @@ static bool insert_simple_l()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool insert_simple_r()
+static bool insert_simple_r(void)
 {
     //    3               2
     //   /               / \
@@ -117,7 +117,7 @@ static bool insert_simple_r()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool insert_simple_ll()
+static bool insert_simple_ll(void)
 {
     //2                  3
     // \                / \
@@ -140,7 +140,7 @@ static bool insert_simple_ll()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool insert_simple_rr()
+static bool insert_simple_rr(void)
 {
     //  4                3
     // /                / \
@@ -163,7 +163,7 @@ static bool insert_simple_rr()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool insert_complex_1()
+static bool insert_complex_1(void)
 {
     //    20+          20++           20++         9
     //   /  \         /  \           /  \         / \
@@ -191,7 +191,7 @@ static bool insert_complex_1()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool insert_complex_2()
+static bool insert_complex_2(void)
 {
     //    20+          20++           20++         9
     //   /  \         /  \           /  \         / \
@@ -219,7 +219,7 @@ static bool insert_complex_2()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool insert_complex_3()
+static bool insert_complex_3(void)
 {
     //      __20+__                _20++_                  __20++_                ___9___
     //     /       \              /      \                /       \              /       \
@@ -254,7 +254,7 @@ static bool insert_complex_3()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool insert_complex_4()
+static bool insert_complex_4(void)
 {
     //      __20+__                _20++_                  __20++_                ___9___
     //     /       \              /      \                /       \              /       \
@@ -289,7 +289,7 @@ static bool insert_complex_4()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool insert_duplicate()
+static bool insert_duplicate(void)
 {
     //      __20+__                _20++_                  __20++_                ___9___
     //     /       \              /      \                /       \              /       \
@@ -327,7 +327,7 @@ static bool insert_duplicate()
 }
 
 
-static bool delete_simple_l()
+static bool delete_simple_l(void)
 {
     //  2                   3
     // x \                 / \
@@ -355,7 +355,7 @@ static bool delete_simple_l()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool delete_simple_r()
+static bool delete_simple_r(void)
 {
     //    3                  2
     //   / x                / \
@@ -383,7 +383,7 @@ static bool delete_simple_r()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool delete_simple_ll()
+static bool delete_simple_ll(void)
 {
     //  2                  3
     // x \                / \
@@ -410,7 +410,7 @@ static bool delete_simple_ll()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool delete_simple_rr()
+static bool delete_simple_rr(void)
 {
     //  3                  2
     // / x                / \
@@ -437,7 +437,7 @@ static bool delete_simple_rr()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool delete_complex_1()
+static bool delete_complex_1(void)
 {
     // Test Case #1
     //  - A single node tree has its only node removed.
@@ -464,7 +464,7 @@ static bool delete_complex_1()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool delete_complex_2()
+static bool delete_complex_2(void)
 {
     // Test Case #2
     //  - A small tree has its root removed.
@@ -507,7 +507,7 @@ static bool delete_complex_2()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool delete_complex_3()
+static bool delete_complex_3(void)
 {
     // Test Case #3
     //  - A small tree has a node with 2 children removed
@@ -547,7 +547,7 @@ static bool delete_complex_3()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool delete_complex_4()
+static bool delete_complex_4(void)
 {
     // Test Case #4
     //  - A small tree has all nodes but the root removed from the bottom up.
@@ -596,7 +596,7 @@ static bool delete_complex_4()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool delete_complex_single_rotation()
+static bool delete_complex_single_rotation(void)
 {
     // Test case single rotation
     //
@@ -651,7 +651,7 @@ static bool delete_complex_single_rotation()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool delete_complex_double_rotation()
+static bool delete_complex_double_rotation(void)
 {
 // Test case double rotation
     //
@@ -706,7 +706,7 @@ static bool delete_complex_double_rotation()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool delete_complex_multiple_rotation()
+static bool delete_complex_multiple_rotation(void)
 {
     // Test case multiple rotation
     //
@@ -761,7 +761,7 @@ static bool delete_complex_multiple_rotation()
     return result && lb_avl_tree_validate(&tree);
 }
 
-static bool delete_DNE()
+static bool delete_DNE(void)
 {
     // Test case DNE
     //  Delete a node that does not exist
@@ -808,7 +808,7 @@ static bool delete_DNE()
 #define AVL_APOCALYPSE_ITER 2
 static int_tree_node apocalypse[AVL_APOCALYPSE_NUM];
 
-static bool test_apocalypse()
+static bool test_apocalypse(void)
 {
     bool result = true;
     avl_tree_t tree;
@@ -817,10 +817,10 @@ static bool test_apocalypse()
     // insert test
     for(int i = 0; i < AVL_APOCALYPSE_NUM; i++)
     {
-        apocalypse[i].val = rand();
+        apocalypse[i].val = lb_rand();
         while(lb_avl_tree_search(&tree, &apocalypse[i].tree_entry) != NULL)
         {
-            apocalypse[i].val += rand() % 32765;
+            apocalypse[i].val += lb_rand() % 32765;
         }
         lb_avl_tree_insert(&tree, &apocalypse[i].tree_entry);
     }
@@ -927,7 +927,7 @@ void  avl_tree_test(void)
     // delete non-existing
     run_case("delete_DNE", delete_DNE());
 
-    srand(2986);
+    lb_srand(2986);
     // ultimate apocalypse
     for(int i = 0; i < AVL_APOCALYPSE_ITER; i++)
     {

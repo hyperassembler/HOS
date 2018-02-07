@@ -2,8 +2,6 @@
  * Distributed under GPL license
  * See COPYING under root for details
  */
-
-#include "abi.h"
 #include "type.h"
 #include "lib/sxtdlib.h"
 

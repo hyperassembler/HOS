@@ -5,7 +5,7 @@
 
 void KABI test_begin(char *name);
 
-void KABI test_end();
+void KABI test_end(void);
 
 void *KABI talloc(uint32_t size);
 
