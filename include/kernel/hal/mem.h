@@ -7,9 +7,6 @@
 /**
  Kernel Memory Layout
 **/
-typedef uintptr_t physical_addr_t;
-typedef uintptr_t virtual_addr_t;
-
 #define KERNEL_PAGE_SIZE (0x1000ull)
 
 #define KERNEL_AREA_START_VADDR (0xFFFF800000000000ull)
@@ -41,7 +38,7 @@ typedef uintptr_t virtual_addr_t;
  */
 typedef struct
 {
-    physical_addr_t base;
+    uintptr_t base;
     uint64_t size;
     uint32_t attr;
 } pmm_node_t;

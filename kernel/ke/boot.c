@@ -6,8 +6,7 @@
 #include "kernel/ke/boot.h"
 #include "kernel/ke/alloc.h"
 #include "test/test_case.h"
-
-extern void KABI hal_printf(char const *, ...);
+#include "kernel/ke/print.h"
 
 // returning from this function results in halting the cpu
 void KABI ke_main(boot_info_t *boot_info)
@@ -15,7 +14,7 @@ void KABI ke_main(boot_info_t *boot_info)
     if (boot_info == NULL)
     {
         // failed.
-        hal_printf("KERNEL: HAL init failed.\n");
+        ke_printf("KERNEL: HAL init failed.\n");
         return;
     }
 
@@ -24,12 +23,12 @@ void KABI ke_main(boot_info_t *boot_info)
 
     ke_alloc_init();
 
-    hal_printf("KERNEL: Base Addr is 0x%X. Size is %uB, %uKB.\n",
+    ke_printf("KERNEL: Base Addr is 0x%X. Size is %uB, %uKB.\n",
                boot_info->krnl_start,
                (boot_info->krnl_end - boot_info->krnl_start),
                (boot_info->krnl_end - boot_info->krnl_start) / 1024);
 
-    hal_printf("KERNEL: CPU Vendor is \"%s\".\n", boot_info->cpu_vd_str);
+    ke_printf("KERNEL: CPU Vendor is \"%s\".\n", boot_info->cpu_vd_str);
 
     linked_list_test();
 
@@ -37,7 +36,7 @@ void KABI ke_main(boot_info_t *boot_info)
 
     salloc_test();
 
-    hal_printf("KERNEL: Kernel tasks finished.\n");
+    ke_printf("KERNEL: Kernel tasks finished.\n");
 
     return;
 }

@@ -1,6 +1,6 @@
 include $(MK)/prologue.mk
 
-SRC_$(d) := init.c \
+SRC_$(d) := boot.c \
 			intr.c \
 			mem.c \
 			print.c 

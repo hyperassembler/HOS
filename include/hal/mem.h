@@ -81,13 +81,13 @@ void KABI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uin
 
 #define PAGE_ENTRY_BASE(PAGE_ENTRY) ((PAGE_ENTRY) & 0xFFFFFFFFFF000)
 
-void KABI hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr);
+void KABI hal_write_pml4(void *const base, uintptr_t const pdpt_addr, uint64_t const attr);
 
-void KABI hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr);
+void KABI hal_write_pdpt(void *const base, uintptr_t const pd_addr, uint64_t const attr);
 
-void KABI hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr);
+void KABI hal_write_pd(void *const base, uintptr_t const pt_addr, uint64_t const attr);
 
-void KABI hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr);
+void KABI hal_write_pt(void *const base, uintptr_t const p_addr, uint64_t const attr);
 
 
 /**

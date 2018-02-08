@@ -12,7 +12,34 @@ static hal_gdt_ptr_t _gdt_ptrs[HAL_CORE_COUNT];
 
 char kernel_heap[KERNEL_HEAP_SIZE];
 
-void KABI hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t const attr)
+/**
+ * helper for boot.asm, not open to C headers
+ * @param k_start kernel start paddr
+ * @param k_end kernel end paddr
+ * @param multiboot_info multibootinfo paddr
+ * @param pt_base page table base paddr
+ * @param pt_end page table entry paddr
+ */
+void KABI hal_write_initial_page_table(void* k_start, void* k_end, void* multiboot_info, void* pt_base, void* pt_end)
+{
+    uint32_t pt_num = 0;
+    uint32_t pd_num = 0;
+    uint32_t pdpt_num = 0;
+    uint32_t pml4_num = 0;
+
+    // calculate the number of page tables required:
+    uint64_t k_size = (uintptr_t)k_start - (uintptr_t)k_end;
+    // 
+    uint32_t m_size = *(uint32_t *)multiboot_info;
+
+
+    // construct recursive mapping with the first page table
+
+
+}
+
+
+void KABI hal_write_pt(void *const base, uintptr_t const p_addr, uint64_t const attr)
 {
     if (base == NULL)
         return;
@@ -28,7 +55,7 @@ void KABI hal_write_pt_entry(void *const base, uint64_t const p_addr, uint64_t c
     return;
 }
 
-void KABI hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t const attr)
+void KABI hal_write_pd(void *const base, uintptr_t const pt_addr, uint64_t const attr)
 {
     if (base == NULL)
         return;
@@ -44,7 +71,7 @@ void KABI hal_write_pd_entry(void *const base, uint64_t const pt_addr, uint64_t 
     return;
 }
 
-void KABI hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_t const attr)
+void KABI hal_write_pdpt(void *const base, uintptr_t const pd_addr, uint64_t const attr)
 {
     if (base == NULL)
         return;
@@ -60,7 +87,7 @@ void KABI hal_write_pdpt_entry(void *const base, uint64_t const pd_addr, uint64_
     return;
 }
 
-void KABI hal_write_pml4_entry(void *const base, uint64_t const pdpt_addr, uint64_t const attr)
+void KABI hal_write_pml4(void *const base, uintptr_t const pdpt_addr, uint64_t const attr)
 {
     if (base == NULL)
         return;
