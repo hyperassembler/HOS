@@ -1,18 +1,10 @@
 include $(MK)/prologue.mk
 
-SRC_$(d) := avl_tree.c \
-			linked_list.c \
-			salloc.c \
-			sxtdlib.c
+SRC_$(d) := $(d)/avl_tree.c \
+			$(d)/linked_list.c \
+			$(d)/salloc.c \
+			$(d)/sxtdlib.c
 
-SRC_$(d) := $(addprefix $(d)/, $(SRC_$(d)))
-
-OBJ_$(d) := $(SRC_$(d):.c=.o)
-
-$(OBJ_$(d)): %.o: %.c
-	$(COMP)
-
-# append all OBJECTS to clean
-OBJ := $(OBJ) $(OBJ_$(d))
+include $(MK)/stdrules.mk
 
 include $(MK)/epilogue.mk

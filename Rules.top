@@ -12,12 +12,14 @@ dir := lib
 include $(dir)/Rules.mk
 dir := test
 include $(dir)/Rules.mk
+dir := mk
+include $(dir)/Rules.mk
 
 TGT := secxkrnl.elf
 DMP := secxkrnl.dmp
 ISO := secxkrnl.iso
 
-$(TGT): $(OBJ)
+$(TGT): $(OBJ) $(LD_SCRIPT)
 	$(LINK) -T $(LD_SCRIPT)
 
 $(DMP): $(TGT)
@@ -25,7 +27,7 @@ $(DMP): $(TGT)
 
 .PHONY: clean
 clean:
-	rm $(OBJ) $(TGT) $(DMP) $(ISO)
+	rm -f $(CLEAN) $(TGT) $(DMP) $(ISO)
 
 .PHONY: compile
 compile: $(TGT)

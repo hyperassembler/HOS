@@ -74,12 +74,10 @@ void KABI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uin
 #define PT_GLOBAL (1ull << 8)
 #define PT_EXECUTION_DISABLED (1ull << 63)
 
-#define PML4_ENTRY_NUM(mem) ((mem) / (4096ull * 512ull * 512ull * 512ull))
-#define PDPT_ENTRY_NUM(mem) ((mem) / (4096ull * 512ull * 512ull))
-#define PD_ENTRY_NUM(mem) ((mem) / (4096ull*512ull))
-#define PT_ENTRY_NUM(mem) ((mem) / 4096ull)
-
-#define PAGE_ENTRY_BASE(PAGE_ENTRY) ((PAGE_ENTRY) & 0xFFFFFFFFFF000)
+#define PML4_ENTRY_NUM(vaddr) (((vaddr) >> 39) & 0x1FF)
+#define PDPT_ENTRY_NUM(vaddr) (((vaddr) >> 30) & 0x1FF)
+#define PD_ENTRY_NUM(vaddr)   (((vaddr) >> 21) & 0x1FF)
+#define PT_ENTRY_NUM(vaddr)   (((vaddr) >> 12) & 0x1FF)
 
 void KABI hal_write_pml4(void *const base, uintptr_t const pdpt_addr, uint64_t const attr);
 

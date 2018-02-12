@@ -1,23 +1,15 @@
 include $(MK)/prologue.mk
 
-SRC_$(d) := alloc.c \
-			assert.c \
-			atomic.c \
-			boot.c \
-			bug_check.c \
-			intr.c \
-			print.c \
-			rwwlock.c \
-			spin_lock.c
-
-SRC_$(d) := $(addprefix $(d)/, $(SRC_$(d)))
-
-OBJ_$(d) := $(SRC_$(d):.c=.o)
-
-$(OBJ_$(d)): %.o: %.c
-	$(COMP)
-
-# append all OBJECTS to clean
-OBJ := $(OBJ) $(OBJ_$(d))
+SRC_$(d) := $(d)/alloc.c \
+			$(d)/assert.c \
+			$(d)/atomic.c \
+			$(d)/boot.c \
+			$(d)/bug_check.c \
+			$(d)/intr.c \
+			$(d)/print.c \
+			$(d)/rwwlock.c \
+			$(d)/spin_lock.c
+			
+include $(MK)/stdrules.mk
 
 include $(MK)/epilogue.mk

@@ -11,8 +11,7 @@
 
 typedef struct
 {
-    virtual_addr_t krnl_start;
-    virtual_addr_t krnl_end;
+	void* krnl_end;
     intr_info_t intr_info;
     char cpu_vd_str[13];
 } boot_info_t;

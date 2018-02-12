@@ -1,6 +1,6 @@
 #include "kernel/ke/assert.h"
 #include "kernel/ke/rwwlock.h"
-#include "kernel/ke/status.h"
+#include "status.h"
 #include "kernel/ke/alloc.h"
 #include "kernel/mm/pmm.h"
 
@@ -8,7 +8,7 @@ typedef struct
 {
     linked_list_node_t free_list_node;
     avl_tree_node_t avl_tree_node;
-    physical_addr_t base;
+    uintptr_t base;
     int32_t attr;
 } physical_page_descriptor_t;
 
@@ -26,10 +26,10 @@ static _Bool initialized;
  */
 static int32_t mmp_base_paddr_compare(void *tree_node, void *my_node)
 {
-    physical_addr_t tree_base = OBTAIN_STRUCT_ADDR(tree_node,
+    uintptr_t tree_base = OBTAIN_STRUCT_ADDR(tree_node,
                                                      physical_page_descriptor_t,
                                                      avl_tree_node)->base;
-    physical_addr_t my_base = OBTAIN_STRUCT_ADDR(my_node,
+    uintptr_t my_base = OBTAIN_STRUCT_ADDR(my_node,
                                                    physical_page_descriptor_t,
                                                    avl_tree_node)->base;
     if (tree_base > my_base)
@@ -44,7 +44,7 @@ status_t KABI sx_pmm_init(pmm_info_t *info)
 {
     if (info == NULL)
     {
-        return PMM_STATUS_INVALID_ARGUMENTS;
+        return MM_INVALID_ARGUMENTS;
     }
 
     if (initialized)
@@ -72,7 +72,7 @@ status_t KABI sx_pmm_init(pmm_info_t *info)
 
             if (page_info == NULL)
             {
-                return PMM_STATUS_ALLOCATION_FAILED;
+                return MM_ALLOCATION_FAILED;
             }
 
             page_info->base = each_node->base;
@@ -88,16 +88,16 @@ status_t KABI sx_pmm_init(pmm_info_t *info)
 // potential callers of these, since timer/interrupts queue DPC, which might trigger
 // page fault (kernel heap), therefore, it must set IRQL to DISABLED
 
-status_t KABI mm_alloc_page(physical_addr_t *out)
+status_t KABI mm_alloc_page(uintptr_t *out)
 {
     if (!initialized)
     {
-        return PMM_STATUS_UNINITIALIZED;
+        return MM_UNINITIALIZED;
     }
 
     if (out == NULL)
     {
-        return PMM_STATUS_INVALID_ARGUMENTS;
+        return MM_INVALID_ARGUMENTS;
     }
 
     irql_t irql = ke_rwwlock_writer_lock_raise_irql(&lock, IRQL_DISABLED_LEVEL);
@@ -114,24 +114,24 @@ status_t KABI mm_alloc_page(physical_addr_t *out)
         *out = page_info->base;
     } else
     {
-        result = PMM_STATUS_NOT_ENOUGH_PAGE;
+        result = MM_NOT_ENOUGH_PAGE;
     }
 
     ke_rwwlock_writer_unlock_lower_irql(&lock, irql);
     return result;
 }
 
-status_t KABI mm_query_page_attr(physical_addr_t base,
-                                   int32_t *out)
+status_t KABI mm_query_page_attr(uintptr_t base,
+                                 int32_t *out)
 {
     if (!initialized)
     {
-        return PMM_STATUS_UNINITIALIZED;
+        return MM_UNINITIALIZED;
     }
 
     if (out == NULL)
     {
-        return PMM_STATUS_INVALID_ARGUMENTS;
+        return MM_INVALID_ARGUMENTS;
     }
 
     irql_t irql = ke_rwwlock_reader_lock_raise_irql(&lock, IRQL_DISABLED_LEVEL);
@@ -149,7 +149,7 @@ status_t KABI mm_query_page_attr(physical_addr_t base,
         *out = page_info->attr;
     } else
     {
-        result = PMM_STATUS_INVALID_ARGUMENTS;
+        result = MM_INVALID_ARGUMENTS;
     }
 
     ke_rwwlock_reader_unlock_lower_irql(&lock, irql);
@@ -157,11 +157,11 @@ status_t KABI mm_query_page_attr(physical_addr_t base,
     return result;
 }
 
-status_t KABI mm_free_page(physical_addr_t base)
+status_t KABI mm_free_page(uintptr_t base)
 {
     if (!initialized)
     {
-        return PMM_STATUS_UNINITIALIZED;
+        return MM_UNINITIALIZED;
     }
 
     // just lock since not sharing with anyone
@@ -179,7 +179,7 @@ status_t KABI mm_free_page(physical_addr_t base)
         lb_linked_list_push_back(&free_list, &page_info->free_list_node);
     } else
     {
-        result = PMM_STATUS_INVALID_ARGUMENTS;
+        result = MM_INVALID_ARGUMENTS;
     }
 
     ke_rwwlock_writer_unlock_lower_irql(&lock, irql);

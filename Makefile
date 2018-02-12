@@ -46,16 +46,32 @@ AS_FLAGS = -w+all \
 			 -g \
 			 $(addprefix -I, $(INCLUDE_DIR)/)
 
-LD_FLAGS = -lgcc \
+LD_FLAGS =  -lgcc \
             -nodefaultlibs \
 			-nostartfiles \
 			-nostdlib \
 			-Wl,-n \
 			-Wl,--build-id=none
 
-COMP = $(CC) $(C_FLAGS) $^ -o $@
-COMPAS = $(AS) $(AS_FLAGS) $^ -o $@
+DUMP_FLAGS = -M intel \
+			 -D
+
+PREP_FLAGS = -E \
+			 -x c \
+			 -P \
+			 -traditional-cpp \
+			 $(C_FLAGS)
+
+GDEP_FLAGS = $(PREP_FLAGS) \
+			 -MMD \
+			 -MT $@
+			 
+
+COMP = $(CC) $(C_FLAGS) $< -o $@
+COMPAS = $(AS) $(AS_FLAGS) $< -o $@
 LINK = $(LD) $(LD_FLAGS) $^ -o $@
-DUMP = $(DAS) -M intel -D $^ > $@
+DUMP = $(DAS) $(DUMP_FLAGS) $< > $@
+PREP = $(CC) $(PREP_FLAGS) $< > $@
+GDEP = $(CC) $(GDEP_FLAGS) -MF $*.d $< > /dev/null
 
 include Rules.top

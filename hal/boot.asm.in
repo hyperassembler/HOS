@@ -1,0 +1,219 @@
+#include "kernel/hal/memdef.h"
+
+%define GET_PADDR(x) ((x) - KERNEL_IMAGE_VADDR)
+%define BOCHS_BREAK xchg bx,bx
+
+extern hal_main
+extern hal_write_initial_page_table
+global hal_entry_32
+
+section .multiboot_header
+bits 32
+MULTIBOOT_TAG_ALIGNMENT equ 8
+MULTIBOOT_HEADER_ALIGNMENT equ 8
+MULTIBOOT_LOADED_MAGIC equ 0x36d76289
+MULTIBOOT_MAGIC_NUMBER equ 0xE85250D6
+MULTIBOOT_ARCH equ 0
+MULTIBOOT_CHECK_SUM equ (0xFFFFFFFF - (MULTIBOOT_MAGIC_NUMBER + MULTIBOOT_HEADER_SIZE + MULTIBOOT_ARCH) + 1)
+MULTIBOOT_REQ_LOADERNAME equ 2
+MULTIBOOT_REQ_MMAP equ 6
+MULTIBOOT_REQ_ACPI_RSDP equ 15
+;====================
+;header tag
+align MULTIBOOT_HEADER_ALIGNMENT
+multiboot_header_tag:
+    dd MULTIBOOT_MAGIC_NUMBER
+    dd MULTIBOOT_ARCH
+    dd MULTIBOOT_HEADER_SIZE
+    dd MULTIBOOT_CHECK_SUM
+;====================
+;INFO_REQUEST_TAG
+align MULTIBOOT_TAG_ALIGNMENT
+multiboot_info_tag:
+    dw 0x1 ; type=1
+    dw 0x0 ; flag=0
+    dd MULTIBOOT_INFO_TAG_SIZE
+    dd MULTIBOOT_REQ_LOADERNAME
+    dd MULTIBOOT_REQ_MMAP
+    dd MULTIBOOT_REQ_ACPI_RSDP
+MULTIBOOT_INFO_TAG_SIZE equ ($ - multiboot_info_tag)
+;====================
+;MODULE ALIGNMENT TAG
+align MULTIBOOT_TAG_ALIGNMENT
+    dw 0x6; type=6
+    dw 0x0; flag=0
+    dd 0x8
+;====================
+align MULTIBOOT_TAG_ALIGNMENT
+	;End_tag
+    dw 0x0
+    dw 0x0
+    dd 0x8
+;====================
+MULTIBOOT_HEADER_SIZE equ ($ - multiboot_header_tag)
+
+
+section .text
+bits 32
+align 4096
+hal_entry_32:
+    cli
+    cld
+    cmp eax,MULTIBOOT_LOADED_MAGIC
+    je .loaded_by_grub
+    hlt
+
+.loaded_by_grub:
+    ; save multiboot_info*
+    mov esi,ebx
+    call halp_check_long_mode
+    cmp eax,1
+    je .init_long_mode
+    hlt
+
+.init_long_mode:
+    ; disable paging first
+    mov eax, cr0          ; Set the A-register to control register 0.
+    and eax, ~(1 << 31)   ; Clear the PG-bit, which is bit 31.
+    mov cr0, eax          ; Set control register 0 to the A-register.
+
+    ; identity map the first 4GB
+    ; ATTRIBUTE = READ/WRITE + SU
+    mov eax, GET_PADDR(_pml4)
+    mov dword [eax], GET_PADDR(_pdpt) + 11b
+
+    ; write values for pdpt
+    mov ecx, 10000011b
+
+    mov eax, GET_PADDR(_pdpt)
+    mov dword [eax], ecx
+
+    add eax,8
+    add ecx,0x40000000 ;1G
+    mov dword [eax], ecx
+
+    add eax,8
+    add ecx,0x40000000 ;1G
+    mov dword [eax], ecx
+
+    add eax,8
+    add ecx,0x40000000 ;1G
+    mov dword [eax], ecx
+
+	BOCHS_BREAK
+
+    ; enable PAE
+    mov eax, cr4                 ; Set the A-register to control register 4.
+    or eax, 1 << 5               ; Set the PAE-bit, which is the 6th bit (bit 5).
+    mov cr4, eax                 ; Set control register 4 to the A-register.
+
+    ; enable long mode
+    mov ecx, 0xC0000080          ; Set the C-register to 0xC0000080, which is the EFER MSR.
+    rdmsr                        ; Read from the model-specific register.
+    or eax, 1 << 8               ; Set the LM-bit which is the 9th bit (bit 8).
+    wrmsr                        ; Write to the model-specific register.
+
+    ; let cr3 point at page table
+    mov eax, GET_PADDR(_pml4)
+    mov cr3, eax
+
+    ; enable paging, enter compatibility mode
+    mov eax, cr0                                   ; Set the A-register to control register 0.
+    or eax, 1 << 31                                ; Set the PG-bit, which is bit 31.
+    mov cr0, eax                                   ; Set control register 0 to the A-register.
+
+    ; enter long mode
+    lgdt [GET_PADDR(_gdt.ptr)]
+    jmp _gdt.code:GET_PADDR(halp_entry_64)
+    hlt
+
+halp_check_long_mode:
+    push ebp
+    mov ebp,esp
+    pushfd
+    pop eax
+    mov ecx, eax
+    xor eax, 1 << 21
+    push eax
+    popfd
+    pushfd
+    pop eax
+    push ecx
+    popfd
+    xor eax, ecx
+    jz .not_supported
+    mov eax, 0x80000000    ; Set the A-register to 0x80000000.
+    cpuid                  ; CPU identification.
+    cmp eax, 0x80000001    ; Compare the A-register with 0x80000001.
+    jb .not_supported      ; It is less, there is no long mode.
+    mov eax, 0x80000001    ; Set the A-register to 0x80000001.
+    cpuid                  ; CPU identification.
+    test edx, 1 << 29      ; Test if the LM-bit, which is bit 29, is set in the D-register.
+    jz .not_supported      ; They aren't, there is no long mode.
+    mov eax,1
+    jmp .end
+.not_supported:
+    xor eax,eax
+.end:
+    mov esp,ebp
+    pop ebp
+    ret
+
+section .text
+bits 64
+halp_entry_64:
+    ; note that we are still at the identity mapping
+    mov ax,_gdt.data
+    mov ds,ax
+    mov es,ax
+    mov fs,ax
+    mov gs,ax
+    mov ss,ax
+
+    mov rsp, GET_PADDR(_stack)
+    mov rdi, rsi ; multiboot_info*
+    call hal_write_initial_page_table
+    test rax,rax
+    jne .end
+    call hal_main
+.end:
+    hlt
+
+section .data
+bits 64
+align 4096
+    times 4096 db 0
+_stack:
+
+_pml4:
+align 4096
+    times 4096 db 0
+_pdpt:
+align 4096
+    times 4096 db 0
+_gdt:                      ; Global Descriptor Table (long mode).
+.null: equ $ - _gdt         ; The null descriptor.
+    dw 0                         ; Limit (low).
+    dw 0                         ; Base (low).
+    db 0                         ; Base (middle)
+    db 0                         ; Access.
+    db 0                         ; Granularity.
+    db 0                         ; Base (high).
+.code: equ $ - _gdt         ; The code descriptor.
+    dw 0                         ; Limit (low).
+    dw 0                         ; Base (low).
+    db 0                         ; Base (middle)
+    db 10011010b                 ; Access (exec/read).
+    db 00100000b                 ; Granularity.
+    db 0                         ; Base (high).
+.data: equ $ - _gdt         ; The data descriptor.
+    dw 0                         ; Limit (low).
+    dw 0                         ; Base (low).
+    db 0                         ; Base (middle)
+    db 10010010b                 ; Access (read/write).
+    db 00000000b                 ; Granularity.
+    db 0                         ; Base (high).
+.ptr:
+    ; GDT PTR
+    dw $ - _gdt - 1             ; Limit.
+    dq GET_PADDR(_gdt)          ; Base.

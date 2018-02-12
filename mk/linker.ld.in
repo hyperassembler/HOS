@@ -1,0 +1,44 @@
+#include "kernel/hal/memdef.h"
+
+OUTPUT_FORMAT(elf64-x86-64)
+OUTPUT_ARCH(i386:x86-64)
+ENTRY(hal_entry_32)
+
+SECTIONS
+{
+  . = KERNEL_IMAGE_VADDR;
+
+  .multiboot_header : AT(ADDR(.multiboot_header) + KERNEL_IMAGE_PADDR - KERNEL_IMAGE_VADDR)
+  {
+    *(.multiboot_header)
+  }
+
+  .text ALIGN(0x1000) : AT(ADDR(.text) + KERNEL_IMAGE_PADDR - KERNEL_IMAGE_VADDR)
+  {
+    *(.text)
+  }
+
+  .data ALIGN(0x1000) : AT(ADDR(.data) + KERNEL_IMAGE_PADDR - KERNEL_IMAGE_VADDR)
+  {
+    *(.data)
+    *(.rodata*)
+  }
+
+  .bss ALIGN(0x1000) : AT(ADDR(.bss) + KERNEL_IMAGE_PADDR - KERNEL_IMAGE_VADDR)
+  {
+    *(.bss)
+    *(COMMON)
+  }
+
+  KERNEL_IMAGE_END_VADDR = .;
+
+   /DISCARD/ :
+   {
+		*(.gcc_except_table)
+		*(.eh_frame)
+		*(.note)
+		*(.comment)
+		*(.rel.*)
+		*(.rela.*)
+	}
+}

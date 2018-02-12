@@ -23,10 +23,10 @@ void KABI ke_main(boot_info_t *boot_info)
 
     ke_alloc_init();
 
-    ke_printf("KERNEL: Base Addr is 0x%X. Size is %uB, %uKB.\n",
-               boot_info->krnl_start,
-               (boot_info->krnl_end - boot_info->krnl_start),
-               (boot_info->krnl_end - boot_info->krnl_start) / 1024);
+//    ke_printf("KERNEL: Base Addr is 0x%X. Size is %uB, %uKB.\n",
+//               boot_info->krnl_start,
+//               (boot_info->krnl_end - boot_info->krnl_start),
+//               (boot_info->krnl_end - boot_info->krnl_start) / 1024);
 
     ke_printf("KERNEL: CPU Vendor is \"%s\".\n", boot_info->cpu_vd_str);
 

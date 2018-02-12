@@ -4,6 +4,7 @@
 #include "hal/cpu.h"
 #include "lib/salloc.h"
 #include "hal/intr.h"
+#include "status.h"
 
 static uint8_t _gdts[HAL_CORE_COUNT][GDT_ENTRY_NUM * GDT_ENTRY_SIZE];
 static hal_gdt_ptr_t _gdt_ptrs[HAL_CORE_COUNT];
@@ -20,22 +21,46 @@ char kernel_heap[KERNEL_HEAP_SIZE];
  * @param pt_base page table base paddr
  * @param pt_end page table entry paddr
  */
-void KABI hal_write_initial_page_table(void* k_start, void* k_end, void* multiboot_info, void* pt_base, void* pt_end)
+status_t KABI hal_write_initial_page_table(void* multiboot_info)
 {
+	UNREFERENCED(multiboot_info);
+
+	/*
+	// still identity mapping
     uint32_t pt_num = 0;
     uint32_t pd_num = 0;
     uint32_t pdpt_num = 0;
     uint32_t pml4_num = 0;
 
     // calculate the number of page tables required:
-    uint64_t k_size = (uintptr_t)k_start - (uintptr_t)k_end;
-    // 
+    uint64_t k_size = (uintptr_t)KERNEL_IMAGE_END_VADDR - (uintptr_t)KERNEL_IMAGE_VADDR;
+    // see multiboot boot info header
     uint32_t m_size = *(uint32_t *)multiboot_info;
 
+	// how many pages do we need to hold the entries
+    // 512 page table entries per 4k page
+	pt_num = (1 + (uint32_t)((k_size + m_size - 1) / KERNEL_PAGE_SIZE)) / 512;
+	pd_num = 1 + (pt_num - 1) / 512;
+	pdpt_num = 1 + (pd_num - 1) / 512;
+	pml4_num = 1 + (pdpt_num - 1) / 512;
 
-    // construct recursive mapping with the first page table
+	// calculate the # of page tables
+    if ((((uintptr_t)(pt_end) - (uintptr_t)(pt_base)) / KERNEL_PAGE_SIZE) < (pt_num + pd_num + pdpt_num + pml4_num))
+    {
+        return STATUS_FAIL;
+    }
 
+	// map kernel first
+	KERNEL_IMAGE_VADDR = ;
 
+	// map kernel dynamic
+	KERNEL_DYNAMIC_SIZE = ;
+
+    // map recursive page tables
+	hal_write_pml4(pt_base, (uintptr_t)pt_base, PML4_PRESENT | PML4_WRITE);
+	 */
+
+	return STATUS_SUCCESS;
 }
 
 
