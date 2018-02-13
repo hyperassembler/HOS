@@ -1,6 +1,6 @@
 My Hobby x86-64 OS kernel.
 
-# Building and Debugging Guide
+# Building
 ## Environment
 Any Linux distribution / Bash for Windows + GCC cross compiler.
 
@@ -24,12 +24,12 @@ CONFIGURED WITH: --target=x86_64-elf --disable-nls --enable-languages=c,c++ --wi
 
 2. Run "tar -xvf cross.tar.gz -C $HOME/opt/cross"
 
-## Compilation
+## Compiling
 Run "make all" in the root directory
 The makefile generates secxkrnl.iso (kernel image), secxkrnl.elf(kernel executable), secxkrnl.dmp(kernel disassembly) at the end.
 
 To clean all generated files, run "make clean"
 
-## Running
+# Running
 On windows run "qemu.bat"
 On linux run "./qemu.bat"
