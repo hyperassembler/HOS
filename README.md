@@ -25,7 +25,7 @@ HOST: x86_64-pc-linux-gnu
 CONFIGURED WITH: --target=x86_64-elf --disable-nls --enable-languages=c,c++ --without-headers
 
 
-1. Download "cross.tar.gz" from https://drive.google.com/file/d/1ssQblBLk7I3ZqFPoeViVlsBvDMXcJFa1/view?usp=sharing
+1. Download "cross.tar.gz" from the release page.
 
 
 2. Run "tar -xvf cross.tar.gz -C $HOME/opt/cross"
