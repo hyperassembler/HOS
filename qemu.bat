@@ -1,1 +1,0 @@
-qemu-system-x86_64 -bios OVMF_x86-64_bios.bin -cdrom secxkrnl.iso -s -S

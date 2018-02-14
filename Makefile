@@ -6,50 +6,50 @@ DAS = $(CROSS_DIR)/x86_64-elf-objdump
 
 INCLUDE_DIR = include
 MK = mk
+OUT = out
 
-LD_SCRIPT = $(MK)/linker.ld
-GRUB_CFG = $(MK)/grub.cfg
+C_WARNINGS =	-Wall \
+				-Werror \
+				-Wextra \
+				-Wpedantic \
+				-Winit-self \
+				-Wunused-parameter \
+				-Wuninitialized \
+				-Wfloat-equal \
+				-Wshadow \
+				-Wcast-qual \
+				-Wcast-align \
+				-Wstrict-prototypes \
+				-Wpointer-arith \
+				-Wno-comment
 
-C_WARNINGS = -Wall \
-			  -Werror \
-			  -Wextra \
-			  -Wpedantic \
-			  -Winit-self \
-			  -Wunused-parameter \
-			  -Wuninitialized \
-			  -Wfloat-equal \
-			  -Wshadow \
-			  -Wcast-qual \
-			  -Wcast-align \
-			  -Wstrict-prototypes \
-			  -Wpointer-arith \
-			  -Wno-comment
+C_FLAGS =   -std=c11 \
+			-g \
+			-c \
+			-O2 \
+			-mcmodel=kernel \
+			-fno-exceptions \
+			-ffreestanding \
+			-mno-red-zone \
+			-mno-mmx \
+			-mno-sse \
+			-mno-sse2 \
+			-masm=intel \
+			$(C_WARNINGS) \
+			$(addprefix -I, $(INCLUDE_DIR))
 
-C_FLAGS = -std=c11 \
-		   -g \
-		   -c \
-		   -O2 \
-		   -mcmodel=kernel \
-		   -fno-exceptions \
-		   -ffreestanding \
-		   -mno-red-zone \
-		   -mno-mmx \
-		   -mno-sse \
-		   -mno-sse2 \
-		   -masm=intel \
-		   $(C_WARNINGS) \
-		   $(addprefix -I, $(INCLUDE_DIR))
-
-AS_FLAGS = -w+all \
-			 -f elf64 \
-			 -F dwarf \
-			 -g \
-			 $(addprefix -I, $(INCLUDE_DIR)/)
+AS_FLAGS =  -w+all \
+			-w+error \
+			-f elf64 \
+			-F dwarf \
+			-g \
+			$(addprefix -I, $(INCLUDE_DIR)/)
 
 LD_FLAGS =  -lgcc \
-            -nodefaultlibs \
+        	-nodefaultlibs \
 			-nostartfiles \
 			-nostdlib \
+			-mno-red-zone \
 			-Wl,-n \
 			-Wl,--build-id=none
 
@@ -65,13 +65,13 @@ PREP_FLAGS = -E \
 GDEP_FLAGS = $(PREP_FLAGS) \
 			 -MMD \
 			 -MT $@
-			 
 
+MKDIR = mkdir -p $(dir $@)
 COMP = $(CC) $(C_FLAGS) $< -o $@
 COMPAS = $(AS) $(AS_FLAGS) $< -o $@
 LINK = $(LD) $(LD_FLAGS) $^ -o $@
 DUMP = $(DAS) $(DUMP_FLAGS) $< > $@
 PREP = $(CC) $(PREP_FLAGS) $< > $@
-GDEP = $(CC) $(GDEP_FLAGS) -MF $*.d $< > /dev/null
+GDEP = $(CC) $(GDEP_FLAGS) -MF $(addsuffix .d, $@) $< > /dev/null
 
 include Rules.top

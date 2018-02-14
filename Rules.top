@@ -15,11 +15,14 @@ include $(dir)/Rules.mk
 dir := mk
 include $(dir)/Rules.mk
 
-TGT := secxkrnl.elf
-DMP := secxkrnl.dmp
-ISO := secxkrnl.iso
+LD_SCRIPT = $(OUT)/$(MK)/linker.ld
+GRUB_CFG = $(OUT)/$(MK)/grub.cfg
+TGT := $(OUT)/secxkrnl.elf
+DMP := $(OUT)/secxkrnl.dmp
+ISO := $(OUT)/secxkrnl.iso
 
 $(TGT): $(OBJ) $(LD_SCRIPT)
+	$(LD) $(LD_FLAGS) -print-libgcc-file-name
 	$(LINK) -T $(LD_SCRIPT)
 
 $(DMP): $(TGT)
@@ -28,6 +31,7 @@ $(DMP): $(TGT)
 .PHONY: clean
 clean:
 	rm -f $(CLEAN) $(TGT) $(DMP) $(ISO)
+	find $(OUT) -empty -type d -delete
 
 .PHONY: compile
 compile: $(TGT)
@@ -36,7 +40,7 @@ compile: $(TGT)
 dump: $(DMP)
 
 .PHONY: iso
-iso: $(TGT)
+iso: $(TGT) $(GRUB_CFG)
 	mkdir -p temp/secX
 	mkdir -p temp/boot
 	mkdir -p temp/boot/grub

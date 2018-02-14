@@ -6,6 +6,7 @@
 
 #define HAL_CORE_COUNT 1
 
+
 typedef struct
 {
     uint16_t limit;

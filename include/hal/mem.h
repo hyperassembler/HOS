@@ -28,12 +28,6 @@
 #define SEG_AVAILABLE (1ull << 52)
 #define SEG_32_BITS (1ull << 54)
 
-static inline uint32_t KABI seg_selector(uint32_t index, uint32_t rpl)
-{
-    return (index << 3) + rpl;
-}
-
-void KABI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 
 /**
  Page Table Definitions
@@ -78,6 +72,13 @@ void KABI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uin
 #define PDPT_ENTRY_NUM(vaddr) (((vaddr) >> 30) & 0x1FF)
 #define PD_ENTRY_NUM(vaddr)   (((vaddr) >> 21) & 0x1FF)
 #define PT_ENTRY_NUM(vaddr)   (((vaddr) >> 12) & 0x1FF)
+
+static inline uint32_t KABI seg_selector(uint32_t index, uint32_t rpl)
+{
+    return (index << 3) + rpl;
+}
+
+void KABI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 
 void KABI hal_write_pml4(void *const base, uintptr_t const pdpt_addr, uint64_t const attr);
 

@@ -1,6 +1,8 @@
-#include "kernel/hal/memdef.h"
+#define ASM_FILE
+#include "kernel/hal/mem.h"
+#include "hal/multiboot2.h"
 
-%define GET_PADDR(x) ((x) - KERNEL_IMAGE_VADDR)
+%define GET_PADDR(x) ((x) - KERNEL_IMAGE_VADDR + KERNEL_IMAGE_PADDR)
 %define BOCHS_BREAK xchg bx,bx
 
 extern hal_main
@@ -9,42 +11,37 @@ global hal_entry_32
 
 section .multiboot_header
 bits 32
-MULTIBOOT_TAG_ALIGNMENT equ 8
-MULTIBOOT_HEADER_ALIGNMENT equ 8
-MULTIBOOT_LOADED_MAGIC equ 0x36d76289
-MULTIBOOT_MAGIC_NUMBER equ 0xE85250D6
 MULTIBOOT_ARCH equ 0
-MULTIBOOT_CHECK_SUM equ (0xFFFFFFFF - (MULTIBOOT_MAGIC_NUMBER + MULTIBOOT_HEADER_SIZE + MULTIBOOT_ARCH) + 1)
+MULTIBOOT_CHECK_SUM equ (0xFFFFFFFF - (MULTIBOOT2_HEADER_MAGIC + MULTIBOOT_HEADER_SIZE + MULTIBOOT_ARCH) + 1)
 MULTIBOOT_REQ_LOADERNAME equ 2
 MULTIBOOT_REQ_MMAP equ 6
 MULTIBOOT_REQ_ACPI_RSDP equ 15
 ;====================
 ;header tag
-align MULTIBOOT_HEADER_ALIGNMENT
+align MULTIBOOT_HEADER_ALIGN
 multiboot_header_tag:
-    dd MULTIBOOT_MAGIC_NUMBER
+    dd MULTIBOOT2_HEADER_MAGIC
     dd MULTIBOOT_ARCH
     dd MULTIBOOT_HEADER_SIZE
     dd MULTIBOOT_CHECK_SUM
 ;====================
 ;INFO_REQUEST_TAG
-align MULTIBOOT_TAG_ALIGNMENT
+align MULTIBOOT_INFO_ALIGN
 multiboot_info_tag:
     dw 0x1 ; type=1
     dw 0x0 ; flag=0
     dd MULTIBOOT_INFO_TAG_SIZE
     dd MULTIBOOT_REQ_LOADERNAME
     dd MULTIBOOT_REQ_MMAP
-    dd MULTIBOOT_REQ_ACPI_RSDP
 MULTIBOOT_INFO_TAG_SIZE equ ($ - multiboot_info_tag)
 ;====================
 ;MODULE ALIGNMENT TAG
-align MULTIBOOT_TAG_ALIGNMENT
+align MULTIBOOT_INFO_ALIGN
     dw 0x6; type=6
     dw 0x0; flag=0
     dd 0x8
 ;====================
-align MULTIBOOT_TAG_ALIGNMENT
+align MULTIBOOT_INFO_ALIGN
 	;End_tag
     dw 0x0
     dw 0x0
@@ -55,11 +52,11 @@ MULTIBOOT_HEADER_SIZE equ ($ - multiboot_header_tag)
 
 section .text
 bits 32
-align 4096
+align KERNEL_PAGE_SIZE
 hal_entry_32:
     cli
     cld
-    cmp eax,MULTIBOOT_LOADED_MAGIC
+    cmp eax,MULTIBOOT2_BOOTLOADER_MAGIC
     je .loaded_by_grub
     hlt
 
@@ -74,7 +71,7 @@ hal_entry_32:
 .init_long_mode:
     ; disable paging first
     mov eax, cr0          ; Set the A-register to control register 0.
-    and eax, ~(1 << 31)   ; Clear the PG-bit, which is bit 31.
+    and eax, 0x7FFFFFFF   ; Clear the PG-bit, which is bit 31.
     mov cr0, eax          ; Set control register 0 to the A-register.
 
     ; identity map the first 4GB
@@ -181,15 +178,15 @@ halp_entry_64:
 
 section .data
 bits 64
-align 4096
+align KERNEL_PAGE_SIZE
     times 4096 db 0
 _stack:
 
 _pml4:
-align 4096
+align KERNEL_PAGE_SIZE
     times 4096 db 0
 _pdpt:
-align 4096
+align KERNEL_PAGE_SIZE
     times 4096 db 0
 _gdt:                      ; Global Descriptor Table (long mode).
 .null: equ $ - _gdt         ; The null descriptor.

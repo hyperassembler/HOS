@@ -1,8 +1,4 @@
 .idea
 cmake-build-debug
-*.o
-*.a
 CMakeLists.txt
-*.iso
-*.elf
-*.dmp
+out/

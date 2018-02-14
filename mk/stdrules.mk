@@ -6,19 +6,22 @@
 # Adds c and asm object files to $OBJ variable
 # Adds all generated files to $CLEAN variable
 
-OBJ_$(d) := $(SRC_$(d):.c=.o)
-OBJAS_$(d) := $(SRCAS_$(d):.asm=.a)
-OBJIN_$(d) := $(SRCIN_$(d):.in=)
-DEP_$(d) := $(SRC_$(d):.c=.d) $(SRCIN_$(d):.in=.d)
+OBJ_$(d) := $(OBJ_$(d)) $(addprefix $(OUT)/, $(SRC_$(d):.c=.o))
+OBJAS_$(d) := $(OBJAS_$(d)) $(addprefix $(OUT)/, $(SRCAS_$(d):.asm=.a))
+OBJIN_$(d) := $(OBJIN_$(d)) $(addprefix $(OUT)/, $(SRCIN_$(d):.in=))
+DEP_$(d) := $(DEP_$(d)) $(addsuffix .d, $(OBJ_$(d)) $(OBJIN_$(d)))
 
-$(OBJ_$(d)): %.o: %.c
+$(OBJ_$(d)): $(OUT)/%.o: %.c
+	$(MKDIR)
 	$(COMP)
 	$(GDEP)
 
-$(OBJAS_$(d)): %.a: %.asm 
+$(OBJAS_$(d)): $(OUT)/%.a: %.asm
+	$(MKDIR)
 	$(COMPAS)
 
-$(OBJIN_$(d)): %: %.in
+$(OBJIN_$(d)): $(OUT)/%: %.in
+	$(MKDIR)
 	$(PREP)
 	$(GDEP)
 
@@ -26,4 +29,4 @@ $(OBJIN_$(d)): %: %.in
 OBJ := $(OBJ) $(OBJ_$(d)) $(OBJAS_$(d))
 CLEAN := $(CLEAN) $(OBJ_$(d)) $(OBJAS_$(d)) $(OBJIN_$(d)) $(DEP_$(d))
 
-include $(DEP_$(d))
+-include $(DEP_$(d))
