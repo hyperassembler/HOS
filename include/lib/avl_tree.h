@@ -26,24 +26,24 @@ typedef struct _k_avl_tree_t
 	avl_tree_node_t *root;
 } avl_tree_t;
 
-avl_tree_node_t *KABI lb_avl_tree_search(avl_tree_t *tree, avl_tree_node_t *entry);
+avl_tree_node_t *SXAPI lb_avl_tree_search(avl_tree_t *tree, avl_tree_node_t *entry);
 
-void KABI lb_avl_tree_insert(avl_tree_t *tree, avl_tree_node_t *entry);
+void SXAPI lb_avl_tree_insert(avl_tree_t *tree, avl_tree_node_t *entry);
 
-avl_tree_node_t *KABI lb_avl_tree_delete(avl_tree_t *tree, avl_tree_node_t *entry);
+avl_tree_node_t *SXAPI lb_avl_tree_delete(avl_tree_t *tree, avl_tree_node_t *entry);
 
-void KABI lb_avl_tree_init(avl_tree_t *tree, callback_func_t compare);
+void SXAPI lb_avl_tree_init(avl_tree_t *tree, callback_func_t compare);
 
-avl_tree_node_t *KABI lb_avl_tree_largest(avl_tree_t *tree);
+avl_tree_node_t *SXAPI lb_avl_tree_largest(avl_tree_t *tree);
 
-avl_tree_node_t *KABI lb_avl_tree_smallest(avl_tree_t *tree);
+avl_tree_node_t *SXAPI lb_avl_tree_smallest(avl_tree_t *tree);
 
-avl_tree_node_t *KABI lb_avl_tree_larger(avl_tree_node_t *entry);
+avl_tree_node_t *SXAPI lb_avl_tree_larger(avl_tree_node_t *entry);
 
-avl_tree_node_t *KABI lb_avl_tree_smaller(avl_tree_node_t *entry);
+avl_tree_node_t *SXAPI lb_avl_tree_smaller(avl_tree_node_t *entry);
 
-bool KABI lb_avl_tree_validate(avl_tree_t *tree);
+bool SXAPI lb_avl_tree_validate(avl_tree_t *tree);
 
-int32_t KABI lb_avl_tree_size(avl_tree_t *tree);
+int32_t SXAPI lb_avl_tree_size(avl_tree_t *tree);
 
 #endif

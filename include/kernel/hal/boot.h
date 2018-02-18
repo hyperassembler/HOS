@@ -17,6 +17,6 @@ typedef struct
 	char cpu_vd_str[13];
 } boot_info_t;
 
-status_t KABI hal_init(void *m_info);
+status_t SXAPI hal_init(void *m_info);
 
 #endif

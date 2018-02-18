@@ -9,18 +9,18 @@
 
 static uint64_t text_pos;
 
-void KABI hal_print_init(void)
+void SXAPI hal_print_init(void)
 {
 	text_pos = 0;
 }
 
-static void KABI halp_print_scroll(void)
+static void SXAPI halp_print_scroll(void)
 {
 	lb_mem_move((void *) (0xb8000 + get_pos(1, 0) * 2), (void *) (0xb8000 + get_pos(0, 0) * 2), (80 * 24) * 2);
 	return;
 }
 
-static void KABI halp_print_str(char const *str)
+static void SXAPI halp_print_str(char const *str)
 {
 	if (str == NULL)
 	{
@@ -57,7 +57,7 @@ static void KABI halp_print_str(char const *str)
 	return;
 }
 
-static void KABI halp_print_uint(uint64_t number)
+static void SXAPI halp_print_uint(uint64_t number)
 {
 	char arr[21]; // do not need to initialize
 	arr[20] = 0; //zero-terminated
@@ -78,7 +78,7 @@ static void KABI halp_print_uint(uint64_t number)
 	return;
 }
 
-static void KABI halp_print_int(int64_t number)
+static void SXAPI halp_print_int(int64_t number)
 {
 	char arr[21]; // do not need to initialize
 	arr[20] = 0; //zero-terminated
@@ -109,7 +109,7 @@ static void KABI halp_print_int(int64_t number)
 	return;
 }
 
-static void KABI halp_print_hex(uint64_t number, uint64_t capital)
+static void SXAPI halp_print_hex(uint64_t number, uint64_t capital)
 {
 	char const lookup_table_cap[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 	char const lookup_table[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
@@ -133,14 +133,14 @@ static void KABI halp_print_hex(uint64_t number, uint64_t capital)
 	return;
 }
 
-void KABI hal_clear_screen(void)
+void SXAPI hal_clear_screen(void)
 {
 	text_pos = 0; // reset text_pos
 	lb_mem_set((void *) 0xb8000, 0, 25 * 80 * 2);
 	return;
 }
 
-void KABI hal_vprintf(char const *format, va_list args)
+void SXAPI hal_vprintf(char const *format, va_list args)
 {
 	char buf[2] = {0, 0};
 	int64_t d;
@@ -196,7 +196,7 @@ void KABI hal_vprintf(char const *format, va_list args)
 	}
 }
 
-void KABI hal_printf(char const *format, ...)
+void SXAPI hal_printf(char const *format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -204,7 +204,7 @@ void KABI hal_printf(char const *format, ...)
 	va_end(args);
 }
 
-void KABI hal_assert(uint32_t expression, char *message)
+void SXAPI hal_assert(uint32_t expression, char *message)
 {
 	if (!expression)
 	{

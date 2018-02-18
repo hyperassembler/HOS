@@ -21,7 +21,7 @@ char kernel_heap[KERNEL_HEAP_SIZE];
  * @param pt_base page table base paddr
  * @param pt_end page table entry paddr
  */
-status_t KABI hal_write_initial_page_table(void *multiboot_info)
+status_t SXAPI hal_write_initial_page_table(void *multiboot_info)
 {
 	UNREFERENCED(multiboot_info);
 
@@ -64,7 +64,7 @@ status_t KABI hal_write_initial_page_table(void *multiboot_info)
 }
 
 
-void KABI hal_write_pt(void *const base, uintptr_t const p_addr, uint64_t const attr)
+void SXAPI hal_write_pt(void *const base, uintptr_t const p_addr, uint64_t const attr)
 {
 	if (base == NULL)
 	{
@@ -82,7 +82,7 @@ void KABI hal_write_pt(void *const base, uintptr_t const p_addr, uint64_t const 
 	return;
 }
 
-void KABI hal_write_pd(void *const base, uintptr_t const pt_addr, uint64_t const attr)
+void SXAPI hal_write_pd(void *const base, uintptr_t const pt_addr, uint64_t const attr)
 {
 	if (base == NULL)
 	{
@@ -100,7 +100,7 @@ void KABI hal_write_pd(void *const base, uintptr_t const pt_addr, uint64_t const
 	return;
 }
 
-void KABI hal_write_pdpt(void *const base, uintptr_t const pd_addr, uint64_t const attr)
+void SXAPI hal_write_pdpt(void *const base, uintptr_t const pd_addr, uint64_t const attr)
 {
 	if (base == NULL)
 	{
@@ -118,7 +118,7 @@ void KABI hal_write_pdpt(void *const base, uintptr_t const pd_addr, uint64_t con
 	return;
 }
 
-void KABI hal_write_pml4(void *const base, uintptr_t const pdpt_addr, uint64_t const attr)
+void SXAPI hal_write_pml4(void *const base, uintptr_t const pdpt_addr, uint64_t const attr)
 {
 	if (base == NULL)
 	{
@@ -136,7 +136,7 @@ void KABI hal_write_pml4(void *const base, uintptr_t const pdpt_addr, uint64_t c
 	return;
 }
 
-void KABI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit,
+void SXAPI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit,
                                        uint64_t const attr)
 {
 	if (gdt == NULL)
@@ -157,18 +157,18 @@ void KABI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uin
 	return;
 }
 
-void *KABI halloc(uint32_t size)
+void *SXAPI halloc(uint32_t size)
 {
 	return lb_salloc(kernel_heap, size);
 }
 
-void KABI hfree(void *ptr)
+void SXAPI hfree(void *ptr)
 {
 	lb_sfree(kernel_heap, ptr);
 	return;
 }
 
-static void KABI _hal_init_gdt(void)
+static void SXAPI _hal_init_gdt(void)
 {
 	uint32_t coreid = hal_get_core_id();
 	// get gdt ready
@@ -199,7 +199,7 @@ static void KABI _hal_init_gdt(void)
 	hal_flush_gdt(&_gdt_ptrs[coreid], seg_selector(1, 0), seg_selector(2, 0));
 }
 
-void KABI hal_mem_init()
+void SXAPI hal_mem_init()
 {
 	_hal_init_gdt();
 	lb_salloc_init(kernel_heap, KERNEL_HEAP_SIZE);

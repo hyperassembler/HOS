@@ -61,7 +61,7 @@ static handle_node_t *rfp_search_handle_node(handle_t handle)
 	return result == NULL ? NULL : OBTAIN_STRUCT_ADDR(result, handle_node_t, tree_node);
 }
 
-status_t KABI rf_reference_setup(void)
+status_t SXAPI rf_reference_setup(void)
 {
 	if (!initialized)
 	{
@@ -73,7 +73,7 @@ status_t KABI rf_reference_setup(void)
 	return STATUS_SUCCESS;
 }
 
-status_t KABI rf_reference_create(ref_node_t *ref,
+status_t SXAPI rf_reference_create(ref_node_t *ref,
                                   callback_func_t free_func)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
@@ -89,7 +89,7 @@ status_t KABI rf_reference_create(ref_node_t *ref,
 	return STATUS_SUCCESS;
 }
 
-status_t KABI rf_reference_obj(ref_node_t *ref_node)
+status_t SXAPI rf_reference_obj(ref_node_t *ref_node)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
@@ -105,7 +105,7 @@ status_t KABI rf_reference_obj(ref_node_t *ref_node)
 	return STATUS_SUCCESS;
 }
 
-status_t KABI rf_dereference_obj(ref_node_t *ref_node)
+status_t SXAPI rf_dereference_obj(ref_node_t *ref_node)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
@@ -129,7 +129,7 @@ status_t KABI rf_dereference_obj(ref_node_t *ref_node)
 }
 
 
-static status_t KABI rf_open_obj_by_handle(handle_t handle, ref_node_t **out)
+static status_t SXAPI rf_open_obj_by_handle(handle_t handle, ref_node_t **out)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
@@ -173,7 +173,7 @@ static status_t KABI rf_open_obj_by_handle(handle_t handle, ref_node_t **out)
 	return status;
 }
 
-static status_t KABI rf_create_handle(ref_node_t *ref,
+static status_t SXAPI rf_create_handle(ref_node_t *ref,
                                       handle_node_t *node,
                                       handle_t *out)
 {
@@ -226,7 +226,7 @@ static status_t KABI rf_create_handle(ref_node_t *ref,
 	return result;
 }
 
-static status_t KABI rf_close_handle(handle_t handle)
+static status_t SXAPI rf_close_handle(handle_t handle)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
@@ -273,7 +273,7 @@ static status_t KABI rf_close_handle(handle_t handle)
 // SX Functions
 // ===========================
 
-status_t KABI sx_create_handle(ref_node_t *ref, handle_t *out)
+status_t SXAPI sx_create_handle(ref_node_t *ref, handle_t *out)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
@@ -294,7 +294,7 @@ status_t KABI sx_create_handle(ref_node_t *ref, handle_t *out)
 	return rf_create_handle(ref, node, out);
 }
 
-status_t KABI sx_close_handle(handle_t handle)
+status_t SXAPI sx_close_handle(handle_t handle)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
@@ -308,7 +308,7 @@ status_t KABI sx_close_handle(handle_t handle)
 	return rf_close_handle(handle);
 }
 
-status_t KABI sx_open_obj_by_handle(handle_t handle, ref_node_t **out)
+status_t SXAPI sx_open_obj_by_handle(handle_t handle, ref_node_t **out)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 

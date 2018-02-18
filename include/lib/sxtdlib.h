@@ -3,55 +3,55 @@
 
 #include "type.h"
 
-uint32_t KABI lb_rand(void);
+uint32_t SXAPI lb_rand(void);
 
-void KABI lb_srand(uint32_t _seed);
+void SXAPI lb_srand(uint32_t _seed);
 
-void KABI lb_mrand(uint32_t max);
+void SXAPI lb_mrand(uint32_t max);
 
-uint64_t KABI lb_str_len(char const *str);
+uint64_t SXAPI lb_str_len(char const *str);
 
-uint64_t KABI lb_str_cmp(char const *str1, char const *str2);
+uint64_t SXAPI lb_str_cmp(char const *str1, char const *str2);
 
-void KABI lb_mem_copy(void *src, void *dst, uint64_t size);
+void SXAPI lb_mem_copy(void *src, void *dst, uint64_t size);
 
-void KABI lb_mem_move(void *src, void *dst, uint64_t size);
+void SXAPI lb_mem_move(void *src, void *dst, uint64_t size);
 
-void KABI lb_mem_set(void *src, uint8_t const val, uint64_t size);
+void SXAPI lb_mem_set(void *src, uint8_t const val, uint64_t size);
 
-static inline uint64_t KABI lb_align_down(uint64_t val, uint64_t alignment)
+static inline uint64_t SXAPI lb_align_down(uint64_t val, uint64_t alignment)
 {
 	return (val / alignment) * alignment;
 }
 
-static inline uint64_t KABI lb_align_up(uint64_t val, uint64_t alignment)
+static inline uint64_t SXAPI lb_align_up(uint64_t val, uint64_t alignment)
 {
 	return ((((val) % (alignment)) == 0) ? (((val) / (alignment)) * (alignment)) : (
 			(((val) / (alignment)) * (alignment)) + 1));
 }
 
-static inline uint64_t KABI lb_is_overlap(uint64_t x1, uint64_t x2, uint64_t y1, uint64_t y2)
+static inline uint64_t SXAPI lb_is_overlap(uint64_t x1, uint64_t x2, uint64_t y1, uint64_t y2)
 {
 	return ((x1 <= y2) && (y1 <= x2)) ? 1 : 0;
 }
 
 
-static inline int64_t KABI lb_max_64(int64_t a, int64_t b)
+static inline int64_t SXAPI lb_max_64(int64_t a, int64_t b)
 {
 	return (a) > (b) ? a : b;
 }
 
-static inline int64_t KABI lb_min_64(int64_t a, int64_t b)
+static inline int64_t SXAPI lb_min_64(int64_t a, int64_t b)
 {
 	return (a) < (b) ? a : b;
 }
 
-static inline int32_t KABI lb_max_32(int32_t a, int32_t b)
+static inline int32_t SXAPI lb_max_32(int32_t a, int32_t b)
 {
 	return (a) > (b) ? a : b;
 }
 
-static inline int32_t KABI lb_min_32(int32_t a, int32_t b)
+static inline int32_t SXAPI lb_min_32(int32_t a, int32_t b)
 {
 	return (a) < (b) ? a : b;
 }
@@ -85,17 +85,17 @@ static inline uint32_t KAPI log_base_2(uint64_t num)
 
 #define OBTAIN_STRUCT_ADDR(member_addr, struct_name, member_name) ((struct_name*)((uintptr_t)(member_addr) - (uintptr_t)(&(((struct_name*)0)->member_name))))
 
-static inline uint64_t KABI lb_bit_mask(uint32_t bit)
+static inline uint64_t SXAPI lb_bit_mask(uint32_t bit)
 {
 	return (uint64_t) 1 << bit;
 }
 
-static inline uint64_t KABI lb_bit_field_mask(uint32_t low, uint32_t high)
+static inline uint64_t SXAPI lb_bit_field_mask(uint32_t low, uint32_t high)
 {
 	return ~(~(uint64_t) 0 << high << 1) << low;
 }
 
-static inline void KABI lb_bit_map_set(void *bit_map, uint64_t bit)
+static inline void SXAPI lb_bit_map_set(void *bit_map, uint64_t bit)
 {
 	if (bit_map != NULL)
 	{
@@ -106,7 +106,7 @@ static inline void KABI lb_bit_map_set(void *bit_map, uint64_t bit)
 	}
 }
 
-static inline void KABI lb_bit_map_clear(void *bit_map, uint64_t bit)
+static inline void SXAPI lb_bit_map_clear(void *bit_map, uint64_t bit)
 {
 	if (bit_map != NULL)
 	{
@@ -117,7 +117,7 @@ static inline void KABI lb_bit_map_clear(void *bit_map, uint64_t bit)
 	}
 }
 
-static inline uint32_t KABI lb_bit_map_read(void *bit_map, uint64_t bit)
+static inline uint32_t SXAPI lb_bit_map_read(void *bit_map, uint64_t bit)
 {
 	if (bit_map != NULL)
 	{

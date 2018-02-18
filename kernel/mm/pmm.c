@@ -49,7 +49,7 @@ static int32_t mmp_base_paddr_compare(void *tree_node, void *my_node)
 	}
 }
 
-status_t KABI sx_pmm_init(pmm_info_t *info)
+status_t SXAPI sx_pmm_init(pmm_info_t *info)
 {
 	if (info == NULL)
 	{
@@ -97,7 +97,7 @@ status_t KABI sx_pmm_init(pmm_info_t *info)
 // potential callers of these, since timer/interrupts queue DPC, which might trigger
 // page fault (kernel heap), therefore, it must set IRQL to DISABLED
 
-status_t KABI mm_alloc_page(uintptr_t *out)
+status_t SXAPI mm_alloc_page(uintptr_t *out)
 {
 	if (!initialized)
 	{
@@ -131,7 +131,7 @@ status_t KABI mm_alloc_page(uintptr_t *out)
 	return result;
 }
 
-status_t KABI mm_query_page_attr(uintptr_t base,
+status_t SXAPI mm_query_page_attr(uintptr_t base,
                                  int32_t *out)
 {
 	if (!initialized)
@@ -168,7 +168,7 @@ status_t KABI mm_query_page_attr(uintptr_t base,
 	return result;
 }
 
-status_t KABI mm_free_page(uintptr_t base)
+status_t SXAPI mm_free_page(uintptr_t base)
 {
 	if (!initialized)
 	{

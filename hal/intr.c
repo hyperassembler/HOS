@@ -12,21 +12,21 @@ static intr_handler_t _intr_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
 static void *_intr_handler_context_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
 static exc_handler_t _exc_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
 
-irql_t KABI hal_set_irql(irql_t irql)
+irql_t SXAPI hal_set_irql(irql_t irql)
 {
 	UNREFERENCED(irql)
 	hal_assert(false, "Unimplemented function called.");
 	return 0;
 }
 
-irql_t KABI hal_get_irql(void)
+irql_t SXAPI hal_get_irql(void)
 {
 	hal_assert(false, "Unimplemented function called.");
 	return 0;
 }
 
 
-void KABI hal_write_gate(void *const gate,
+void SXAPI hal_write_gate(void *const gate,
                          uint64_t const offset,
                          uint32_t const selector,
                          uint32_t const attr)
@@ -50,7 +50,7 @@ void KABI hal_write_gate(void *const gate,
 	return;
 }
 
-void KABI hal_set_interrupt_handler(uint64_t index,
+void SXAPI hal_set_interrupt_handler(uint64_t index,
                                     void (*handler)(void))
 {
 	if (index < IDT_ENTRY_NUM)
@@ -61,7 +61,7 @@ void KABI hal_set_interrupt_handler(uint64_t index,
 	return;
 }
 
-void KABI hal_issue_interrupt(uint32_t target_core, uint32_t vector)
+void SXAPI hal_issue_interrupt(uint32_t target_core, uint32_t vector)
 {
 	UNREFERENCED(target_core);
 	UNREFERENCED(vector);
@@ -69,7 +69,7 @@ void KABI hal_issue_interrupt(uint32_t target_core, uint32_t vector)
 	return;
 }
 
-void KABI hal_register_interrupt_handler(uint32_t coreid, uint32_t index, intr_handler_t handler, void *context)
+void SXAPI hal_register_interrupt_handler(uint32_t coreid, uint32_t index, intr_handler_t handler, void *context)
 {
 	if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
 	{
@@ -79,7 +79,7 @@ void KABI hal_register_interrupt_handler(uint32_t coreid, uint32_t index, intr_h
 	return;
 }
 
-void KABI hal_deregister_interrupt_handler(uint32_t coreid, uint32_t index)
+void SXAPI hal_deregister_interrupt_handler(uint32_t coreid, uint32_t index)
 {
 	if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
 	{
@@ -88,7 +88,7 @@ void KABI hal_deregister_interrupt_handler(uint32_t coreid, uint32_t index)
 	return;
 }
 
-void KABI hal_register_exception_handler(uint32_t coreid, uint32_t index, exc_handler_t handler)
+void SXAPI hal_register_exception_handler(uint32_t coreid, uint32_t index, exc_handler_t handler)
 {
 	if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
 	{
@@ -97,7 +97,7 @@ void KABI hal_register_exception_handler(uint32_t coreid, uint32_t index, exc_ha
 	return;
 }
 
-void KABI hal_deregister_exception_handler(uint32_t coreid, uint32_t index)
+void SXAPI hal_deregister_exception_handler(uint32_t coreid, uint32_t index)
 {
 	if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
 	{
@@ -106,7 +106,7 @@ void KABI hal_deregister_exception_handler(uint32_t coreid, uint32_t index)
 	return;
 }
 
-void KABI hal_interrupt_dispatcher(uint64_t int_vec, hal_interrupt_context_t *context)
+void SXAPI hal_interrupt_dispatcher(uint64_t int_vec, hal_interrupt_context_t *context)
 {
 	uint32_t coreid = hal_get_core_id();
 	if (_intr_handler_table[int_vec] == NULL)
@@ -120,7 +120,7 @@ void KABI hal_interrupt_dispatcher(uint64_t int_vec, hal_interrupt_context_t *co
 	return;
 }
 
-void KABI hal_exception_dispatcher(uint64_t exc_vec, hal_interrupt_context_t *context, uint64_t errorcode)
+void SXAPI hal_exception_dispatcher(uint64_t exc_vec, hal_interrupt_context_t *context, uint64_t errorcode)
 {
 	uint32_t coreid = hal_get_core_id();
 	if (_exc_handler_table[exc_vec] == NULL)
@@ -134,7 +134,7 @@ void KABI hal_exception_dispatcher(uint64_t exc_vec, hal_interrupt_context_t *co
 	return;
 }
 
-static void KABI halp_populate_idt(void)
+static void SXAPI halp_populate_idt(void)
 {
 	hal_set_interrupt_handler(0, hal_interrupt_handler_0);
 	hal_set_interrupt_handler(1, hal_interrupt_handler_1);
@@ -395,13 +395,13 @@ static void KABI halp_populate_idt(void)
 	return;
 }
 
-uint32_t KABI hal_get_core_id(void)
+uint32_t SXAPI hal_get_core_id(void)
 {
 	// TODO
 	return 0;
 }
 
-int32_t KABI hal_interrupt_init(void)
+int32_t SXAPI hal_interrupt_init(void)
 {
 	uint32_t coreid = hal_get_core_id();
 	uint32_t eax = 0, ebx = 0, ecx = 0, edx = 0;

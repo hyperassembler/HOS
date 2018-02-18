@@ -4,8 +4,8 @@
 #include "type.h"
 #include "kernel/hal/print.h"
 
-void KABI ke_printf(const char *str, ...);
+void SXAPI ke_printf(const char *str, ...);
 
-void KABI ke_vprintf(const char *str, va_list args);
+void SXAPI ke_vprintf(const char *str, va_list args);
 
 #endif

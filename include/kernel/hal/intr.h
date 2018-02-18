@@ -12,11 +12,11 @@ typedef uint32_t irql_t;
 #define IRQL_APC_LEVEL (1 << 1)
 #define IRQL_PASSIVE_LEVEL (1 << 0)
 
-irql_t KABI hal_set_irql(irql_t irql);
+irql_t SXAPI hal_set_irql(irql_t irql);
 
-irql_t KABI hal_get_irql(void);
+irql_t SXAPI hal_get_irql(void);
 
-uint32_t KABI hal_get_core_id(void);
+uint32_t SXAPI hal_get_core_id(void);
 
 /**
  * Interrupt Handler Registration
@@ -28,11 +28,11 @@ typedef struct
 	uint32_t dpc_intr_vec;
 } intr_info_t;
 
-typedef void (KABI *intr_handler_t)(void *context, void *intr_stack);
+typedef void (SXAPI *intr_handler_t)(void *context, void *intr_stack);
 
-void KABI hal_register_interrupt_handler(uint32_t coreid, uint32_t index, intr_handler_t handler, void *context);
+void SXAPI hal_register_interrupt_handler(uint32_t coreid, uint32_t index, intr_handler_t handler, void *context);
 
-void KABI hal_deregister_interrupt_handler(uint32_t coreid, uint32_t index);
+void SXAPI hal_deregister_interrupt_handler(uint32_t coreid, uint32_t index);
 
 /**
  * Exception Handler Registration
@@ -48,10 +48,10 @@ typedef enum
 	debug_exc
 } exc_type_t;
 
-typedef void (KABI *exc_handler_t)(uint64_t exc_addr, uint64_t exc_stack, uint64_t error_code);
+typedef void (SXAPI *exc_handler_t)(uint64_t exc_addr, uint64_t exc_stack, uint64_t error_code);
 
-void KABI hal_register_exception_handler(uint32_t coreid, uint32_t index, exc_handler_t handler);
+void SXAPI hal_register_exception_handler(uint32_t coreid, uint32_t index, exc_handler_t handler);
 
-void KABI hal_deregister_exception_handler(uint32_t coreid, uint32_t index);
+void SXAPI hal_deregister_exception_handler(uint32_t coreid, uint32_t index);
 
 #endif

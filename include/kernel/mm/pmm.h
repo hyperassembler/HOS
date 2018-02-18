@@ -17,20 +17,20 @@
 //} k_physical_page_attr_t;
 
 
-status_t KABI sx_pmm_init(pmm_info_t *info);
+status_t SXAPI sx_pmm_init(pmm_info_t *info);
 
-status_t KABI mm_alloc_page(uintptr_t *out);
+status_t SXAPI mm_alloc_page(uintptr_t *out);
 
-status_t KABI mm_free_page(uintptr_t base);
+status_t SXAPI mm_free_page(uintptr_t base);
 
-status_t KABI mm_query_page_attr(uintptr_t base,
+status_t SXAPI mm_query_page_attr(uintptr_t base,
                                  int32_t *out);
 
 // TODO: implement these somehow, i might just reserve the first 16MB for these
-int32_t KABI mm_alloc_contiguous_pages(uint64_t num_of_page,
+int32_t SXAPI mm_alloc_contiguous_pages(uint64_t num_of_page,
                                        uintptr_t highest_p_addr,
                                        uintptr_t *out);
 
-int32_t KABI mm_free_contiguous_pages(uintptr_t base);
+int32_t SXAPI mm_free_contiguous_pages(uintptr_t base);
 
 #endif

@@ -1,7 +1,7 @@
 #include "type.h"
 #include "lib/sxtdlib.h"
 
-void KABI lb_mem_copy(void *src, void *dst, uint64_t size)
+void SXAPI lb_mem_copy(void *src, void *dst, uint64_t size)
 {
 	if (src == NULL || dst == NULL)
 	{
@@ -16,7 +16,7 @@ void KABI lb_mem_copy(void *src, void *dst, uint64_t size)
 	return;
 }
 
-void KABI lb_mem_set(void *src, uint8_t const val, uint64_t size)
+void SXAPI lb_mem_set(void *src, uint8_t const val, uint64_t size)
 {
 	if (src == NULL)
 	{
@@ -30,7 +30,7 @@ void KABI lb_mem_set(void *src, uint8_t const val, uint64_t size)
 	return;
 }
 
-void KABI lb_mem_move(void *src, void *dst, uint64_t size)
+void SXAPI lb_mem_move(void *src, void *dst, uint64_t size)
 {
 	if (src == NULL || dst == NULL)
 	{
@@ -58,18 +58,18 @@ void KABI lb_mem_move(void *src, void *dst, uint64_t size)
 static uint32_t seed = 1;
 static uint32_t max = 16777215;
 
-uint32_t KABI lb_rand(void)
+uint32_t SXAPI lb_rand(void)
 {
 	seed = seed * 1103512986 + 29865;
 	return (unsigned int) (seed / 65536) % (max + 1);
 }
 
-void KABI lb_srand(uint32_t _seed)
+void SXAPI lb_srand(uint32_t _seed)
 {
 	seed = _seed;
 }
 
-void KABI lb_mrand(uint32_t _max)
+void SXAPI lb_mrand(uint32_t _max)
 {
 	max = _max;
 }
@@ -78,7 +78,7 @@ void KABI lb_mrand(uint32_t _max)
 // String Library
 //
 
-uint64_t KABI lb_str_len(char const *str)
+uint64_t SXAPI lb_str_len(char const *str)
 {
 	uint64_t length = 0;
 	if (str == NULL)
@@ -93,7 +93,7 @@ uint64_t KABI lb_str_len(char const *str)
 	return length;
 }
 
-uint64_t KABI lb_str_cmp(char const *str1, char const *str2)
+uint64_t SXAPI lb_str_cmp(char const *str1, char const *str2)
 {
 	if (str1 == NULL || str2 == NULL)
 	{

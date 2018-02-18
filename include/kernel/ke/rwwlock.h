@@ -14,22 +14,22 @@ typedef struct
 	uint32_t writer_ct;
 } k_rwwlock_t;
 
-void KABI ke_rwwlock_init(k_rwwlock_t *lock);
+void SXAPI ke_rwwlock_init(k_rwwlock_t *lock);
 
-void KABI ke_rwwlock_reader_lock(k_rwwlock_t *lock);
+void SXAPI ke_rwwlock_reader_lock(k_rwwlock_t *lock);
 
-void KABI ke_rwwlock_reader_unlock(k_rwwlock_t *lock);
+void SXAPI ke_rwwlock_reader_unlock(k_rwwlock_t *lock);
 
-void KABI ke_rwwlock_writer_lock(k_rwwlock_t *lock);
+void SXAPI ke_rwwlock_writer_lock(k_rwwlock_t *lock);
 
-void KABI ke_rwwlock_writer_unlock(k_rwwlock_t *lock);
+void SXAPI ke_rwwlock_writer_unlock(k_rwwlock_t *lock);
 
-irql_t KABI ke_rwwlock_reader_lock_raise_irql(k_rwwlock_t *lock, irql_t irql);
+irql_t SXAPI ke_rwwlock_reader_lock_raise_irql(k_rwwlock_t *lock, irql_t irql);
 
-void KABI ke_rwwlock_reader_unlock_lower_irql(k_rwwlock_t *lock, irql_t irql);
+void SXAPI ke_rwwlock_reader_unlock_lower_irql(k_rwwlock_t *lock, irql_t irql);
 
-irql_t KABI ke_rwwlock_writer_lock_raise_irql(k_rwwlock_t *lock, irql_t irql);
+irql_t SXAPI ke_rwwlock_writer_lock_raise_irql(k_rwwlock_t *lock, irql_t irql);
 
-void KABI ke_rwwlock_writer_unlock_lower_irql(k_rwwlock_t *lock, irql_t irql);
+void SXAPI ke_rwwlock_writer_unlock_lower_irql(k_rwwlock_t *lock, irql_t irql);
 
 #endif

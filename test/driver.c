@@ -84,7 +84,7 @@ static void ginfo_push(char *case_name, bool success)
 	ke_printf("GINFO full, [%s] result not recorded.\n", r_case_name);
 }
 
-void KABI test_begin(char *name)
+void SXAPI test_begin(char *name)
 {
 	test_name = (name == NULL ? "Anonymous Test" : name);
 	for (int i = 0; i < GAT_SIZE; i++)
@@ -97,7 +97,7 @@ void KABI test_begin(char *name)
 	}
 }
 
-void KABI test_end(void)
+void SXAPI test_end(void)
 {
 	gat_free();
 	int32_t total = 0, failed = 0, success = 0;
@@ -135,7 +135,7 @@ void KABI test_end(void)
 	}
 }
 
-void KABI *talloc(uint32_t size)
+void SXAPI *talloc(uint32_t size)
 {
 	if (!gat_full())
 	{
@@ -151,7 +151,7 @@ void KABI *talloc(uint32_t size)
 	return NULL;
 }
 
-void KABI run_case(char *name, bool result)
+void SXAPI run_case(char *name, bool result)
 {
 	ginfo_push(name, result);
 }

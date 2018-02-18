@@ -3,6 +3,6 @@
 
 #include "type.h"
 
-void KABI hal_vprintf(const char *str, va_list args);
+void SXAPI hal_vprintf(const char *str, va_list args);
 
 #endif

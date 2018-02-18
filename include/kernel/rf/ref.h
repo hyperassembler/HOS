@@ -19,20 +19,20 @@ typedef struct
 // specifying where the allocations take place
 //
 
-status_t KABI rf_reference_setup(void);
+status_t SXAPI rf_reference_setup(void);
 
-status_t KABI rf_reference_create(ref_node_t *ref,
+status_t SXAPI rf_reference_create(ref_node_t *ref,
                                   callback_func_t free_func);
 
-status_t KABI rf_reference_obj(ref_node_t *ref);
+status_t SXAPI rf_reference_obj(ref_node_t *ref);
 
-status_t KABI rf_dereference_obj(ref_node_t *ref);
+status_t SXAPI rf_dereference_obj(ref_node_t *ref);
 
 // HANDLES
-status_t KABI sx_open_obj_by_handle(handle_t handle, ref_node_t **out);
+status_t SXAPI sx_open_obj_by_handle(handle_t handle, ref_node_t **out);
 
-status_t KABI sx_create_handle(ref_node_t *ref, handle_t *out);
+status_t SXAPI sx_create_handle(ref_node_t *ref, handle_t *out);
 
-status_t KABI sx_close_handle(handle_t handle);
+status_t SXAPI sx_close_handle(handle_t handle);
 
 #endif

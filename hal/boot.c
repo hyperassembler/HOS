@@ -6,7 +6,7 @@
 #include "hal/boot.h"
 #include "status.h"
 
-static void KABI halp_obtain_cpu_info(boot_info_t *hal_info)
+static void SXAPI halp_obtain_cpu_info(boot_info_t *hal_info)
 {
 	if (hal_info == NULL)
 	{
@@ -20,7 +20,7 @@ static void KABI halp_obtain_cpu_info(boot_info_t *hal_info)
 	hal_info->cpu_vd_str[12] = 0;
 }
 
-status_t KABI hal_init(void *m_info)
+status_t SXAPI hal_init(void *m_info)
 {
 	if (m_info == NULL || (uint64_t) m_info & lb_bit_field_mask(0, 2))
 	{

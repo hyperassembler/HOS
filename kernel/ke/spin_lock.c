@@ -1,7 +1,7 @@
 #include "kernel/ke/atomic.h"
 #include "kernel/ke/spin_lock.h"
 
-void KABI ke_spin_lock_init(k_spin_lock_t *lock)
+void SXAPI ke_spin_lock_init(k_spin_lock_t *lock)
 {
 	if (lock != NULL)
 	{
@@ -9,7 +9,7 @@ void KABI ke_spin_lock_init(k_spin_lock_t *lock)
 	}
 }
 
-void KABI ke_spin_lock(k_spin_lock_t *lock)
+void SXAPI ke_spin_lock(k_spin_lock_t *lock)
 {
 	if (lock != NULL)
 	{
@@ -19,7 +19,7 @@ void KABI ke_spin_lock(k_spin_lock_t *lock)
 	return;
 }
 
-void KABI ke_spin_unlock(k_spin_lock_t *lock)
+void SXAPI ke_spin_unlock(k_spin_lock_t *lock)
 {
 	if (lock != NULL)
 	{
@@ -28,7 +28,7 @@ void KABI ke_spin_unlock(k_spin_lock_t *lock)
 	return;
 }
 
-irql_t KABI ke_spin_lock_raise_irql(k_spin_lock_t *lock, irql_t irql)
+irql_t SXAPI ke_spin_lock_raise_irql(k_spin_lock_t *lock, irql_t irql)
 {
 	irql_t prev_irql = ke_get_irql();
 	if (lock != NULL)
@@ -39,7 +39,7 @@ irql_t KABI ke_spin_lock_raise_irql(k_spin_lock_t *lock, irql_t irql)
 	return prev_irql;
 }
 
-void KABI ke_spin_unlock_lower_irql(k_spin_lock_t *lock, irql_t irql)
+void SXAPI ke_spin_unlock_lower_irql(k_spin_lock_t *lock, irql_t irql)
 {
 	if (lock != NULL)
 	{

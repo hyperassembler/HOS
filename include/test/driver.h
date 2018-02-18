@@ -3,12 +3,12 @@
 
 #include "type.h"
 
-void KABI test_begin(char *name);
+void SXAPI test_begin(char *name);
 
-void KABI test_end(void);
+void SXAPI test_end(void);
 
-void *KABI talloc(uint32_t size);
+void *SXAPI talloc(uint32_t size);
 
-void KABI run_case(char *name, bool result);
+void SXAPI run_case(char *name, bool result);
 
 #endif

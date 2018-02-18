@@ -73,30 +73,30 @@
 #define PD_ENTRY_NUM(vaddr)   (((vaddr) >> 21) & 0x1FF)
 #define PT_ENTRY_NUM(vaddr)   (((vaddr) >> 12) & 0x1FF)
 
-static inline uint32_t KABI seg_selector(uint32_t index, uint32_t rpl)
+static inline uint32_t SXAPI seg_selector(uint32_t index, uint32_t rpl)
 {
 	return (index << 3) + rpl;
 }
 
-void KABI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
+void SXAPI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
 
-void KABI hal_write_pml4(void *const base, uintptr_t const pdpt_addr, uint64_t const attr);
+void SXAPI hal_write_pml4(void *const base, uintptr_t const pdpt_addr, uint64_t const attr);
 
-void KABI hal_write_pdpt(void *const base, uintptr_t const pd_addr, uint64_t const attr);
+void SXAPI hal_write_pdpt(void *const base, uintptr_t const pd_addr, uint64_t const attr);
 
-void KABI hal_write_pd(void *const base, uintptr_t const pt_addr, uint64_t const attr);
+void SXAPI hal_write_pd(void *const base, uintptr_t const pt_addr, uint64_t const attr);
 
-void KABI hal_write_pt(void *const base, uintptr_t const p_addr, uint64_t const attr);
+void SXAPI hal_write_pt(void *const base, uintptr_t const p_addr, uint64_t const attr);
 
 
 /**
  Function Defn
 **/
 
-void *KABI halloc(uint32_t size);
+void *SXAPI halloc(uint32_t size);
 
-void KABI hfree(void *ptr);
+void SXAPI hfree(void *ptr);
 
-void KABI hal_mem_init(void);
+void SXAPI hal_mem_init(void);
 
 #endif

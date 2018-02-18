@@ -439,7 +439,7 @@ static bool search_test(void)
 }
 
 
-void KABI linked_list_test(void)
+void SXAPI linked_list_test(void)
 {
 	test_begin("Linked list test");
 	run_case("insert_test_beginning", insert_test_beginning());

@@ -3,10 +3,10 @@
 
 #include "type.h"
 
-void KABI linked_list_test(void);
+void SXAPI linked_list_test(void);
 
-void KABI avl_tree_test(void);
+void SXAPI avl_tree_test(void);
 
-void KABI salloc_test(void);
+void SXAPI salloc_test(void);
 
 #endif

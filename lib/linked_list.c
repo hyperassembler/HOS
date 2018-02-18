@@ -1,6 +1,6 @@
 #include "lib/linked_list.h"
 
-static void KABI lbp_init_linked_list_node(linked_list_node_t *node)
+static void SXAPI lbp_init_linked_list_node(linked_list_node_t *node)
 {
 	if (node != NULL)
 	{
@@ -10,7 +10,7 @@ static void KABI lbp_init_linked_list_node(linked_list_node_t *node)
 	return;
 }
 
-static void KABI lbp_append_node(linked_list_node_t *target, linked_list_node_t *node)
+static void SXAPI lbp_append_node(linked_list_node_t *target, linked_list_node_t *node)
 {
 	if (target == NULL || node == NULL)
 	{
@@ -35,7 +35,7 @@ static void KABI lbp_append_node(linked_list_node_t *target, linked_list_node_t 
 }
 
 // link target with node, suppose target is in the current list
-static void KABI lbp_prepend_node(linked_list_node_t *target, linked_list_node_t *node)
+static void SXAPI lbp_prepend_node(linked_list_node_t *target, linked_list_node_t *node)
 {
 	if (target == NULL || node == NULL)
 	{
@@ -59,7 +59,7 @@ static void KABI lbp_prepend_node(linked_list_node_t *target, linked_list_node_t
 	return;
 }
 
-static void KABI lbp_unlink_node(linked_list_node_t *node)
+static void SXAPI lbp_unlink_node(linked_list_node_t *node)
 {
 	if (node == NULL)
 	{
@@ -79,7 +79,7 @@ static void KABI lbp_unlink_node(linked_list_node_t *node)
 	return;
 }
 
-void KABI lb_linked_list_init(linked_list_t *list)
+void SXAPI lb_linked_list_init(linked_list_t *list)
 {
 	if (list != NULL)
 	{
@@ -89,7 +89,7 @@ void KABI lb_linked_list_init(linked_list_t *list)
 	return;
 }
 
-int32_t KABI lb_linked_list_size(linked_list_t *list)
+int32_t SXAPI lb_linked_list_size(linked_list_t *list)
 {
 	if (list == NULL)
 	{
@@ -110,7 +110,7 @@ int32_t KABI lb_linked_list_size(linked_list_t *list)
 	return size;
 }
 
-void KABI lb_linked_list_push_front(linked_list_t *list, linked_list_node_t *node)
+void SXAPI lb_linked_list_push_front(linked_list_t *list, linked_list_node_t *node)
 {
 	if (list == NULL || node == NULL)
 	{
@@ -124,7 +124,7 @@ void KABI lb_linked_list_push_front(linked_list_t *list, linked_list_node_t *nod
 	return;
 }
 
-void KABI lb_linked_list_push_back(linked_list_t *list, linked_list_node_t *node)
+void SXAPI lb_linked_list_push_back(linked_list_t *list, linked_list_node_t *node)
 {
 	if (list == NULL || node == NULL)
 	{
@@ -138,7 +138,7 @@ void KABI lb_linked_list_push_back(linked_list_t *list, linked_list_node_t *node
 	return;
 }
 
-linked_list_node_t *KABI lb_linked_list_pop_front(linked_list_t *list)
+linked_list_node_t *SXAPI lb_linked_list_pop_front(linked_list_t *list)
 {
 	if (list == NULL)
 	{
@@ -147,7 +147,7 @@ linked_list_node_t *KABI lb_linked_list_pop_front(linked_list_t *list)
 	return lb_linked_list_remove_ref(list, list->head);
 }
 
-linked_list_node_t *KABI lb_linked_list_pop_back(linked_list_t *list)
+linked_list_node_t *SXAPI lb_linked_list_pop_back(linked_list_t *list)
 {
 	if (list == NULL)
 	{
@@ -158,7 +158,7 @@ linked_list_node_t *KABI lb_linked_list_pop_back(linked_list_t *list)
 }
 
 
-void KABI lb_linked_list_insert_ref(linked_list_t *list, linked_list_node_t *prev_node, linked_list_node_t *node)
+void SXAPI lb_linked_list_insert_ref(linked_list_t *list, linked_list_node_t *prev_node, linked_list_node_t *node)
 {
 	if (list == NULL || node == NULL)
 	{
@@ -195,7 +195,7 @@ void KABI lb_linked_list_insert_ref(linked_list_t *list, linked_list_node_t *pre
 	}
 }
 
-void KABI lb_linked_list_insert(linked_list_t *list, int32_t index, linked_list_node_t *node)
+void SXAPI lb_linked_list_insert(linked_list_t *list, int32_t index, linked_list_node_t *node)
 {
 	if (list == NULL || index < 0 || node == NULL)
 	{
@@ -219,7 +219,7 @@ void KABI lb_linked_list_insert(linked_list_t *list, int32_t index, linked_list_
 	return;
 }
 
-linked_list_node_t *KABI lb_linked_list_remove(linked_list_t *list, int32_t index)
+linked_list_node_t *SXAPI lb_linked_list_remove(linked_list_t *list, int32_t index)
 {
 	if (list == NULL || index < 0)
 	{
@@ -235,7 +235,7 @@ linked_list_node_t *KABI lb_linked_list_remove(linked_list_t *list, int32_t inde
 	return lb_linked_list_remove_ref(list, cur_node);
 }
 
-linked_list_node_t *KABI lb_linked_list_remove_ref(linked_list_t *list, linked_list_node_t *node)
+linked_list_node_t *SXAPI lb_linked_list_remove_ref(linked_list_t *list, linked_list_node_t *node)
 {
 	if (list == NULL || node == NULL)
 	{
@@ -259,7 +259,7 @@ linked_list_node_t *KABI lb_linked_list_remove_ref(linked_list_t *list, linked_l
 	return node;
 }
 
-linked_list_node_t *KABI lb_linked_list_get(linked_list_t *list, int32_t index)
+linked_list_node_t *SXAPI lb_linked_list_get(linked_list_t *list, int32_t index)
 {
 	if (list == NULL || index < 0 || list->head == NULL)
 	{
@@ -271,7 +271,7 @@ linked_list_node_t *KABI lb_linked_list_get(linked_list_t *list, int32_t index)
 	return cur_node;
 }
 
-linked_list_node_t *KABI lb_linked_list_next(linked_list_node_t *node)
+linked_list_node_t *SXAPI lb_linked_list_next(linked_list_node_t *node)
 {
 	if (node != NULL)
 	{
@@ -280,7 +280,7 @@ linked_list_node_t *KABI lb_linked_list_next(linked_list_node_t *node)
 	return node;
 }
 
-linked_list_node_t *KABI lb_linked_list_prev(linked_list_node_t *node)
+linked_list_node_t *SXAPI lb_linked_list_prev(linked_list_node_t *node)
 {
 	if (node != NULL)
 	{
@@ -289,7 +289,7 @@ linked_list_node_t *KABI lb_linked_list_prev(linked_list_node_t *node)
 	return node;
 }
 
-linked_list_node_t *KABI lb_linked_list_first(linked_list_t *list)
+linked_list_node_t *SXAPI lb_linked_list_first(linked_list_t *list)
 {
 	linked_list_node_t *result = NULL;
 	if (list != NULL)
@@ -299,7 +299,7 @@ linked_list_node_t *KABI lb_linked_list_first(linked_list_t *list)
 	return result;
 }
 
-linked_list_node_t *KABI lb_linked_list_last(linked_list_t *list)
+linked_list_node_t *SXAPI lb_linked_list_last(linked_list_t *list)
 {
 	linked_list_node_t *result = NULL;
 	if (list != NULL)
@@ -309,7 +309,7 @@ linked_list_node_t *KABI lb_linked_list_last(linked_list_t *list)
 	return result;
 }
 
-int32_t KABI lb_linked_list_search(linked_list_t *list, linked_list_node_t *target,
+int32_t SXAPI lb_linked_list_search(linked_list_t *list, linked_list_node_t *target,
                                    callback_func_t equals)
 {
 	if (list == NULL || target == NULL)

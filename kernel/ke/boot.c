@@ -5,7 +5,7 @@
  * Kernel entry point
  * @param boot_info passed by the bootloader
  */
-void KABI ke_main(boot_info_t *boot_info)
+void SXAPI ke_main(boot_info_t *boot_info)
 {
 	status_t status = STATUS_SUCCESS;
 	status = hal_init(boot_info);

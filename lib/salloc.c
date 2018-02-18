@@ -86,7 +86,7 @@ static void lbp_salloc_join(void *base)
 	}
 }
 
-bool KABI lb_salloc_assert(void *base, uint32_t *blk_size, bool *blk_free, uint32_t size)
+bool SXAPI lb_salloc_assert(void *base, uint32_t *blk_size, bool *blk_free, uint32_t size)
 {
 	if (base == NULL || blk_free == NULL || blk_size == NULL)
 	{
@@ -115,7 +115,7 @@ bool KABI lb_salloc_assert(void *base, uint32_t *blk_size, bool *blk_free, uint3
 	}
 }
 
-void KABI lb_salloc_init(void *base, uint32_t size)
+void SXAPI lb_salloc_init(void *base, uint32_t size)
 {
 	if (base != NULL && size >= sizeof(_salloc_header))
 	{
@@ -127,7 +127,7 @@ void KABI lb_salloc_init(void *base, uint32_t size)
 	return;
 }
 
-void *KABI lb_salloc(void *base, uint32_t size)
+void *SXAPI lb_salloc(void *base, uint32_t size)
 {
 	void *result = NULL;
 	if (base != NULL && size != 0)
@@ -186,7 +186,7 @@ void *KABI lb_salloc(void *base, uint32_t size)
 	return result;
 }
 
-void KABI lb_sfree(void *base, void *ptr)
+void SXAPI lb_sfree(void *base, void *ptr)
 {
 	if (base != NULL && ptr != NULL)
 	{

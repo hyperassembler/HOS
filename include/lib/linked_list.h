@@ -20,37 +20,37 @@ typedef struct _linked_list_t
  * false otherwise
  */
 
-void KABI lb_linked_list_init(linked_list_t *list);
+void SXAPI lb_linked_list_init(linked_list_t *list);
 
-int32_t KABI lb_linked_list_size(linked_list_t *list);
+int32_t SXAPI lb_linked_list_size(linked_list_t *list);
 
-void KABI lb_linked_list_push_front(linked_list_t *list, linked_list_node_t *node);
+void SXAPI lb_linked_list_push_front(linked_list_t *list, linked_list_node_t *node);
 
-void KABI lb_linked_list_push_back(linked_list_t *list, linked_list_node_t *node);
+void SXAPI lb_linked_list_push_back(linked_list_t *list, linked_list_node_t *node);
 
-linked_list_node_t *KABI lb_linked_list_pop_front(linked_list_t *list);
+linked_list_node_t *SXAPI lb_linked_list_pop_front(linked_list_t *list);
 
-linked_list_node_t *KABI lb_linked_list_pop_back(linked_list_t *list);
+linked_list_node_t *SXAPI lb_linked_list_pop_back(linked_list_t *list);
 
-void KABI lb_linked_list_insert(linked_list_t *list, int32_t index, linked_list_node_t *node);
+void SXAPI lb_linked_list_insert(linked_list_t *list, int32_t index, linked_list_node_t *node);
 
-void KABI lb_linked_list_insert_ref(linked_list_t *list, linked_list_node_t *prev_node, linked_list_node_t *node);
+void SXAPI lb_linked_list_insert_ref(linked_list_t *list, linked_list_node_t *prev_node, linked_list_node_t *node);
 
-linked_list_node_t *KABI lb_linked_list_remove(linked_list_t *list, int32_t index);
+linked_list_node_t *SXAPI lb_linked_list_remove(linked_list_t *list, int32_t index);
 
-linked_list_node_t *KABI lb_linked_list_remove_ref(linked_list_t *list, linked_list_node_t *node);
+linked_list_node_t *SXAPI lb_linked_list_remove_ref(linked_list_t *list, linked_list_node_t *node);
 
-linked_list_node_t *KABI lb_linked_list_get(linked_list_t *list, int32_t index);
+linked_list_node_t *SXAPI lb_linked_list_get(linked_list_t *list, int32_t index);
 
-linked_list_node_t *KABI lb_linked_list_next(linked_list_node_t *node);
+linked_list_node_t *SXAPI lb_linked_list_next(linked_list_node_t *node);
 
-linked_list_node_t *KABI lb_linked_list_prev(linked_list_node_t *node);
+linked_list_node_t *SXAPI lb_linked_list_prev(linked_list_node_t *node);
 
-linked_list_node_t *KABI lb_linked_list_first(linked_list_t *list);
+linked_list_node_t *SXAPI lb_linked_list_first(linked_list_t *list);
 
-linked_list_node_t *KABI lb_linked_list_last(linked_list_t *list);
+linked_list_node_t *SXAPI lb_linked_list_last(linked_list_t *list);
 
-int32_t KABI lb_linked_list_search(linked_list_t *list, linked_list_node_t *target,
+int32_t SXAPI lb_linked_list_search(linked_list_t *list, linked_list_node_t *target,
                                    callback_func_t equals);
 
 #endif
