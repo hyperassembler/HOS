@@ -9,9 +9,9 @@ GCC cross compiler (see the next section)
 
 ### GCC cross compiler
 ##### Method 1 - Compile from GCC source.
-Follow the [instructions](wiki.osdev.org/GCC_Cross-Compiler)
+Follow the [instructions](https://wiki.osdev.org/GCC_Cross-Compiler)
 
-Set the "TARGET" to "x86_64-elf" instead of "i686-elf" and build [libgcc without redzone](wiki.osdev.org/Libgcc_without_red_zone).
+Set the "TARGET" to "x86_64-elf" instead of "i686-elf" and build [libgcc without redzone](https://wiki.osdev.org/Libgcc_without_red_zone).
 
 ##### Method 2 - Precompiled binaries
 VERSION: GCC 7.3 + Binutils 2.30
@@ -32,6 +32,6 @@ This will generate secxkrnl.elf (kernel executable) and secxkrnl.dmp (kernel dum
 Run "make clean" to clean a build.
 
 # Running
-secX requires bootloader [secboot](github.com/secXsQuared/secboot).
+secX requires bootloader [secboot](https://github.com/secXsQuared/secboot).
 
 See secboot repository for more information.
