@@ -20,9 +20,6 @@ TGT := $(OUT)/secxkrnl.elf
 DMP := $(OUT)/secxkrnl.dmp
 
 $(TGT): $(OBJ) $(LD_SCRIPT)
-	@echo ================libgcc path===================
-	$(LD) $(LD_FLAGS) -print-libgcc-file-name
-	@echo ==============================================
 	$(LINK) -T $(LD_SCRIPT)
 
 $(DMP): $(TGT)

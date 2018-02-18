@@ -1,7 +1,7 @@
 CROSS_PATH = ~/opt/cross/bin
 AS = nasm
 CC = $(CROSS_PATH)/x86_64-elf-gcc
-LD = $(CROSS_PATH)/x86_64-elf-gcc
+LD = $(CROSS_PATH)/x86_64-elf-ld
 DAS = $(CROSS_PATH)/x86_64-elf-objdump
 
 INCLUDE_DIR = include
@@ -41,10 +41,8 @@ AS_FLAGS =  -w+all \
 			-g \
 			$(addprefix -I, $(INCLUDE_DIR)/)
 
-LD_FLAGS =  -lgcc \
-			-nostdlib \
-			-Wl,--fatal-warnings \
-			-mno-red-zone
+LD_FLAGS =  -nostdlib \
+			--fatal-warnings
 
 DUMP_FLAGS = -M intel \
 			 -D
@@ -60,9 +58,9 @@ GDEP_FLAGS = $(PREP_FLAGS) \
 			 -MT $@
 
 MKDIR = mkdir -p $(dir $@)
-COMP = $(CC) $(C_FLAGS) $< -o $@
-COMPAS = $(AS) $(AS_FLAGS) $< -o $@
-LINK = $(LD) $(LD_FLAGS) $^ -o $@
+COMP = $(CC) $(C_FLAGS) -o $@ $<
+COMPAS = $(AS) $(AS_FLAGS) -o $@ $<
+LINK = $(LD) $(LD_FLAGS) -o $@ $^ $(shell $(CC) $(C_FLAGS) -print-libgcc-file-name)
 DUMP = $(DAS) $(DUMP_FLAGS) $< > $@
 PREP = $(CC) $(PREP_FLAGS) $< > $@
 GDEP = $(CC) $(GDEP_FLAGS) -MF $(addsuffix .d, $@) $< > /dev/null
