@@ -28,8 +28,11 @@ CONFIGURED WITH: --target=x86_64-elf --disable-nls --enable-languages=c,c++ --wi
 2. Run "tar -xvf cross.tar.gz -C $HOME/opt/cross"
 
 ### Compiling
-Run "make all" in the root directory
+Run "make" in the root directory.
 
-The makefile generates secxkrnl.elf(kernel executable), secxkrnl.dmp(kernel disassembly).
+This will generate secxkrnl.elf (kernel executable) and secxkrnl.dmp (kernel dump).
 
-To clean all generated files, run "make clean"
+Run "make clean" to clean a build.
+
+# Running
+
