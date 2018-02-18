@@ -5,6 +5,7 @@ Linux distribution / Bash for Windows.
 ### Required packages
 
 NASM (sudo apt-get install nasm)
+
 GCC cross compiler (see the next section)
 
 ### GCC cross compiler
