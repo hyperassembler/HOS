@@ -6,7 +6,7 @@
 
 typedef struct
 {
-    int32_t val;
+	int32_t val;
 } k_spin_lock_t;
 
 void KABI ke_spin_lock_init(k_spin_lock_t *lock);

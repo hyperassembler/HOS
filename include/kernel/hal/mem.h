@@ -41,15 +41,15 @@
  */
 typedef struct
 {
-    uintptr_t base;
-    uint64_t size;
-    uint32_t attr;
+	uintptr_t base;
+	uint64_t size;
+	uint32_t attr;
 } pmm_node_t;
 
 typedef struct
 {
-    uint32_t num_of_nodes;
-    pmm_node_t nodes[];
+	uint32_t num_of_nodes;
+	pmm_node_t nodes[];
 } pmm_info_t;
 
 #endif

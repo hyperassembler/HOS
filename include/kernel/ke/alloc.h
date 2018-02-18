@@ -5,7 +5,7 @@
 
 void KABI ke_alloc_init(void);
 
-void* KABI ke_alloc(uint32_t size);
+void *KABI ke_alloc(uint32_t size);
 
 void KABI ke_free(void *ptr);
 

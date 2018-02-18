@@ -5,14 +5,14 @@
 
 typedef struct _linked_list_node_t
 {
-    struct _linked_list_node_t *prev;
-    struct _linked_list_node_t *next;
+	struct _linked_list_node_t *prev;
+	struct _linked_list_node_t *next;
 } linked_list_node_t;
 
 typedef struct _linked_list_t
 {
-    linked_list_node_t *head;
-    linked_list_node_t *tail;
+	linked_list_node_t *head;
+	linked_list_node_t *tail;
 } linked_list_t;
 
 /*

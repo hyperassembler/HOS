@@ -75,7 +75,7 @@
 
 static inline uint32_t KABI seg_selector(uint32_t index, uint32_t rpl)
 {
-    return (index << 3) + rpl;
+	return (index << 3) + rpl;
 }
 
 void KABI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);

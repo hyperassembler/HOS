@@ -4,11 +4,12 @@
 
 void KABI ke_trap(void)
 {
-    while(true){};
+	while (true)
+	{};
 }
 
 void KABI ke_panic(uint64_t reason)
 {
-    ke_printf("BugCheck: Reason - %ul\n", reason);
-    ke_trap();
+	ke_printf("BugCheck: Reason - %ul\n", reason);
+	ke_trap();
 }

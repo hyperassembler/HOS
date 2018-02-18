@@ -8,8 +8,8 @@ typedef uint32_t handle_t;
 
 typedef struct
 {
-    int32_t ref_count;
-    callback_func_t free_routine;
+	int32_t ref_count;
+	callback_func_t free_routine;
 } ref_node_t;
 
 #define K_HANDLE_BASE 0x80000000

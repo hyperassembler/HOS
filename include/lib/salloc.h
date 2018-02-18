@@ -5,7 +5,7 @@
 
 void KABI lb_salloc_init(void *base, uint32_t size);
 
-void* KABI lb_salloc(void *base, uint32_t size);
+void *KABI lb_salloc(void *base, uint32_t size);
 
 void KABI lb_sfree(void *base, void *ptr);
 

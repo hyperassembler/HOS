@@ -1,16 +1,17 @@
 #ifndef _KERNEL_KE_RWLOCK_H_
 #define _KERNEL_KE_RWLOCK_H_
+
 #include "kernel/ke/spin_lock.h"
 #include "type.h"
 
 typedef struct
 {
-    k_spin_lock_t w_mutex;
-    k_spin_lock_t r_mutex;
-    k_spin_lock_t res_lock;
-    k_spin_lock_t r_try;
-    uint32_t reader_ct;
-    uint32_t writer_ct;
+	k_spin_lock_t w_mutex;
+	k_spin_lock_t r_mutex;
+	k_spin_lock_t res_lock;
+	k_spin_lock_t r_try;
+	uint32_t reader_ct;
+	uint32_t writer_ct;
 } k_rwwlock_t;
 
 void KABI ke_rwwlock_init(k_rwwlock_t *lock);

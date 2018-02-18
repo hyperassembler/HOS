@@ -9,14 +9,14 @@
 
 typedef struct
 {
-    uint16_t limit;
-    uint64_t base;
+	uint16_t limit;
+	uint64_t base;
 } STRUCT_PACKED hal_gdt_ptr_t;
 
 typedef struct
 {
-    uint16_t limit;
-    uint64_t base;
+	uint16_t limit;
+	uint64_t base;
 } STRUCT_PACKED hal_idt_ptr_t;
 
 
@@ -65,6 +65,7 @@ extern void KABI hal_read_idt(hal_idt_ptr_t **idt_ptr);
  * Control Register Operations
  */
 #define MSR_IA32_APIC_BASE 0x1B
+
 extern void KABI hal_read_msr(uint32_t *ecx, uint32_t *edx, uint32_t *eax);
 
 extern void KABI hal_write_msr(uint32_t *ecx, uint32_t *edx, uint32_t *eax);
@@ -76,7 +77,6 @@ extern uint64_t KABI hal_read_cr3(void);
 extern void KABI hal_write_cr8(uint64_t pri);
 
 extern uint64_t KABI hal_read_cr8(void);
-
 
 
 #endif

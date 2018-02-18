@@ -6,11 +6,11 @@
 
 typedef struct _k_avl_tree_node_t
 {
-    struct _k_avl_tree_node_t *left;
-    struct _k_avl_tree_node_t *right;
-    struct _k_avl_tree_node_t *parent;
+	struct _k_avl_tree_node_t *left;
+	struct _k_avl_tree_node_t *right;
+	struct _k_avl_tree_node_t *parent;
 
-    int32_t height;
+	int32_t height;
 } avl_tree_node_t;
 
 /*
@@ -22,8 +22,8 @@ typedef struct _k_avl_tree_node_t
 */
 typedef struct _k_avl_tree_t
 {
-    callback_func_t compare;
-    avl_tree_node_t *root;
+	callback_func_t compare;
+	avl_tree_node_t *root;
 } avl_tree_t;
 
 avl_tree_node_t *KABI lb_avl_tree_search(avl_tree_t *tree, avl_tree_node_t *entry);
