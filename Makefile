@@ -50,7 +50,6 @@ DUMP_FLAGS = -M intel \
 PREP_FLAGS = -E \
 			 -x c \
 			 -P \
-			 -traditional-cpp \
 			 $(C_FLAGS)
 
 GDEP_FLAGS = $(PREP_FLAGS) \
