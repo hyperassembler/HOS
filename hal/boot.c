@@ -1,14 +1,10 @@
-/* Copyright 2016 secXsQuared
- * Distributed under GPL license
- * See COPYING under root for details
- */
-
 #include "hal/print.h"
 #include "hal/mem.h"
 #include "hal/intr.h"
 #include "hal/cpu.h"
 #include "lib/sxtdlib.h"
 #include "hal/boot.h"
+#include "status.h"
 
 static void KABI halp_obtain_cpu_info(boot_info_t *hal_info)
 {
@@ -22,10 +18,10 @@ static void KABI halp_obtain_cpu_info(boot_info_t *hal_info)
     hal_info->cpu_vd_str[12] = 0;
 }
 
-void KABI hal_main(void *m_info)
+status_t KABI hal_init(void *m_info)
 {
     if (m_info == NULL || (uint64_t) m_info & lb_bit_field_mask(0, 2))
-        return;
+        return STATUS_FAIL;
 
     // init HAL infrastructures
     hal_print_init();
@@ -34,17 +30,14 @@ void KABI hal_main(void *m_info)
 
     boot_info_t* boot_info = halloc(sizeof(boot_info_t));
 
-    boot_info->krnl_end = KERNEL_IMAGE_END_VADDR;
-
     // obtain cpu info
     halp_obtain_cpu_info(boot_info);
 
     // init interrupt
     if(hal_interrupt_init() != 0)
     {
-        return;
+        return STATUS_FAIL;
     }
-    // pass the control to the kernel
-    ke_main(boot_info);
-    return;
+
+    return STATUS_SUCCESS;
 }

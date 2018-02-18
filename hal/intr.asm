@@ -1,7 +1,3 @@
-; Copyright 2016 secXsQuared
-; Distributed under GPL license
-; See COPYING under root for details
-
 %macro PUSHAQ 0
    push rax      ;save current rax
    push rbx      ;save current rbx

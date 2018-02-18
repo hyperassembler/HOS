@@ -1,8 +1,3 @@
-/* Copyright 2016 secXsQuared
- * Distributed under GPL license
- * See COPYING under root for details
- */
-
 #include "lib/avl_tree.h"
 
 static inline int32_t KABI lbp_avl_tree_node_get_height(avl_tree_node_t *node)

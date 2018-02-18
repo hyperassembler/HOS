@@ -1,8 +1,3 @@
-/* Copyright 2016 secXsQuared
- * Distributed under GPL license
- * See COPYING under root for details
- */
-
 #include "lib/linked_list.h"
 
 static void KABI lbp_init_linked_list_node(linked_list_node_t *node)

@@ -1,8 +1,3 @@
-/* Copyright 2016 secXsQuared
- * Distributed under GPL license
- * See COPYING under root for details
- */
-
 #ifndef _LIB_AVL_TREE_H_
 #define _LIB_AVL_TREE_H_
 

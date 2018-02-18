@@ -1,7 +1,3 @@
-; Copyright 2016 secXsQuared
-; Distributed under GPL license
-; See COPYING under root for details
-
 ;Functions preserve the registers rbx, rsp, rbp, r12, r13, r14, and 15
 ;rax, rdi, rsi, rdx, rcx, r8, r9, r10, r11 are scratch registers.
 ;function parameter: rdi,rsi,rdx,rcx,r8,r9

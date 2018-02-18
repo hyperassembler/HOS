@@ -37,11 +37,6 @@
 #include "lib/linked_list.h"
 
 /**
- * From linker.inc
- */
-extern char KERNEL_IMAGE_END_VADDR[];
-
-/**
  * PMM init info
  */
 typedef struct

@@ -17,7 +17,7 @@ typedef uint32_t status_t;
 // bits 15-29 - Facility 32768 in total
 //
 
-#define SX_MAKE_STATUS(Severity, Facility, Return) (((Severity) << 30) | ((Facility) << 16) | (Return))
+#define SX_MAKE_STATUS(Severity, Facility, Return) ((status_t)(((Severity) << 30) | ((Facility) << 16) | (Return)))
 
 #define SEVERITY_ERROR 0x3
 #define SEVERITY_SUCCESS 0x0

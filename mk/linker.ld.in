@@ -3,43 +3,31 @@
 
 OUTPUT_FORMAT(elf64-x86-64)
 OUTPUT_ARCH(i386:x86-64)
-ENTRY(hal_entry_32)
+ENTRY(ke_main)
 
 SECTIONS
 {
-  . = KERNEL_IMAGE_VADDR;
+	. = KERNEL_IMAGE_VADDR;
 
-  .multiboot_header ALIGN(KERNEL_PAGE_SIZE) : AT(ADDR(.multiboot_header) + KERNEL_IMAGE_PADDR - KERNEL_IMAGE_VADDR)
-  {
-    *(.multiboot_header)
-  }
+	.multiboot_header ALIGN(KERNEL_PAGE_SIZE) : AT(ADDR(.multiboot_header) + KERNEL_IMAGE_PADDR - KERNEL_IMAGE_VADDR)
+	{
+		*(.multiboot_header)
+	}
 
-  .text ALIGN(KERNEL_PAGE_SIZE) : AT(ADDR(.text) + KERNEL_IMAGE_PADDR - KERNEL_IMAGE_VADDR)
-  {
-    *(.text)
-  }
+	.text ALIGN(KERNEL_PAGE_SIZE) : AT(ADDR(.text) + KERNEL_IMAGE_PADDR - KERNEL_IMAGE_VADDR)
+	{
+		*(.text)
+	}
 
-  .data ALIGN(KERNEL_PAGE_SIZE) : AT(ADDR(.data) + KERNEL_IMAGE_PADDR - KERNEL_IMAGE_VADDR)
-  {
-    *(.data)
-    *(.rodata*)
-  }
+	.data ALIGN(KERNEL_PAGE_SIZE) : AT(ADDR(.data) + KERNEL_IMAGE_PADDR - KERNEL_IMAGE_VADDR)
+	{
+		*(.data)
+		*(.rodata*)
+	}
 
-  .bss ALIGN(KERNEL_PAGE_SIZE) : AT(ADDR(.bss) + KERNEL_IMAGE_PADDR - KERNEL_IMAGE_VADDR)
-  {
-    *(.bss)
-    *(COMMON)
-  }
-
-  KERNEL_IMAGE_END_VADDR = .;
-
-   /DISCARD/ :
-   {
-		*(.gcc_except_table)
-		*(.eh_frame)
-		*(.note)
-		*(.comment)
-		*(.rel.*)
-		*(.rela.*)
+	.bss ALIGN(KERNEL_PAGE_SIZE) : AT(ADDR(.bss) + KERNEL_IMAGE_PADDR - KERNEL_IMAGE_VADDR)
+	{
+		*(.bss)
+		*(COMMON)
 	}
 }

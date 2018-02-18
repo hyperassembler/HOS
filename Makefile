@@ -1,8 +1,8 @@
-CROSS_DIR = ~/opt/cross/bin
+CROSS_PATH = ~/opt/cross/bin
 AS = nasm
-CC = $(CROSS_DIR)/x86_64-elf-gcc
-LD = $(CROSS_DIR)/x86_64-elf-gcc
-DAS = $(CROSS_DIR)/x86_64-elf-objdump
+CC = $(CROSS_PATH)/x86_64-elf-gcc
+LD = $(CROSS_PATH)/x86_64-elf-gcc
+DAS = $(CROSS_PATH)/x86_64-elf-objdump
 
 INCLUDE_DIR = include
 MK = mk
@@ -28,13 +28,9 @@ C_FLAGS =   -std=c11 \
 			-c \
 			-O2 \
 			-mcmodel=kernel \
-			-fno-exceptions \
+			-fno-stack-protector \
 			-ffreestanding \
 			-mno-red-zone \
-			-mno-mmx \
-			-mno-sse \
-			-mno-sse2 \
-			-masm=intel \
 			$(C_WARNINGS) \
 			$(addprefix -I, $(INCLUDE_DIR))
 
@@ -46,12 +42,9 @@ AS_FLAGS =  -w+all \
 			$(addprefix -I, $(INCLUDE_DIR)/)
 
 LD_FLAGS =  -lgcc \
-        	-nodefaultlibs \
-			-nostartfiles \
 			-nostdlib \
-			-mno-red-zone \
-			-Wl,-n \
-			-Wl,--build-id=none
+			-Wl,--fatal-warnings \
+			-mno-red-zone
 
 DUMP_FLAGS = -M intel \
 			 -D

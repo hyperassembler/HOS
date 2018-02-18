@@ -15,14 +15,14 @@ include $(dir)/Rules.mk
 dir := mk
 include $(dir)/Rules.mk
 
-LD_SCRIPT = $(OUT)/$(MK)/linker.ld
-GRUB_CFG = $(OUT)/$(MK)/grub.cfg
+LD_SCRIPT := $(OUT)/$(MK)/linker.ld
 TGT := $(OUT)/secxkrnl.elf
 DMP := $(OUT)/secxkrnl.dmp
-ISO := $(OUT)/secxkrnl.iso
 
 $(TGT): $(OBJ) $(LD_SCRIPT)
+	@echo ================libgcc path===================
 	$(LD) $(LD_FLAGS) -print-libgcc-file-name
+	@echo ==============================================
 	$(LINK) -T $(LD_SCRIPT)
 
 $(DMP): $(TGT)
@@ -39,17 +39,7 @@ compile: $(TGT)
 .PHONY: dump
 dump: $(DMP)
 
-.PHONY: iso
-iso: $(TGT) $(GRUB_CFG)
-	mkdir -p temp/secX
-	mkdir -p temp/boot
-	mkdir -p temp/boot/grub
-	cp $(TGT) temp/secX/
-	cp $(GRUB_CFG) temp/boot/grub/
-	grub-mkrescue -o $(ISO) temp
-	rm -r temp
-
 .PHONY: all
-all: compile dump iso
+all: compile dump
 
 include $(MK)/epilogue.mk

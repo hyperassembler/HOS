@@ -4,6 +4,7 @@
 #include "type.h"
 #include "kernel/hal/intr.h"
 #include "kernel/hal/mem.h"
+#include "status.h"
 
 /**
  * Required OS boot info
@@ -16,6 +17,6 @@ typedef struct
     char cpu_vd_str[13];
 } boot_info_t;
 
-void KABI ke_main(boot_info_t* info);
+status_t KABI hal_init(void *m_info);
 
 #endif
