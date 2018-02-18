@@ -45,7 +45,7 @@ LD_FLAGS =  -nostdlib \
 			--fatal-warnings
 
 DUMP_FLAGS = -M intel \
-			 -D
+			 -d
 
 PREP_FLAGS = -E \
 			 -x c \
