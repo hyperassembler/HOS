@@ -3,7 +3,7 @@
 All platforms where the required packages are available.
 
 ### Required packages
-NASM, Clang (6.0+), make
+nasm, clang (6.0+), make
 
 ### Compiling
 Run "make" in the root directory.
