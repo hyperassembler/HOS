@@ -1,10 +1,9 @@
 # Building
 ### Environment
-Linux distribution / Bash for Windows.
+All platforms where the required packages are available.
 
 ### Required packages
-NASM (sudo apt-get install nasm)
-Clang 6.0+ (see the next section)
+NASM, Clang (6.0+), make
 
 ### Compiling
 Run "make" in the root directory.
