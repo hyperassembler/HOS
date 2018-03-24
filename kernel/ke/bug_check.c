@@ -2,13 +2,13 @@
 #include "kernel/ke/print.h"
 #include "kernel/ke/bug_check.h"
 
-void SXAPI ke_trap(void)
+void SXAPI SXTRAP ke_trap(void)
 {
-	while (true)
+	while (TRUE)
 	{};
 }
 
-void SXAPI ke_panic(uint64_t reason)
+void SXAPI SXTRAP ke_panic(uint64 reason)
 {
 	ke_printf("BugCheck: Reason - %ul\n", reason);
 	ke_trap();

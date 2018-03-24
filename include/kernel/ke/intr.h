@@ -1,15 +1,15 @@
-#ifndef _KERNEL_KE_INTR_H_
-#define _KERNEL_KE_INTR_H_
+#ifndef KERNEL_KE_INTR_H
+#define KERNEL_KE_INTR_H
 
 #include "kernel/hal/intr.h"
 #include "type.h"
 
-irql_t SXAPI ke_raise_irql(irql_t irql);
+k_irql SXAPI ke_raise_irql(k_irql irql);
 
-irql_t SXAPI ke_lower_irql(irql_t irql);
+k_irql SXAPI ke_lower_irql(k_irql irql);
 
-int SXAPI ke_get_current_core(void);
+uint32 SXAPI ke_get_current_core(void);
 
-irql_t SXAPI ke_get_irql(void);
+k_irql SXAPI ke_get_irql(void);
 
 #endif

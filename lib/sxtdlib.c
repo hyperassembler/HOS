@@ -1,7 +1,7 @@
 #include "type.h"
 #include "lib/sxtdlib.h"
 
-void SXAPI lb_mem_copy(void *src, void *dst, uint64_t size)
+void SXAPI lb_mem_copy(void *src, void *dst, uint64 size)
 {
 	if (src == NULL || dst == NULL)
 	{
@@ -13,10 +13,9 @@ void SXAPI lb_mem_copy(void *src, void *dst, uint64_t size)
 	{
 		*(cDst++) = *(cSrc++);
 	}
-	return;
 }
 
-void SXAPI lb_mem_set(void *src, uint8_t const val, uint64_t size)
+void SXAPI lb_mem_set(void *src, uint8 const val, uint64 size)
 {
 	if (src == NULL)
 	{
@@ -24,13 +23,12 @@ void SXAPI lb_mem_set(void *src, uint8_t const val, uint64_t size)
 	}
 	while (size--)
 	{
-		*(uint8_t *) src = val;
-		src = (void *) ((uintptr_t) src + 1);
+		*(uint8 *) src = val;
+		src = (void *) ((uintptr) src + 1);
 	}
-	return;
 }
 
-void SXAPI lb_mem_move(void *src, void *dst, uint64_t size)
+void SXAPI lb_mem_move(void *src, void *dst, uint64 size)
 {
 	if (src == NULL || dst == NULL)
 	{
@@ -41,35 +39,34 @@ void SXAPI lb_mem_move(void *src, void *dst, uint64_t size)
 		lb_mem_copy(src, dst, size);
 		return;
 	}
-	src = (void *) ((uintptr_t) src + size - 1);
-	dst = (void *) ((uintptr_t) dst + size - 1);
+	src = (void *) ((uintptr) src + size - 1);
+	dst = (void *) ((uintptr) dst + size - 1);
 	while (size--)
 	{
 		*(char *) dst = *(char *) src;
-		dst = (void *) ((uintptr_t) dst - 1);
-		src = (void *) ((uintptr_t) src - 1);
+		dst = (void *) ((uintptr) dst - 1);
+		src = (void *) ((uintptr) src - 1);
 	}
-	return;
 }
 
 //
 // Random Generator
 //
-static uint32_t seed = 1;
-static uint32_t max = 16777215;
+static uint32 seed = 1;
+static uint32 max = 16777215;
 
-uint32_t SXAPI lb_rand(void)
+uint32 SXAPI lb_rand(void)
 {
 	seed = seed * 1103512986 + 29865;
 	return (unsigned int) (seed / 65536) % (max + 1);
 }
 
-void SXAPI lb_srand(uint32_t _seed)
+void SXAPI lb_srand(uint32 _seed)
 {
 	seed = _seed;
 }
 
-void SXAPI lb_mrand(uint32_t _max)
+void SXAPI lb_mrand(uint32 _max)
 {
 	max = _max;
 }
@@ -78,9 +75,9 @@ void SXAPI lb_mrand(uint32_t _max)
 // String Library
 //
 
-uint64_t SXAPI lb_str_len(char const *str)
+uint64 SXAPI lb_str_len(char const *str)
 {
-	uint64_t length = 0;
+	uint64 length = 0;
 	if (str == NULL)
 	{
 		return 0;
@@ -93,13 +90,13 @@ uint64_t SXAPI lb_str_len(char const *str)
 	return length;
 }
 
-uint64_t SXAPI lb_str_cmp(char const *str1, char const *str2)
+uint64 SXAPI lb_str_cmp(char const *str1, char const *str2)
 {
 	if (str1 == NULL || str2 == NULL)
 	{
 		return 0;
 	}
-	uint64_t length = lb_str_len(str1);
+	uint64 length = lb_str_len(str1);
 	if (length != lb_str_len(str2))
 	{
 		return 0;

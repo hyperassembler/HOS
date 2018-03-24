@@ -1,38 +1,40 @@
-#ifndef _KERNEL_HAL_INTR_H_
-#define _KERNEL_HAL_INTR_H_
+#ifndef KERNEL_HAL_INTR_H
+#define KERNEL_HAL_INTR_H
 
 #include "type.h"
 
 /**
  * IRQL Definitions
  */
-typedef uint32_t irql_t;
+typedef uint32 k_irql;
 #define IRQL_DISABLED_LEVEL (1 << 3)
 #define IRQL_DPC_LEVEL (1 << 2)
 #define IRQL_APC_LEVEL (1 << 1)
 #define IRQL_PASSIVE_LEVEL (1 << 0)
 
-irql_t SXAPI hal_set_irql(irql_t irql);
+k_irql SXAPI hal_set_irql(k_irql irql);
 
-irql_t SXAPI hal_get_irql(void);
+k_irql SXAPI hal_get_irql(void);
 
-uint32_t SXAPI hal_get_core_id(void);
+uint32 SXAPI hal_get_core_id(void);
+
+void SXAPI hal_issue_interrupt(uint32 target_core, uint32 vector);
 
 /**
  * Interrupt Handler Registration
  */
-typedef struct
+struct intr_info
 {
-	uint32_t timer_intr_vec;
-	uint32_t apc_intr_vec;
-	uint32_t dpc_intr_vec;
-} intr_info_t;
+	uint32 timer_intr_vec;
+	uint32 apc_intr_vec;
+	uint32 dpc_intr_vec;
+};
 
-typedef void (SXAPI *intr_handler_t)(void *context, void *intr_stack);
+typedef void (SXAPI *intr_handler)(void *context, void *intr_stack);
 
-void SXAPI hal_register_interrupt_handler(uint32_t coreid, uint32_t index, intr_handler_t handler, void *context);
+void SXAPI hal_register_interrupt_handler(uint32 coreid, uint32 index, intr_handler handler, void *context);
 
-void SXAPI hal_deregister_interrupt_handler(uint32_t coreid, uint32_t index);
+void SXAPI hal_deregister_interrupt_handler(uint32 coreid, uint32 index);
 
 /**
  * Exception Handler Registration
@@ -48,10 +50,11 @@ typedef enum
 	debug_exc
 } exc_type_t;
 
-typedef void (SXAPI *exc_handler_t)(uint64_t exc_addr, uint64_t exc_stack, uint64_t error_code);
+typedef void (SXAPI *exc_handler)(uint64 exc_addr, uint64 exc_stack, uint64 error_code);
 
-void SXAPI hal_register_exception_handler(uint32_t coreid, uint32_t index, exc_handler_t handler);
+void SXAPI hal_register_exception_handler(uint32 coreid, uint32 index, exc_handler handler);
 
-void SXAPI hal_deregister_exception_handler(uint32_t coreid, uint32_t index);
+void SXAPI hal_deregister_exception_handler(uint32 coreid, uint32 index);
+
 
 #endif

@@ -49,10 +49,10 @@ static bool gat_full(void)
 	{
 		if (gat[i] == NULL)
 		{
-			return false;
+			return FALSE;
 		}
 	}
-	return true;
+	return TRUE;
 }
 
 static void gat_free(void)
@@ -76,7 +76,7 @@ static void ginfo_push(char *case_name, bool success)
 		{
 			ginfo[i].case_name = r_case_name;
 			ginfo[i].success = success;
-			ginfo[i].used = true;
+			ginfo[i].used = TRUE;
 			return;
 		}
 	}
@@ -93,14 +93,14 @@ void SXAPI test_begin(char *name)
 	}
 	for (int i = 0; i < CASE_NUM; i++)
 	{
-		ginfo[i].used = false;
+		ginfo[i].used = FALSE;
 	}
 }
 
 void SXAPI test_end(void)
 {
 	gat_free();
-	int32_t total = 0, failed = 0, success = 0;
+	int32 total = 0, failed = 0, success = 0;
 	for (int i = 0; i < CASE_NUM; i++)
 	{
 		if (ginfo[i].used)
@@ -131,11 +131,11 @@ void SXAPI test_end(void)
 	}
 	for (int i = 0; i < CASE_NUM; i++)
 	{
-		ginfo[i].used = false;
+		ginfo[i].used = FALSE;
 	}
 }
 
-void SXAPI *talloc(uint32_t size)
+void SXAPI *talloc(uint32 size)
 {
 	if (!gat_full())
 	{

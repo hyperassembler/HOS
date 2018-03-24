@@ -1,5 +1,5 @@
-#ifndef _KERNEL_MM_PMM_H_
-#define _KERNEL_MM_PMM_H_
+#ifndef KERNEL_MM_PMM_H
+#define KERNEL_MM_PMM_H
 
 #include "type.h"
 #include "lib/avl_tree.h"
@@ -13,24 +13,24 @@
 //
 //typedef struct
 //{
-//    uint32_t attr;
+//    uint32 attr;
 //} k_physical_page_attr_t;
 
 
-status_t SXAPI sx_pmm_init(pmm_info_t *info);
+sx_status SXAPI sx_pmm_init(pmm_info_t *info);
 
-status_t SXAPI mm_alloc_page(uintptr_t *out);
+sx_status SXAPI mm_alloc_page(uintptr *out);
 
-status_t SXAPI mm_free_page(uintptr_t base);
+sx_status SXAPI mm_free_page(uintptr base);
 
-status_t SXAPI mm_query_page_attr(uintptr_t base,
-                                 int32_t *out);
+sx_status SXAPI mm_query_page_attr(uintptr base,
+                                 int32 *out);
 
 // TODO: implement these somehow, i might just reserve the first 16MB for these
-int32_t SXAPI mm_alloc_contiguous_pages(uint64_t num_of_page,
-                                       uintptr_t highest_p_addr,
-                                       uintptr_t *out);
+int32 SXAPI mm_alloc_contiguous_pages(uint64 num_of_page,
+                                       uintptr highest_p_addr,
+                                       uintptr *out);
 
-int32_t SXAPI mm_free_contiguous_pages(uintptr_t base);
+int32 SXAPI mm_free_contiguous_pages(uintptr base);
 
 #endif

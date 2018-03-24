@@ -1,5 +1,5 @@
-#ifndef _HAL_INTR_H_
-#define _HAL_INTR_H_
+#ifndef HAL_INTR_H
+#define HAL_INTR_H
 
 #include "type.h"
 #include "kernel/hal/intr.h"
@@ -9,11 +9,11 @@
  */
 typedef struct
 {
-	const uint64_t rip;
-	const uint64_t cs;
-	const uint64_t rflags;
-	const uint64_t rsp;
-	const uint64_t ss;
+	const uint64 rip;
+	const uint64 cs;
+	const uint64 rflags;
+	const uint64 rsp;
+	const uint64 ss;
 } hal_interrupt_context_t;
 
 
@@ -36,21 +36,36 @@ typedef struct
  * intr.h
  */
 
-int32_t SXAPI hal_interrupt_init(void);
+int32 SXAPI hal_interrupt_init(void);
+
+void SXAPI hal_write_gate(void *const gate,
+                          uint64 const offset,
+                          uint32 const selector,
+                          uint32 const attr);
+
+void SXAPI hal_set_interrupt_handler(uint64 index, void (*handler)(void));
+
+
+/**
+ * Dispatchers for asm code
+ */
+void SXAPI hal_interrupt_dispatcher(uint64 int_vec, hal_interrupt_context_t *context);
+
+void SXAPI hal_exception_dispatcher(uint64 exc_vec, hal_interrupt_context_t *context, uint64 errorcode);
 
 
 /**
  * System exception Handlers
  */
-extern void SXAPI hal_interrupt_handler_0(void);
+extern SXAPI void hal_interrupt_handler_0(void);
 
-extern void SXAPI hal_interrupt_handler_1(void);
+extern SXAPI void hal_interrupt_handler_1(void);
 
-extern void SXAPI hal_interrupt_handler_2(void);
+extern SXAPI void hal_interrupt_handler_2(void);
 
-extern void SXAPI hal_interrupt_handler_3(void);
+extern SXAPI void hal_interrupt_handler_3(void);
 
-extern void SXAPI hal_interrupt_handler_4(void);
+extern SXAPI void hal_interrupt_handler_4(void);
 
 extern void SXAPI hal_interrupt_handler_5(void);
 

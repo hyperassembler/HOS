@@ -20,7 +20,7 @@ TGT := $(OUT)/secxkrnl.elf
 DMP := $(OUT)/secxkrnl.dmp
 
 $(TGT): $(OBJ) $(LD_SCRIPT)
-	$(LINK) -T $(LD_SCRIPT)
+	$(LINK)
 
 $(DMP): $(TGT)
 	$(DUMP)

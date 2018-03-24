@@ -1,114 +1,108 @@
 
 #include "type.h"
+#include "kernel/hal/intr.h"
 #include "hal/cpu.h"
 #include "hal/intr.h"
 #include "hal/print.h"
 #include "hal/mem.h"
 #include "lib/sxtdlib.h"
 
-static uint8_t _idts[HAL_CORE_COUNT][IDT_ENTRY_NUM * IDT_ENTRY_SIZE];
-static hal_idt_ptr_t _idt_ptrs[HAL_CORE_COUNT];
-static intr_handler_t _intr_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
+static uint8 _idts[HAL_CORE_COUNT][IDT_ENTRY_NUM * IDT_ENTRY_SIZE];
+static struct hal_idt_ptr _idt_ptrs[HAL_CORE_COUNT];
+static intr_handler _intr_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
 static void *_intr_handler_context_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
-static exc_handler_t _exc_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
+static exc_handler _exc_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
 
-irql_t SXAPI hal_set_irql(irql_t irql)
+k_irql SXAPI hal_set_irql(k_irql irql)
 {
 	UNREFERENCED(irql)
-	hal_assert(false, "Unimplemented function called.");
+	hal_assert(FALSE, "Unimplemented function called.");
 	return 0;
 }
 
-irql_t SXAPI hal_get_irql(void)
+k_irql SXAPI hal_get_irql(void)
 {
-	hal_assert(false, "Unimplemented function called.");
+	hal_assert(FALSE, "Unimplemented function called.");
 	return 0;
 }
 
 
 void SXAPI hal_write_gate(void *const gate,
-                         uint64_t const offset,
-                         uint32_t const selector,
-                         uint32_t const attr)
+                         uint64 const offset,
+                         uint32 const selector,
+                         uint32 const attr)
 {
-	((uint8_t *) gate)[0] = (uint8_t) (offset & 0xFF);
-	((uint8_t *) gate)[1] = (uint8_t) ((offset >> 8) & 0xFF);
-	((uint8_t *) gate)[2] = (uint8_t) (selector & 0xFF);
-	((uint8_t *) gate)[3] = (uint8_t) ((selector >> 8) & 0xFF);
-	((uint8_t *) gate)[4] = (uint8_t) (attr & 0xFF);
-	((uint8_t *) gate)[5] = (uint8_t) ((attr >> 8) & 0xFF);
-	((uint8_t *) gate)[6] = (uint8_t) ((offset >> 16) & 0xFF);
-	((uint8_t *) gate)[7] = (uint8_t) ((offset >> 24) & 0xFF);
-	((uint8_t *) gate)[8] = (uint8_t) ((offset >> 32) & 0xFF);
-	((uint8_t *) gate)[9] = (uint8_t) ((offset >> 40) & 0xFF);
-	((uint8_t *) gate)[10] = (uint8_t) ((offset >> 48) & 0xFF);
-	((uint8_t *) gate)[11] = (uint8_t) ((offset >> 56) & 0xFF);
-	((uint8_t *) gate)[12] = 0;
-	((uint8_t *) gate)[13] = 0;
-	((uint8_t *) gate)[14] = 0;
-	((uint8_t *) gate)[15] = 0;
-	return;
+	((uint8 *) gate)[0] = (uint8) (offset & 0xFF);
+	((uint8 *) gate)[1] = (uint8) ((offset >> 8) & 0xFF);
+	((uint8 *) gate)[2] = (uint8) (selector & 0xFF);
+	((uint8 *) gate)[3] = (uint8) ((selector >> 8) & 0xFF);
+	((uint8 *) gate)[4] = (uint8) (attr & 0xFF);
+	((uint8 *) gate)[5] = (uint8) ((attr >> 8) & 0xFF);
+	((uint8 *) gate)[6] = (uint8) ((offset >> 16) & 0xFF);
+	((uint8 *) gate)[7] = (uint8) ((offset >> 24) & 0xFF);
+	((uint8 *) gate)[8] = (uint8) ((offset >> 32) & 0xFF);
+	((uint8 *) gate)[9] = (uint8) ((offset >> 40) & 0xFF);
+	((uint8 *) gate)[10] = (uint8) ((offset >> 48) & 0xFF);
+	((uint8 *) gate)[11] = (uint8) ((offset >> 56) & 0xFF);
+	((uint8 *) gate)[12] = 0;
+	((uint8 *) gate)[13] = 0;
+	((uint8 *) gate)[14] = 0;
+	((uint8 *) gate)[15] = 0;
 }
 
-void SXAPI hal_set_interrupt_handler(uint64_t index,
+void SXAPI hal_set_interrupt_handler(uint64 index,
                                     void (*handler)(void))
 {
 	if (index < IDT_ENTRY_NUM)
 	{
-		hal_write_gate(_idts[hal_get_core_id()] + 16 * index, (uint64_t) handler, seg_selector(1, 0),
+		hal_write_gate(_idts[hal_get_core_id()] + 16 * index, (uintptr) handler, seg_selector(1, 0),
 		               GATE_DPL_0 | GATE_PRESENT | GATE_TYPE_INTERRUPT);
 	}
-	return;
 }
 
-void SXAPI hal_issue_interrupt(uint32_t target_core, uint32_t vector)
+void SXAPI hal_issue_interrupt(uint32 target_core, uint32 vector)
 {
 	UNREFERENCED(target_core);
 	UNREFERENCED(vector);
-	hal_assert(false, "Unimplemented function called.");
-	return;
+	hal_assert(FALSE, "Unimplemented function called.");
 }
 
-void SXAPI hal_register_interrupt_handler(uint32_t coreid, uint32_t index, intr_handler_t handler, void *context)
+void SXAPI hal_register_interrupt_handler(uint32 coreid, uint32 index, intr_handler handler, void *context)
 {
 	if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
 	{
 		_intr_handler_table[coreid][index] = handler;
 		_intr_handler_context_table[coreid][index] = context;
 	}
-	return;
 }
 
-void SXAPI hal_deregister_interrupt_handler(uint32_t coreid, uint32_t index)
+void SXAPI hal_deregister_interrupt_handler(uint32 coreid, uint32 index)
 {
 	if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
 	{
 		_intr_handler_table[coreid][index] = NULL;
 	}
-	return;
 }
 
-void SXAPI hal_register_exception_handler(uint32_t coreid, uint32_t index, exc_handler_t handler)
+void SXAPI hal_register_exception_handler(uint32 coreid, uint32 index, exc_handler handler)
 {
 	if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
 	{
 		_exc_handler_table[coreid][index] = handler;
 	}
-	return;
 }
 
-void SXAPI hal_deregister_exception_handler(uint32_t coreid, uint32_t index)
+void SXAPI hal_deregister_exception_handler(uint32 coreid, uint32 index)
 {
 	if (index < IDT_ENTRY_NUM && coreid < HAL_CORE_COUNT)
 	{
 		_exc_handler_table[coreid][index] = NULL;
 	}
-	return;
 }
 
-void SXAPI hal_interrupt_dispatcher(uint64_t int_vec, hal_interrupt_context_t *context)
+void SXAPI hal_interrupt_dispatcher(uint64 int_vec, hal_interrupt_context_t *context)
 {
-	uint32_t coreid = hal_get_core_id();
+	uint32 coreid = hal_get_core_id();
 	if (_intr_handler_table[int_vec] == NULL)
 	{
 		hal_printf("Unhandled interrupt %d at 0x%X.\n", int_vec, context->rip);
@@ -117,12 +111,11 @@ void SXAPI hal_interrupt_dispatcher(uint64_t int_vec, hal_interrupt_context_t *c
 	{
 		_intr_handler_table[coreid][int_vec](context, _intr_handler_context_table[coreid][int_vec]);
 	}
-	return;
 }
 
-void SXAPI hal_exception_dispatcher(uint64_t exc_vec, hal_interrupt_context_t *context, uint64_t errorcode)
+void SXAPI hal_exception_dispatcher(uint64 exc_vec, hal_interrupt_context_t *context, uint64 errorcode)
 {
-	uint32_t coreid = hal_get_core_id();
+	uint32 coreid = hal_get_core_id();
 	if (_exc_handler_table[exc_vec] == NULL)
 	{
 		hal_printf("Unhandled exception %d at 0x%X.\n", exc_vec, context->rip);
@@ -131,7 +124,6 @@ void SXAPI hal_exception_dispatcher(uint64_t exc_vec, hal_interrupt_context_t *c
 	{
 		_exc_handler_table[coreid][exc_vec](context->rip, context->rsp, errorcode);
 	}
-	return;
 }
 
 static void SXAPI halp_populate_idt(void)
@@ -392,19 +384,18 @@ static void SXAPI halp_populate_idt(void)
 	hal_set_interrupt_handler(253, hal_interrupt_handler_253);
 	hal_set_interrupt_handler(254, hal_interrupt_handler_254);
 	hal_set_interrupt_handler(255, hal_interrupt_handler_255);
-	return;
 }
 
-uint32_t SXAPI hal_get_core_id(void)
+uint32 SXAPI hal_get_core_id(void)
 {
 	// TODO
 	return 0;
 }
 
-int32_t SXAPI hal_interrupt_init(void)
+int32 SXAPI hal_interrupt_init(void)
 {
-	uint32_t coreid = hal_get_core_id();
-	uint32_t eax = 0, ebx = 0, ecx = 0, edx = 0;
+	uint32 coreid = hal_get_core_id();
+	uint32 eax = 0, ebx = 0, ecx = 0, edx = 0;
 	eax = 1;
 	hal_cpuid(&eax, &ebx, &ecx, &edx);
 	if (!(edx & lb_bit_mask(9)))
@@ -414,11 +405,11 @@ int32_t SXAPI hal_interrupt_init(void)
 	}
 
 	// get idt ptr ready
-	_idt_ptrs[coreid].base = (uint64_t) &_idts[coreid];
+	_idt_ptrs[coreid].base = (uint64) &_idts[coreid];
 	_idt_ptrs[coreid].limit = IDT_ENTRY_NUM * IDT_ENTRY_SIZE - 1;
 
 	// clear dispatch table
-	for (uint64_t i = 0; i < IDT_ENTRY_NUM; i++)
+	for (uint64 i = 0; i < IDT_ENTRY_NUM; i++)
 	{
 		_intr_handler_table[coreid][i] = NULL;
 		_exc_handler_table[coreid][i] = NULL;
@@ -434,26 +425,26 @@ int32_t SXAPI hal_interrupt_init(void)
 	hal_write_port_8(0xa1, 0xff);
 	hal_write_port_8(0x21, 0xff);
 
-	uint64_t apic_base_reg = 0;
-	uint64_t apic_base = 0;
+	uint64 apic_base_reg = 0;
+	uint64 apic_base = 0;
 	ecx = MSR_IA32_APIC_BASE;
 	hal_read_msr(&ecx, &edx, &eax);
-	apic_base_reg = ((uint64_t) edx << 32) + (uint64_t) eax;
+	apic_base_reg = ((uint64) edx << 32) + (uint64) eax;
 	apic_base = apic_base_reg & lb_bit_field_mask(12, 35);
 	UNREFERENCED(apic_base);
 
 	//hal_printf("APIC Base: 0x%X\n", apic_base);
 	//hal_printf("APIC Enabled: %s\n", apic_base_reg & bit_mask_64(11) ? "Yes" : "No");
 	//hal_printf("BSP: %s\n", apic_base_reg & bit_mask_64(8) ? "Yes" : "No");
-	//hal_printf("APIC Spour: 0x%X\n", *(uint32_t *) ((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET));
+	//hal_printf("APIC Spour: 0x%X\n", *(uint32 *) ((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET));
 
 	// hardware enable APIC
 	ecx = MSR_IA32_APIC_BASE;
-	eax = (uint32_t) ((apic_base_reg & lb_bit_field_mask(0, 31)) | lb_bit_mask(11));
+	eax = (uint32) ((apic_base_reg & lb_bit_field_mask(0, 31)) | lb_bit_mask(11));
 	hal_write_msr(&ecx, &edx, &eax);
 
 	// software enable APIC
-	// hal_write_mem_32((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET, *(uint32_t *) (apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET) | (uint32_t)lb_bit_mask(8));
+	// hal_write_mem_32((char *) apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET, *(uint32 *) (apic_base + APIC_SPURIOUS_INT_VEC_REG_OFFSET) | (uint32)lb_bit_mask(8));
 
 //    hal_issue_interrupt(1, 255);
 //    hal_enable_interrupt();

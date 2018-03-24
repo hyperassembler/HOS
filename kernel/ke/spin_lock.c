@@ -28,9 +28,9 @@ void SXAPI ke_spin_unlock(k_spin_lock_t *lock)
 	return;
 }
 
-irql_t SXAPI ke_spin_lock_raise_irql(k_spin_lock_t *lock, irql_t irql)
+k_irql SXAPI ke_spin_lock_raise_irql(k_spin_lock_t *lock, k_irql irql)
 {
-	irql_t prev_irql = ke_get_irql();
+	k_irql prev_irql = ke_get_irql();
 	if (lock != NULL)
 	{
 		ke_raise_irql(irql);
@@ -39,7 +39,7 @@ irql_t SXAPI ke_spin_lock_raise_irql(k_spin_lock_t *lock, irql_t irql)
 	return prev_irql;
 }
 
-void SXAPI ke_spin_unlock_lower_irql(k_spin_lock_t *lock, irql_t irql)
+void SXAPI ke_spin_unlock_lower_irql(k_spin_lock_t *lock, k_irql irql)
 {
 	if (lock != NULL)
 	{

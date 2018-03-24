@@ -5,15 +5,14 @@
  * Kernel entry point
  * @param boot_info passed by the bootloader
  */
-void SXAPI ke_main(boot_info_t *boot_info)
+void SXAPI ke_main(struct boot_info *boot_info)
 {
-	status_t status = STATUS_SUCCESS;
+	sx_status status = STATUS_SUCCESS;
 	status = hal_init(boot_info);
 	if (!sx_success(status))
 	{
 		ke_panic(status);
-		return;
 	}
-
 	ke_trap();
 }
+

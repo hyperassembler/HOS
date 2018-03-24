@@ -1,56 +1,56 @@
-#ifndef _LIB_LINKED_LIST_H_
-#define _LIB_LINKED_LIST_H_
+#ifndef LIB_LINKED_LIST_H
+#define LIB_LINKED_LIST_H
 
 #include "type.h"
 
-typedef struct _linked_list_node_t
+struct linked_list_node
 {
-	struct _linked_list_node_t *prev;
-	struct _linked_list_node_t *next;
-} linked_list_node_t;
+	struct linked_list_node *prev;
+	struct linked_list_node *next;
+};
 
-typedef struct _linked_list_t
+struct linked_list
 {
-	linked_list_node_t *head;
-	linked_list_node_t *tail;
-} linked_list_t;
+	struct linked_list_node *head;
+	struct linked_list_node *tail;
+};
 
 /*
  * Returns true if current list node == your node
  * false otherwise
  */
 
-void SXAPI lb_linked_list_init(linked_list_t *list);
+void SXAPI lb_linked_list_init(struct linked_list *list);
 
-int32_t SXAPI lb_linked_list_size(linked_list_t *list);
+int32 SXAPI lb_linked_list_size(struct linked_list *list);
 
-void SXAPI lb_linked_list_push_front(linked_list_t *list, linked_list_node_t *node);
+void SXAPI lb_linked_list_push_front(struct linked_list *list, struct linked_list_node *node);
 
-void SXAPI lb_linked_list_push_back(linked_list_t *list, linked_list_node_t *node);
+void SXAPI lb_linked_list_push_back(struct linked_list *list, struct linked_list_node *node);
 
-linked_list_node_t *SXAPI lb_linked_list_pop_front(linked_list_t *list);
+struct linked_list_node *SXAPI lb_linked_list_pop_front(struct linked_list *list);
 
-linked_list_node_t *SXAPI lb_linked_list_pop_back(linked_list_t *list);
+struct linked_list_node *SXAPI lb_linked_list_pop_back(struct linked_list *list);
 
-void SXAPI lb_linked_list_insert(linked_list_t *list, int32_t index, linked_list_node_t *node);
+void SXAPI lb_linked_list_insert(struct linked_list *list, int32 index, struct linked_list_node *node);
 
-void SXAPI lb_linked_list_insert_ref(linked_list_t *list, linked_list_node_t *prev_node, linked_list_node_t *node);
+void SXAPI lb_linked_list_insert_ref(struct linked_list *list, struct linked_list_node *prev_node, struct linked_list_node *node);
 
-linked_list_node_t *SXAPI lb_linked_list_remove(linked_list_t *list, int32_t index);
+struct linked_list_node *SXAPI lb_linked_list_remove(struct linked_list *list, int32 index);
 
-linked_list_node_t *SXAPI lb_linked_list_remove_ref(linked_list_t *list, linked_list_node_t *node);
+struct linked_list_node *SXAPI lb_linked_list_remove_ref(struct linked_list *list, struct linked_list_node *node);
 
-linked_list_node_t *SXAPI lb_linked_list_get(linked_list_t *list, int32_t index);
+struct linked_list_node *SXAPI lb_linked_list_get(struct linked_list *list, int32 index);
 
-linked_list_node_t *SXAPI lb_linked_list_next(linked_list_node_t *node);
+struct linked_list_node *SXAPI lb_linked_list_next(struct linked_list_node *node);
 
-linked_list_node_t *SXAPI lb_linked_list_prev(linked_list_node_t *node);
+struct linked_list_node *SXAPI lb_linked_list_prev(struct linked_list_node *node);
 
-linked_list_node_t *SXAPI lb_linked_list_first(linked_list_t *list);
+struct linked_list_node *SXAPI lb_linked_list_first(struct linked_list *list);
 
-linked_list_node_t *SXAPI lb_linked_list_last(linked_list_t *list);
+struct linked_list_node *SXAPI lb_linked_list_last(struct linked_list *list);
 
-int32_t SXAPI lb_linked_list_search(linked_list_t *list, linked_list_node_t *target,
-                                   callback_func_t equals);
+int32 SXAPI lb_linked_list_search(struct linked_list *list, struct linked_list_node *target,
+                                   callback_func equals);
 
 #endif

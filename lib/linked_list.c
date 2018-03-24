@@ -1,23 +1,22 @@
 #include "lib/linked_list.h"
 
-static void SXAPI lbp_init_linked_list_node(linked_list_node_t *node)
+static void SXAPI lbp_init_linked_list_node(struct linked_list_node *node)
 {
 	if (node != NULL)
 	{
 		node->next = NULL;
 		node->prev = NULL;
 	}
-	return;
 }
 
-static void SXAPI lbp_append_node(linked_list_node_t *target, linked_list_node_t *node)
+static void SXAPI lbp_append_node(struct linked_list_node *target, struct linked_list_node *node)
 {
 	if (target == NULL || node == NULL)
 	{
 		return;
 	}
 
-	linked_list_node_t *next = target->next;
+	struct linked_list_node *next = target->next;
 	// update the next node
 	if (next != NULL)
 	{
@@ -30,19 +29,17 @@ static void SXAPI lbp_append_node(linked_list_node_t *target, linked_list_node_t
 	// update the node itself
 	node->prev = target;
 	node->next = next;
-
-	return;
 }
 
 // link target with node, suppose target is in the current list
-static void SXAPI lbp_prepend_node(linked_list_node_t *target, linked_list_node_t *node)
+static void SXAPI lbp_prepend_node(struct linked_list_node *target, struct linked_list_node *node)
 {
 	if (target == NULL || node == NULL)
 	{
 		return;
 	}
 
-	linked_list_node_t *prev = target->prev;
+	struct linked_list_node *prev = target->prev;
 	// update the prev node
 	if (prev != NULL)
 	{
@@ -55,11 +52,9 @@ static void SXAPI lbp_prepend_node(linked_list_node_t *target, linked_list_node_
 	// update the node itself
 	node->next = target;
 	node->prev = prev;
-
-	return;
 }
 
-static void SXAPI lbp_unlink_node(linked_list_node_t *node)
+static void SXAPI lbp_unlink_node(struct linked_list_node *node)
 {
 	if (node == NULL)
 	{
@@ -75,21 +70,18 @@ static void SXAPI lbp_unlink_node(linked_list_node_t *node)
 	{
 		node->next->prev = node->prev;
 	}
-
-	return;
 }
 
-void SXAPI lb_linked_list_init(linked_list_t *list)
+void SXAPI lb_linked_list_init(struct linked_list *list)
 {
 	if (list != NULL)
 	{
 		list->head = NULL;
 		list->tail = NULL;
 	}
-	return;
 }
 
-int32_t SXAPI lb_linked_list_size(linked_list_t *list)
+int32 SXAPI lb_linked_list_size(struct linked_list *list)
 {
 	if (list == NULL)
 	{
@@ -100,9 +92,9 @@ int32_t SXAPI lb_linked_list_size(linked_list_t *list)
 		return 0;
 	}
 
-	int32_t size = 1;
-	linked_list_node_t *cur_node = list->head;
-	linked_list_node_t *tail = list->tail;
+	int32 size = 1;
+	struct linked_list_node *cur_node = list->head;
+	struct linked_list_node *tail = list->tail;
 	while ((cur_node != tail) && ((cur_node = cur_node->next) != NULL))
 	{
 		size++;
@@ -110,7 +102,7 @@ int32_t SXAPI lb_linked_list_size(linked_list_t *list)
 	return size;
 }
 
-void SXAPI lb_linked_list_push_front(linked_list_t *list, linked_list_node_t *node)
+void SXAPI lb_linked_list_push_front(struct linked_list *list, struct linked_list_node *node)
 {
 	if (list == NULL || node == NULL)
 	{
@@ -120,11 +112,9 @@ void SXAPI lb_linked_list_push_front(linked_list_t *list, linked_list_node_t *no
 	lbp_init_linked_list_node(node);
 
 	lb_linked_list_insert_ref(list, NULL, node);
-
-	return;
 }
 
-void SXAPI lb_linked_list_push_back(linked_list_t *list, linked_list_node_t *node)
+void SXAPI lb_linked_list_push_back(struct linked_list *list, struct linked_list_node *node)
 {
 	if (list == NULL || node == NULL)
 	{
@@ -134,11 +124,9 @@ void SXAPI lb_linked_list_push_back(linked_list_t *list, linked_list_node_t *nod
 	lbp_init_linked_list_node(node);
 
 	lb_linked_list_insert_ref(list, list->tail, node);
-
-	return;
 }
 
-linked_list_node_t *SXAPI lb_linked_list_pop_front(linked_list_t *list)
+struct linked_list_node *SXAPI lb_linked_list_pop_front(struct linked_list *list)
 {
 	if (list == NULL)
 	{
@@ -147,7 +135,7 @@ linked_list_node_t *SXAPI lb_linked_list_pop_front(linked_list_t *list)
 	return lb_linked_list_remove_ref(list, list->head);
 }
 
-linked_list_node_t *SXAPI lb_linked_list_pop_back(linked_list_t *list)
+struct linked_list_node *SXAPI lb_linked_list_pop_back(struct linked_list *list)
 {
 	if (list == NULL)
 	{
@@ -158,7 +146,7 @@ linked_list_node_t *SXAPI lb_linked_list_pop_back(linked_list_t *list)
 }
 
 
-void SXAPI lb_linked_list_insert_ref(linked_list_t *list, linked_list_node_t *prev_node, linked_list_node_t *node)
+void SXAPI lb_linked_list_insert_ref(struct linked_list *list, struct linked_list_node *prev_node, struct linked_list_node *node)
 {
 	if (list == NULL || node == NULL)
 	{
@@ -195,13 +183,13 @@ void SXAPI lb_linked_list_insert_ref(linked_list_t *list, linked_list_node_t *pr
 	}
 }
 
-void SXAPI lb_linked_list_insert(linked_list_t *list, int32_t index, linked_list_node_t *node)
+void SXAPI lb_linked_list_insert(struct linked_list *list, int32 index, struct linked_list_node *node)
 {
 	if (list == NULL || index < 0 || node == NULL)
 	{
 		return;
 	}
-	linked_list_node_t *prev_node = lb_linked_list_get(list, index - 1);
+	struct linked_list_node *prev_node = lb_linked_list_get(list, index - 1);
 	lbp_init_linked_list_node(node);
 
 	if (prev_node == NULL)
@@ -215,17 +203,15 @@ void SXAPI lb_linked_list_insert(linked_list_t *list, int32_t index, linked_list
 	{
 		lb_linked_list_insert_ref(list, prev_node, node);
 	}
-
-	return;
 }
 
-linked_list_node_t *SXAPI lb_linked_list_remove(linked_list_t *list, int32_t index)
+struct linked_list_node *SXAPI lb_linked_list_remove(struct linked_list *list, int32 index)
 {
 	if (list == NULL || index < 0)
 	{
 		return NULL;
 	}
-	linked_list_node_t *cur_node = lb_linked_list_get(list, index);
+	struct linked_list_node *cur_node = lb_linked_list_get(list, index);
 
 	if (cur_node == NULL)
 	{
@@ -235,7 +221,7 @@ linked_list_node_t *SXAPI lb_linked_list_remove(linked_list_t *list, int32_t ind
 	return lb_linked_list_remove_ref(list, cur_node);
 }
 
-linked_list_node_t *SXAPI lb_linked_list_remove_ref(linked_list_t *list, linked_list_node_t *node)
+struct linked_list_node *SXAPI lb_linked_list_remove_ref(struct linked_list *list, struct linked_list_node *node)
 {
 	if (list == NULL || node == NULL)
 	{
@@ -259,19 +245,19 @@ linked_list_node_t *SXAPI lb_linked_list_remove_ref(linked_list_t *list, linked_
 	return node;
 }
 
-linked_list_node_t *SXAPI lb_linked_list_get(linked_list_t *list, int32_t index)
+struct linked_list_node *SXAPI lb_linked_list_get(struct linked_list *list, int32 index)
 {
 	if (list == NULL || index < 0 || list->head == NULL)
 	{
 		return NULL;
 	}
-	linked_list_node_t *cur_node = list->head;
+	struct linked_list_node *cur_node = list->head;
 	while (index-- && (cur_node = cur_node->next) != NULL)
 	{}
 	return cur_node;
 }
 
-linked_list_node_t *SXAPI lb_linked_list_next(linked_list_node_t *node)
+struct linked_list_node *SXAPI lb_linked_list_next(struct linked_list_node *node)
 {
 	if (node != NULL)
 	{
@@ -280,7 +266,7 @@ linked_list_node_t *SXAPI lb_linked_list_next(linked_list_node_t *node)
 	return node;
 }
 
-linked_list_node_t *SXAPI lb_linked_list_prev(linked_list_node_t *node)
+struct linked_list_node *SXAPI lb_linked_list_prev(struct linked_list_node *node)
 {
 	if (node != NULL)
 	{
@@ -289,9 +275,9 @@ linked_list_node_t *SXAPI lb_linked_list_prev(linked_list_node_t *node)
 	return node;
 }
 
-linked_list_node_t *SXAPI lb_linked_list_first(linked_list_t *list)
+struct linked_list_node *SXAPI lb_linked_list_first(struct linked_list *list)
 {
-	linked_list_node_t *result = NULL;
+	struct linked_list_node *result = NULL;
 	if (list != NULL)
 	{
 		result = list->head;
@@ -299,9 +285,9 @@ linked_list_node_t *SXAPI lb_linked_list_first(linked_list_t *list)
 	return result;
 }
 
-linked_list_node_t *SXAPI lb_linked_list_last(linked_list_t *list)
+struct linked_list_node *SXAPI lb_linked_list_last(struct linked_list *list)
 {
-	linked_list_node_t *result = NULL;
+	struct linked_list_node *result = NULL;
 	if (list != NULL)
 	{
 		result = list->tail;
@@ -309,15 +295,15 @@ linked_list_node_t *SXAPI lb_linked_list_last(linked_list_t *list)
 	return result;
 }
 
-int32_t SXAPI lb_linked_list_search(linked_list_t *list, linked_list_node_t *target,
-                                   callback_func_t equals)
+int32 SXAPI lb_linked_list_search(struct linked_list *list, struct linked_list_node *target,
+                                   callback_func equals)
 {
 	if (list == NULL || target == NULL)
 	{
 		return -1;
 	}
-	int32_t result = 0;
-	linked_list_node_t *node = lb_linked_list_first(list);
+	int32 result = 0;
+	struct linked_list_node *node = lb_linked_list_first(list);
 	while (node != NULL)
 	{
 		if (equals != NULL)
@@ -340,18 +326,4 @@ int32_t SXAPI lb_linked_list_search(linked_list_t *list, linked_list_node_t *tar
 
 	return -1;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

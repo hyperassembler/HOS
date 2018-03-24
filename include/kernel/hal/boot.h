@@ -1,5 +1,5 @@
-#ifndef _KERNEL_HAL_BOOT_H_
-#define _KERNEL_HAL_BOOT_H_
+#ifndef KERNEL_HAL_BOOT_H
+#define KERNEL_HAL_BOOT_H
 
 #include "type.h"
 #include "kernel/hal/intr.h"
@@ -10,13 +10,13 @@
  * Required OS boot info
  */
 
-typedef struct
+struct boot_info
 {
 	void *krnl_end;
-	intr_info_t intr_info;
+	struct intr_info intr_info;
 	char cpu_vd_str[13];
-} boot_info_t;
+};
 
-status_t SXAPI hal_init(void *m_info);
+sx_status SXAPI hal_init(void *m_info);
 
 #endif

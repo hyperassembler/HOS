@@ -1,5 +1,5 @@
-#ifndef _KERNEL_KE_PRINT_H_
-#define _KERNEL_KE_PRINT_H_
+#ifndef KERNEL_KE_PRINT_H
+#define KERNEL_KE_PRINT_H
 
 #include "type.h"
 #include "kernel/hal/print.h"

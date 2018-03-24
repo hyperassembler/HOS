@@ -1,5 +1,5 @@
-#ifndef _HAL_BOOT_H_
-#define _HAL_BOOT_H_
+#ifndef HAL_BOOT_H
+#define HAL_BOOT_H
 
 #include "kernel/hal/boot.h"
 

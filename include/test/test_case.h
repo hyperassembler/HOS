@@ -1,5 +1,5 @@
-#ifndef _TEST_TEST_H_
-#define _TEST_TEST_H_
+#ifndef TEST_TEST_H
+#define TEST_TEST_H
 
 #include "type.h"
 

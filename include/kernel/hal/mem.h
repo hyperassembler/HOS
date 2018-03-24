@@ -1,5 +1,5 @@
-#ifndef _KERNEL_HAL_MEM_H_
-#define _KERNEL_HAL_MEM_H_
+#ifndef KERNEL_HAL_MEM_H
+#define KERNEL_HAL_MEM_H
 
 /**
  * Kernel Memory Layout
@@ -41,17 +41,18 @@
  */
 typedef struct
 {
-	uintptr_t base;
-	uint64_t size;
-	uint32_t attr;
+	uintptr base;
+	uint64 size;
+	uint32 attr;
 } pmm_node_t;
 
 typedef struct
 {
-	uint32_t num_of_nodes;
+	uint32 num_of_nodes;
 	pmm_node_t nodes[];
 } pmm_info_t;
 
 #endif
 
 #endif
+

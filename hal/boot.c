@@ -6,23 +6,23 @@
 #include "hal/boot.h"
 #include "status.h"
 
-static void SXAPI halp_obtain_cpu_info(boot_info_t *hal_info)
+static void SXAPI halp_obtain_cpu_info(struct boot_info *hal_info)
 {
 	if (hal_info == NULL)
 	{
 		return;
 	}
-	uint32_t eax = 0, ebx = 0, ecx = 0, edx = 0;
+	uint32 eax = 0, ebx = 0, ecx = 0, edx = 0;
 	hal_cpuid(&eax, &ebx, &ecx, &edx);
-	lb_mem_copy(&ebx, &hal_info->cpu_vd_str[0], sizeof(uint32_t));
-	lb_mem_copy(&edx, &hal_info->cpu_vd_str[4], sizeof(uint32_t));
-	lb_mem_copy(&ecx, &hal_info->cpu_vd_str[8], sizeof(uint32_t));
+	lb_mem_copy(&ebx, &hal_info->cpu_vd_str[0], sizeof(uint32));
+	lb_mem_copy(&edx, &hal_info->cpu_vd_str[4], sizeof(uint32));
+	lb_mem_copy(&ecx, &hal_info->cpu_vd_str[8], sizeof(uint32));
 	hal_info->cpu_vd_str[12] = 0;
 }
 
-status_t SXAPI hal_init(void *m_info)
+sx_status SXAPI hal_init(void *m_info)
 {
-	if (m_info == NULL || (uint64_t) m_info & lb_bit_field_mask(0, 2))
+	if (m_info == NULL || (uint64) m_info & lb_bit_field_mask(0, 2))
 	{
 		return STATUS_FAIL;
 	}
@@ -32,7 +32,7 @@ status_t SXAPI hal_init(void *m_info)
 	hal_mem_init();
 
 
-	boot_info_t *boot_info = halloc(sizeof(boot_info_t));
+	struct boot_info *boot_info = halloc(sizeof(struct boot_info));
 
 	// obtain cpu info
 	halp_obtain_cpu_info(boot_info);

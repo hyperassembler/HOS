@@ -8,13 +8,13 @@
 
 typedef struct
 {
-	avl_tree_node_t tree_node;
+	struct avl_tree_node tree_node;
 	handle_t handle;
 	ref_node_t *ref;
-	callback_func_t free_routine;
+	callback_func free_routine;
 } handle_node_t;
 
-static int32_t rfp_handle_node_free(void *node, void *up)
+static int32 rfp_handle_node_free(void *node, void *up)
 {
 	UNREFERENCED(up);
 	ke_free(node);
@@ -25,23 +25,23 @@ static int32_t rfp_handle_node_free(void *node, void *up)
 // Ke Functions
 // ===========================
 
-static avl_tree_t handle_tree;
+static struct avl_tree handle_tree;
 static bool initialized;
 static k_spin_lock_t handle_tree_lock;
-static int32_t handle_base;
+static uint32 handle_base;
 
-static int32_t rfp_handle_compare(void *tree_node, void *my_node)
+static int32 rfp_handle_compare(void *tree_node, void *my_node)
 {
 	handle_node_t *tcb = OBTAIN_STRUCT_ADDR(tree_node, handle_node_t, tree_node);
 	handle_node_t *my_tcb = OBTAIN_STRUCT_ADDR(my_node, handle_node_t, tree_node);
 
-	if ((uintptr_t) tcb->handle > (uintptr_t) my_tcb->handle)
+	if ((uintptr) tcb->handle > (uintptr) my_tcb->handle)
 	{
 		return -1;
 	}
 	else
 	{
-		if ((uintptr_t) tcb->handle == (uintptr_t) my_tcb->handle)
+		if ((uintptr) tcb->handle == (uintptr) my_tcb->handle)
 		{
 			return 0;
 		}
@@ -54,27 +54,27 @@ static int32_t rfp_handle_compare(void *tree_node, void *my_node)
 
 static handle_node_t *rfp_search_handle_node(handle_t handle)
 {
-	avl_tree_node_t *result;
+	struct avl_tree_node *result;
 	handle_node_t temp;
 	temp.handle = handle;
 	result = lb_avl_tree_search(&handle_tree, &temp.tree_node);
 	return result == NULL ? NULL : OBTAIN_STRUCT_ADDR(result, handle_node_t, tree_node);
 }
 
-status_t SXAPI rf_reference_setup(void)
+sx_status SXAPI rf_reference_setup(void)
 {
 	if (!initialized)
 	{
 		lb_avl_tree_init(&handle_tree, rfp_handle_compare);
 		ke_spin_lock_init(&handle_tree_lock);
 		handle_base = K_HANDLE_BASE;
-		initialized = true;
+		initialized = TRUE;
 	}
 	return STATUS_SUCCESS;
 }
 
-status_t SXAPI rf_reference_create(ref_node_t *ref,
-                                  callback_func_t free_func)
+sx_status SXAPI rf_reference_create(ref_node_t *ref,
+                                  callback_func free_func)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
@@ -89,7 +89,7 @@ status_t SXAPI rf_reference_create(ref_node_t *ref,
 	return STATUS_SUCCESS;
 }
 
-status_t SXAPI rf_reference_obj(ref_node_t *ref_node)
+sx_status SXAPI rf_reference_obj(ref_node_t *ref_node)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
@@ -98,14 +98,14 @@ status_t SXAPI rf_reference_obj(ref_node_t *ref_node)
 		return RF_INVALID_ARGUMENTS;
 	}
 
-	int32_t old_ref_count = ke_interlocked_increment_32(&ref_node->ref_count, 1);
+	int32 old_ref_count = ke_interlocked_increment_32(&ref_node->ref_count, 1);
 
 	ke_assert(old_ref_count >= 1);
 
 	return STATUS_SUCCESS;
 }
 
-status_t SXAPI rf_dereference_obj(ref_node_t *ref_node)
+sx_status SXAPI rf_dereference_obj(ref_node_t *ref_node)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
@@ -114,9 +114,9 @@ status_t SXAPI rf_dereference_obj(ref_node_t *ref_node)
 		return RF_INVALID_ARGUMENTS;
 	}
 
-	status_t result = STATUS_SUCCESS;
+	sx_status result = STATUS_SUCCESS;
 
-	int32_t old_ref_count = ke_interlocked_increment_32(&ref_node->ref_count, -1);
+	int32 old_ref_count = ke_interlocked_increment_32(&ref_node->ref_count, -1);
 
 	ke_assert(old_ref_count >= 1);
 
@@ -129,7 +129,7 @@ status_t SXAPI rf_dereference_obj(ref_node_t *ref_node)
 }
 
 
-static status_t SXAPI rf_open_obj_by_handle(handle_t handle, ref_node_t **out)
+static sx_status SXAPI rf_open_obj_by_handle(handle_t handle, ref_node_t **out)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
@@ -143,8 +143,8 @@ static status_t SXAPI rf_open_obj_by_handle(handle_t handle, ref_node_t **out)
 		return RF_INVALID_ARGUMENTS;
 	}
 
-	irql_t irql;
-	status_t status = STATUS_SUCCESS;
+	k_irql irql;
+	sx_status status = STATUS_SUCCESS;
 	ref_node_t *ref = NULL;
 
 
@@ -173,7 +173,7 @@ static status_t SXAPI rf_open_obj_by_handle(handle_t handle, ref_node_t **out)
 	return status;
 }
 
-static status_t SXAPI rf_create_handle(ref_node_t *ref,
+static sx_status SXAPI rf_create_handle(ref_node_t *ref,
                                       handle_node_t *node,
                                       handle_t *out)
 {
@@ -189,14 +189,14 @@ static status_t SXAPI rf_create_handle(ref_node_t *ref,
 		return RF_INVALID_ARGUMENTS;
 	}
 
-	status_t result = STATUS_SUCCESS;
-	irql_t irql;
+	sx_status result = STATUS_SUCCESS;
+	k_irql irql;
 
 
 	if (sx_success(result))
 	{
 		// TODO: CHECK OVERFLOW
-		node->handle = (handle_t) ke_interlocked_increment_32(&handle_base, 1);
+		node->handle = (handle_t) ke_interlocked_increment_32((int32*)&handle_base, 1);
 		node->ref = ref;
 		irql = ke_spin_lock_raise_irql(&handle_tree_lock, IRQL_DPC_LEVEL);
 		handle_node_t *existing_node = rfp_search_handle_node(node->handle);
@@ -226,7 +226,7 @@ static status_t SXAPI rf_create_handle(ref_node_t *ref,
 	return result;
 }
 
-static status_t SXAPI rf_close_handle(handle_t handle)
+static sx_status SXAPI rf_close_handle(handle_t handle)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
@@ -235,10 +235,10 @@ static status_t SXAPI rf_close_handle(handle_t handle)
 		return RF_UNINITIALIZED;
 	}
 
-	irql_t irql;
-	status_t status = STATUS_SUCCESS;
+	k_irql irql;
+	sx_status status = STATUS_SUCCESS;
 	ref_node_t *ref = NULL;
-	bool free = false;
+	bool free = FALSE;
 
 	irql = ke_spin_lock_raise_irql(&handle_tree_lock, IRQL_DPC_LEVEL);
 	handle_node_t *handle_node = rfp_search_handle_node(handle);
@@ -250,7 +250,7 @@ static status_t SXAPI rf_close_handle(handle_t handle)
 	{
 		ref = handle_node->ref;
 		lb_avl_tree_delete(&handle_tree, &handle_node->tree_node);
-		free = true;
+		free = TRUE;
 	}
 	ke_spin_unlock_lower_irql(&handle_tree_lock, irql);
 
@@ -273,7 +273,7 @@ static status_t SXAPI rf_close_handle(handle_t handle)
 // SX Functions
 // ===========================
 
-status_t SXAPI sx_create_handle(ref_node_t *ref, handle_t *out)
+sx_status SXAPI sx_create_handle(ref_node_t *ref, handle_t *out)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
@@ -294,7 +294,7 @@ status_t SXAPI sx_create_handle(ref_node_t *ref, handle_t *out)
 	return rf_create_handle(ref, node, out);
 }
 
-status_t SXAPI sx_close_handle(handle_t handle)
+sx_status SXAPI sx_close_handle(handle_t handle)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
@@ -308,7 +308,7 @@ status_t SXAPI sx_close_handle(handle_t handle)
 	return rf_close_handle(handle);
 }
 
-status_t SXAPI sx_open_obj_by_handle(handle_t handle, ref_node_t **out)
+sx_status SXAPI sx_open_obj_by_handle(handle_t handle, ref_node_t **out)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 

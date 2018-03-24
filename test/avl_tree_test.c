@@ -1,10 +1,11 @@
 #include "test/driver.h"
+#include "test/test_case.h"
 #include "lib/avl_tree.h"
 
 typedef struct
 {
-	avl_tree_node_t tree_entry;
-	int val;
+	struct avl_tree_node tree_entry;
+	int32 val;
 } int_tree_node;
 
 static int_tree_node *create_tree_node(int val)
@@ -14,16 +15,16 @@ static int_tree_node *create_tree_node(int val)
 	return rs;
 }
 
-static int32_t compare(void *root1, void *node1)
+static int32 compare(void *root1, void *node1)
 {
-	avl_tree_node_t *root = (avl_tree_node_t *) node1;
-	avl_tree_node_t *node = (avl_tree_node_t *) root1;
+	struct avl_tree_node *root = (struct avl_tree_node *) node1;
+	struct avl_tree_node *node = (struct avl_tree_node *) root1;
 	int_tree_node *rooti = OBTAIN_STRUCT_ADDR(root, int_tree_node, tree_entry);
 	int_tree_node *nodei = OBTAIN_STRUCT_ADDR(node, int_tree_node, tree_entry);
 	return rooti->val - nodei->val;
 }
 
-//static void _pre_order(avl_tree_node_t *node, bool root)
+//static void _pre_order(struct avl_tree_node *node, bool root)
 //{
 //    if (node == NULL)
 //        return;
@@ -35,29 +36,29 @@ static int32_t compare(void *root1, void *node1)
 //        printf("\n");
 //}
 //
-//static void pre_order(avl_tree_node_t *node)
+//static void pre_order(struct avl_tree_node *node)
 //{
-//    _pre_order(node, true);
+//    _pre_order(node, TRUE);
 //}
 
 static int counter = 0;
 
-static bool _pre_order_assert(avl_tree_node_t *node, int order[], int size)
+static bool _pre_order_assert(struct avl_tree_node *node, int order[], int size)
 {
 	if (node == NULL)
 	{
-		return true;
+		return TRUE;
 	}
 	if (counter >= size)
 	{
-		return false;
+		return FALSE;
 	}
 
-	bool result = true;
+	bool result = TRUE;
 	int_tree_node *my_node = OBTAIN_STRUCT_ADDR(node, int_tree_node, tree_entry);
 	if (order[counter] != my_node->val)
 	{
-		result = false;
+		result = FALSE;
 	}
 	counter++;
 	result = result && _pre_order_assert(node->left, order, size);
@@ -65,7 +66,7 @@ static bool _pre_order_assert(avl_tree_node_t *node, int order[], int size)
 	return result;
 }
 
-static bool pre_order_assert(avl_tree_t *node, int order[], int size)
+static bool pre_order_assert(struct avl_tree *node, int order[], int size)
 {
 	counter = 0;
 	return _pre_order_assert(node->root, order, size);
@@ -81,8 +82,8 @@ static bool insert_simple_l(void)
 	//   \
     //    3
 
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	lb_avl_tree_insert(&tree, &create_tree_node(1)->tree_entry);
@@ -105,8 +106,8 @@ static bool insert_simple_r(void)
 	// /
 	//1
 
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	lb_avl_tree_insert(&tree, &create_tree_node(3)->tree_entry);
@@ -128,8 +129,8 @@ static bool insert_simple_ll(void)
     //  4   == 2L ==>  2   4
 	// /
 	//3
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	lb_avl_tree_insert(&tree, &create_tree_node(2)->tree_entry);
@@ -151,8 +152,8 @@ static bool insert_simple_rr(void)
     //2     == 2R ==>  2   4
 	// \
     //  3
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	lb_avl_tree_insert(&tree, &create_tree_node(4)->tree_entry);
@@ -176,8 +177,8 @@ static bool insert_complex_1(void)
     //3   9        3   9-         4+  15       3  15    26
 	//                   \       /
 	//                    15    3
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	lb_avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
@@ -204,8 +205,8 @@ static bool insert_complex_2(void)
     //3   9        3   9+         4            3   8    26
 	//                /          / \
     //               8          3   8
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	lb_avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
@@ -234,8 +235,8 @@ static bool insert_complex_3(void)
     //2   7   11             2   7   11-             3+  7   15             2           15  21    30
 	//                                 \            /
 	//                                  15         2
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	lb_avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
@@ -269,8 +270,8 @@ static bool insert_complex_4(void)
     //2   7   11             2   7-  11              3+  7-                 2       8      21    30
 	//                            \                 /     \
     //                             8               2       8
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	lb_avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
@@ -304,8 +305,8 @@ static bool insert_duplicate(void)
     //2   7   11             2   7-  11              3+  7-                 2       8      21    30
 	//                            \                 /     \
     //                             8               2       8
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	lb_avl_tree_insert(&tree, &create_tree_node(20)->tree_entry);
@@ -339,8 +340,8 @@ static bool delete_simple_l(void)
 	//     \
     //      4
 
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	int_tree_node *deleted = create_tree_node(1);
@@ -367,8 +368,8 @@ static bool delete_simple_r(void)
 	// /
 	//1
 
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	int_tree_node *deleted = create_tree_node(4);
@@ -394,8 +395,8 @@ static bool delete_simple_ll(void)
     //1   4   == 2L ==>  2   4
 	//   /
 	//  3
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	int_tree_node *deleted = create_tree_node(1);
@@ -421,8 +422,8 @@ static bool delete_simple_rr(void)
     //2   4   == 2R ==>  1   3
 	// \
     //  1
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	int_tree_node *deleted = create_tree_node(4);
@@ -452,8 +453,8 @@ static bool delete_complex_1(void)
 	//
 	// Result:
 	//                    empty tree
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	int_tree_node *deleted = create_tree_node(10);
@@ -490,8 +491,8 @@ static bool delete_complex_2(void)
 	//                         \
 	//                         35
 	//
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	int_tree_node *deleted = create_tree_node(20);
@@ -529,8 +530,8 @@ static bool delete_complex_3(void)
 	//                  15    30
 	//                 /     /
 	//                5     25
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	int_tree_node *deleted = create_tree_node(10);
@@ -568,8 +569,8 @@ static bool delete_complex_4(void)
 	// Results:
 	//                     20
 	//
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	int_tree_node *delete5 = create_tree_node(5);
@@ -627,8 +628,8 @@ static bool delete_complex_single_rotation(void)
 	//             12           22    31   40
 	//
 	//
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	int_tree_node *deleted = create_tree_node(50);
@@ -682,8 +683,8 @@ static bool delete_complex_double_rotation(void)
 	//             12           25  31     50
 	//
 	//
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	int_tree_node *deleted = create_tree_node(22);
@@ -737,8 +738,8 @@ static bool delete_complex_multiple_rotation(void)
 	//     10   15  22          31
 	//
 	//
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	int_tree_node *deleted = create_tree_node(5);
@@ -785,8 +786,8 @@ static bool delete_DNE(void)
 	//                 /  \  /
 	//                5  15 25
 	//
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	int_tree_node *delete100 = create_tree_node(100);
@@ -814,17 +815,17 @@ static int_tree_node apocalypse[AVL_APOCALYPSE_NUM];
 
 static bool test_apocalypse(void)
 {
-	bool result = true;
-	avl_tree_t tree;
+	bool result = TRUE;
+	struct avl_tree tree;
 	lb_avl_tree_init(&tree, compare);
 
 	// insert test
 	for (int i = 0; i < AVL_APOCALYPSE_NUM; i++)
 	{
-		apocalypse[i].val = lb_rand();
+		apocalypse[i].val = (int32)lb_rand();
 		while (lb_avl_tree_search(&tree, &apocalypse[i].tree_entry) != NULL)
 		{
-			apocalypse[i].val += lb_rand() % 32765;
+			apocalypse[i].val += (int32)lb_rand() % 32765;
 		}
 		lb_avl_tree_insert(&tree, &apocalypse[i].tree_entry);
 	}
@@ -834,15 +835,15 @@ static bool test_apocalypse(void)
 	result = result && lb_avl_tree_size(&tree) == AVL_APOCALYPSE_NUM;
 
 	// smaller and bigger test
-	avl_tree_node_t *entry = lb_avl_tree_smallest(&tree);
-	uint32_t size = 0;
-	int32_t prev = -1;
-	int32_t cur = OBTAIN_STRUCT_ADDR(entry, int_tree_node, tree_entry)->val;
+	struct avl_tree_node *entry = lb_avl_tree_smallest(&tree);
+	uint32 size = 0;
+	int32 prev = -1;
+	int32 cur = OBTAIN_STRUCT_ADDR(entry, int_tree_node, tree_entry)->val;
 	while (entry != NULL)
 	{
 		if (cur < prev)
 		{
-			result = false;
+			result = FALSE;
 			break;
 		}
 		size++;
@@ -865,7 +866,7 @@ static bool test_apocalypse(void)
 	{
 		if (cur > prev)
 		{
-			result = false;
+			result = FALSE;
 			break;
 		}
 		size++;

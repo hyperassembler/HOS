@@ -1,8 +1,9 @@
-#ifndef _HAL_MEM_H_
-#define _HAL_MEM_H_
+#ifndef HAL_MEM_H
+#define HAL_MEM_H
 
 #include "type.h"
 #include "kernel/hal/mem.h"
+#include "status.h"
 
 /**
  Global Descriptors Table Definitions
@@ -73,27 +74,28 @@
 #define PD_ENTRY_NUM(vaddr)   (((vaddr) >> 21) & 0x1FF)
 #define PT_ENTRY_NUM(vaddr)   (((vaddr) >> 12) & 0x1FF)
 
-static inline uint32_t SXAPI seg_selector(uint32_t index, uint32_t rpl)
+static inline uint32 SXAPI seg_selector(uint32 index, uint32 rpl)
 {
 	return (index << 3) + rpl;
 }
 
-void SXAPI hal_write_segment_descriptor(void *const gdt, uint32_t const base, uint32_t const limit, uint64_t const attr);
+void SXAPI hal_write_segment_descriptor(void *const gdt, uint32 const base, uint32 const limit, uint64 const attr);
 
-void SXAPI hal_write_pml4(void *const base, uintptr_t const pdpt_addr, uint64_t const attr);
+void SXAPI hal_write_pml4(void *const base, uintptr const pdpt_addr, uint64 const attr);
 
-void SXAPI hal_write_pdpt(void *const base, uintptr_t const pd_addr, uint64_t const attr);
+void SXAPI hal_write_pdpt(void *const base, uintptr const pd_addr, uint64 const attr);
 
-void SXAPI hal_write_pd(void *const base, uintptr_t const pt_addr, uint64_t const attr);
+void SXAPI hal_write_pd(void *const base, uintptr const pt_addr, uint64 const attr);
 
-void SXAPI hal_write_pt(void *const base, uintptr_t const p_addr, uint64_t const attr);
+void SXAPI hal_write_pt(void *const base, uintptr const p_addr, uint64 const attr);
 
+sx_status SXAPI hal_write_initial_page_table(void *multiboot_info);
 
 /**
  Function Defn
 **/
 
-void *SXAPI halloc(uint32_t size);
+void *SXAPI halloc(uint32 size);
 
 void SXAPI hfree(void *ptr);
 

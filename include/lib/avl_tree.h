@@ -1,17 +1,17 @@
-#ifndef _LIB_AVL_TREE_H_
-#define _LIB_AVL_TREE_H_
+#ifndef LIB_AVL_TREE_H
+#define LIB_AVL_TREE_H
 
 #include "type.h"
 #include "lib/sxtdlib.h"
 
-typedef struct _k_avl_tree_node_t
+struct avl_tree_node
 {
-	struct _k_avl_tree_node_t *left;
-	struct _k_avl_tree_node_t *right;
-	struct _k_avl_tree_node_t *parent;
+	struct avl_tree_node *left;
+	struct avl_tree_node *right;
+	struct avl_tree_node *parent;
 
-	int32_t height;
-} avl_tree_node_t;
+	int32 height;
+};
 
 /*
 * A comparison function between tree_node and your_node
@@ -20,30 +20,30 @@ typedef struct _k_avl_tree_node_t
 * = 0 if tree_node == your_node
 * > 0 if tree_node > your_node
 */
-typedef struct _k_avl_tree_t
+struct avl_tree
 {
-	callback_func_t compare;
-	avl_tree_node_t *root;
-} avl_tree_t;
+	callback_func compare;
+	struct avl_tree_node *root;
+};
 
-avl_tree_node_t *SXAPI lb_avl_tree_search(avl_tree_t *tree, avl_tree_node_t *entry);
+struct avl_tree_node *SXAPI lb_avl_tree_search(struct avl_tree *tree, struct avl_tree_node *entry);
 
-void SXAPI lb_avl_tree_insert(avl_tree_t *tree, avl_tree_node_t *entry);
+void SXAPI lb_avl_tree_insert(struct avl_tree *tree, struct avl_tree_node *entry);
 
-avl_tree_node_t *SXAPI lb_avl_tree_delete(avl_tree_t *tree, avl_tree_node_t *entry);
+struct avl_tree_node *SXAPI lb_avl_tree_delete(struct avl_tree *tree, struct avl_tree_node *entry);
 
-void SXAPI lb_avl_tree_init(avl_tree_t *tree, callback_func_t compare);
+void SXAPI lb_avl_tree_init(struct avl_tree *tree, callback_func compare);
 
-avl_tree_node_t *SXAPI lb_avl_tree_largest(avl_tree_t *tree);
+struct avl_tree_node *SXAPI lb_avl_tree_largest(struct avl_tree *tree);
 
-avl_tree_node_t *SXAPI lb_avl_tree_smallest(avl_tree_t *tree);
+struct avl_tree_node *SXAPI lb_avl_tree_smallest(struct avl_tree *tree);
 
-avl_tree_node_t *SXAPI lb_avl_tree_larger(avl_tree_node_t *entry);
+struct avl_tree_node *SXAPI lb_avl_tree_larger(struct avl_tree_node *entry);
 
-avl_tree_node_t *SXAPI lb_avl_tree_smaller(avl_tree_node_t *entry);
+struct avl_tree_node *SXAPI lb_avl_tree_smaller(struct avl_tree_node *entry);
 
-bool SXAPI lb_avl_tree_validate(avl_tree_t *tree);
+bool SXAPI lb_avl_tree_validate(struct avl_tree *tree);
 
-int32_t SXAPI lb_avl_tree_size(avl_tree_t *tree);
+int32 SXAPI lb_avl_tree_size(struct avl_tree *tree);
 
 #endif

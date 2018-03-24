@@ -1,11 +1,11 @@
 #include "lib/avl_tree.h"
 
-static inline int32_t SXAPI lbp_avl_tree_node_get_height(avl_tree_node_t *node)
+static inline int32 SXAPI lbp_avl_tree_node_get_height(struct avl_tree_node *node)
 {
 	return node == NULL ? -1 : node->height;
 }
 
-static inline int32_t SXAPI lbp_avl_tree_node_get_balance_factor(avl_tree_node_t *node)
+static inline int32 SXAPI lbp_avl_tree_node_get_balance_factor(struct avl_tree_node *node)
 {
 	if (node == NULL)
 	{
@@ -14,9 +14,9 @@ static inline int32_t SXAPI lbp_avl_tree_node_get_balance_factor(avl_tree_node_t
 	return lbp_avl_tree_node_get_height(node->left) - lbp_avl_tree_node_get_height(node->right);
 }
 
-static avl_tree_node_t *SXAPI lbp_avl_tree_node_right_rotate(avl_tree_node_t *root)
+static struct avl_tree_node *SXAPI lbp_avl_tree_node_right_rotate(struct avl_tree_node *root)
 {
-	avl_tree_node_t *left_children = root->left;
+	struct avl_tree_node *left_children = root->left;
 	//adjust parents first
 	left_children->parent = root->parent;
 	root->parent = left_children;
@@ -35,9 +35,9 @@ static avl_tree_node_t *SXAPI lbp_avl_tree_node_right_rotate(avl_tree_node_t *ro
 	return left_children;
 }
 
-static avl_tree_node_t *SXAPI lbp_avl_tree_node_left_rotate(avl_tree_node_t *root)
+static struct avl_tree_node *SXAPI lbp_avl_tree_node_left_rotate(struct avl_tree_node *root)
 {
-	avl_tree_node_t *right_children = root->right;
+	struct avl_tree_node *right_children = root->right;
 	//adjust parents
 	right_children->parent = root->parent;
 	root->parent = right_children;
@@ -57,13 +57,13 @@ static avl_tree_node_t *SXAPI lbp_avl_tree_node_left_rotate(avl_tree_node_t *roo
 	return right_children;
 }
 
-static avl_tree_node_t *SXAPI lbp_avl_tree_node_balance(avl_tree_node_t *node)
+static struct avl_tree_node *SXAPI lbp_avl_tree_node_balance(struct avl_tree_node *node)
 {
-	const int32_t bf = lbp_avl_tree_node_get_balance_factor(node);
+	const int32 bf = lbp_avl_tree_node_get_balance_factor(node);
 
 	if (bf > 1)
 	{
-		const int32_t left_bf = lbp_avl_tree_node_get_balance_factor(node->left);
+		const int32 left_bf = lbp_avl_tree_node_get_balance_factor(node->left);
 		if (left_bf >= 0)
 		{
 			//left left
@@ -80,7 +80,7 @@ static avl_tree_node_t *SXAPI lbp_avl_tree_node_balance(avl_tree_node_t *node)
 	{
 		if (bf < -1)
 		{
-			const int32_t right_bf = lbp_avl_tree_node_get_balance_factor(node->right);
+			const int32 right_bf = lbp_avl_tree_node_get_balance_factor(node->right);
 			if (right_bf <= 0)
 			{
 				// right right
@@ -101,9 +101,9 @@ static avl_tree_node_t *SXAPI lbp_avl_tree_node_balance(avl_tree_node_t *node)
 
 }
 
-static avl_tree_node_t *SXAPI lbp_avl_tree_node_insert(avl_tree_node_t *root, avl_tree_node_t *node,
-                                                      callback_func_t compare,
-                                                      avl_tree_node_t *parent)
+static struct avl_tree_node *SXAPI lbp_avl_tree_node_insert(struct avl_tree_node *root, struct avl_tree_node *node,
+                                                      callback_func compare,
+                                                      struct avl_tree_node *parent)
 {
 	if (node == NULL || compare == NULL)
 	{
@@ -115,7 +115,7 @@ static avl_tree_node_t *SXAPI lbp_avl_tree_node_insert(avl_tree_node_t *root, av
 		return node;
 	}
 
-	const int32_t comp = compare(root, node);
+	const int32 comp = compare(root, node);
 	if (comp < 0)
 	{
 		root->right = lbp_avl_tree_node_insert(root->right, node, compare, root);
@@ -137,16 +137,17 @@ static avl_tree_node_t *SXAPI lbp_avl_tree_node_insert(avl_tree_node_t *root, av
 	return lbp_avl_tree_node_balance(root);
 }
 
-static void lbp_avl_tree_swap_nodes(avl_tree_node_t *node1, avl_tree_node_t *node2)
+static void SXAPI lbp_avl_tree_swap_nodes(struct avl_tree_node *node1, struct avl_tree_node *node2)
 {
 	if (node1 == NULL || node2 == NULL)
 	{
 		return;
 	}
-	avl_tree_node_t *parent = NULL;
-	avl_tree_node_t *child = NULL;
-	avl_tree_node_t *temp = NULL;
+	struct avl_tree_node *parent = NULL;
+	struct avl_tree_node *child = NULL;
+	struct avl_tree_node *temp = NULL;
 	//swap node but does not change anything else other than node1,node2
+	// determine the parent/child relationship
 	if (node1->parent != NULL && node1->parent == node2)
 	{
 		parent = node2;
@@ -282,22 +283,21 @@ static void lbp_avl_tree_swap_nodes(avl_tree_node_t *node1, avl_tree_node_t *nod
 	}
 
 	//swap height
-	int32_t height = node1->height;
+	int32 height = node1->height;
 	node1->height = node2->height;
 	node2->height = height;
-	return;
 }
 
-static avl_tree_node_t *SXAPI lbp_avl_tree_node_delete(avl_tree_node_t *root,
-                                                      avl_tree_node_t *node,
-                                                      callback_func_t compare,
-                                                      avl_tree_node_t **deleted_node)
+static struct avl_tree_node *SXAPI lbp_avl_tree_node_delete(struct avl_tree_node *root,
+                                                      struct avl_tree_node *node,
+                                                      callback_func compare,
+                                                      struct avl_tree_node **deleted_node)
 {
 	if (root == NULL || node == NULL || compare == NULL || deleted_node == NULL)
 	{
 		return root;
 	}
-	const int32_t comp = compare(root, node);
+	const int32 comp = compare(root, node);
 	if (comp < 0)
 	{
 		root->right = lbp_avl_tree_node_delete(root->right, node, compare, deleted_node);
@@ -314,7 +314,7 @@ static avl_tree_node_t *SXAPI lbp_avl_tree_node_delete(avl_tree_node_t *root,
 			// node with only one child or no child
 			if ((root->left == NULL) || (root->right == NULL))
 			{
-				avl_tree_node_t *child = root->left != NULL ? root->left : root->right;
+				struct avl_tree_node *child = root->left != NULL ? root->left : root->right;
 
 				if (child == NULL)
 				{   // 0 child
@@ -330,7 +330,7 @@ static avl_tree_node_t *SXAPI lbp_avl_tree_node_delete(avl_tree_node_t *root,
 			{
 				// node with two children: Get the inorder successor (smallest
 				// in the right subtree)
-				avl_tree_node_t *successor = lb_avl_tree_larger(root);
+				struct avl_tree_node *successor = lb_avl_tree_larger(root);
 				//swap fields
 				lbp_avl_tree_swap_nodes(successor, root);
 
@@ -350,14 +350,14 @@ static avl_tree_node_t *SXAPI lbp_avl_tree_node_delete(avl_tree_node_t *root,
 	return root;
 }
 
-static avl_tree_node_t *SXAPI lbp_avl_tree_node_search(avl_tree_node_t *root, avl_tree_node_t *node,
-                                                      callback_func_t compare)
+static struct avl_tree_node *SXAPI lbp_avl_tree_node_search(struct avl_tree_node *root, struct avl_tree_node *node,
+                                                      callback_func compare)
 {
 	if (root == NULL || compare == NULL)
 	{
 		return NULL;
 	}
-	const int32_t comp = compare(root, node);
+	const int32 comp = compare(root, node);
 	if (comp < 0)
 	{
 		return lbp_avl_tree_node_search(root->right, node, compare);
@@ -376,7 +376,7 @@ static avl_tree_node_t *SXAPI lbp_avl_tree_node_search(avl_tree_node_t *root, av
 }
 
 
-static void SXAPI lbp_avl_tree_node_init(avl_tree_node_t *it)
+static void SXAPI lbp_avl_tree_node_init(struct avl_tree_node *it)
 {
 	if (it != NULL)
 	{
@@ -385,17 +385,16 @@ static void SXAPI lbp_avl_tree_node_init(avl_tree_node_t *it)
 		it->right = NULL;
 		it->parent = NULL;
 	}
-	return;
 }
 
 
-avl_tree_node_t *SXAPI lb_avl_tree_smallest(avl_tree_t *tree)
+struct avl_tree_node *SXAPI lb_avl_tree_smallest(struct avl_tree *tree)
 {
 	if (tree == NULL)
 	{
 		return NULL;
 	}
-	avl_tree_node_t *entry = tree->root;
+	struct avl_tree_node *entry = tree->root;
 	if (entry == NULL)
 	{
 		return NULL;
@@ -407,13 +406,13 @@ avl_tree_node_t *SXAPI lb_avl_tree_smallest(avl_tree_t *tree)
 	return entry;
 }
 
-avl_tree_node_t *SXAPI lb_avl_tree_largest(avl_tree_t *tree)
+struct avl_tree_node *SXAPI lb_avl_tree_largest(struct avl_tree *tree)
 {
 	if (tree == NULL)
 	{
 		return NULL;
 	}
-	avl_tree_node_t *entry = tree->root;
+	struct avl_tree_node *entry = tree->root;
 	if (entry == NULL)
 	{
 		return NULL;
@@ -426,13 +425,13 @@ avl_tree_node_t *SXAPI lb_avl_tree_largest(avl_tree_t *tree)
 }
 
 
-avl_tree_node_t *SXAPI lb_avl_tree_larger(avl_tree_node_t *it)
+struct avl_tree_node *SXAPI lb_avl_tree_larger(struct avl_tree_node *it)
 {
 	if (it == NULL)
 	{
 		return NULL;
 	}
-	avl_tree_node_t *root = it;
+	struct avl_tree_node *root = it;
 	if (root->right != NULL)
 	{
 		root = root->right;
@@ -456,13 +455,13 @@ avl_tree_node_t *SXAPI lb_avl_tree_larger(avl_tree_node_t *it)
 	}
 }
 
-avl_tree_node_t *SXAPI lb_avl_tree_smaller(avl_tree_node_t *it)
+struct avl_tree_node *SXAPI lb_avl_tree_smaller(struct avl_tree_node *it)
 {
 	if (it == NULL)
 	{
 		return NULL;
 	}
-	avl_tree_node_t *root = it;
+	struct avl_tree_node *root = it;
 	if (root->left != NULL)
 	{
 		root = root->left;
@@ -486,25 +485,24 @@ avl_tree_node_t *SXAPI lb_avl_tree_smaller(avl_tree_node_t *it)
 	}
 }
 
-avl_tree_node_t *SXAPI lb_avl_tree_search(avl_tree_t *tree, avl_tree_node_t *node)
+struct avl_tree_node *SXAPI lb_avl_tree_search(struct avl_tree *tree, struct avl_tree_node *node)
 {
 	return lbp_avl_tree_node_search(tree->root, node, tree->compare);
 }
 
 
-void SXAPI lb_avl_tree_insert(avl_tree_t *tree, avl_tree_node_t *data)
+void SXAPI lb_avl_tree_insert(struct avl_tree *tree, struct avl_tree_node *data)
 {
 	if (tree != NULL && data != NULL)
 	{
 		lbp_avl_tree_node_init(data);
 		tree->root = lbp_avl_tree_node_insert(tree->root, data, tree->compare, NULL);
 	}
-	return;
 }
 
-avl_tree_node_t *SXAPI lb_avl_tree_delete(avl_tree_t *tree, avl_tree_node_t *data)
+struct avl_tree_node *SXAPI lb_avl_tree_delete(struct avl_tree *tree, struct avl_tree_node *data)
 {
-	avl_tree_node_t *node = NULL;
+	struct avl_tree_node *node = NULL;
 	if (tree != NULL && data != NULL)
 	{
 		tree->root = lbp_avl_tree_node_delete(tree->root, data, tree->compare, &node);
@@ -512,7 +510,7 @@ avl_tree_node_t *SXAPI lb_avl_tree_delete(avl_tree_t *tree, avl_tree_node_t *dat
 	return node;
 }
 
-int32_t SXAPI lb_avl_tree_size(avl_tree_t *tree)
+int32 SXAPI lb_avl_tree_size(struct avl_tree *tree)
 {
 	if (tree == NULL)
 	{
@@ -522,8 +520,8 @@ int32_t SXAPI lb_avl_tree_size(avl_tree_t *tree)
 	{
 		return 0;
 	}
-	int32_t size = 0;
-	avl_tree_node_t *entry = lb_avl_tree_smallest(tree);
+	int32 size = 0;
+	struct avl_tree_node *entry = lb_avl_tree_smallest(tree);
 	while (entry != NULL)
 	{
 		size++;
@@ -532,21 +530,20 @@ int32_t SXAPI lb_avl_tree_size(avl_tree_t *tree)
 	return size;
 }
 
-void SXAPI lb_avl_tree_init(avl_tree_t *tree, callback_func_t compare)
+void SXAPI lb_avl_tree_init(struct avl_tree *tree, callback_func compare)
 {
 	if (tree != NULL)
 	{
 		tree->compare = compare;
 		tree->root = NULL;
 	}
-	return;
 }
 
 
 
 // TESTING STUFF
 
-static int32_t SXAPI lbp_avl_tree_node_calculate_height(avl_tree_node_t *tree)
+static int32 SXAPI lbp_avl_tree_node_calculate_height(struct avl_tree_node *tree)
 {
 	if (tree == NULL)
 	{
@@ -556,29 +553,29 @@ static int32_t SXAPI lbp_avl_tree_node_calculate_height(avl_tree_node_t *tree)
 	       1;
 }
 
-static bool SXAPI lbp_avl_tree_node_test(avl_tree_node_t *tree, callback_func_t compare)
+static bool SXAPI lbp_avl_tree_node_test(struct avl_tree_node *tree, callback_func compare)
 {
 	if (tree == NULL)
 	{
-		return true;
+		return TRUE;
 	}
 	if (lbp_avl_tree_node_get_balance_factor(tree) < -1 || lbp_avl_tree_node_get_balance_factor(tree) > 1 ||
 	    lbp_avl_tree_node_calculate_height(tree) != tree->height)
 	{
-		return false;
+		return FALSE;
 	}
 	if (tree->left != NULL)
 	{
 		if (tree->left->parent != tree)
 		{
-			return false;
+			return FALSE;
 		}
 	}
 	if (tree->right != NULL)
 	{
 		if (tree->right->parent != tree)
 		{
-			return false;
+			return FALSE;
 		}
 	}
 	if (compare != NULL)
@@ -586,17 +583,17 @@ static bool SXAPI lbp_avl_tree_node_test(avl_tree_node_t *tree, callback_func_t 
 		if ((tree->right != NULL && compare(tree, tree->right) > 0) ||
 		    (tree->left != NULL && compare(tree, tree->left) < 0))
 		{
-			return false;
+			return FALSE;
 		}
 	}
 	return lbp_avl_tree_node_test(tree->left, compare) && lbp_avl_tree_node_test(tree->right, compare);
 }
 
-bool SXAPI lb_avl_tree_validate(avl_tree_t *tree)
+bool SXAPI lb_avl_tree_validate(struct avl_tree *tree)
 {
 	if (tree == NULL)
 	{
-		return true;
+		return TRUE;
 	}
 	return lbp_avl_tree_node_test(tree->root, tree->compare);
 }

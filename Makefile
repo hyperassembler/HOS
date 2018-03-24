@@ -1,38 +1,35 @@
-CROSS_PATH = ~/opt/cross/bin
 AS = nasm
-CC = $(CROSS_PATH)/x86_64-elf-gcc
-LD = $(CROSS_PATH)/x86_64-elf-ld
-DAS = $(CROSS_PATH)/x86_64-elf-objdump
+CC = clang
+LD = clang
+DAS = llvm-objdump
 
 INCLUDE_DIR = include
 MK = mk
 OUT = out
 
-C_WARNINGS =	-Wall \
-				-Werror \
-				-Wextra \
-				-Wpedantic \
-				-Winit-self \
-				-Wunused-parameter \
-				-Wuninitialized \
-				-Wfloat-equal \
-				-Wshadow \
-				-Wcast-qual \
-				-Wcast-align \
-				-Wstrict-prototypes \
-				-Wpointer-arith \
-				-Wno-comment
+C_IGNORED_WARNINGS = -Wno-cast-align \
+					 -Wno-padded
 
-C_FLAGS =   -std=c11 \
-			-g \
-			-c \
-			-O2 \
+C_FLAGS =   -xc\
+            -g \
+            -c \
+            -O2 \
+			-std=c11 \
+			-Weverything \
+			-Werror \
+			$(C_IGNORED_WARNINGS) \
+			-ffreestanding \
+			-fno-pic \
 			-mcmodel=kernel \
 			-fno-stack-protector \
-			-ffreestanding \
 			-mno-red-zone \
-			$(C_WARNINGS) \
-			$(addprefix -I, $(INCLUDE_DIR))
+			-mno-mmx \
+			-mno-sse \
+			-mno-sse2 \
+			-mno-sse3 \
+			-mno-3dnow \
+			-target x86_64-elf \
+			-I$(INCLUDE_DIR)
 
 AS_FLAGS =  -w+all \
 			-w+error \
@@ -41,14 +38,19 @@ AS_FLAGS =  -w+all \
 			-g \
 			$(addprefix -I, $(INCLUDE_DIR)/)
 
-LD_FLAGS =  -nostdlib \
-			--fatal-warnings
+LD_FLAGS =  -fuse-ld=lld \
+			-nostdlib \
+			-Wl,-T,$(LD_SCRIPT) \
+			-Wl,--fatal-warnings
 
-DUMP_FLAGS = -M intel \
-			 -d
+DUMP_FLAGS = -x86-asm-syntax=intel \
+			 -disassemble \
+			 -r \
+			 -t \
+			 -triple=x86_64-elf
 
 PREP_FLAGS = -E \
-			 -x c \
+			 -xc\
 			 -P \
 			 $(C_FLAGS)
 
@@ -59,7 +61,7 @@ GDEP_FLAGS = $(PREP_FLAGS) \
 MKDIR = mkdir -p $(dir $@)
 COMP = $(CC) $(C_FLAGS) -o $@ $<
 COMPAS = $(AS) $(AS_FLAGS) -o $@ $<
-LINK = $(LD) $(LD_FLAGS) -o $@ $^ $(shell $(CC) $(C_FLAGS) -print-libgcc-file-name)
+LINK = $(LD) $(LD_FLAGS) -o $@ $^
 DUMP = $(DAS) $(DUMP_FLAGS) $< > $@
 PREP = $(CC) $(PREP_FLAGS) $< > $@
 GDEP = $(CC) $(GDEP_FLAGS) -MF $(addsuffix .d, $@) $< > /dev/null

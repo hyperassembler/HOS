@@ -4,16 +4,16 @@
 #include "kernel/ke/alloc.h"
 #include "kernel/mm/pmm.h"
 
-typedef struct
+struct phys_page_desc
 {
-	linked_list_node_t free_list_node;
-	avl_tree_node_t avl_tree_node;
-	uintptr_t base;
-	int32_t attr;
-} physical_page_descriptor_t;
+	struct linked_list_node free_list_node;
+	struct avl_tree_node tree_node;
+	uintptr base;
+	int32 attr;
+};
 
-static avl_tree_t active_tree;
-static linked_list_t free_list;
+static struct avl_tree active_tree;
+static struct linked_list free_list;
 static k_rwwlock_t lock;
 static _Bool initialized;
 
@@ -24,14 +24,14 @@ static _Bool initialized;
  * = 0 if tree_node == your_node
  * > 0 if tree_node > your_node
  */
-static int32_t mmp_base_paddr_compare(void *tree_node, void *my_node)
+static int32 mmp_base_paddr_compare(void *tree_node, void *my_node)
 {
-	uintptr_t tree_base = OBTAIN_STRUCT_ADDR(tree_node,
-	                                         physical_page_descriptor_t,
-	                                         avl_tree_node)->base;
-	uintptr_t my_base = OBTAIN_STRUCT_ADDR(my_node,
-	                                       physical_page_descriptor_t,
-	                                       avl_tree_node)->base;
+	uintptr tree_base = OBTAIN_STRUCT_ADDR(tree_node,
+	                                         struct phys_page_desc,
+	                                         tree_node)->base;
+	uintptr my_base = OBTAIN_STRUCT_ADDR(my_node,
+	                                       struct phys_page_desc,
+	                                       tree_node)->base;
 	if (tree_base > my_base)
 	{
 		return 1;
@@ -49,7 +49,7 @@ static int32_t mmp_base_paddr_compare(void *tree_node, void *my_node)
 	}
 }
 
-status_t SXAPI sx_pmm_init(pmm_info_t *info)
+sx_status SXAPI sx_pmm_init(pmm_info_t *info)
 {
 	if (info == NULL)
 	{
@@ -65,19 +65,19 @@ status_t SXAPI sx_pmm_init(pmm_info_t *info)
 	lb_linked_list_init(&free_list);
 	lb_avl_tree_init(&active_tree, mmp_base_paddr_compare);
 
-	for (uint32_t i = 0; i < info->num_of_nodes; i++)
+	for (uint32 i = 0; i < info->num_of_nodes; i++)
 	{
 		pmm_node_t *each_node = &info->nodes[i];
 
 		ke_assert (each_node->base % KERNEL_PAGE_SIZE != 0);
 
-		for (uint64_t j = 0; j <= each_node->size; j++)
+		for (uint64 j = 0; j <= each_node->size; j++)
 		{
 			// note that k_alloc function here might trigger page fault
 			// however it's fine as long as we don't touch linked list just yet
 			// it will use the pages that are already on file to enlarge the kernel heap
 			// don't worry, be happy :)
-			physical_page_descriptor_t *page_info = ke_alloc(sizeof(physical_page_descriptor_t));
+			struct phys_page_desc *page_info = ke_alloc(sizeof(struct phys_page_desc));
 
 			if (page_info == NULL)
 			{
@@ -88,7 +88,7 @@ status_t SXAPI sx_pmm_init(pmm_info_t *info)
 			lb_linked_list_push_back(&free_list, &page_info->free_list_node);
 		}
 	}
-	initialized = true;
+	initialized = TRUE;
 	return STATUS_SUCCESS;
 }
 
@@ -97,7 +97,7 @@ status_t SXAPI sx_pmm_init(pmm_info_t *info)
 // potential callers of these, since timer/interrupts queue DPC, which might trigger
 // page fault (kernel heap), therefore, it must set IRQL to DISABLED
 
-status_t SXAPI mm_alloc_page(uintptr_t *out)
+sx_status SXAPI mm_alloc_page(uintptr *out)
 {
 	if (!initialized)
 	{
@@ -109,17 +109,17 @@ status_t SXAPI mm_alloc_page(uintptr_t *out)
 		return MM_INVALID_ARGUMENTS;
 	}
 
-	irql_t irql = ke_rwwlock_writer_lock_raise_irql(&lock, IRQL_DISABLED_LEVEL);
-	status_t result = STATUS_SUCCESS;
-	linked_list_node_t *node = NULL;
-	physical_page_descriptor_t *page_info = NULL;
+	k_irql irql = ke_rwwlock_writer_lock_raise_irql(&lock, IRQL_DISABLED_LEVEL);
+	sx_status result = STATUS_SUCCESS;
+	struct linked_list_node *node = NULL;
+	struct phys_page_desc *page_info = NULL;
 	node = lb_linked_list_pop_front(&free_list);
 	if (node != NULL)
 	{
 		page_info = OBTAIN_STRUCT_ADDR(node,
-		                               physical_page_descriptor_t,
+		                               struct phys_page_desc,
 		                               free_list_node);
-		lb_avl_tree_insert(&active_tree, &page_info->avl_tree_node);
+		lb_avl_tree_insert(&active_tree, &page_info->tree_node);
 		*out = page_info->base;
 	}
 	else
@@ -131,8 +131,8 @@ status_t SXAPI mm_alloc_page(uintptr_t *out)
 	return result;
 }
 
-status_t SXAPI mm_query_page_attr(uintptr_t base,
-                                 int32_t *out)
+sx_status SXAPI mm_query_page_attr(uintptr base,
+                                 int32 *out)
 {
 	if (!initialized)
 	{
@@ -144,18 +144,18 @@ status_t SXAPI mm_query_page_attr(uintptr_t base,
 		return MM_INVALID_ARGUMENTS;
 	}
 
-	irql_t irql = ke_rwwlock_reader_lock_raise_irql(&lock, IRQL_DISABLED_LEVEL);
-	status_t result = STATUS_SUCCESS;
-	avl_tree_node_t *node = NULL;
+	k_irql irql = ke_rwwlock_reader_lock_raise_irql(&lock, IRQL_DISABLED_LEVEL);
+	sx_status result = STATUS_SUCCESS;
+	struct avl_tree_node *node = NULL;
 	// search for dummy
-	physical_page_descriptor_t dummy, *page_info = NULL;
+	struct phys_page_desc dummy, *page_info = NULL;
 	dummy.base = base;
 
-	node = lb_avl_tree_delete(&active_tree, &dummy.avl_tree_node);
+	node = lb_avl_tree_delete(&active_tree, &dummy.tree_node);
 
 	if (node != NULL)
 	{
-		page_info = OBTAIN_STRUCT_ADDR(node, physical_page_descriptor_t, avl_tree_node);
+		page_info = OBTAIN_STRUCT_ADDR(node, struct phys_page_desc, tree_node);
 		*out = page_info->attr;
 	}
 	else
@@ -168,7 +168,7 @@ status_t SXAPI mm_query_page_attr(uintptr_t base,
 	return result;
 }
 
-status_t SXAPI mm_free_page(uintptr_t base)
+sx_status SXAPI mm_free_page(uintptr base)
 {
 	if (!initialized)
 	{
@@ -176,17 +176,17 @@ status_t SXAPI mm_free_page(uintptr_t base)
 	}
 
 	// just lock since not sharing with anyone
-	irql_t irql = ke_rwwlock_writer_lock_raise_irql(&lock, IRQL_DISABLED_LEVEL);
-	status_t result = STATUS_SUCCESS;
-	avl_tree_node_t *node = NULL;
+	k_irql irql = ke_rwwlock_writer_lock_raise_irql(&lock, IRQL_DISABLED_LEVEL);
+	sx_status result = STATUS_SUCCESS;
+	struct avl_tree_node *node = NULL;
 	// search for dummy
-	physical_page_descriptor_t dummy, *page_info;
+	struct phys_page_desc dummy, *page_info;
 	dummy.base = base;
 
-	node = lb_avl_tree_delete(&active_tree, &dummy.avl_tree_node);
+	node = lb_avl_tree_delete(&active_tree, &dummy.tree_node);
 	if (node != NULL)
 	{
-		page_info = OBTAIN_STRUCT_ADDR(node, physical_page_descriptor_t, avl_tree_node);
+		page_info = OBTAIN_STRUCT_ADDR(node, struct phys_page_desc, tree_node);
 		lb_linked_list_push_back(&free_list, &page_info->free_list_node);
 	}
 	else

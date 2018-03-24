@@ -76,7 +76,7 @@ mov cr8,rdi
 ret
 
 ; ============================
-; int32_t KAPI hal_interlocked_exchange_32(int32_t *target, int32_t val)
+; int32 KAPI hal_interlocked_exchange_32(int32 *target, int32 val)
 global hal_interlocked_exchange_32
 hal_interlocked_exchange_32:
 lock xchg dword [rdi], esi
@@ -85,7 +85,7 @@ mov eax, esi
 ret
 
 ; ============================
-; int32_t KAPI hal_interlocked_compare_exchange_32(int32_t *dst, int32_t compare, int32_t val);
+; int32 KAPI hal_interlocked_compare_exchange_32(int32 *dst, int32 compare, int32 val);
 global hal_interlocked_compare_exchange_32
 hal_interlocked_compare_exchange_32:
 mov eax, esi; eax = compare
@@ -93,7 +93,7 @@ lock cmpxchg dword [rdi], edx ; edx = val, rdi = ptr to dst
 ret
 
 ; ============================
-; int32_t KAPI hal_interlocked_increment_32(int32_t *target, int32_t increment);
+; int32 KAPI hal_interlocked_increment_32(int32 *target, int32 increment);
 global hal_interlocked_increment_32
 hal_interlocked_increment_32:
 lock xadd dword [rdi], esi ; [rdi] = [rdi] + esi, esi = old [rdi]
@@ -102,7 +102,7 @@ mov eax, esi
 ret
 
 ; ============================
-; extern void KAPI hal_cpuid(uint32_t* eax, uint32_t* ebx, uint32_t* ecx, uint32_t* edx);
+; extern void KAPI hal_cpuid(uint32* eax, uint32* ebx, uint32* ecx, uint32* edx);
 global hal_cpuid
 hal_cpuid:
 push rbp
@@ -196,14 +196,14 @@ ret
 
 ;====================
 global hal_write_mem_32
-; (void* target, uint32_t* data)
+; (void* target, uint32* data)
 hal_write_mem_32:
 mov dword [rdi], esi
 ret
 
 ;====================
 global hal_write_mem_64
-; (void* target, uint64_t data)
+; (void* target, u64 data)
 hal_write_mem_64:
 mov qword [rdi], rsi
 ret
@@ -228,7 +228,7 @@ hlt
 jmp .loop
 
 ;====================
-;(uint32_t *ecx, uint32_t* edx, uint32_t* eax)
+;(uint32 *ecx, uint32* edx, uint32* eax)
 global hal_read_msr
 hal_read_msr:
 ; preserve rdx
@@ -242,7 +242,7 @@ mov dword [r11], eax
 ret
 
 ;====================
-;(uint32_t *ecx, uint32_t* edx, uint32_t* eax)
+;(uint32 *ecx, uint32* edx, uint32* eax)
 global hal_write_msr
 hal_write_msr:
 mov ecx, dword [rdi]

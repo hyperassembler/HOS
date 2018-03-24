@@ -1,10 +1,10 @@
-#ifndef _STATUS_H_
-#define _STATUS_H_
+#ifndef STATUS_H
+#define STATUS_H
 
 #include "type.h"
 #include "lib/sxtdlib.h"
 
-typedef uint32_t status_t;
+typedef uint32 sx_status;
 
 //
 // 32 bit ints
@@ -17,19 +17,19 @@ typedef uint32_t status_t;
 // bits 15-29 - Facility 32768 in total
 //
 
-#define SX_MAKE_STATUS(Severity, Facility, Return) ((status_t)(((Severity) << 30) | ((Facility) << 16) | (Return)))
+#define SX_MAKE_STATUS(Severity, Facility, Return) ((sx_status)(((Severity) << 30) | ((Facility) << 16) | (Return)))
 
-#define SEVERITY_ERROR 0x3
-#define SEVERITY_SUCCESS 0x0
-#define SEVERITY_INFO 0x1
+#define SEVERITY_ERROR 0x3ul
+#define SEVERITY_SUCCESS 0x0ul
+#define SEVERITY_INFO 0x1ul
 
-#define FACILITY_GENERIC 0
-#define FACILITY_RF 1
-#define FACILITY_MM 2
+#define FACILITY_GENERIC 0ul
+#define FACILITY_RF 1ul
+#define FACILITY_MM 2ul
 
-static inline bool sx_success(status_t status)
+static inline bool sx_success(sx_status status)
 {
-	uint32_t severity = status >> 30;
+	uint32 severity = status >> 30;
 	return (severity == SEVERITY_INFO) || (severity == SEVERITY_SUCCESS);
 }
 

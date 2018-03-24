@@ -1,5 +1,5 @@
-#ifndef _KERNEL_HAL_ATOMIC_H_
-#define _KERNEL_HAL_ATOMIC_H_
+#ifndef KERNEL_HAL_ATOMIC_H
+#define KERNEL_HAL_ATOMIC_H
 
 #include "type.h"
 
@@ -7,10 +7,10 @@
  * Atomic operations
  */
 
-extern int32_t SXAPI hal_interlocked_exchange_32(int32_t *target, int32_t val);
+extern int32 SXAPI hal_interlocked_exchange_32(int32 *target, int32 val);
 
-extern int32_t SXAPI hal_interlocked_increment_32(int32_t *target, int32_t increment);
+extern int32 SXAPI hal_interlocked_increment_32(int32 *target, int32 increment);
 
-extern int32_t SXAPI hal_interlocked_compare_exchange_32(int32_t *target, int32_t compare, int32_t val);
+extern int32 SXAPI hal_interlocked_compare_exchange_32(int32 *target, int32 compare, int32 val);
 
 #endif

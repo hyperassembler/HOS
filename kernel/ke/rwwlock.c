@@ -71,28 +71,28 @@ void ke_rwwlock_writer_unlock(k_rwwlock_t *lock)
 	ke_spin_unlock(&lock->w_mutex);
 }
 
-irql_t ke_rwwlock_reader_lock_raise_irql(k_rwwlock_t *lock, irql_t irql)
+k_irql ke_rwwlock_reader_lock_raise_irql(k_rwwlock_t *lock, k_irql irql)
 {
-	irql_t old_irql = ke_raise_irql(irql);
+	k_irql old_irql = ke_raise_irql(irql);
 	ke_rwwlock_reader_lock(lock);
 	return old_irql;
 }
 
-void ke_rwwlock_reader_unlock_lower_irql(k_rwwlock_t *lock, irql_t irql)
+void ke_rwwlock_reader_unlock_lower_irql(k_rwwlock_t *lock, k_irql irql)
 {
 	ke_rwwlock_reader_unlock(lock);
 	ke_lower_irql(irql);
 	return;
 }
 
-irql_t ke_rwwlock_writer_lock_raise_irql(k_rwwlock_t *lock, irql_t irql)
+k_irql ke_rwwlock_writer_lock_raise_irql(k_rwwlock_t *lock, k_irql irql)
 {
-	irql_t old_irql = ke_raise_irql(irql);
+	k_irql old_irql = ke_raise_irql(irql);
 	ke_rwwlock_writer_lock(lock);
 	return old_irql;
 }
 
-void ke_rwwlock_writer_unlock_lower_irql(k_rwwlock_t *lock, irql_t irql)
+void ke_rwwlock_writer_unlock_lower_irql(k_rwwlock_t *lock, k_irql irql)
 {
 	ke_rwwlock_writer_unlock(lock);
 	ke_lower_irql(irql);
