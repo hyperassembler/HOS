@@ -1,28 +1,9 @@
 # Building
 ### Environment
-Linux distribution / Bash for Windows.
+All platforms where the required packages are available.
 
 ### Required packages
-NASM (sudo apt-get install nasm)
-
-GCC cross compiler (see the next section)
-
-### GCC cross compiler
-##### Method 1 - Compile from GCC source.
-Follow the [instructions](https://wiki.osdev.org/GCC_Cross-Compiler)
-
-Set the "TARGET" to "x86_64-elf" instead of "i686-elf" and build [libgcc without redzone](https://wiki.osdev.org/Libgcc_without_red_zone).
-
-##### Method 2 - Precompiled binaries
-VERSION: GCC 7.3 + Binutils 2.30
-
-HOST: x86_64-pc-linux-gnu
-
-CONFIGURED WITH: --target=x86_64-elf --disable-nls --enable-languages=c,c++ --without-headers
-
-1. Download "cross.tar.gz" from the Github release page.
-
-2. Run "tar -xvf cross.tar.gz -C $HOME/opt/cross"
+nasm, clang (6.0+), make
 
 ### Compiling
 Run "make" in the root directory.
