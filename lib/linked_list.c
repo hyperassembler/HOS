@@ -55,21 +55,32 @@ void SXAPI lb_linked_list_push_back(struct linked_list *list, struct linked_list
 
 struct linked_list_node *SXAPI lb_linked_list_pop_front(struct linked_list *list)
 {
+	struct linked_list_node *ret = NULL;
 	if (list == NULL)
 	{
 		return NULL;
 	}
-	return lb_linked_list_remove_by_ref(list, list->head);
+
+	ret = list->head;
+
+	lb_linked_list_remove_by_ref(list, list->head);
+
+	return ret;
 }
 
 struct linked_list_node *SXAPI lb_linked_list_pop_back(struct linked_list *list)
 {
+	struct linked_list_node *ret = NULL;
 	if (list == NULL)
 	{
 		return NULL;
 	}
 
-	return lb_linked_list_remove_by_ref(list, list->tail);
+	ret = list->tail;
+
+	lb_linked_list_remove_by_ref(list, list->tail);
+
+	return ret;
 }
 
 

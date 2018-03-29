@@ -364,6 +364,7 @@ static bool size_test(void)
 
 static bool push_pop_front_test(void)
 {
+	struct linked_list_node *node;
 	bool result = TRUE;
 	struct linked_list list;
 	lb_linked_list_init(&list);
@@ -377,16 +378,16 @@ static bool push_pop_front_test(void)
 	int val1[] = {4, 3, 2, 1};
 	result = result && assert_list(&list, val1, 4);
 
-	lb_linked_list_pop_front(&list);
+	node = lb_linked_list_pop_front(&list);
 	//321==123
 	int val2[] = {3, 2, 1};
-	result = result && assert_list(&list, val2, 3);
+	result = result && assert_list(&list, val2, 3) && OBTAIN_STRUCT_ADDR(node, my_list_node, lnode)->val == 4;
 
 	lb_linked_list_pop_front(&list);
 	lb_linked_list_pop_front(&list);
-	lb_linked_list_pop_front(&list);
+	node = lb_linked_list_pop_front(&list);
 
-	result = result && assert_list(&list, NULL, 0);
+	result = result && assert_list(&list, NULL, 0) && OBTAIN_STRUCT_ADDR(node, my_list_node, lnode)->val == 1;
 	return result;
 }
 
@@ -395,6 +396,7 @@ static bool push_pop_back_test(void)
 	bool result = TRUE;
 	struct linked_list list;
 	lb_linked_list_init(&list);
+	struct linked_list_node *node;
 
 	push_back_val(&list, 1);
 	push_back_val(&list, 2);
@@ -405,16 +407,16 @@ static bool push_pop_back_test(void)
 	int val1[] = {1, 2, 3, 4};
 	result = result && assert_list(&list, val1, 4);
 
-	lb_linked_list_pop_back(&list);
+	node = lb_linked_list_pop_back(&list);
 	//123==321
 	int val2[] = {1, 2, 3};
-	result = result && assert_list(&list, val2, 3);
+	result = result && assert_list(&list, val2, 3) && OBTAIN_STRUCT_ADDR(node, my_list_node, lnode)->val == 4;
 
 	lb_linked_list_pop_back(&list);
-	lb_linked_list_pop_back(&list);
+	node = lb_linked_list_pop_back(&list);
 	lb_linked_list_pop_back(&list);
 
-	result = result && assert_list(&list, NULL, 0);
+	result = result && assert_list(&list, NULL, 0) && OBTAIN_STRUCT_ADDR(node, my_list_node, lnode)->val == 2;
 	return result;
 }
 
