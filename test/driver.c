@@ -1,6 +1,7 @@
-#include "kernel/ke/print.h"
-#include "test/driver.h"
-#include "kernel/ke/alloc.h"
+#include "driver.h"
+#include "test_case.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 #define GAT_SIZE 256
 #define CASE_NUM 32
@@ -18,17 +19,17 @@ static char *test_name;
 
 static void test_info(void)
 {
-	ke_printf("[TD-INFO][%s] - ", test_name);
+	printf("[TD-INFO][%s] - ", test_name);
 }
 
 static void test_warning(void)
 {
-	ke_printf("[TD-WARN][%s] - ", test_name);
+	printf("[TD-WARN][%s] - ", test_name);
 }
 
 static void test_error(void)
 {
-	ke_printf("[TD-ERR][%s] - ", test_name);
+	printf("[TD-ERR][%s] - ", test_name);
 }
 
 static void gat_push(void *ptr)
@@ -61,7 +62,7 @@ static void gat_free(void)
 	{
 		if (gat[i] != NULL)
 		{
-			ke_free(gat[i]);
+			free(gat[i]);
 			gat[i] = NULL;
 		}
 	}
@@ -81,7 +82,7 @@ static void ginfo_push(char *case_name, bool success)
 		}
 	}
 	test_warning();
-	ke_printf("GINFO full, [%s] result not recorded.\n", r_case_name);
+	printf("GINFO full, [%s] result not recorded.\n", r_case_name);
 }
 
 void SXAPI test_begin(char *name)
@@ -117,15 +118,15 @@ void SXAPI test_end(void)
 		}
 	}
 	test_info();
-	ke_printf("%s\n", failed > 0 ? "FAIL" : "PASS");
-	ke_printf("    %d cases executed. S: %d. F: %d.\n", total, success, failed);
+	printf("%s\n", failed > 0 ? "FAIL" : "PASS");
+	printf("    %d cases executed. S: %d. F: %d.\n", total, success, failed);
 	if (failed > 0)
 	{
 		for (int i = 0; i < CASE_NUM; i++)
 		{
 			if (ginfo[i].used && !ginfo[i].success)
 			{
-				ke_printf("        %s FAILED\n", ginfo[i].case_name);
+				printf("        %s FAILED\n", ginfo[i].case_name);
 			}
 		}
 	}
@@ -139,14 +140,14 @@ void SXAPI *talloc(uint32 size)
 {
 	if (!gat_full())
 	{
-		void *result = ke_alloc(size);
+		void *result = malloc(size);
 		gat_push(result);
 		return result;
 	}
 	else
 	{
 		test_error();
-		ke_printf("GAT full, rejecting further allocations.\n");
+		printf("GAT full, rejecting further allocations.\n");
 	}
 	return NULL;
 }
@@ -154,6 +155,14 @@ void SXAPI *talloc(uint32 size)
 void SXAPI run_case(char *name, bool result)
 {
 	ginfo_push(name, result);
+}
+
+int main(void)
+{
+	linked_list_test();
+	salloc_test();
+	avl_tree_test();
+	return 0;
 }
 
 

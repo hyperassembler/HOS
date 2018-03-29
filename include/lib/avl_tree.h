@@ -13,6 +13,8 @@ struct avl_tree_node
 	int32 height;
 };
 
+typedef int32 (SXAPI *avl_tree_compare_func)(struct avl_tree_node *left, struct avl_tree_node *right);
+
 /*
 * A comparison function between tree_node and your_node
 * Returns:
@@ -22,7 +24,7 @@ struct avl_tree_node
 */
 struct avl_tree
 {
-	callback_func compare;
+	avl_tree_compare_func compare;
 	struct avl_tree_node *root;
 };
 
@@ -32,7 +34,7 @@ void SXAPI lb_avl_tree_insert(struct avl_tree *tree, struct avl_tree_node *entry
 
 struct avl_tree_node *SXAPI lb_avl_tree_delete(struct avl_tree *tree, struct avl_tree_node *entry);
 
-void SXAPI lb_avl_tree_init(struct avl_tree *tree, callback_func compare);
+void SXAPI lb_avl_tree_init(struct avl_tree *tree, avl_tree_compare_func compare);
 
 struct avl_tree_node *SXAPI lb_avl_tree_largest(struct avl_tree *tree);
 

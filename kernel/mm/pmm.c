@@ -24,7 +24,7 @@ static _Bool initialized;
  * = 0 if tree_node == your_node
  * > 0 if tree_node > your_node
  */
-static int32 mmp_base_paddr_compare(void *tree_node, void *my_node)
+static int32 SXAPI mmp_base_paddr_compare(struct avl_tree_node* tree_node, struct avl_tree_node *my_node)
 {
 	uintptr tree_base = OBTAIN_STRUCT_ADDR(tree_node,
 	                                         struct phys_page_desc,

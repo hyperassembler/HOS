@@ -16,7 +16,6 @@ void SXAPI ke_spin_lock(k_spin_lock_t *lock)
 		while (ke_interlocked_compare_exchange_32(&lock->val, 0, 1) != 0)
 		{}
 	}
-	return;
 }
 
 void SXAPI ke_spin_unlock(k_spin_lock_t *lock)
@@ -25,7 +24,6 @@ void SXAPI ke_spin_unlock(k_spin_lock_t *lock)
 	{
 		lock->val = 0;
 	}
-	return;
 }
 
 k_irql SXAPI ke_spin_lock_raise_irql(k_spin_lock_t *lock, k_irql irql)
@@ -46,5 +44,4 @@ void SXAPI ke_spin_unlock_lower_irql(k_spin_lock_t *lock, k_irql irql)
 		ke_spin_unlock(lock);
 		ke_lower_irql(irql);
 	}
-	return;
 }

@@ -1,6 +1,6 @@
-#include "test/driver.h"
+#include "driver.h"
 #include "lib/salloc.h"
-#include "test/test_case.h"
+#include "test_case.h"
 
 typedef union
 {

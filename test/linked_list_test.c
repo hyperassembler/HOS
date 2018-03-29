@@ -1,13 +1,19 @@
-#include "test/driver.h"
+#include "driver.h"
+#include "test_case.h"
 #include "lib/linked_list.h"
-#include "test/test_case.h"
 #include "lib/sxtdlib.h"
+#include <stdio.h>
 
 typedef struct
 {
 	struct linked_list_node lnode;
-	int val;
+	int32 val;
 } my_list_node;
+
+static int32 SXAPI equals(struct linked_list_node *node, void *obj)
+{
+	return ((int32)(uintptr) obj) - OBTAIN_STRUCT_ADDR(node, my_list_node, lnode)->val;
+}
 
 static bool validate_list(struct linked_list *list)
 {
@@ -34,6 +40,21 @@ static bool validate_list(struct linked_list *list)
 	return result;
 }
 
+static void print_list(struct linked_list *list)
+{
+#ifdef TDBG
+	struct linked_list_node *node = lb_linked_list_first(list);
+
+	while (node != NULL)
+	{
+		my_list_node *enode = OBTAIN_STRUCT_ADDR(node, my_list_node, lnode);
+		printf("%d->",enode->val);
+		node = lb_linked_list_next(node);
+	}
+	printf("[END]\n");
+#endif
+}
+
 
 static bool assert_list(struct linked_list *list, int val[], int size)
 {
@@ -42,7 +63,7 @@ static bool assert_list(struct linked_list *list, int val[], int size)
 
 	if (!validate_list(list))
 	{
-		return TRUE;
+		return FALSE;
 	}
 
 	while (node != NULL && i < size)
@@ -76,33 +97,11 @@ static bool assert_list(struct linked_list *list, int val[], int size)
 	return i == 0;
 }
 
-//void print_validate(struct linked_list *list)
-//{
-//    my_list_node* node = (my_list_node*) linked_list_first(list);
-//    while(node != NULL)
-//    {
-//        hal_printf("%d", node->val);
-//        node = (my_list_node*) linked_list_next((struct linked_list_node *) node);
-//    }
-//
-//    hal_printf("======");
-//    node = (my_list_node*) linked_list_last(list);
-//    while(node != NULL)
-//    {
-//        hal_printf("%d", node->val);
-//        node = (my_list_node*) linked_list_prev((struct linked_list_node *) node);
-//    }
-//
-//    validate_list(list);
-//    hal_printf("\n");
-//    return;
-//}
-
 static void insert_val(struct linked_list *list, int index, int val)
 {
 	my_list_node *a = (my_list_node *) talloc(sizeof(my_list_node));
 	a->val = val;
-	lb_linked_list_insert(list, index, &a->lnode);
+	lb_linked_list_insert_by_idx(list, index, &a->lnode);
 }
 
 static void push_back_val(struct linked_list *list, int val)
@@ -128,6 +127,7 @@ static bool insert_test_beginning(void)
 	insert_val(&list, 0, 1);
 	insert_val(&list, 0, 2);
 	insert_val(&list, 0, 3);
+	print_list(&list);
 
 	// 3210==0123
 	int val[4] = {3, 2, 1, 0};
@@ -160,6 +160,7 @@ static bool insert_test_end(void)
 	insert_val(&list, 1, 1);
 	insert_val(&list, 2, 2);
 	insert_val(&list, 3, 3);
+	print_list(&list);
 
 	int val[] = {0, 1, 2, 3};
 	return assert_list(&list, val, 4);
@@ -187,8 +188,8 @@ static bool insert_test_invalid(void)
 
 	// NULL
 	insert_val(NULL, 1, 4);
-	lb_linked_list_insert_ref(NULL, list.head, list.tail);
-	lb_linked_list_insert_ref(&list, list.head, NULL);
+	lb_linked_list_insert_by_ref(NULL, list.head, list.tail);
+	lb_linked_list_insert_by_ref(&list, list.head, NULL);
 
 	int val[] = {0, 1, 2, 3};
 	return assert_list(&list, val, 4);
@@ -204,8 +205,10 @@ static bool remove_test_beginning(void)
 	insert_val(&list, 0, 2);
 	insert_val(&list, 0, 3);
 
-	lb_linked_list_remove(&list, 0);
-	lb_linked_list_remove(&list, 0);
+	lb_linked_list_remove_by_idx(&list, 0);
+	//print_list(&list);
+	lb_linked_list_remove_by_idx(&list, 0);
+	//print_list(&list);
 
 	// 10==01
 	int val[] = {1, 0};
@@ -225,8 +228,11 @@ static bool remove_test_middle(void)
 	insert_val(&list, 0, 4);
 	insert_val(&list, 0, 5);
 
-	lb_linked_list_remove(&list, 1);
-	lb_linked_list_remove(&list, 2);
+	print_list(&list);
+	lb_linked_list_remove_by_idx(&list, 1);
+	print_list(&list);
+	lb_linked_list_remove_by_idx(&list, 2);
+	print_list(&list);
 
 	// 5310=====0135
 	int val[] = {5, 3, 1, 0};
@@ -239,12 +245,18 @@ static bool remove_test_end(void)
 	lb_linked_list_init(&list);
 
 	insert_val(&list, 0, 0);
+	print_list(&list);
 	insert_val(&list, 1, 1);
+	print_list(&list);
 	insert_val(&list, 2, 2);
+	print_list(&list);
 	insert_val(&list, 3, 3);
 
-	lb_linked_list_remove(&list, 3);
-	lb_linked_list_remove(&list, 2);
+	print_list(&list);
+	lb_linked_list_remove_by_idx(&list, 3);
+	print_list(&list);
+	lb_linked_list_remove_by_idx(&list, 2);
+	print_list(&list);
 
 	int val[] = {0, 1};
 	return assert_list(&list, val, 2);
@@ -261,10 +273,10 @@ static bool remove_test_all(void)
 	insert_val(&list, 2, 2);
 	insert_val(&list, 3, 3);
 
-	lb_linked_list_remove(&list, 0);
-	lb_linked_list_remove(&list, 0);
-	lb_linked_list_remove(&list, 0);
-	lb_linked_list_remove(&list, 0);
+	lb_linked_list_remove_by_idx(&list, 0);
+	lb_linked_list_remove_by_idx(&list, 0);
+	lb_linked_list_remove_by_idx(&list, 0);
+	lb_linked_list_remove_by_idx(&list, 0);
 
 	result = result && assert_list(&list, NULL, 0);
 
@@ -273,10 +285,10 @@ static bool remove_test_all(void)
 	insert_val(&list, 2, 2);
 	insert_val(&list, 3, 3);
 
-	lb_linked_list_remove(&list, 3);
-	lb_linked_list_remove(&list, 2);
-	lb_linked_list_remove(&list, 1);
-	lb_linked_list_remove(&list, 0);
+	lb_linked_list_remove_by_idx(&list, 3);
+	lb_linked_list_remove_by_idx(&list, 2);
+	lb_linked_list_remove_by_idx(&list, 1);
+	lb_linked_list_remove_by_idx(&list, 0);
 
 	result = result && assert_list(&list, NULL, 0);
 
@@ -285,10 +297,10 @@ static bool remove_test_all(void)
 	insert_val(&list, 2, 2);
 	insert_val(&list, 3, 3);
 
-	lb_linked_list_remove(&list, 1);
-	lb_linked_list_remove(&list, 1);
-	lb_linked_list_remove(&list, 1);
-	lb_linked_list_remove(&list, 0);
+	lb_linked_list_remove_by_idx(&list, 1);
+	lb_linked_list_remove_by_idx(&list, 1);
+	lb_linked_list_remove_by_idx(&list, 1);
+	lb_linked_list_remove_by_idx(&list, 0);
 
 	result = result && assert_list(&list, NULL, 0);
 
@@ -306,19 +318,19 @@ static bool remove_test_invalid(void)
 	insert_val(&list, 0, 0);
 
 	// large index
-	lb_linked_list_remove(&list, 5);
-	lb_linked_list_remove(&list, 6);
-	lb_linked_list_remove(&list, 999);
+	lb_linked_list_remove_by_idx(&list, 5);
+	lb_linked_list_remove_by_idx(&list, 6);
+	lb_linked_list_remove_by_idx(&list, 999);
 
 	// small index
-	lb_linked_list_remove(&list, -1);
-	lb_linked_list_remove(&list, -2);
-	lb_linked_list_remove(&list, -999);
+	lb_linked_list_remove_by_idx(&list, -1);
+	lb_linked_list_remove_by_idx(&list, -2);
+	lb_linked_list_remove_by_idx(&list, -999);
 
 	// NULL
-	lb_linked_list_remove(NULL, 1);
-	lb_linked_list_remove_ref(NULL, list.head);
-	lb_linked_list_remove_ref(&list, NULL);
+	lb_linked_list_remove_by_idx(NULL, 1);
+	lb_linked_list_remove_by_ref(NULL, list.head);
+	lb_linked_list_remove_by_ref(&list, NULL);
 
 	// 0123=====3210
 	int val[] = {0, 1, 2, 3};
@@ -401,11 +413,6 @@ static bool push_pop_back_test(void)
 	return result;
 }
 
-static int32 equals(void *a, void *b)
-{
-	return ((int64) (struct linked_list_node *) b) ==
-	       OBTAIN_STRUCT_ADDR((struct linked_list_node *) a, my_list_node, lnode)->val;
-}
 
 static bool search_test(void)
 {
@@ -421,17 +428,13 @@ static bool search_test(void)
 	int val1[] = {1, 2, 3, 4};
 	result = result && assert_list(&list, val1, 4);
 
-	result = result && (lb_linked_list_search(&list, (void *) 4, equals) == 3);
-	result = result && (lb_linked_list_search(&list, (struct linked_list_node *) 3, equals) == 2);
-	result = result && (lb_linked_list_search(&list, (struct linked_list_node *) 2, equals) == 1);
-	result = result && (lb_linked_list_search(&list, (struct linked_list_node *) 1, equals) == 0);
+	result = result && (lb_linked_list_search(&list, (void *) 4, equals) != NULL);
+	result = result && (lb_linked_list_search(&list, (void *) 3, equals) != NULL);
+	result = result && (lb_linked_list_search(&list, (void *) 2, equals) != NULL);
+	result = result && (lb_linked_list_search(&list, (void *) 1, equals) != NULL);
 
-	result = result && (lb_linked_list_search(&list, NULL, equals) == -1);
-	result = result && (lb_linked_list_search(NULL, (struct linked_list_node *) 1, equals) == -1);
-
-	struct linked_list_node *node = lb_linked_list_get(&list, 1);
-	result = result && (lb_linked_list_search(&list, node, NULL) == 1);
-
+	result = result && (lb_linked_list_search(&list, NULL, equals) == NULL);
+	result = result && (lb_linked_list_search(NULL, (void *) 1, equals) == NULL);
 
 	result = result && assert_list(&list, val1, 4);
 

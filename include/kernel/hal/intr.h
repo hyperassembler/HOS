@@ -7,10 +7,10 @@
  * IRQL Definitions
  */
 typedef uint32 k_irql;
-#define IRQL_DISABLED_LEVEL (1 << 3)
-#define IRQL_DPC_LEVEL (1 << 2)
-#define IRQL_APC_LEVEL (1 << 1)
-#define IRQL_PASSIVE_LEVEL (1 << 0)
+#define IRQL_DISABLED_LEVEL (1ul << 3)
+#define IRQL_DPC_LEVEL (1ul << 2)
+#define IRQL_APC_LEVEL (1ul << 1)
+#define IRQL_PASSIVE_LEVEL (1ul << 0)
 
 k_irql SXAPI hal_set_irql(k_irql irql);
 

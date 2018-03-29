@@ -22,9 +22,6 @@ typedef _Bool bool;
 #define TRUE (1)
 #define FALSE (0)
 
-
-typedef int32 (*callback_func)(void *kernel_args, void *user_args);
-
 #define STRUCT_PACKED __attribute__((packed))
 
 #define UNREFERENCED(x) {(x) = (x);}

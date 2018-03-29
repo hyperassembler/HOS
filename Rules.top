@@ -10,8 +10,6 @@ dir	:= kernel
 include	$(dir)/Rules.mk
 dir := lib
 include $(dir)/Rules.mk
-dir := test
-include $(dir)/Rules.mk
 dir := mk
 include $(dir)/Rules.mk
 

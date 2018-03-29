@@ -1,0 +1,3 @@
+target remote localhost:1234
+symbol-file secxkrnl.elf
+break *0x1003000

@@ -1,6 +1,7 @@
-#include "test/driver.h"
-#include "test/test_case.h"
+#include "driver.h"
+#include "test_case.h"
 #include "lib/avl_tree.h"
+#include <stdio.h>
 
 typedef struct
 {
@@ -15,31 +16,31 @@ static int_tree_node *create_tree_node(int val)
 	return rs;
 }
 
-static int32 compare(void *root1, void *node1)
+static int32 SXAPI compare(struct avl_tree_node *root, struct avl_tree_node *node)
 {
-	struct avl_tree_node *root = (struct avl_tree_node *) node1;
-	struct avl_tree_node *node = (struct avl_tree_node *) root1;
 	int_tree_node *rooti = OBTAIN_STRUCT_ADDR(root, int_tree_node, tree_entry);
 	int_tree_node *nodei = OBTAIN_STRUCT_ADDR(node, int_tree_node, tree_entry);
 	return rooti->val - nodei->val;
 }
 
-//static void _pre_order(struct avl_tree_node *node, bool root)
-//{
-//    if (node == NULL)
-//        return;
-//    int_tree_node *my_node = OBTAIN_STRUCT_ADDR(node, tree_entry, int_tree_node);
-//    printf("%d-", my_node->val);
-//    _pre_order(node->left, false);
-//    _pre_order(node->right, false);
-//    if (root)
-//        printf("\n");
-//}
-//
-//static void pre_order(struct avl_tree_node *node)
-//{
-//    _pre_order(node, TRUE);
-//}
+static void _pre_order(struct avl_tree_node *node, bool root)
+{
+    if (node == NULL)
+        return;
+    int_tree_node *my_node = OBTAIN_STRUCT_ADDR(node, int_tree_node, tree_entry);
+    printf("%d-", my_node->val);
+    _pre_order(node->left, FALSE);
+    _pre_order(node->right, FALSE);
+    if (root)
+        printf("\n");
+}
+
+static void pre_order(struct avl_tree_node *node)
+{
+#ifdef TDBG
+    _pre_order(node, TRUE);
+#endif
+}
 
 static int counter = 0;
 
@@ -87,12 +88,14 @@ static bool insert_simple_l(void)
 	lb_avl_tree_init(&tree, compare);
 
 	lb_avl_tree_insert(&tree, &create_tree_node(1)->tree_entry);
+	pre_order(tree.root);
 	lb_avl_tree_insert(&tree, &create_tree_node(2)->tree_entry);
+	pre_order(tree.root);
 	int val1[] = {1, 2};
 	result = result && pre_order_assert(&tree, val1, 2);
 
 	lb_avl_tree_insert(&tree, &create_tree_node(3)->tree_entry);
-
+	pre_order(tree.root);
 	int val2[] = {2, 1, 3};
 	result = result && pre_order_assert(&tree, val2, 3);
 	return result && lb_avl_tree_validate(&tree);
@@ -895,7 +898,7 @@ static bool test_apocalypse(void)
 }
 
 
-void avl_tree_test(void)
+void SXAPI avl_tree_test(void)
 {
 	test_begin("AVL tree test");
 

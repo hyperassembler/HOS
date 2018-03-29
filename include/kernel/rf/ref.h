@@ -6,10 +6,12 @@
 
 typedef uint32 handle_t;
 
+typedef void (SXAPI *ref_free_func)(void*);
+
 typedef struct
 {
 	int32 ref_count;
-	callback_func free_routine;
+	ref_free_func free_routine;
 } ref_node_t;
 
 #define K_HANDLE_BASE (0x80000000ul)
@@ -22,7 +24,7 @@ typedef struct
 sx_status SXAPI rf_reference_setup(void);
 
 sx_status SXAPI rf_reference_create(ref_node_t *ref,
-                                  callback_func free_func);
+                                  ref_free_func free_func);
 
 sx_status SXAPI rf_reference_obj(ref_node_t *ref);
 

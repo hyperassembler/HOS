@@ -102,8 +102,8 @@ static struct avl_tree_node *SXAPI lbp_avl_tree_node_balance(struct avl_tree_nod
 }
 
 static struct avl_tree_node *SXAPI lbp_avl_tree_node_insert(struct avl_tree_node *root, struct avl_tree_node *node,
-                                                      callback_func compare,
-                                                      struct avl_tree_node *parent)
+                                                            avl_tree_compare_func compare,
+                                                            struct avl_tree_node *parent)
 {
 	if (node == NULL || compare == NULL)
 	{
@@ -289,9 +289,9 @@ static void SXAPI lbp_avl_tree_swap_nodes(struct avl_tree_node *node1, struct av
 }
 
 static struct avl_tree_node *SXAPI lbp_avl_tree_node_delete(struct avl_tree_node *root,
-                                                      struct avl_tree_node *node,
-                                                      callback_func compare,
-                                                      struct avl_tree_node **deleted_node)
+                                                            struct avl_tree_node *node,
+                                                            avl_tree_compare_func compare,
+                                                            struct avl_tree_node **deleted_node)
 {
 	if (root == NULL || node == NULL || compare == NULL || deleted_node == NULL)
 	{
@@ -351,7 +351,7 @@ static struct avl_tree_node *SXAPI lbp_avl_tree_node_delete(struct avl_tree_node
 }
 
 static struct avl_tree_node *SXAPI lbp_avl_tree_node_search(struct avl_tree_node *root, struct avl_tree_node *node,
-                                                      callback_func compare)
+                                                            avl_tree_compare_func compare)
 {
 	if (root == NULL || compare == NULL)
 	{
@@ -530,7 +530,7 @@ int32 SXAPI lb_avl_tree_size(struct avl_tree *tree)
 	return size;
 }
 
-void SXAPI lb_avl_tree_init(struct avl_tree *tree, callback_func compare)
+void SXAPI lb_avl_tree_init(struct avl_tree *tree, avl_tree_compare_func compare)
 {
 	if (tree != NULL)
 	{
@@ -553,7 +553,7 @@ static int32 SXAPI lbp_avl_tree_node_calculate_height(struct avl_tree_node *tree
 	       1;
 }
 
-static bool SXAPI lbp_avl_tree_node_test(struct avl_tree_node *tree, callback_func compare)
+static bool SXAPI lbp_avl_tree_node_test(struct avl_tree_node *tree, avl_tree_compare_func compare)
 {
 	if (tree == NULL)
 	{

@@ -11,14 +11,12 @@ typedef struct
 	struct avl_tree_node tree_node;
 	handle_t handle;
 	ref_node_t *ref;
-	callback_func free_routine;
+	ref_free_func free_routine;
 } handle_node_t;
 
-static int32 rfp_handle_node_free(void *node, void *up)
+static void SXAPI rfp_handle_node_free(void *node)
 {
-	UNREFERENCED(up);
 	ke_free(node);
-	return 0;
 }
 
 // ===========================
@@ -30,7 +28,7 @@ static bool initialized;
 static k_spin_lock_t handle_tree_lock;
 static uint32 handle_base;
 
-static int32 rfp_handle_compare(void *tree_node, void *my_node)
+static int32 rfp_handle_compare(struct avl_tree_node *tree_node, struct avl_tree_node *my_node)
 {
 	handle_node_t *tcb = OBTAIN_STRUCT_ADDR(tree_node, handle_node_t, tree_node);
 	handle_node_t *my_tcb = OBTAIN_STRUCT_ADDR(my_node, handle_node_t, tree_node);
@@ -74,7 +72,7 @@ sx_status SXAPI rf_reference_setup(void)
 }
 
 sx_status SXAPI rf_reference_create(ref_node_t *ref,
-                                  callback_func free_func)
+                                  ref_free_func free_func)
 {
 	ke_assert(ke_get_irql() <= IRQL_DPC_LEVEL);
 
@@ -122,7 +120,7 @@ sx_status SXAPI rf_dereference_obj(ref_node_t *ref_node)
 
 	if (old_ref_count == 1)
 	{
-		ref_node->free_routine(ref_node, NULL);
+		ref_node->free_routine(ref_node);
 	}
 
 	return result;
@@ -220,7 +218,7 @@ static sx_status SXAPI rf_create_handle(ref_node_t *ref,
 	}
 	else
 	{
-		node->free_routine(node, NULL);
+		node->free_routine(node);
 	}
 
 	return result;
@@ -256,7 +254,7 @@ static sx_status SXAPI rf_close_handle(handle_t handle)
 
 	if (free)
 	{
-		handle_node->free_routine(handle_node, NULL);
+		handle_node->free_routine(handle_node);
 	}
 
 	if (sx_success(status))
