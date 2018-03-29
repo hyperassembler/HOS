@@ -352,6 +352,11 @@ static bool size_test(void)
 
 	result = result && (lb_linked_list_size(&list) == 4 && lb_linked_list_size(&list2) == 0 &&
 	                    lb_linked_list_size(NULL) == -1);
+
+	lb_linked_list_remove_by_idx(&list, 0);
+	result = result && (lb_linked_list_size(&list) == 3);
+	insert_val(&list, 0, 0);
+
 	int val[] = {0, 1, 2, 3};
 	result = result && assert_list(&list, val, 4);
 	return result;
