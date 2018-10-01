@@ -1,14 +1,19 @@
-#include "kernel/ke/print.h"
+#include "kp.h"
 
-void SXAPI ke_printf(const char *str, ...)
+void
+ke_printf(const char *str, ...)
 {
-	va_list args;
-	va_start(args, str);
-	ke_vprintf(str, args);
-	va_end(args);
+    va_list args;
+    va_start(args, str);
+    ke_vprintf(str, args);
+    va_end(args);
 }
 
-void SXAPI ke_vprintf(const char *str, va_list args)
+void
+ke_vprintf(const char *str, va_list args)
 {
-	hal_vprintf(str, args);
+    //TODO: implement
+    ke_assert(0);
+    UNREFERENCED(str);
+    UNREFERENCED(args);
 }

@@ -85,10 +85,10 @@ mov eax, esi
 ret
 
 ; ============================
-; int32 KAPI hal_interlocked_compare_exchange_32(int32 *dst, int32 compare, int32 val);
+; int32 KAPI hal_interlocked_compare_exchange_32(int32 *dst, int32 test_node_compare, int32 val);
 global hal_interlocked_compare_exchange_32
 hal_interlocked_compare_exchange_32:
-mov eax, esi; eax = compare
+mov eax, esi; eax = test_node_compare
 lock cmpxchg dword [rdi], edx ; edx = val, rdi = ptr to dst
 ret
 

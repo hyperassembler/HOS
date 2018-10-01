@@ -1,11 +1,11 @@
-AS = nasm
-CC = clang
-LD = clang
-DAS = llvm-objdump
+AS := nasm
+CC := clang
+LD := clang
+DAS := llvm-objdump
 
-INCLUDE_DIR = include
-MK = mk
-OUT = out
+INC_COMMON := inc
+MK := mk
+OUT := out
 
 C_IGNORED_WARNINGS = -Wno-cast-align \
 					 -Wno-padded
@@ -19,6 +19,8 @@ C_FLAGS =   -xc\
 			-Werror \
 			$(C_IGNORED_WARNINGS) \
 			-ffreestanding \
+			-fno-builtin \
+			-nostdlib \
 			-fno-pic \
 			-mcmodel=kernel \
 			-fno-stack-protector \
@@ -28,15 +30,16 @@ C_FLAGS =   -xc\
 			-mno-sse2 \
 			-mno-sse3 \
 			-mno-3dnow \
-			-target x86_64-elf \
-			-I$(INCLUDE_DIR)
+			-target x86_64-pc-none-elf \
+			-I$(INC_COMMON)
 
 AS_FLAGS =  -w+all \
 			-w+error \
 			-f elf64 \
 			-F dwarf \
 			-g \
-			$(addprefix -I, $(INCLUDE_DIR)/)
+			-I$(INC_COMMON) \
+			$(INC_$(d))
 
 LD_FLAGS =  -fuse-ld=lld \
 			-nostdlib \

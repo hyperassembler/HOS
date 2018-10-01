@@ -1,30 +1,33 @@
-#include "type.h"
-#include "kernel/ke/alloc.h"
-#include "lib/salloc.h"
+#include "kp.h"
 
 #define K_KERNEL_HEAP_SIZE 8192
 
 static bool alloc_initialized;
 static uint8 alloc_heap[K_KERNEL_HEAP_SIZE];
 
-void SXAPI ke_alloc_init(void)
+void
+ke_alloc_init(void)
 {
-	if (!alloc_initialized)
-	{
-		lb_salloc_init(alloc_heap, K_KERNEL_HEAP_SIZE);
-		alloc_initialized = TRUE;
-	}
+    if (!alloc_initialized)
+    {
+        lb_salloc_init(alloc_heap, K_KERNEL_HEAP_SIZE);
+        alloc_initialized = TRUE;
+    }
 }
 
-void *SXAPI ke_alloc(uint32 size)
+void *
+ke_alloc(
+        uint32 size)
 {
-	return alloc_initialized ? lb_salloc(alloc_heap, size) : NULL;
+    return alloc_initialized ? lb_salloc(alloc_heap, size) : NULL;
 }
 
-void SXAPI ke_free(void *ptr)
+void
+ke_free(
+        void *ptr)
 {
-	if (alloc_initialized)
-	{
-		lb_sfree(alloc_heap, ptr);
-	}
+    if (alloc_initialized)
+    {
+        lb_sfree(alloc_heap, ptr);
+    }
 }

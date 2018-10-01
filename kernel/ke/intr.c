@@ -1,25 +1,81 @@
-#include "kernel/ke/assert.h"
-#include "kernel/ke/intr.h"
+#include "common.h"
+#include "kernel/status.h"
+#include "kp.h"
 
-k_irql SXAPI ke_raise_irql(k_irql irql)
+static uint32 irql_arr[IRQL_NUM];
+
+k_status
+kp_intr_init(struct boot_info *info)
 {
-	ke_assert(ke_get_irql() <= irql);
-	return hal_set_irql(irql);
+    irql_arr[IRQL_HIGH] = info->intr_info.irql_high;
+    irql_arr[IRQL_DPC] = info->intr_info.irql_dpc;
+    irql_arr[IRQL_LOW] = info->intr_info.irql_low;
+    return STATUS_SUCCESS;
 }
 
-k_irql SXAPI ke_lower_irql(k_irql irql)
+
+uint32
+ke_raise_irql(uint32 irql)
 {
-	k_irql old_irql = ke_get_irql();
-	ke_assert(old_irql >= irql);
-	return hal_set_irql(irql);
+    ke_assert(ke_get_irql() <= irql);
+    return hal_set_irql(irql);
 }
 
-k_irql SXAPI ke_get_irql(void)
+
+uint32
+ke_lower_irql(uint32 irql)
 {
-	return hal_get_irql();
+    uint32 old_irql = ke_get_irql();
+    ke_assert(old_irql >= irql);
+    return hal_set_irql(irql);
 }
 
-uint32 SXAPI ke_get_current_core(void)
+
+uint32
+ke_get_irql(void)
 {
-	return hal_get_core_id();
+    return hal_get_irql();
 }
+
+
+void
+ke_issue_intr(uint32 core, uint32 vector)
+{
+    hal_issue_intr(core, vector);
+}
+
+
+void
+ke_reg_intr(uint32 index, intr_handler_fp handler)
+{
+    hal_reg_intr(index, handler);
+}
+
+
+void
+ke_dereg_intr(uint32 index)
+{
+    hal_dereg_intr(index);
+}
+
+
+void
+ke_reg_exc(uint32 exc, exc_handler_fp handler)
+{
+    hal_reg_exc(exc, handler);
+}
+
+
+void
+ke_dereg_exc(uint32 exc)
+{
+    hal_dereg_exc(exc);
+}
+
+
+uint32
+ke_get_core_id(void)
+{
+    return hal_get_core_id();
+}
+

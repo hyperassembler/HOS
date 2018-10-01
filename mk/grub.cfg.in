@@ -1,0 +1,3 @@
+menuentry "secX" {
+	multiboot2 /secX/secxkrnl.elf
+}

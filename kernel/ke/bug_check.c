@@ -1,15 +1,7 @@
-#include "type.h"
-#include "kernel/ke/print.h"
-#include "kernel/ke/bug_check.h"
+#include "kp.h"
 
-void SXAPI SXTRAP ke_trap(void)
+void ke_panic(uint64 reason)
 {
-	while (TRUE)
-	{};
-}
-
-void SXAPI SXTRAP ke_panic(uint64 reason)
-{
-	ke_printf("BugCheck: Reason - %ul\n", reason);
-	ke_trap();
+    ke_printf("BugCheck: Reason - %ul\n", reason);
+    hal_halt();
 }

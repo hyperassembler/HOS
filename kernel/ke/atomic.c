@@ -1,18 +1,17 @@
-#include "type.h"
-#include "kernel/ke/atomic.h"
+#include "kp.h"
 
-int32 SXAPI ke_interlocked_exchange_32(int32 *target, int32 val)
+int32 ke_atomic_xchg_32(int32 *target, int32 val)
 {
-	return hal_interlocked_exchange_32(target, val);
+    return hal_atomic_xchg_32(target, val);
 }
 
-int32 SXAPI ke_interlocked_increment_32(int32 *target, int32 increment)
+int32 ke_atomic_inc_32(int32 *target, int32 increment)
 {
-	return hal_interlocked_increment_32(target, increment);
+    return hal_atomic_inc_32(target, increment);
 }
 
-int32 SXAPI ke_interlocked_compare_exchange_32(int32 *target, int32 compare, int32 val)
+int32 ke_atmoic_cmpxchg_32(int32 *target, int32 compare, int32 val)
 {
-	return hal_interlocked_compare_exchange_32(target, compare, val);
+    return hal_atomic_cmpxchg_32(target, compare, val);
 }
 

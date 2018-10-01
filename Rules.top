@@ -8,9 +8,9 @@ dir	:= hal
 include	$(dir)/Rules.mk
 dir	:= kernel
 include	$(dir)/Rules.mk
-dir := lib
-include $(dir)/Rules.mk
 dir := mk
+include $(dir)/Rules.mk
+dir := common
 include $(dir)/Rules.mk
 
 LD_SCRIPT := $(OUT)/$(MK)/linker.ld
