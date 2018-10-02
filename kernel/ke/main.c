@@ -1,14 +1,17 @@
-#include "kp.h"
-#include "kernel/mm.h"
+#include "kernel.h"
+#include "cdef.h"
+#include "intrp.h"
+#include "mm/pmm.h"
+#include "ke/panic.h"
 
 /**
  * Kernel entry point
  * @param boot_info passed by the bootloader
  */
 void KABI
-ke_main(struct boot_info *boot_info)
+kmain(struct boot_info *boot_info)
 {
-    k_status status = STATUS_SUCCESS;
+    k_status status;
 
     // initialize interrupts
     status = kp_intr_init(boot_info);

@@ -1,9 +1,8 @@
-#include "lp.h"
+#include "lb/atree.h"
+#include "clib.h"
 
-static
-struct atree_node *
-atree_node_max(
-        struct atree_node *node)
+static struct atree_node *
+atree_node_max(struct atree_node *node)
 {
     while ((node != NULL) && (node->right != NULL))
     {
@@ -13,10 +12,8 @@ atree_node_max(
 }
 
 
-static
-struct atree_node *
-atree_node_min(
-        struct atree_node *node)
+static struct atree_node *
+atree_node_min(struct atree_node *node)
 {
     while ((node != NULL) && (node->left != NULL))
     {
@@ -26,10 +23,8 @@ atree_node_min(
 }
 
 
-static
-void
-atree_node_init(
-        struct atree_node *it)
+static void
+atree_node_init(struct atree_node *it)
 {
     if (it != NULL)
     {
@@ -40,19 +35,15 @@ atree_node_init(
 }
 
 
-static
-int32
-atree_node_get_height(
-        struct atree_node *node)
+static int32
+atree_node_get_height(struct atree_node *node)
 {
     return node == NULL ? -1 : node->height;
 }
 
 
-static
-int32
-atree_node_get_balance_factor(
-        struct atree_node *node)
+static int32
+atree_node_get_balance_factor(struct atree_node *node)
 {
     if (node == NULL)
     {
@@ -62,10 +53,8 @@ atree_node_get_balance_factor(
 }
 
 
-static
-struct atree_node *
-atree_node_right_rotate(
-        struct atree_node *node)
+static struct atree_node *
+atree_node_right_rotate(struct atree_node *node)
 {
     struct atree_node *lchild = node->left;
     node->left = lchild->right;
@@ -77,10 +66,8 @@ atree_node_right_rotate(
 }
 
 
-static
-struct atree_node *
-atree_node_left_rotate(
-        struct atree_node *node)
+static struct atree_node *
+atree_node_left_rotate(struct atree_node *node)
 {
     struct atree_node *rchild = node->right;
     node->right = rchild->left;
@@ -349,25 +336,21 @@ atree_node_delete(struct atree_node *node, struct atree_node *entry, atree_cmp_f
 
 
 struct atree_node *
-lb_atree_min(
-        struct atree *tree)
+lb_atree_min(struct atree *tree)
 {
     return atree_node_min(tree->root);
 }
 
 
 struct atree_node *
-lb_atree_max(
-        struct atree *tree)
+lb_atree_max(struct atree *tree)
 {
     return atree_node_max(tree->root);
 }
 
 
 struct atree_node *
-lb_atree_next(
-        struct atree *tree,
-        struct atree_node *entry)
+lb_atree_next(struct atree *tree, struct atree_node *entry)
 {
     struct atree_node *succ;
     struct atree_node *node;
@@ -407,9 +390,7 @@ lb_atree_next(
 
 
 struct atree_node *
-lb_atree_prev(
-        struct atree *tree,
-        struct atree_node *entry)
+lb_atree_prev(struct atree *tree, struct atree_node *entry)
 {
     struct atree_node *prev;
     struct atree_node *node;
@@ -449,18 +430,14 @@ lb_atree_prev(
 
 
 struct atree_node *
-lb_atree_search(
-        struct atree *tree,
-        struct atree_node *entry)
+lb_atree_search(struct atree *tree, struct atree_node *entry)
 {
     return atree_node_search(tree->root, entry, tree->cmpf, NULL);
 }
 
 
 struct atree_node *
-lb_atree_insert(
-        struct atree *tree,
-        struct atree_node *entry)
+lb_atree_insert(struct atree *tree, struct atree_node *entry)
 {
     struct atree_node *old;
 
@@ -471,9 +448,7 @@ lb_atree_insert(
 
 
 struct atree_node *
-lb_atree_delete(
-        struct atree *tree,
-        struct atree_node *entry)
+lb_atree_delete(struct atree *tree, struct atree_node *entry)
 {
     struct atree_node *node;
 
@@ -484,8 +459,7 @@ lb_atree_delete(
 
 
 uint32
-lb_atree_size(
-        struct atree *tree)
+lb_atree_size(struct atree *tree)
 {
     uint32 size;
     struct atree_node *node;
@@ -505,9 +479,7 @@ lb_atree_size(
 
 
 void
-lb_atree_init(
-        struct atree *tree,
-        atree_cmp_fp compare)
+lb_atree_init(struct atree *tree, atree_cmp_fp compare)
 {
     tree->cmpf = compare;
     tree->root = NULL;

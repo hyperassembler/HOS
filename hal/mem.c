@@ -1,9 +1,9 @@
 
-#include "common.h"
+#include "cdef.h"
 #include "cpu.h"
 #include "mem.h"
 #include "intr.h"
-#include "hal_export.h"
+#include "hal.h"
 
 static uint8 _gdts[HAL_CORE_COUNT][GDT_ENTRY_NUM * GDT_ENTRY_SIZE];
 static struct hal_gdt_ptr _gdt_ptrs[HAL_CORE_COUNT];
@@ -12,7 +12,8 @@ static struct hal_gdt_ptr _gdt_ptrs[HAL_CORE_COUNT];
 static uint32 hal_heap_used;
 static char hal_heap[HAL_HEAP_SIZE];
 
-uint32 hal_write_initial_page_table(void *multiboot_info)
+uint32
+hal_write_initial_page_table(void *multiboot_info)
 {
     UNREFERENCED(multiboot_info);
 

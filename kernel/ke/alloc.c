@@ -1,4 +1,5 @@
-#include "kp.h"
+#include "ke/alloc.h"
+#include "lb/salloc.h"
 
 #define K_KERNEL_HEAP_SIZE 8192
 
@@ -16,15 +17,13 @@ ke_alloc_init(void)
 }
 
 void *
-ke_alloc(
-        uint32 size)
+ke_alloc(uint32 size)
 {
     return alloc_initialized ? lb_salloc(alloc_heap, size) : NULL;
 }
 
 void
-ke_free(
-        void *ptr)
+ke_free(void *ptr)
 {
     if (alloc_initialized)
     {

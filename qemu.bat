@@ -1,0 +1,1 @@
+qemu-system-x86_64 -bios qemu_bios.bin -cdrom out/secxkrnl.iso -s -S

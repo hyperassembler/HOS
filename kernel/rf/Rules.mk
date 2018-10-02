@@ -1,6 +1,6 @@
 include $(MK)/prologue.mk
 
-SRC_$(d) := $(d)/rf.c
+SRC_$(d) := $(d)/ref.c
 
 include $(MK)/stdrules.mk
 

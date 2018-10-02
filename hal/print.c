@@ -1,6 +1,7 @@
-#include "common.h"
+#include "cdef.h"
 #include "cpu.h"
 #include "print.h"
+#include "clib.h"
 
 // #define get_column(pos) ((pos) % 80)
 #define get_row(pos) ((pos) / 80)

@@ -1,6 +1,7 @@
 #include "test_main.h"
 #include "test_case.h"
-#include "lb.h"
+#include "lb/llist.h"
+#include "clib.h"
 #include <stdio.h>
 
 struct test_list_node

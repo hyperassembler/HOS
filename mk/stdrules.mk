@@ -11,22 +11,25 @@ OBJAS_$(d) := $(OBJAS_$(d)) $(addprefix $(OUT)/, $(SRCAS_$(d):.asm=.a))
 OBJIN_$(d) := $(OBJIN_$(d)) $(addprefix $(OUT)/, $(SRCIN_$(d):.in=))
 DEP_$(d) := $(DEP_$(d)) $(addsuffix .d, $(OBJ_$(d)) $(OBJIN_$(d)))
 
-$(OBJ_$(d)): $(OUT)/%.o: %.c
+$(OUT)/$(d)/%.o: MOD:=$(MOD)
+
+$(OBJ_$(d)): $(OUT)/$(d)/%.o: $(d)/%.c
 	$(MKDIR)
 	$(COMP)
 	$(GDEP)
 
-$(OBJAS_$(d)): $(OUT)/%.a: %.asm
+$(OUT)/$(d)/%.a: MOD:=$(MOD)
+
+$(OBJAS_$(d)): $(OUT)/$(d)/%.a: $(d)/%.asm
 	$(MKDIR)
 	$(COMPAS)
 
-$(OBJIN_$(d)): $(OUT)/%: %.in
+$(OBJIN_$(d)): $(OUT)/$(d)/%: $(d)/%.in
 	$(MKDIR)
 	$(PREP)
 	$(GDEP)
 
 # append all OBJECTS to OBJ
 OBJ := $(OBJ) $(OBJ_$(d)) $(OBJAS_$(d))
-CLEAN := $(CLEAN) $(OBJ_$(d)) $(OBJAS_$(d)) $(OBJIN_$(d)) $(DEP_$(d))
 
 -include $(DEP_$(d))

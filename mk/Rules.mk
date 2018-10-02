@@ -1,7 +1,8 @@
 include $(MK)/prologue.mk
 
-SRCIN_$(d) := $(d)/linker.ld.in \
-              $(d)/grub.cfg.in
+MOD:=MK
+
+SRCIN_$(d) := $(d)/linker.ld.in
 
 include $(MK)/stdrules.mk
 

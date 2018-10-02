@@ -1,4 +1,5 @@
-#include "kp.h"
+#include "ke/assert.h"
+#include "ke/print.h"
 
 void ke_assert_ex(const char *expr_str, const char *file, int32 line, int32 expr)
 {

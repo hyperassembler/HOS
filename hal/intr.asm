@@ -1,3 +1,15 @@
+global hal_disable_interrupt
+global hal_enable_interrupt
+
+hal_disable_interrupt:
+cli
+ret
+
+hal_enable_interrupt:
+sti
+ret
+
+
 %macro PUSHAQ 0
    push rax      ;save current rax
    push rbx      ;save current rbx

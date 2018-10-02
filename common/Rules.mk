@@ -1,6 +1,8 @@
 include $(MK)/prologue.mk
 
-SRC_$(d) := $(d)/common.c
+MOD:=COMMON
+
+SRC_$(d) := $(d)/clib.c
 
 include $(MK)/stdrules.mk
 

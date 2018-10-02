@@ -1,5 +1,9 @@
 include $(MK)/prologue.mk
 
+MOD:=KERNEL
+C_FLAGS_$(MOD):=$(addprefix -I, $(d)/inc)
+AS_FLAGS_$(MOD):=$(addprefix -I, $(d)/inc)
+
 dir	:= $(d)/ke
 include	$(dir)/Rules.mk
 dir	:= $(d)/mm

@@ -1,4 +1,5 @@
-#include "kp.h"
+#include "ke/spin_lock.h"
+#include "ke/atomic.h"
 
 void
 ke_spin_init(struct spin_lock *lock)

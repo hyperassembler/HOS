@@ -1,30 +1,30 @@
 
-#include "common.h"
-#include "intr.h"
 #include "cpu.h"
+#include "hdef.h"
+#include "hal.h"
 #include "intr.h"
-#include "print.h"
 #include "mem.h"
-#include "hal_export.h"
+#include "print.h"
+#include "io.h"
 
-static uint8 _idts[HAL_CORE_COUNT][IDT_ENTRY_NUM * IDT_ENTRY_SIZE];
-static struct hal_idt_ptr _idt_ptrs[HAL_CORE_COUNT];
-static intr_handler_fp _intr_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
-static void *_intr_handler_context_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
-static exc_handler_fp _exc_handler_table[HAL_CORE_COUNT][IDT_ENTRY_NUM];
+static uint8 cpu_idts[HAL_CORE_COUNT][IDT_ENTRY_NUM * IDT_ENTRY_SIZE];
+static struct hal_idt_ptr cpu_idt_ptrs[HAL_CORE_COUNT];
+
+static k_exc_dispatcher k_exc_disps[HAL_CORE_COUNT];
+static k_intr_dispatcher k_intr_disps[HAL_CORE_COUNT];
 
 uint32
-hal_set_irql(uint32 irql)
+impl_hal_set_irql(uint32 irql)
 {
     UNREFERENCED(irql)
-    hal_assert(FALSE, "Unimplemented function called.");
+    hal_halt_cpu();
     return 0;
 }
 
 uint32
-hal_get_irql(void)
+impl_hal_get_irql(void)
 {
-    hal_assert(FALSE, "Unimplemented function called.");
+    hal_halt_cpu();
     return 0;
 }
 
@@ -55,92 +55,57 @@ hal_set_interrupt_handler(uint64 index, void (*handler)(void))
 {
     if (index < IDT_ENTRY_NUM)
     {
-        hal_write_gate(_idts[hal_get_core_id()] + 16 * index, (uintptr) handler, seg_selector(1, 0),
+        hal_write_gate(cpu_idts[hal_get_core_id()] + 16 * index, (uintptr) handler, seg_selector(1, 0),
                        GATE_DPL_0 | GATE_PRESENT | GATE_TYPE_INTERRUPT);
     }
 }
 
-void KABI
-hal_issue_intr(uint32 target_core, uint32 vector)
+void
+impl_hal_issue_intr(uint32 target_core, uint32 vector)
 {
     UNREFERENCED(target_core);
     UNREFERENCED(vector);
-    hal_assert(FALSE, "Unimplemented function called.");
-}
-
-void
-hal_reg_intr(uint32 index, intr_handler_fp handler)
-{
-    // TODO: FIX CONTEXT
-
-    if (index < IDT_ENTRY_NUM && hal_get_core_id() < HAL_CORE_COUNT)
-    {
-        _intr_handler_table[hal_get_core_id()][index] = handler;
-        _intr_handler_context_table[hal_get_core_id()][index] = NULL;
-    }
-}
-
-void
-hal_dereg_intr(uint32 index)
-{
-    // TODO: FIX CONTEXT
-    if (index < IDT_ENTRY_NUM && hal_get_core_id() < HAL_CORE_COUNT)
-    {
-        _intr_handler_table[hal_get_core_id()][index] = NULL;
-    }
-}
-
-
-void
-hal_reg_exc(uint32 index, exc_handler_fp handler)
-{
-    if (index < IDT_ENTRY_NUM && hal_get_core_id() < HAL_CORE_COUNT)
-    {
-        _exc_handler_table[hal_get_core_id()][index] = handler;
-    }
-}
-
-
-void
-hal_dereg_exc(uint32 index)
-{
-    if (index < IDT_ENTRY_NUM && hal_get_core_id() < HAL_CORE_COUNT)
-    {
-        _exc_handler_table[hal_get_core_id()][index] = NULL;
-    }
-}
-
-void KABI
-hal_halt(void)
-{
     hal_halt_cpu();
 }
 
+void
+impl_hal_set_intr_dispatcher(k_intr_dispatcher handler)
+{
+    k_intr_disps[hal_get_core_id()] = handler;
+}
+
+void
+impl_hal_set_exc_dispatcher(k_exc_dispatcher handler)
+{
+    k_exc_disps[hal_get_core_id()] = handler;
+}
+
+
 void HABI
-hal_interrupt_dispatcher(uint64 int_vec, hal_interrupt_context_t *context)
+hal_interrupt_dispatcher(uint64 int_vec, struct interrupt_context *context)
 {
     uint32 coreid = hal_get_core_id();
-    if (_intr_handler_table[int_vec] == NULL)
+    if (k_intr_disps[coreid] == NULL)
     {
         hal_printf("Unhandled interrupt %d at 0x%X.\n", int_vec, context->rip);
     }
     else
     {
-        _intr_handler_table[coreid][int_vec](context->rip, context->rsp, 0);
+        k_intr_disps[coreid]((uint32) int_vec, context);
     }
 }
 
 void HABI
-hal_exception_dispatcher(uint64 exc_vec, hal_interrupt_context_t *context, uint32 errorcode)
+hal_exception_dispatcher(uint64 exc_vec, struct interrupt_context *context, uint32 errorcode)
 {
     uint32 coreid = hal_get_core_id();
-    if (_exc_handler_table[exc_vec] == NULL)
+    if (k_exc_disps[coreid] == NULL)
     {
         hal_printf("Unhandled exception %d at 0x%X.\n", exc_vec, context->rip);
     }
     else
     {
-        _exc_handler_table[coreid][exc_vec](context->rip, context->rsp, errorcode);
+        k_exc_disps[coreid]((uint32)exc_vec, context->rip, errorcode, context);
     }
 }
 
@@ -406,7 +371,7 @@ halp_populate_idt(void)
 }
 
 uint32
-hal_get_core_id(void)
+impl_hal_get_core_id(void)
 {
     // TODO
     return 0;
@@ -426,21 +391,17 @@ hal_interrupt_init(void)
     }
 
     // get idt ptr ready
-    _idt_ptrs[coreid].base = (uint64) &_idts[coreid];
-    _idt_ptrs[coreid].limit = IDT_ENTRY_NUM * IDT_ENTRY_SIZE - 1;
+    cpu_idt_ptrs[coreid].base = (uint64) &cpu_idts[coreid];
+    cpu_idt_ptrs[coreid].limit = IDT_ENTRY_NUM * IDT_ENTRY_SIZE - 1;
 
     // clear dispatch table
-    for (uint64 i = 0; i < IDT_ENTRY_NUM; i++)
-    {
-        _intr_handler_table[coreid][i] = NULL;
-        _exc_handler_table[coreid][i] = NULL;
-        _intr_handler_context_table[coreid][i] = NULL;
-    }
+    k_exc_disps[coreid] = NULL;
+    k_intr_disps[coreid] = NULL;
 
     // hook asm interrupt handlers
     halp_populate_idt();
 
-    hal_flush_idt(&_idt_ptrs[coreid]);
+    hal_flush_idt(&cpu_idt_ptrs[coreid]);
 
     // disable PIC
     hal_write_port_8(0xa1, 0xff);

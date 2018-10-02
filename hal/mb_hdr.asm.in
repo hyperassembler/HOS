@@ -1,0 +1,47 @@
+#define ASM_FILE
+#include "multiboot2.h"
+#include "mlayout.h"
+
+extern hmain
+global hal_main_32
+
+section .multiboot_header
+bits 32
+align KERNEL_PAGE_SIZE
+MULTIBOOT_ARCH equ 0
+MULTIBOOT_CHECK_SUM equ (0xFFFFFFFF - (MULTIBOOT2_HEADER_MAGIC + MULTIBOOT_HEADER_SIZE + MULTIBOOT_ARCH) + 1)
+MULTIBOOT_REQ_LOADERNAME equ 2
+MULTIBOOT_REQ_MMAP equ 6
+MULTIBOOT_REQ_ACPI_RSDP equ 15
+;====================
+;header tag
+align MULTIBOOT_HEADER_ALIGN
+multiboot_header_tag:
+    dd MULTIBOOT2_HEADER_MAGIC
+    dd MULTIBOOT_ARCH
+    dd MULTIBOOT_HEADER_SIZE
+    dd MULTIBOOT_CHECK_SUM
+;====================
+;INFO_REQUEST_TAG
+align MULTIBOOT_INFO_ALIGN
+multiboot_info_tag:
+    dw 0x1 ; type=1
+    dw 0x0 ; flag=0
+    dd MULTIBOOT_INFO_TAG_SIZE
+    dd MULTIBOOT_REQ_LOADERNAME
+    dd MULTIBOOT_REQ_MMAP
+MULTIBOOT_INFO_TAG_SIZE equ ($ - multiboot_info_tag)
+;====================
+;MODULE ALIGNMENT TAG
+align MULTIBOOT_INFO_ALIGN
+    dw 0x6; type=6
+    dw 0x0; flag=0
+    dd 0x8
+;====================
+align MULTIBOOT_INFO_ALIGN
+	;End_tag
+    dw 0x0
+    dw 0x0
+    dd 0x8
+;====================
+MULTIBOOT_HEADER_SIZE equ ($ - multiboot_header_tag)

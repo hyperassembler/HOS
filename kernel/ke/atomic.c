@@ -1,4 +1,5 @@
-#include "kp.h"
+#include "ke/atomic.h"
+#include "hal.h"
 
 int32 ke_atomic_xchg_32(int32 *target, int32 val)
 {

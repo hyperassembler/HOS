@@ -1,4 +1,5 @@
-#include "kp.h"
+#include "ke/print.h"
+#include "ke/assert.h"
 
 void
 ke_printf(const char *str, ...)
@@ -13,7 +14,7 @@ void
 ke_vprintf(const char *str, va_list args)
 {
     //TODO: implement
-    ke_assert(0);
+    KE_ASSERT(0);
     UNREFERENCED(str);
     UNREFERENCED(args);
 }

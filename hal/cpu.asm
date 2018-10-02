@@ -2,10 +2,23 @@
 ;rax, rdi, rsi, rdx, rcx, r8, r9, r10, r11 are scratch registers.
 ;function parameter: rdi,rsi,rdx,rcx,r8,r9
 
-[SECTION .text]
-[BITS 64]
-;======================
 global hal_flush_gdt
+global hal_flush_tlb
+global hal_flush_idt
+global hal_read_idt
+global hal_read_cr3
+global hal_write_cr3
+global hal_read_cr8
+global hal_write_cr8
+global hal_cpuid
+global hal_halt_cpu
+global hal_read_msr
+global hal_write_msr
+
+
+section .text
+bits 64
+
 hal_flush_gdt:
 push rbp
 mov rbp,rsp
@@ -31,16 +44,13 @@ mov ds,dx
 pop rbp
 ret
 
-;======================
-global hal_flush_tlb
-;void flush_tlb(void)
+
 hal_flush_tlb:
 mov rax,cr3
 mov cr3,rax
 ret
 
-;======================
-global hal_flush_idt
+
 hal_flush_idt:
 lidt [rdi]
 ret
@@ -76,32 +86,6 @@ mov cr8,rdi
 ret
 
 ; ============================
-; int32 KAPI hal_interlocked_exchange_32(int32 *target, int32 val)
-global hal_interlocked_exchange_32
-hal_interlocked_exchange_32:
-lock xchg dword [rdi], esi
-xor rax, rax
-mov eax, esi
-ret
-
-; ============================
-; int32 KAPI hal_interlocked_compare_exchange_32(int32 *dst, int32 test_node_compare, int32 val);
-global hal_interlocked_compare_exchange_32
-hal_interlocked_compare_exchange_32:
-mov eax, esi; eax = test_node_compare
-lock cmpxchg dword [rdi], edx ; edx = val, rdi = ptr to dst
-ret
-
-; ============================
-; int32 KAPI hal_interlocked_increment_32(int32 *target, int32 increment);
-global hal_interlocked_increment_32
-hal_interlocked_increment_32:
-lock xadd dword [rdi], esi ; [rdi] = [rdi] + esi, esi = old [rdi]
-xor rax, rax
-mov eax, esi
-ret
-
-; ============================
 ; extern void KAPI hal_cpuid(uint32* eax, uint32* ebx, uint32* ecx, uint32* edx);
 global hal_cpuid
 hal_cpuid:
@@ -125,99 +109,6 @@ mov dword [r11], edx
 pop rbx
 mov rsp,rbp
 pop rbp
-ret
-
-;====================
-global hal_write_port_32
-hal_write_port_32:
-mov rdx,rdi
-mov rax,rsi
-out dx,eax
-nop
-nop
-nop
-ret
-
-;====================
-global hal_write_port_16
-hal_write_port_16:
-mov rdx,rdi
-mov rax,rsi
-out dx,ax
-nop
-nop
-nop
-ret
-
-
-;====================
-global hal_write_port_8
-hal_write_port_8:
-mov rdx,rdi
-mov rax,rsi
-out dx,al
-nop
-nop
-nop
-ret
-
-;====================
-global hal_read_port_8
-hal_read_port_8:
-mov rdx,rdi
-xor rax,rax
-in al,dx
-nop
-nop
-nop
-ret
-
-;====================
-global hal_read_port_16
-hal_read_port_16:
-mov rdx,rdi
-xor rax,rax
-in ax,dx
-nop
-nop
-nop
-ret
-
-;====================
-global hal_read_port_32
-hal_read_port_32:
-mov rdx,rdi
-xor rax,rax
-in eax,dx
-nop
-nop
-nop
-ret
-
-;====================
-global hal_write_mem_32
-; (void* target, uint32* data)
-hal_write_mem_32:
-mov dword [rdi], esi
-ret
-
-;====================
-global hal_write_mem_64
-; (void* target, u64 data)
-hal_write_mem_64:
-mov qword [rdi], rsi
-ret
-
-;====================
-global hal_disable_interrupt
-hal_disable_interrupt:
-cli
-ret
-
-;====================
-global hal_enable_interrupt
-hal_enable_interrupt:
-sti
 ret
 
 ;====================

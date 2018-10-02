@@ -1,9 +1,9 @@
-#include "print.h"
 #include "mem.h"
+#include "print.h"
 #include "intr.h"
 #include "cpu.h"
-#include "call.h"
-#include "hal_export.h"
+#include "kernel.h"
+#include "hal.h"
 
 //static void
 //halp_obtain_cpu_info(struct boot_info *hal_info)
@@ -21,10 +21,10 @@
 //}
 
 void HABI
-hal_main(void *m_info);
+hmain(void *m_info);
 
 void HABI
-hal_main(void *m_info)
+hmain(void *m_info)
 {
     if (m_info == NULL || (uint64) m_info & bit_field_mask(0, 2))
     {
@@ -47,5 +47,5 @@ hal_main(void *m_info)
         hal_halt_cpu();
     }
 
-    ke_main(boot_info);
+    kmain(boot_info);
 }

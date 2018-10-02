@@ -1,7 +1,7 @@
 #ifndef TEST_DRIVER_H
 #define TEST_DRIVER_H
 
-#include "common.h"
+#include "cdef.h"
 
 void
 test_begin(char *name);

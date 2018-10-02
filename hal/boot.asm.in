@@ -1,57 +1,16 @@
 #define ASM_FILE
+#include "mlayout.h"
 #include "multiboot2.h"
 
 %define GET_PADDR(x) ((x) - KERNEL_IMAGE_VADDR + KERNEL_IMAGE_PADDR)
 %define BOCHS_BREAK xchg bx,bx
 
-extern hal_main
-global hal_main_32
-
-section .multiboot_header
-bits 32
-MULTIBOOT_ARCH equ 0
-MULTIBOOT_CHECK_SUM equ (0xFFFFFFFF - (MULTIBOOT2_HEADER_MAGIC + MULTIBOOT_HEADER_SIZE + MULTIBOOT_ARCH) + 1)
-MULTIBOOT_REQ_LOADERNAME equ 2
-MULTIBOOT_REQ_MMAP equ 6
-MULTIBOOT_REQ_ACPI_RSDP equ 15
-;====================
-;header tag
-align MULTIBOOT_HEADER_ALIGN
-multiboot_header_tag:
-    dd MULTIBOOT2_HEADER_MAGIC
-    dd MULTIBOOT_ARCH
-    dd MULTIBOOT_HEADER_SIZE
-    dd MULTIBOOT_CHECK_SUM
-;====================
-;INFO_REQUEST_TAG
-align MULTIBOOT_INFO_ALIGN
-multiboot_info_tag:
-    dw 0x1 ; type=1
-    dw 0x0 ; flag=0
-    dd MULTIBOOT_INFO_TAG_SIZE
-    dd MULTIBOOT_REQ_LOADERNAME
-    dd MULTIBOOT_REQ_MMAP
-MULTIBOOT_INFO_TAG_SIZE equ ($ - multiboot_info_tag)
-;====================
-;MODULE ALIGNMENT TAG
-align MULTIBOOT_INFO_ALIGN
-    dw 0x6; type=6
-    dw 0x0; flag=0
-    dd 0x8
-;====================
-align MULTIBOOT_INFO_ALIGN
-	;End_tag
-    dw 0x0
-    dw 0x0
-    dd 0x8
-;====================
-MULTIBOOT_HEADER_SIZE equ ($ - multiboot_header_tag)
-
+global sys_entry
+extern hmain
 
 section .text
 bits 32
-align KERNEL_PAGE_SIZE
-hal_main_32:
+sys_entry:
     cli
     cld
     cmp eax,MULTIBOOT2_BOOTLOADER_MAGIC
@@ -119,7 +78,7 @@ hal_main_32:
 
     ; enter long mode
     lgdt [GET_PADDR(_gdt.ptr)]
-    jmp _gdt.code:GET_PADDR(halp_entry_64)
+    jmp _gdt.code:GET_PADDR(hmain_stub)
     hlt
 
 halp_check_long_mode:
@@ -144,7 +103,7 @@ halp_check_long_mode:
     mov eax, 0x80000001    ; Set the A-register to 0x80000001.
     cpuid                  ; CPU identification.
     test edx, 1 << 29      ; Test if the LM-bit, which is bit 29, is set in the D-register.
-    jz .not_supported      ; They aren't, there is no long mode.
+    jz .not_supported      ; They arent, there is no long mode.
     mov eax,1
     jmp .end
 .not_supported:
@@ -156,7 +115,7 @@ halp_check_long_mode:
 
 section .text
 bits 64
-halp_entry_64:
+hmain_stub:
     ; note that we are still at the identity mapping
     mov ax,_gdt.data
     mov ds,ax
@@ -167,10 +126,7 @@ halp_entry_64:
 
     mov rsp, GET_PADDR(_stack)
     mov rdi, rsi ; multiboot_info*
-    call hal_write_initial_page_table
-    test rax,rax
-    jne .end
-    call hal_main
+    call hmain
 .end:
     hlt
 

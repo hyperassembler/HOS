@@ -1,5 +1,5 @@
 #include "test_main.h"
-#include "lb.h"
+#include "lb/salloc.h"
 #include "test_case.h"
 
 typedef union

@@ -1,4 +1,10 @@
-#include "mp.h"
+#include "mm/pmm.h"
+
+#include "lb/atree.h"
+#include "lb/llist.h"
+#include "ke/rww_lock.h"
+#include "clib.h"
+#include "ke/intr.h"
 
 struct phys_page_desc
 {
@@ -10,7 +16,7 @@ struct phys_page_desc
 
 static struct atree active_tree;
 static struct llist free_list;
-static struct rwwlock lock;
+static struct rww_lock lock;
 
 /*
  * A comparison function between tree_node and your_node
@@ -65,7 +71,7 @@ k_status mm_pmm_init(struct boot_info *info)
 //	{
 //		pmm_node_t *each_node = &info->nodes[i];
 //
-//		ke_assert (each_node->base % KERNEL_PAGE_SIZE != 0);
+//		KE_ASSERT (each_node->base % KERNEL_PAGE_SIZE != 0);
 //
 //		for (uint64 j = 0; j <= each_node->size; j++)
 //		{

@@ -1,6 +1,5 @@
-#include "common.h"
-#include "kernel/ke.h"
-#include "hal_export.h"
+#include "cdef.h"
+#include "hal.h"
 
 /**
  * Bogus implementation of HAL
@@ -42,7 +41,7 @@ hal_issue_intr(uint32 core, uint32 vector)
 }
 
 void KABI
-hal_reg_intr(uint32 index, intr_handler_fp handler)
+hal_reg_intr(uint32 index, k_intr_dispatcher handler)
 {
 }
 
@@ -52,7 +51,7 @@ hal_dereg_intr(uint32 index)
 }
 
 void KABI
-hal_reg_exc(uint32 exc, exc_handler_fp handler)
+hal_reg_exc(uint32 exc, k_exc_dispatcher handler)
 {
 }
 
@@ -65,4 +64,10 @@ uint32 KABI
 hal_get_core_id(void)
 {
     return 0;
+}
+
+void KABI
+hal_halt(void)
+{
+
 }

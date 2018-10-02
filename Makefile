@@ -10,6 +10,8 @@ OUT := out
 C_IGNORED_WARNINGS = -Wno-cast-align \
 					 -Wno-padded
 
+# generic freestanding cflags used for target
+# each submodule can append to this flag
 C_FLAGS =   -xc\
             -g \
             -c \
@@ -31,32 +33,28 @@ C_FLAGS =   -xc\
 			-mno-sse3 \
 			-mno-3dnow \
 			-target x86_64-pc-none-elf \
-			-I$(INC_COMMON)
+			-I$(INC_COMMON) \
+			$(C_FLAGS_$(MOD))
 
+# generic asm flags used for target
+# each submodule can append to this flag
 AS_FLAGS =  -w+all \
 			-w+error \
 			-f elf64 \
 			-F dwarf \
 			-g \
 			-I$(INC_COMMON) \
-			$(INC_$(d))
+			$(AS_FLAGS_$(MOD))
 
-LD_FLAGS =  -fuse-ld=lld \
-			-nostdlib \
-			-Wl,-T,$(LD_SCRIPT) \
-			-Wl,--fatal-warnings
-
-DUMP_FLAGS = -x86-asm-syntax=intel \
-			 -disassemble \
-			 -r \
-			 -t \
-			 -triple=x86_64-elf
-
+# generic pre-processing flags used for target
 PREP_FLAGS = -E \
 			 -xc\
 			 -P \
-			 $(C_FLAGS)
+			 -I$(INC_COMMON) \
+             $(C_FLAGS_$(MOD))
 
+# generic generate dependency flags used for target
+# each submodule can append to this flag
 GDEP_FLAGS = $(PREP_FLAGS) \
 			 -MMD \
 			 -MT $@
@@ -64,8 +62,6 @@ GDEP_FLAGS = $(PREP_FLAGS) \
 MKDIR = mkdir -p $(dir $@)
 COMP = $(CC) $(C_FLAGS) -o $@ $<
 COMPAS = $(AS) $(AS_FLAGS) -o $@ $<
-LINK = $(LD) $(LD_FLAGS) -o $@ $^
-DUMP = $(DAS) $(DUMP_FLAGS) $< > $@
 PREP = $(CC) $(PREP_FLAGS) $< > $@
 GDEP = $(CC) $(GDEP_FLAGS) -MF $(addsuffix .d, $@) $< > /dev/null
 

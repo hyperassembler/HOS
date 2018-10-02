@@ -3,15 +3,19 @@ project(secX)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c11")
 
-file(GLOB_RECURSE hal_src ./hal/*.h ./hal/*.c ./common/*.h ./common/*.c)
-file(GLOB_RECURSE kernel_src ./kernel/*.h ./kernel/*.c ./common/*.h ./common/*.c)
-file(GLOB_RECURSE test_src ./test/*.h ./test/*.c ./common/*.h ./common/*.c)
+file(GLOB_RECURSE hal_src  ./inc/*.h ./hal/*.c ./hal/*.h ./common/*.c)
+file(GLOB_RECURSE kernel_src ./inc/*.h ./kernel/*.c ./kernel/*.h ./common/*.c)
+file(GLOB_RECURSE test_src  ./inc/*.h ./test/*.c ./test/*.h ./common/*.c)
 include_directories(inc)
 
-#KERNEL + HAL
+# HAL
+#include_directories(hal/inc)
+#add_executable(hal ${hal_src})
+
+
+# KERNEL
 include_directories(kernel/inc)
-include_directories(hal/inc)
-add_executable(kernel ${kernel_src} ${hal_src})
+add_executable(kernel ${kernel_src})
 
 # KERNEL + TESTS
 #include_directories(test/inc)

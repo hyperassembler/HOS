@@ -1,4 +1,5 @@
-#include "lp.h"
+#include "lb/salloc.h"
+#include "clib.h"
 
 struct salloc_header
 {
