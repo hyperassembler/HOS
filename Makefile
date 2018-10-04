@@ -1,7 +1,28 @@
+
 AS := nasm
 CC := clang
-LD := clang
+LD := lld
 DAS := llvm-objdump
+
+ifneq '$(AS_ENV)' ''
+AS := $(AS_ENV)
+endif
+$(info Using AS=$(AS))
+
+ifneq '$(CC_ENV)' ''
+CC := $(CC_ENV)
+endif
+$(info Using CC=$(CC))
+
+ifneq '$(LD_ENV)' ''
+LD := $(LD_ENV)
+endif
+$(info Using LD=$(LD))
+
+ifneq '$(DAS_ENV)' ''
+DAS := $(DAS_ENV)
+endif
+$(info Using DAS=$(DAS))
 
 INC_COMMON := inc
 MK := mk
