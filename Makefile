@@ -28,32 +28,30 @@ INC_COMMON := inc
 MK := mk
 OUT := out
 
-C_IGNORED_WARNINGS = -Wno-cast-align \
-					 -Wno-padded
+C_FLAGS_ARCH_X86_64 := -mcmodel=kernel \
+                  -target x86_64-pc-none-elf \
+                  -mno-red-zone \
+                  -mno-mmx \
+                  -mno-sse \
+                  -mno-sse2 \
+                  -mno-sse3 \
+                  -mno-3dnow
 
 # generic freestanding cflags used for target
 # each submodule can append to this flag
-C_FLAGS =   -xc\
-            -g \
+C_FLAGS =   -x c \
+			-g \
             -c \
             -O2 \
-			-std=c11 \
-			-Weverything \
+			-std=c17 \
+			-Wall \
+			-Wextra \
+			-Wpedantic \
 			-Werror \
-			$(C_IGNORED_WARNINGS) \
 			-ffreestanding \
-			-fno-builtin \
-			-nostdlib \
 			-fno-pic \
-			-mcmodel=kernel \
 			-fno-stack-protector \
-			-mno-red-zone \
-			-mno-mmx \
-			-mno-sse \
-			-mno-sse2 \
-			-mno-sse3 \
-			-mno-3dnow \
-			-target x86_64-pc-none-elf \
+			$(C_FLAGS_ARCH_X86_64) \
 			-I$(INC_COMMON) \
 			$(C_FLAGS_$(MOD))
 

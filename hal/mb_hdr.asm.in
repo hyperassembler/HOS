@@ -5,43 +5,44 @@
 extern hmain
 global hal_main_32
 
+ASM_MULTIBOOT_CHECK_SUM equ (0xFFFFFFFF - (MULTIBOOT2_HEADER_MAGIC + ASM_MULTIBOOT_HEADER_SIZE + MULTIBOOT_ARCHITECTURE_I386) + 1)
+
 section .multiboot_header
 bits 32
 align KERNEL_PAGE_SIZE
-MULTIBOOT_ARCH equ 0
-MULTIBOOT_CHECK_SUM equ (0xFFFFFFFF - (MULTIBOOT2_HEADER_MAGIC + MULTIBOOT_HEADER_SIZE + MULTIBOOT_ARCH) + 1)
-MULTIBOOT_REQ_LOADERNAME equ 2
-MULTIBOOT_REQ_MMAP equ 6
-MULTIBOOT_REQ_ACPI_RSDP equ 15
 ;====================
-;header tag
 align MULTIBOOT_HEADER_ALIGN
-multiboot_header_tag:
+start_hdr:
     dd MULTIBOOT2_HEADER_MAGIC
-    dd MULTIBOOT_ARCH
-    dd MULTIBOOT_HEADER_SIZE
-    dd MULTIBOOT_CHECK_SUM
-;====================
-;INFO_REQUEST_TAG
-align MULTIBOOT_INFO_ALIGN
-multiboot_info_tag:
-    dw 0x1 ; type=1
-    dw 0x0 ; flag=0
-    dd MULTIBOOT_INFO_TAG_SIZE
-    dd MULTIBOOT_REQ_LOADERNAME
-    dd MULTIBOOT_REQ_MMAP
-MULTIBOOT_INFO_TAG_SIZE equ ($ - multiboot_info_tag)
-;====================
-;MODULE ALIGNMENT TAG
-align MULTIBOOT_INFO_ALIGN
-    dw 0x6; type=6
-    dw 0x0; flag=0
-    dd 0x8
+    dd MULTIBOOT_ARCHITECTURE_I386
+    dd ASM_MULTIBOOT_HEADER_SIZE
+    dd ASM_MULTIBOOT_CHECK_SUM
 ;====================
 align MULTIBOOT_INFO_ALIGN
-	;End_tag
-    dw 0x0
-    dw 0x0
-    dd 0x8
+    dw MULTIBOOT_HEADER_TAG_INFORMATION_REQUEST
+    dw 0 ; flag
+    dd (8+4*4) ; size
+    dd MULTIBOOT_TAG_TYPE_BOOT_LOADER_NAME
+    dd MULTIBOOT_TAG_TYPE_MMAP
+    dd MULTIBOOT_TAG_TYPE_ACPI_NEW
+    dd MULTIBOOT_TAG_TYPE_BOOTDEV
 ;====================
-MULTIBOOT_HEADER_SIZE equ ($ - multiboot_header_tag)
+align MULTIBOOT_INFO_ALIGN
+    dw MULTIBOOT_HEADER_TAG_FRAMEBUFFER; type=5
+    dw 0 ; flag
+    dw 20 ; size
+    dd 0 ; width
+    dd 0 ; depth
+    dd 0 ; height
+;====================
+align MULTIBOOT_INFO_ALIGN
+    dw MULTIBOOT_HEADER_TAG_MODULE_ALIGN; type=6
+    dw 0 ; flag
+    dd 8 ; size
+;====================
+align MULTIBOOT_INFO_ALIGN
+    dw MULTIBOOT_HEADER_TAG_END
+    dw 0 ; flag
+    dd 8 ; size
+;====================
+ASM_MULTIBOOT_HEADER_SIZE equ ($ - start_hdr)

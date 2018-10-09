@@ -2,10 +2,12 @@
 #include "mlayout.h"
 #include "multiboot2.h"
 
-%define GET_PADDR(x) ((x) - KERNEL_IMAGE_VADDR + KERNEL_IMAGE_PADDR)
-%define BOCHS_BREAK xchg bx,bx
+%define GET_PADDR(x) ((x) - KERNEL_IMAGE_VADDR)
+%define GET_PML4(vaddr) (((vaddr) >> 39 ) & 0x1FF)
+%define GET_PDPT(vaddr) (((vaddr) >> 30 ) & 0x1FF)
 
 global sys_entry
+global sys_entry_64
 extern hmain
 
 section .text
@@ -13,48 +15,46 @@ bits 32
 sys_entry:
     cli
     cld
-    cmp eax,MULTIBOOT2_BOOTLOADER_MAGIC
-    je .loaded_by_grub
-    hlt
+    cmp eax, MULTIBOOT2_BOOTLOADER_MAGIC
+    jne .end
 
-.loaded_by_grub:
-    ; save multiboot_info*
-    mov esi,ebx
-    call halp_check_long_mode
-    cmp eax,1
-    je .init_long_mode
-    hlt
+    ; save multiboot info
+    mov dword [GET_PADDR(multiboot_info_ptr)], ebx
 
-.init_long_mode:
+    ; setup stack
+    call check_long_mode ; check support for long mode 
+    cmp eax, 1
+    jne .end
+
     ; disable paging first
     mov eax, cr0          ; Set the A-register to control register 0.
-    and eax, 0x7FFFFFFF   ; Clear the PG-bit, which is bit 31.
+    and eax, ~(1 << 31) & 0xFFFFFFFF   ; Clear the PG-bit, which is bit 31, and hack to get rid of warning
     mov cr0, eax          ; Set control register 0 to the A-register.
 
+    ; point the first PML4 entry to the identity pdpt
+    mov eax, GET_PADDR(init_pml4)
+    mov dword [eax], GET_PADDR(init_pdpt_iden) + 11b ; write the lower bits, higher = 0
+    ; point the nth PML4 entry to the kernel pdpt
+    add eax, GET_PML4(KERNEL_IMAGE_VADDR) * 8
+    mov dword [eax], GET_PADDR(init_pdpt_kern) + 11b
+
+
     ; identity map the first 4GB
-    ; ATTRIBUTE = READ/WRITE + SU
-    mov eax, GET_PADDR(_pml4)
-    mov dword [eax], GET_PADDR(_pdpt) + 11b
+    mov eax, GET_PADDR(init_pdpt_iden)
+    mov ebx, 10000011b ; R/W + SU + 1G page
+    mov ecx, 4 ; loop 4 times
+.l0:
+    mov dword [eax], ebx
+    add ebx, 1*1024*1024*1024 ; 1G
+    add eax, 8
+    loop .l0
 
-    ; write values for pdpt
-    mov ecx, 10000011b
-
-    mov eax, GET_PADDR(_pdpt)
-    mov dword [eax], ecx
-
-    add eax,8
-    add ecx,0x40000000 ;1G
-    mov dword [eax], ecx
-
-    add eax,8
-    add ecx,0x40000000 ;1G
-    mov dword [eax], ecx
-
-    add eax,8
-    add ecx,0x40000000 ;1G
-    mov dword [eax], ecx
-
-	BOCHS_BREAK
+    ; map the first 1 GB, which contains the kernel, to KERNEL_BASE_VADDR
+    mov eax, GET_PADDR(init_pdpt_kern)
+    ; extract the PML4 entry
+    add eax, GET_PDPT(KERNEL_IMAGE_VADDR) * 8
+    mov ebx, 10000011b ; R/W + SU + 1G page
+    mov dword [eax], ebx
 
     ; enable PAE
     mov eax, cr4                 ; Set the A-register to control register 4.
@@ -68,7 +68,7 @@ sys_entry:
     wrmsr                        ; Write to the model-specific register.
 
     ; let cr3 point at page table
-    mov eax, GET_PADDR(_pml4)
+    mov eax, GET_PADDR(init_pml4)
     mov cr3, eax
 
     ; enable paging, enter compatibility mode
@@ -76,12 +76,18 @@ sys_entry:
     or eax, 1 << 31                                ; Set the PG-bit, which is bit 31.
     mov cr0, eax                                   ; Set control register 0 to the A-register.
 
-    ; enter long mode
-    lgdt [GET_PADDR(_gdt.ptr)]
-    jmp _gdt.code:GET_PADDR(hmain_stub)
+    ; now we are in compat mode
+
+    ; load the long mode GDT
+    lgdt [GET_PADDR(init_gdt.ptr)]
+
+	; switch to long mode
+    jmp init_gdt.code:GET_PADDR(sys_entry_64)
+.end:
     hlt
 
-halp_check_long_mode:
+
+check_long_mode:
     push ebp
     mov ebp,esp
     pushfd
@@ -113,51 +119,70 @@ halp_check_long_mode:
     pop ebp
     ret
 
+section .data
+bits 32
+multiboot_info_ptr: 
+    dd 0
+
 section .text
 bits 64
-hmain_stub:
-    ; note that we are still at the identity mapping
-    mov ax,_gdt.data
+sys_entry_64:
+	; note that we are in long mode but rip is still lower
+	; switch to high address
+	mov rax, .high
+	jmp rax
+.high:
+    ; set proper segment registers
+    mov ax,init_gdt.data
     mov ds,ax
     mov es,ax
     mov fs,ax
     mov gs,ax
     mov ss,ax
 
-    mov rsp, GET_PADDR(_stack)
-    mov rdi, rsi ; multiboot_info*
+    mov rsp, init_stack
+    xor edi, edi
+    mov edi, dword [multiboot_info_ptr]
+    mov rdi, rsi
     call hmain
 .end:
     hlt
+
 
 section .data
 bits 64
 align KERNEL_PAGE_SIZE
     times KERNEL_PAGE_SIZE db 0
-_stack:
+init_stack:
 
-_pml4:
+init_pml4:
 align KERNEL_PAGE_SIZE
     times KERNEL_PAGE_SIZE db 0
-_pdpt:
+
+init_pdpt_iden:
 align KERNEL_PAGE_SIZE
     times KERNEL_PAGE_SIZE db 0
-_gdt:                      ; Global Descriptor Table (long mode).
-.null: equ $ - _gdt         ; The null descriptor.
+
+init_pdpt_kern:
+align KERNEL_PAGE_SIZE
+    times KERNEL_PAGE_SIZE db 0
+
+init_gdt:                        ; Global Descriptor Table (long mode).
+.null: equ $ - init_gdt         ; The null descriptor.
     dw 0                         ; Limit (low).
     dw 0                         ; Base (low).
     db 0                         ; Base (middle)
     db 0                         ; Access.
     db 0                         ; Granularity.
     db 0                         ; Base (high).
-.code: equ $ - _gdt         ; The code descriptor.
+.code: equ $ - init_gdt         ; The code descriptor.
     dw 0                         ; Limit (low).
     dw 0                         ; Base (low).
     db 0                         ; Base (middle)
     db 10011010b                 ; Access (exec/read).
     db 00100000b                 ; Granularity.
     db 0                         ; Base (high).
-.data: equ $ - _gdt         ; The data descriptor.
+.data: equ $ - init_gdt         ; The data descriptor.
     dw 0                         ; Limit (low).
     dw 0                         ; Base (low).
     db 0                         ; Base (middle)
@@ -166,5 +191,5 @@ _gdt:                      ; Global Descriptor Table (long mode).
     db 0                         ; Base (high).
 .ptr:
     ; GDT PTR
-    dw $ - _gdt - 1             ; Limit.
-    dq GET_PADDR(_gdt)          ; Base.
+    dw $ - init_gdt - 1             ; Limit.
+    dq GET_PADDR(init_gdt)          ; Base.

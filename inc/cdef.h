@@ -18,7 +18,11 @@ typedef _Bool bool;
 #define TRUE (1)
 #define FALSE (0)
 
-#define STRUCT_PACKED __attribute__((packed))
+#define PRAGMA_PACKED __attribute__((packed))
+
+#define PRAGMA_SECTION(x) __attribute__ ((section (x)))
+
+#define PRAGMA_ALIGN(x) __attribute__ ((aligned(x)))
 
 #define UNREFERENCED(x) {(x) = (x);}
 

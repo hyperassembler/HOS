@@ -25,7 +25,8 @@ DUMP_FLAGS = -x86-asm-syntax=intel \
 			 -disassemble \
 			 -r \
 			 -t \
-			 -triple=x86_64-pc-none-elf
+			 -triple=x86_64-pc-none-elf \
+			 -print-imm-hex
 
 LD_FLAGS =  -fuse-ld=$(LD) \
 			-nostdlib \
@@ -52,12 +53,9 @@ clean:
 	rm -rf $(OUT)
 
 .PHONY: compile
-compile: $(TGT)
-
-.PHONY: dump
-dump: $(DMP)
+compile: $(TGT) $(DMP)
 
 .PHONY: all
-all: compile dump iso
+all: compile iso
 
 include $(MK)/epilogue.mk

@@ -144,13 +144,13 @@ hal_clear_screen(void)
 static void
 halp_vprintf(char const *format, va_list args)
 {
-    char buf[2] = {0, 0};
-    int64
-            d;
-    uint64
-            u;
+    char buf[2];
+    int64 d;
+    uint64 u;
     char *s;
     char c;
+
+    buf[1] = '\0';
     for (; *format != '\0'; format++)
     {
         if (*format != '%')
@@ -210,8 +210,7 @@ hal_printf(char const *format, ...)
 }
 
 void
-hal_assert(uint32 expression, char *message
-)
+hal_assert(uint32 expression, char *message)
 {
     if (!expression)
     {

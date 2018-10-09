@@ -1,3 +1,4 @@
+file out/secxkrnl.elf
+set arch i386:x86-64:intel
 target remote localhost:1234
-symbol-file out/secxkrnl.elf
-break *0x1001000
+break sys_entry_64.high

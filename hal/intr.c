@@ -110,7 +110,7 @@ hal_exception_dispatcher(uint64 exc_vec, struct interrupt_context *context, uint
 }
 
 static void
-halp_populate_idt(void)
+populate_idt(void)
 {
     hal_set_interrupt_handler(0, hal_interrupt_handler_0);
     hal_set_interrupt_handler(1, hal_interrupt_handler_1);
@@ -380,15 +380,22 @@ impl_hal_get_core_id(void)
 int32
 hal_interrupt_init(void)
 {
-    uint32 coreid = hal_get_core_id();
-    uint32 eax = 0, ebx = 0, ecx = 0, edx = 0;
+    uint32 coreid;
+    uint32 eax;
+    uint32 ebx;
+    uint32 ecx;
+    uint32 edx;
+
+    // detect APIC first
     eax = 1;
     hal_cpuid(&eax, &ebx, &ecx, &edx);
-    if (!(edx & bit_mask(9)))
+    if (!(edx & (1 << 9)))
     {
-        hal_printf("ERROR: APIC not supported by CPU.\n");
+        hal_printf("ERROR: APIC is not present.\n");
         return 1;
     }
+
+    coreid = hal_get_core_id();
 
     // get idt ptr ready
     cpu_idt_ptrs[coreid].base = (uint64) &cpu_idts[coreid];
@@ -399,7 +406,7 @@ hal_interrupt_init(void)
     k_intr_disps[coreid] = NULL;
 
     // hook asm interrupt handlers
-    halp_populate_idt();
+    populate_idt();
 
     hal_flush_idt(&cpu_idt_ptrs[coreid]);
 

@@ -4,13 +4,13 @@
 
 #define HAL_CORE_COUNT 1
 
-struct STRUCT_PACKED hal_gdt_ptr
+struct PRAGMA_PACKED hal_gdt_ptr
 {
     uint16 limit;
     uint64 base;
 };
 
-struct STRUCT_PACKED hal_idt_ptr
+struct PRAGMA_PACKED hal_idt_ptr
 {
     uint16 limit;
     uint64 base;

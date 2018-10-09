@@ -21,9 +21,6 @@
 //}
 
 void HABI
-hmain(void *m_info);
-
-void HABI
 hmain(void *m_info)
 {
     if (m_info == NULL || (uint64) m_info & bit_field_mask(0, 2))
