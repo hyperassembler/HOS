@@ -148,8 +148,7 @@ hal_write_segment_descriptor(void *const gdt, uint32 const base, uint32 const li
     ((uint8 *) gdt)[7] = (uint8) ((seg_desc >> 56) & 0xFF);
 }
 
-static
-void _hal_init_gdt(void)
+void hal_init_gdt(void)
 {
     uint32 coreid = hal_get_core_id();
     // get gdt ready
@@ -181,20 +180,19 @@ void _hal_init_gdt(void)
 }
 
 void
-hal_mem_init()
+hal_mem_init(struct multiboot_tag_mmap *info)
 {
-    _hal_init_gdt();
-    hal_heap_used = 0;
+    UNREFERENCED(info);
 }
 
 void *
 halloc(uint32 size)
 {
-    void* ret;
+    void *ret;
     ret = NULL;
-    if(hal_heap_used + size < HAL_HEAP_SIZE)
+    if (hal_heap_used + size < HAL_HEAP_SIZE)
     {
-        ret = (void*)((uintptr)hal_heap + hal_heap_used);
+        ret = (void *) ((uintptr) hal_heap + hal_heap_used);
         hal_heap_used += size;
     }
     return ret;
@@ -206,5 +204,5 @@ hfree(void *ptr)
     /**
      * Do nothing for now since salloc not available in HAL
      */
-     UNREFERENCED(ptr);
+    UNREFERENCED(ptr);
 }

@@ -24,6 +24,8 @@ typedef _Bool bool;
 
 #define PRAGMA_ALIGN(x) __attribute__ ((aligned(x)))
 
+#define ALIGN(type, num, align) (((type)(num) + ((type)align - 1)) & ~((type)align - 1))
+
 #define UNREFERENCED(x) {(x) = (x);}
 
 #define KABI __attribute__((sysv_abi))

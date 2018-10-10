@@ -2,6 +2,7 @@
 
 #include "cdef.h"
 #include "mem.h"
+#include "multiboot2.h"
 
 /**
  Global Descriptors Table Definitions
@@ -106,5 +107,5 @@ void
 hfree(void *ptr);
 
 void
-hal_mem_init(void);
+hal_mem_init(struct multiboot_tag_mmap *info);
 

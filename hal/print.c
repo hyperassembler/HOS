@@ -10,9 +10,9 @@
 static uint64 text_pos;
 
 void
-hal_print_init(void)
+hal_print_init(struct multiboot_tag_framebuffer* info)
 {
-    text_pos = 0;
+    UNREFERENCED(info);
 }
 
 static void

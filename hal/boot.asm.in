@@ -141,9 +141,8 @@ sys_entry_64:
     mov ss,ax
 
     mov rsp, init_stack
-    xor edi, edi
+    xor rdi, rdi
     mov edi, dword [multiboot_info_ptr]
-    mov rdi, rsi
     call hmain
 .end:
     hlt

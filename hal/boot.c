@@ -4,6 +4,7 @@
 #include "cpu.h"
 #include "kernel.h"
 #include "hal.h"
+#include "multiboot2.h"
 
 //static void
 //halp_obtain_cpu_info(struct boot_info *hal_info)
@@ -21,17 +22,46 @@
 //}
 
 void HABI
-hmain(void *m_info)
+hmain(struct multiboot_tag *mb_info)
 {
-    if (m_info == NULL || (uint64) m_info & bit_field_mask(0, 2))
+    if (mb_info == NULL)
     {
-        hal_halt_cpu();
+        goto err;
     }
 
-    // init HAL infrastructures
-    hal_print_init();
-    hal_mem_init();
+    char *cur_ptr = (char *) mb_info + 8;
+    char *bootloader_name = NULL;
 
+    while (1)
+    {
+        struct multiboot_tag *cur_tag = (struct multiboot_tag *) cur_ptr;
+        switch (cur_tag->type)
+        {
+            case MULTIBOOT_TAG_TYPE_MMAP:
+                hal_mem_init((struct multiboot_tag_mmap*) cur_ptr);
+                break;
+            case MULTIBOOT_TAG_TYPE_FRAMEBUFFER:
+                hal_print_init((struct multiboot_tag_framebuffer *) cur_ptr);
+                break;
+            case MULTIBOOT_TAG_TYPE_BOOT_LOADER_NAME:
+                bootloader_name = ((struct multiboot_tag_string*)cur_ptr)->string;
+                break;
+            case MULTIBOOT_TAG_TYPE_ACPI_NEW:
+            default:
+                break;
+        }
+
+        if (cur_tag->type == MULTIBOOT_TAG_TYPE_END)
+        {
+            break;
+        }
+
+        cur_ptr += cur_tag->size;
+        cur_ptr = (char *) ALIGN(uintptr, cur_ptr, 8);
+    }
+    hal_halt_cpu();
+
+    hal_printf("Boot loader:%d\n", bootloader_name);
 
     struct boot_info *boot_info = halloc(sizeof(struct boot_info));
 
@@ -45,4 +75,6 @@ hmain(void *m_info)
     }
 
     kmain(boot_info);
+err:
+    hal_halt_cpu();
 }
