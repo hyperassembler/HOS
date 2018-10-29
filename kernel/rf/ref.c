@@ -7,7 +7,7 @@
 
 #define K_IDENT_BASE (0x80000000ul)
 
-static struct atree ident_tree;
+static struct a_tree ident_tree;
 static struct spin_lock ident_tree_lock;
 static uint32 ident_base;
 

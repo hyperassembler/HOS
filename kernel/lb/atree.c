@@ -336,21 +336,21 @@ atree_node_delete(struct atree_node *node, struct atree_node *entry, atree_cmp_f
 
 
 struct atree_node *
-lb_atree_min(struct atree *tree)
+lb_atree_min(struct a_tree *tree)
 {
     return atree_node_min(tree->root);
 }
 
 
 struct atree_node *
-lb_atree_max(struct atree *tree)
+lb_atree_max(struct a_tree *tree)
 {
     return atree_node_max(tree->root);
 }
 
 
 struct atree_node *
-lb_atree_next(struct atree *tree, struct atree_node *entry)
+lb_atree_next(struct a_tree *tree, struct atree_node *entry)
 {
     struct atree_node *succ;
     struct atree_node *node;
@@ -390,7 +390,7 @@ lb_atree_next(struct atree *tree, struct atree_node *entry)
 
 
 struct atree_node *
-lb_atree_prev(struct atree *tree, struct atree_node *entry)
+lb_atree_prev(struct a_tree *tree, struct atree_node *entry)
 {
     struct atree_node *prev;
     struct atree_node *node;
@@ -430,14 +430,14 @@ lb_atree_prev(struct atree *tree, struct atree_node *entry)
 
 
 struct atree_node *
-lb_atree_search(struct atree *tree, struct atree_node *entry)
+lb_atree_search(struct a_tree *tree, struct atree_node *entry)
 {
     return atree_node_search(tree->root, entry, tree->cmpf, NULL);
 }
 
 
 struct atree_node *
-lb_atree_insert(struct atree *tree, struct atree_node *entry)
+lb_atree_insert(struct a_tree *tree, struct atree_node *entry)
 {
     struct atree_node *old;
 
@@ -448,7 +448,7 @@ lb_atree_insert(struct atree *tree, struct atree_node *entry)
 
 
 struct atree_node *
-lb_atree_delete(struct atree *tree, struct atree_node *entry)
+lb_atree_delete(struct a_tree *tree, struct atree_node *entry)
 {
     struct atree_node *node;
 
@@ -459,7 +459,7 @@ lb_atree_delete(struct atree *tree, struct atree_node *entry)
 
 
 uint32
-lb_atree_size(struct atree *tree)
+lb_atree_size(struct a_tree *tree)
 {
     uint32 size;
     struct atree_node *node;
@@ -479,7 +479,7 @@ lb_atree_size(struct atree *tree)
 
 
 void
-lb_atree_init(struct atree *tree, atree_cmp_fp compare)
+lb_atree_init(struct a_tree *tree, atree_cmp_fp compare)
 {
     tree->cmpf = compare;
     tree->root = NULL;
@@ -538,7 +538,7 @@ atree_node_test(struct atree_node *tree, atree_cmp_fp compare)
 
 
 bool
-lb_atree_validate(struct atree *tree)
+lb_atree_validate(struct a_tree *tree)
 {
     if (tree == NULL)
     {

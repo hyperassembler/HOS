@@ -19,7 +19,7 @@ struct atree_node
 */
 typedef int32 (*atree_cmp_fp)(struct atree_node *tree_node, struct atree_node *self);
 
-struct atree
+struct a_tree
 {
     atree_cmp_fp cmpf;
     struct atree_node *root;
@@ -27,39 +27,39 @@ struct atree
 
 
 struct atree_node *
-lb_atree_search(struct atree *tree, struct atree_node *entry);
+lb_atree_search(struct a_tree *tree, struct atree_node *entry);
 
 
 struct atree_node *
-lb_atree_insert(struct atree *tree, struct atree_node *entry);
+lb_atree_insert(struct a_tree *tree, struct atree_node *entry);
 
 
 struct atree_node *
-lb_atree_delete(struct atree *tree, struct atree_node *entry);
+lb_atree_delete(struct a_tree *tree, struct atree_node *entry);
 
 
 void
-lb_atree_init(struct atree *tree, atree_cmp_fp compare);
+lb_atree_init(struct a_tree *tree, atree_cmp_fp compare);
 
 
 struct atree_node *
-lb_atree_max(struct atree *tree);
+lb_atree_max(struct a_tree *tree);
 
 
 struct atree_node *
-lb_atree_min(struct atree *tree);
+lb_atree_min(struct a_tree *tree);
 
 
 struct atree_node *
-lb_atree_next(struct atree *tree, struct atree_node *entry);
+lb_atree_next(struct a_tree *tree, struct atree_node *entry);
 
 
 struct atree_node *
-lb_atree_prev(struct atree *tree, struct atree_node *entry);
+lb_atree_prev(struct a_tree *tree, struct atree_node *entry);
 
 bool
-lb_atree_validate(struct atree *tree);
+lb_atree_validate(struct a_tree *tree);
 
 uint32
-lb_atree_size(struct atree *tree);
+lb_atree_size(struct a_tree *tree);
 

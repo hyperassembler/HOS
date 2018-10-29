@@ -1,21 +1,21 @@
 #include "mm/pmm.h"
 
 #include "lb/atree.h"
-#include "lb/llist.h"
+#include "lb/dlist.h"
 #include "ke/rww_lock.h"
 #include "clib.h"
 #include "ke/intr.h"
 
 struct phys_page_desc
 {
-    struct llist_node free_list_node;
+    struct dlist_node free_list_node;
     struct atree_node tree_node;
     uintptr base;
     int32 attr;
 };
 
-static struct atree active_tree;
-static struct llist free_list;
+static struct a_tree active_tree;
+static struct dlist free_list;
 static struct rww_lock lock;
 
 /*
@@ -109,7 +109,7 @@ k_status mm_alloc_page(uintptr *out)
     irql = ke_raise_irql(IRQL_HIGH);
     ke_rww_w_lock(&lock);
 
-    struct llist_node *node = NULL;
+    struct dlist_node *node = NULL;
     struct phys_page_desc *page_info = NULL;
     node = lb_llist_pop_front(&free_list);
     if (node != NULL)
