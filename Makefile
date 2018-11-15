@@ -2,7 +2,7 @@
 AS := nasm
 CC := clang
 LD := lld
-DAS := objdump
+DAS := llvm-objdump-6.0
 
 ifneq '$(AS_ENV)' ''
 AS := $(AS_ENV)
