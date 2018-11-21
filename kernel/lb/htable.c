@@ -1,10 +1,10 @@
 #include "clib.h"
 #include "cdef.h"
 #include "lb/htable.h"
-#include "lb/dlist.h"
+#include "lb/llist.h"
 
 void
-htable_init(struct htable *table, htable_cmp_fp cmp_fp, htable_hash_fp hash_fp, struct dlist *buf, uint32 bkts)
+htable_init(struct htable *table, htable_cmp_fp cmp_fp, htable_hash_fp hash_fp, struct llist *buf, uint32 bkts)
 {
     table->hash_fp = hash_fp;
     table->cmp_fp = cmp_fp;
@@ -20,7 +20,7 @@ struct htable_node *
 htable_insert(struct htable *table, struct htable_node *entry)
 {
     uint32 hash = table->hash_fp(entry) % table->bkts;
-    struct dlist *hlist = &table->buf[hash];
+    struct llist *hlist = &table->buf[hash];
 
     struct htable_node *ret = NULL;
     struct dlist_node *lnode = lb_llist_first(hlist);

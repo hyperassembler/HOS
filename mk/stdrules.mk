@@ -16,7 +16,6 @@ $(OUT)/$(d)/%.o: MOD:=$(MOD)
 $(OBJ_$(d)): $(OUT)/$(d)/%.o: $(d)/%.c
 	$(MKDIR)
 	$(COMP)
-	$(GDEP)
 
 $(OUT)/$(d)/%.a: MOD:=$(MOD)
 
@@ -27,7 +26,6 @@ $(OBJAS_$(d)): $(OUT)/$(d)/%.a: $(d)/%.asm
 $(OBJIN_$(d)): $(OUT)/$(d)/%: $(d)/%.in
 	$(MKDIR)
 	$(PREP)
-	$(GDEP)
 
 # append all OBJECTS to OBJ
 OBJ := $(OBJ) $(OBJ_$(d)) $(OBJAS_$(d))

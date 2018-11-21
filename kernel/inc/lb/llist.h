@@ -8,7 +8,7 @@ struct dlist_node
     struct dlist_node *next;
 };
 
-struct dlist
+struct llist
 {
     struct dlist_node *head;
     struct dlist_node *tail;
@@ -16,17 +16,17 @@ struct dlist
 };
 
 void
-lb_llist_init(struct dlist *list);
+lb_llist_init(struct llist *list);
 
 uint32
-lb_llist_size(struct dlist *list);
+lb_llist_size(struct llist *list);
 
 void
-lb_llist_insert(struct dlist *list, struct dlist_node *cur_node, struct dlist_node *new_node);
+lb_llist_insert(struct llist *list, struct dlist_node *cur_node, struct dlist_node *new_node);
 
 
 struct dlist_node *
-lb_llist_remove(struct dlist *list, struct dlist_node *node);
+lb_llist_remove(struct llist *list, struct dlist_node *node);
 
 
 struct dlist_node *
@@ -38,8 +38,8 @@ lb_llist_prev(struct dlist_node *node);
 
 
 struct dlist_node *
-lb_llist_first(struct dlist *list);
+lb_llist_first(struct llist *list);
 
 
 struct dlist_node *
-lb_llist_last(struct dlist *list);
+lb_llist_last(struct llist *list);

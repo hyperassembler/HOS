@@ -1,7 +1,7 @@
 #include "mm/pmm.h"
 
 #include "lb/atree.h"
-#include "lb/dlist.h"
+#include "lb/llist.h"
 #include "ke/rww_lock.h"
 #include "clib.h"
 #include "ke/intr.h"
@@ -15,7 +15,7 @@ struct phys_page_desc
 };
 
 static struct a_tree active_tree;
-static struct dlist free_list;
+static struct llist free_list;
 static struct rww_lock lock;
 
 /*
@@ -111,7 +111,7 @@ k_status mm_alloc_page(uintptr *out)
 
     struct dlist_node *node = NULL;
     struct phys_page_desc *page_info = NULL;
-    node = lb_llist_pop_front(&free_list);
+    //node = lb_dlist_pop_front(&free_list);
     if (node != NULL)
     {
         page_info = OBTAIN_STRUCT_ADDR(node,
@@ -186,7 +186,7 @@ k_status mm_free_page(uintptr base)
     if (node != NULL)
     {
         page_info = OBTAIN_STRUCT_ADDR(node, struct phys_page_desc, tree_node);
-        lb_llist_push_back(&free_list, &page_info->free_list_node);
+        //lb_llist_push_back(&free_list, &page_info->free_list_node);
     }
     else
     {

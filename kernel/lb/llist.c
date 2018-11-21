@@ -1,4 +1,4 @@
-#include "lb/dlist.h"
+#include "lb/llist.h"
 
 static void
 llist_node_init(struct dlist_node *node)
@@ -9,7 +9,7 @@ llist_node_init(struct dlist_node *node)
 
 
 void
-lb_llist_init(struct dlist *list)
+lb_llist_init(struct llist *list)
 {
     list->head = NULL;
     list->tail = NULL;
@@ -18,13 +18,13 @@ lb_llist_init(struct dlist *list)
 
 
 uint32
-lb_llist_size(struct dlist *list)
+lb_llist_size(struct llist *list)
 {
     return list->size;
 }
 
 void
-lb_llist_insert(struct dlist *list, struct dlist_node *cur_node, struct dlist_node *new_node)
+lb_llist_insert(struct llist *list, struct dlist_node *cur_node, struct dlist_node *new_node)
 {
     struct dlist_node *left_node;
     struct dlist_node *right_node;
@@ -92,7 +92,7 @@ lb_llist_insert(struct dlist *list, struct dlist_node *cur_node, struct dlist_no
  * returns the next node
  */
 struct dlist_node *
-lb_llist_remove(struct dlist *list, struct dlist_node *node)
+lb_llist_remove(struct llist *list, struct dlist_node *node)
 {
     struct dlist_node *ret;
 
@@ -142,14 +142,14 @@ lb_llist_prev(struct dlist_node *node)
 
 
 struct dlist_node *
-lb_llist_first(struct dlist *list)
+lb_llist_first(struct llist *list)
 {
     return list->head;
 }
 
 
 struct dlist_node *
-lb_llist_last(struct dlist *list)
+lb_llist_last(struct llist *list)
 {
     return list->tail;
 }

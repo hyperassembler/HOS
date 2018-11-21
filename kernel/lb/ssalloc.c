@@ -1,6 +1,6 @@
 #include "cdef.h"
 #include "mlayout.h"
-#include "lb/dlist.h"
+#include "lb/llist.h"
 
 /**
  * Simplified Slab Allocator
@@ -17,9 +17,9 @@ struct ssalloc_page_desc
 
 struct ssalloc_obj_desc
 {
-    struct dlist free_list;
-    struct dlist full_list;
-    struct dlist empty_list;
+    struct llist free_list;
+    struct llist full_list;
+    struct llist empty_list;
     usize obj_size;
     uint32 align;
 };

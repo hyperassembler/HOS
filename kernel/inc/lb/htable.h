@@ -1,5 +1,5 @@
 #include "cdef.h"
-#include "dlist.h"
+#include "llist.h"
 
 struct htable_node;
 
@@ -15,13 +15,13 @@ struct htable_node
 struct htable
 {
     uint32 bkts;
-    struct dlist *buf;
+    struct llist *buf;
     htable_cmp_fp cmp_fp;
     htable_hash_fp hash_fp;
 };
 
 void
-htable_init(struct htable* table, htable_cmp_fp cmp_fp, htable_hash_fp hash_fp, struct dlist *buf, uint32 bkts);
+htable_init(struct htable* table, htable_cmp_fp cmp_fp, htable_hash_fp hash_fp, struct llist *buf, uint32 bkts);
 
 /**
  * returns the overwritten object
