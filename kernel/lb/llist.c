@@ -1,7 +1,7 @@
 #include "lb/llist.h"
 
 static void
-llist_node_init(struct llist_node *node)
+llist_node_init(struct dlist_node *node)
 {
     node->next = NULL;
     node->prev = NULL;
@@ -23,52 +23,11 @@ lb_llist_size(struct llist *list)
     return list->size;
 }
 
-
 void
-lb_llist_push_front(struct llist *list, struct llist_node *node)
+lb_llist_insert(struct llist *list, struct dlist_node *cur_node, struct dlist_node *new_node)
 {
-    llist_node_init(node);
-    lb_llist_insert_by_ref(list, NULL, node);
-}
-
-
-void
-lb_llist_push_back(struct llist *list, struct llist_node *node)
-{
-    llist_node_init(node);
-    lb_llist_insert_by_ref(list, list->tail, node);
-}
-
-
-struct llist_node *
-lb_llist_pop_front(struct llist *list)
-{
-    struct llist_node *ret;
-
-    ret = list->head;
-    lb_llist_remove_by_ref(list, list->head);
-
-    return ret;
-}
-
-
-struct llist_node *
-lb_llist_pop_back(struct llist *list)
-{
-    struct llist_node *ret;
-
-    ret = list->tail;
-    lb_llist_remove_by_ref(list, list->tail);
-
-    return ret;
-}
-
-
-void
-lb_llist_insert_by_ref(struct llist *list, struct llist_node *cur_node, struct llist_node *new_node)
-{
-    struct llist_node *left_node;
-    struct llist_node *right_node;
+    struct dlist_node *left_node;
+    struct dlist_node *right_node;
 
     if (list == NULL || new_node == NULL)
     {
@@ -129,52 +88,13 @@ lb_llist_insert_by_ref(struct llist *list, struct llist_node *cur_node, struct l
     list->size++;
 }
 
-
-void
-lb_llist_insert_by_idx(struct llist *list, uint32 index, struct llist_node *node)
-{
-    struct llist_node *prev_node;
-
-    prev_node = lb_llist_get(list, index - 1);
-    llist_node_init(node);
-
-    if (prev_node == NULL)
-    {
-        if (index == 0)
-        {
-            lb_llist_insert_by_ref(list, NULL, node);
-        }
-    }
-    else
-    {
-        lb_llist_insert_by_ref(list, prev_node, node);
-    }
-}
-
-
-struct llist_node *
-lb_llist_remove_by_idx(struct llist *list, uint32 index)
-{
-    struct llist_node *cur_node;
-
-    cur_node = lb_llist_get(list, index);
-
-    if (cur_node == NULL)
-    {
-        return NULL;
-    }
-
-    return lb_llist_remove_by_ref(list, cur_node);
-}
-
-
 /**
  * returns the next node
  */
-struct llist_node *
-lb_llist_remove_by_ref(struct llist *list, struct llist_node *node)
+struct dlist_node *
+lb_llist_remove(struct llist *list, struct dlist_node *node)
 {
-    struct llist_node *ret;
+    struct dlist_node *ret;
 
     /*
      * Adjust the left and treenode node
@@ -207,42 +127,28 @@ lb_llist_remove_by_ref(struct llist *list, struct llist_node *node)
 }
 
 
-struct llist_node *
-lb_llist_get(struct llist *list, uint32 index)
-{
-    if (list->head == NULL)
-    {
-        return NULL;
-    }
-    struct llist_node *cur_node = list->head;
-    while (index-- && (cur_node = cur_node->next) != NULL)
-    {}
-    return cur_node;
-}
-
-
-struct llist_node *
-lb_llist_next(struct llist_node *node)
+struct dlist_node *
+lb_llist_next(struct dlist_node *node)
 {
     return node->next;
 }
 
 
-struct llist_node *
-lb_llist_prev(struct llist_node *node)
+struct dlist_node *
+lb_llist_prev(struct dlist_node *node)
 {
     return node->prev;
 }
 
 
-struct llist_node *
+struct dlist_node *
 lb_llist_first(struct llist *list)
 {
     return list->head;
 }
 
 
-struct llist_node *
+struct dlist_node *
 lb_llist_last(struct llist *list)
 {
     return list->tail;

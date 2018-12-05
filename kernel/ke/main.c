@@ -21,7 +21,7 @@ kmain(struct boot_info *boot_info)
     }
 
     // initialize memory manager
-    status = mm_pmm_init(boot_info);
+    //status = mm_pmm_init(boot_info);
     if (!SX_SUCCESS(status))
     {
         goto end;

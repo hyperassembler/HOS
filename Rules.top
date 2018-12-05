@@ -46,7 +46,7 @@ iso: $(TGT) $(GRUB_CFG)
 	mkdir -p $(OUT)/temp/boot/grub
 	cp $(TGT) $(OUT)/temp/secX/
 	cp $(GRUB_CFG) $(OUT)/temp/boot/grub/
-	grub-mkrescue -o $(ISO) $(OUT)/temp
+	grub-mkrescue -d /usr/lib/grub/i386-pc -o $(ISO) $(OUT)/temp
 
 .PHONY: clean
 clean:

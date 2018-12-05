@@ -8,13 +8,13 @@
 
 struct phys_page_desc
 {
-    struct llist_node free_list_node;
+    struct dlist_node free_list_node;
     struct atree_node tree_node;
     uintptr base;
     int32 attr;
 };
 
-static struct atree active_tree;
+static struct a_tree active_tree;
 static struct llist free_list;
 static struct rww_lock lock;
 
@@ -109,9 +109,9 @@ k_status mm_alloc_page(uintptr *out)
     irql = ke_raise_irql(IRQL_HIGH);
     ke_rww_w_lock(&lock);
 
-    struct llist_node *node = NULL;
+    struct dlist_node *node = NULL;
     struct phys_page_desc *page_info = NULL;
-    node = lb_llist_pop_front(&free_list);
+    //node = lb_dlist_pop_front(&free_list);
     if (node != NULL)
     {
         page_info = OBTAIN_STRUCT_ADDR(node,
@@ -186,7 +186,7 @@ k_status mm_free_page(uintptr base)
     if (node != NULL)
     {
         page_info = OBTAIN_STRUCT_ADDR(node, struct phys_page_desc, tree_node);
-        lb_llist_push_back(&free_list, &page_info->free_list_node);
+        //lb_llist_push_back(&free_list, &page_info->free_list_node);
     }
     else
     {

@@ -72,16 +72,9 @@ PREP_FLAGS = -E \
 			 -I$(INC_COMMON) \
              $(C_FLAGS_$(MOD))
 
-# generic generate dependency flags used for target
-# each submodule can append to this flag
-GDEP_FLAGS = $(PREP_FLAGS) \
-			 -MMD \
-			 -MT $@
-
 MKDIR = mkdir -p $(dir $@)
 COMP = $(CC) $(C_FLAGS) -o $@ $<
 COMPAS = $(AS) $(AS_FLAGS) -o $@ $<
 PREP = $(CC) $(PREP_FLAGS) $< > $@
-GDEP = $(CC) $(GDEP_FLAGS) -MF $(addsuffix .d, $@) $< > /dev/null
 
 include Rules.top
