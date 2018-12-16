@@ -1,7 +1,7 @@
 #include "test_main.h"
 #include "test_case.h"
-#include "lb/llist.h"
-#include "clib.h"
+#include "lb/dlist.h"
+#include "kern/clib.h"
 #include <stdio.h>
 
 struct test_list_node
@@ -11,7 +11,7 @@ struct test_list_node
 };
 
 static bool
-validate_list(struct llist *list)
+validate_list(struct dlist *list)
 {
     bool result = TRUE;
     // list_head_test
@@ -37,23 +37,23 @@ validate_list(struct llist *list)
 }
 
 static void
-print_list(struct llist *list)
+print_list(struct dlist *list)
 {
 #ifdef TDBG
-    struct llist_node *node = lb_llist_first(list);
+    struct llist_node *node = lb_dlist_first(list);
 
     while (node != NULL)
     {
         struct test_list_node *enode = OBTAIN_STRUCT_ADDR(node, struct test_list_node, lnode);
         printf("%d->", enode->val);
-        node = lb_llist_next(node);
+        node = lb_dlist_next(node);
     }
     printf("[END]\n");
 #endif
 }
 
 static bool
-check_list_elements(struct llist *list, int val[], int size)
+check_list_elements(struct dlist *list, int val[], int size)
 {
     struct llist_node *node = list->head;
     bool ret = TRUE;
@@ -67,7 +67,7 @@ check_list_elements(struct llist *list, int val[], int size)
             break;
         }
         i++;
-        node = lb_llist_next(node);
+        node = lb_dlist_next(node);
     }
 
     if(ret)
@@ -80,7 +80,7 @@ check_list_elements(struct llist *list, int val[], int size)
 
     if(ret)
     {
-        node = lb_llist_last(list);
+        node = lb_dlist_last(list);
         while (node != NULL && i >= 0)
         {
             struct test_list_node *enode = OBTAIN_STRUCT_ADDR(node, struct test_list_node, lnode);
@@ -90,7 +90,7 @@ check_list_elements(struct llist *list, int val[], int size)
                 break;
             }
             i--;
-            node = lb_llist_prev(node);
+            node = lb_dlist_prev(node);
         }
     }
 
@@ -118,9 +118,9 @@ check_list_elements(struct llist *list, int val[], int size)
 
 
 static bool
-assert_list(struct llist *list, int val[], int size)
+assert_list(struct dlist *list, int val[], int size)
 {
-    struct llist_node *node = lb_llist_first(list);
+    struct llist_node *node = lb_dlist_first(list);
     int i = 0;
 
     if (!validate_list(list))
@@ -132,7 +132,7 @@ assert_list(struct llist *list, int val[], int size)
 }
 
 static void
-insert_val(struct llist *list, int index, int val)
+insert_val(struct dlist *list, int index, int val)
 {
     struct test_list_node *a = (struct test_list_node *) talloc(sizeof(struct test_list_node));
     a->val = val;
@@ -140,7 +140,7 @@ insert_val(struct llist *list, int index, int val)
 }
 
 static void
-push_back_val(struct llist *list, int val)
+push_back_val(struct dlist *list, int val)
 {
     struct test_list_node *a = (struct test_list_node *) talloc(sizeof(struct test_list_node));
     a->val = val;
@@ -148,7 +148,7 @@ push_back_val(struct llist *list, int val)
 }
 
 static void
-push_front_val(struct llist *list, int val)
+push_front_val(struct dlist *list, int val)
 {
     struct test_list_node *a = (struct test_list_node *) talloc(sizeof(struct test_list_node));
     a->val = val;
@@ -159,8 +159,8 @@ push_front_val(struct llist *list, int val)
 static bool
 insert_test_beginning(void)
 {
-    struct llist list;
-    lb_llist_init(&list);
+    struct dlist list;
+    lb_dlist_init(&list);
     insert_val(&list, 0, 0);
     insert_val(&list, 0, 1);
     insert_val(&list, 0, 2);
@@ -174,8 +174,8 @@ insert_test_beginning(void)
 static bool
 insert_test_middle(void)
 {
-    struct llist list;
-    lb_llist_init(&list);
+    struct dlist list;
+    lb_dlist_init(&list);
 
     insert_val(&list, 0, 0);
     insert_val(&list, 0, 1);
@@ -192,8 +192,8 @@ insert_test_middle(void)
 static bool
 insert_test_end(void)
 {
-    struct llist list;
-    lb_llist_init(&list);
+    struct dlist list;
+    lb_dlist_init(&list);
 
     insert_val(&list, 0, 0);
     insert_val(&list, 1, 1);
@@ -207,8 +207,8 @@ insert_test_end(void)
 static bool
 insert_test_invalid(void)
 {
-    struct llist list;
-    lb_llist_init(&list);
+    struct dlist list;
+    lb_dlist_init(&list);
 
     insert_val(&list, 0, 3);
     insert_val(&list, 0, 2);
@@ -243,8 +243,8 @@ insert_test_invalid(void)
 static bool
 remove_test_beginning(void)
 {
-    struct llist list;
-    lb_llist_init(&list);
+    struct dlist list;
+    lb_dlist_init(&list);
     insert_val(&list, 0, 0);
     insert_val(&list, 0, 1);
     insert_val(&list, 0, 2);
@@ -261,8 +261,8 @@ remove_test_beginning(void)
 static bool
 remove_test_middle(void)
 {
-    struct llist list;
-    lb_llist_init(&list);
+    struct dlist list;
+    lb_dlist_init(&list);
 
     insert_val(&list, 0, 0);
     insert_val(&list, 0, 1);
@@ -283,8 +283,8 @@ remove_test_middle(void)
 static bool
 remove_test_end(void)
 {
-    struct llist list;
-    lb_llist_init(&list);
+    struct dlist list;
+    lb_dlist_init(&list);
 
     insert_val(&list, 0, 0);
     insert_val(&list, 1, 1);
@@ -302,8 +302,8 @@ static bool
 remove_test_all(void)
 {
     bool result = TRUE;
-    struct llist list;
-    lb_llist_init(&list);
+    struct dlist list;
+    lb_dlist_init(&list);
 
     insert_val(&list, 0, 0);
     insert_val(&list, 1, 1);
@@ -347,8 +347,8 @@ remove_test_all(void)
 static bool
 remove_test_invalid(void)
 {
-    struct llist list;
-    lb_llist_init(&list);
+    struct dlist list;
+    lb_dlist_init(&list);
 
     insert_val(&list, 0, 3);
     insert_val(&list, 0, 2);
@@ -383,10 +383,10 @@ static bool
 size_test(void)
 {
     bool result = TRUE;
-    struct llist list;
-    lb_llist_init(&list);
-    struct llist list2;
-    lb_llist_init(&list2);
+    struct dlist list;
+    lb_dlist_init(&list);
+    struct dlist list2;
+    lb_dlist_init(&list2);
 
     insert_val(&list, 0, 0);
     insert_val(&list, 1, 1);
@@ -416,8 +416,8 @@ push_pop_front_test(void)
 {
     struct llist_node *node;
     bool result = TRUE;
-    struct llist list;
-    lb_llist_init(&list);
+    struct dlist list;
+    lb_dlist_init(&list);
 
     push_front_val(&list, 1);
     push_front_val(&list, 2);
@@ -445,8 +445,8 @@ static bool
 push_pop_back_test(void)
 {
     bool result = TRUE;
-    struct llist list;
-    lb_llist_init(&list);
+    struct dlist list;
+    lb_dlist_init(&list);
     struct llist_node *node;
 
     push_back_val(&list, 1);

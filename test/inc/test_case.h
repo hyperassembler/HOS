@@ -1,7 +1,7 @@
 #ifndef TEST_TEST_H
 #define TEST_TEST_H
 
-#include "cdef.h"
+#include "kern/cdef.h"
 
 void
 linked_list_test(void);

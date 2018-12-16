@@ -1,5 +1,5 @@
 #define ASM_FILE
-#include "mlayout.h"
+#include "kern/mlayout.h"
 
 ENTRY(sys_entry)
 
