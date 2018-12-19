@@ -1,5 +1,5 @@
-#include <kern/atree.h>
-#include <kern/clib.h>
+#include <ke/atree.h>
+#include <ke/clib.h>
 
 static struct atree_node *
 atree_node_max(struct atree_node *node)

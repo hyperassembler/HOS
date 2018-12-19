@@ -1,4 +1,4 @@
-#include <arch/cpu.h>
+#include "cpu.h"
 #include <ke/cdef.h>
 
 #define GDT_ENTRY_SIZE 8

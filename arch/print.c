@@ -1,5 +1,5 @@
 #include <ke/cdef.h>
-#include <arch/cpu.h>
+#include "cpu.h"
 #include <arch/mem.h>
 #include <arch/print.h>
 #include <ke/clib.h>

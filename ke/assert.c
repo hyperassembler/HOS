@@ -1,6 +1,6 @@
-#include <kern/cdef.h>
-#include <kern/assert.h>
-#include <kern/print.h>
+#include <ke/cdef.h>
+#include <ke/assert.h>
+#include <ke/print.h>
 
 void kassert_ex(const char *expr_str, const char *file, int32 line, int32 expr)
 {

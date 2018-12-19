@@ -1,7 +1,7 @@
-#include <kern/balloc.h>
+#include <mm/balloc.h>
 #include <math.h>
-#include <kern/clib.h>
-#include <kern/bitmap.h>
+#include <ke/clib.h>
+#include <ke/bitmap.h>
 
 // for each size
 // we have - bitmap representing each frame_size

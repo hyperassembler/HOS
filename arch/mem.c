@@ -1,8 +1,8 @@
 
 #include <ke/cdef.h>
-#include <arch/cpu.h>
+#include "cpu.h"
 #include <arch/mem.h>
-#include <arch/intr.h>
+#include <arch/trap.h>
 #include <arch/mlayout.h>
 
 /**
@@ -50,7 +50,7 @@
 #define PT_ENTRY_NUM(vaddr)   (((vaddr) >> 12) & 0x1FF)
 
 void
-arch_write_page_tbl(void *base, uintptr pdpt_addr, uint64 attr)
+write_page_tbl(void *base, uintptr pdpt_addr, uint64 attr)
 {
     if (base == NULL)
     {
@@ -69,7 +69,7 @@ arch_write_page_tbl(void *base, uintptr pdpt_addr, uint64 attr)
 
 
 void*
-arch_pmap_map(phys_addr paddr, usize size)
+pmap_map(phys_addr paddr, usize size)
 {
     UNREFERENCED(size);
     return (void*)(paddr + KERNEL_PMAP_VADDR);
