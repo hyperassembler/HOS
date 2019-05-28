@@ -14,8 +14,6 @@ xorriso; grub-pc-bin for bios; grub-efi-amd64-bin, mtools for UEFI.
 ### Compiling
 Run "make all" or "make compile" in the root directory.
 
-This will generate secxkrnl.elf, secxkrnl.dmp, (and secxkrnl.iso) in "out" folder
-
 Run "make clean" to clean a build.
 
 
