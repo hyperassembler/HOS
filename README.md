@@ -12,9 +12,7 @@ To make bootable ISO (make all):
 xorriso; grub-pc-bin for bios; grub-efi-amd64-bin, mtools for UEFI.
 
 ### Compiling
-Run "make all" or "make compile" in the root directory.
-
-Run "make clean" to clean a build.
+CMAKE coming...
 
 
 # Running
