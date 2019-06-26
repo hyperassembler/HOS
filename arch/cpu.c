@@ -1,5 +1,5 @@
 #include <arch/cpu.h>
-#include <ke/cdef.h>
+#include <kern/cdef.h>
 
 #define GDT_ENTRY_SIZE 8
 #define GDT_ENTRY_NUM 9
@@ -53,31 +53,31 @@ write_segment_descriptor(void *const gdt, uint32 const base, uint32 const limit,
 
 void hal_init_gdt(void)
 {
-    uint32 coreid = hal_get_core_id();
+    uint32 coreid = 0;
     // get gdt ready
-    hal_write_segment_descriptor((void *) &_gdts[coreid][0], 0, 0, 0);
-    hal_write_segment_descriptor((void *) &_gdts[coreid][8], 0, 0,
+    write_segment_descriptor((void *) &_gdts[coreid][0], 0, 0, 0);
+    write_segment_descriptor((void *) &_gdts[coreid][8], 0, 0,
                                  SEG_DPL_0 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_CODE_X);
-    hal_write_segment_descriptor((void *) &_gdts[coreid][16], 0, 0,
+    write_segment_descriptor((void *) &_gdts[coreid][16], 0, 0,
                                  SEG_DPL_0 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_DATA_RW);
-    hal_write_segment_descriptor((void *) &_gdts[coreid][24], 0, 0,
+    write_segment_descriptor((void *) &_gdts[coreid][24], 0, 0,
                                  SEG_DPL_3 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_CODE_X);
-    hal_write_segment_descriptor((void *) &_gdts[coreid][32], 0, 0,
+    write_segment_descriptor((void *) &_gdts[coreid][32], 0, 0,
                                  SEG_DPL_3 | SEG_CODE_DATA | SEG_PRESENT | SEG_LONG | SEG_TYPE_DATA_RW);
 
-    hal_write_segment_descriptor((void *) &_gdts[coreid][40], 0, 0xFFFFF,
+    write_segment_descriptor((void *) &_gdts[coreid][40], 0, 0xFFFFF,
                                  SEG_DPL_0 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
                                  SEG_TYPE_CODE_X);
-    hal_write_segment_descriptor((void *) &_gdts[coreid][48], 0, 0xFFFFF,
+    write_segment_descriptor((void *) &_gdts[coreid][48], 0, 0xFFFFF,
                                  SEG_DPL_0 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
                                  SEG_TYPE_DATA_RW);
-    hal_write_segment_descriptor((void *) &_gdts[coreid][56], 0, 0xFFFFF,
+    write_segment_descriptor((void *) &_gdts[coreid][56], 0, 0xFFFFF,
                                  SEG_DPL_3 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
                                  SEG_TYPE_CODE_X);
-    hal_write_segment_descriptor((void *) &_gdts[coreid][64], 0, 0xFFFFF,
+    write_segment_descriptor((void *) &_gdts[coreid][64], 0, 0xFFFFF,
                                  SEG_DPL_3 | SEG_GRANULARITY | SEG_CODE_DATA | SEG_PRESENT | SEG_32_BITS |
                                  SEG_TYPE_DATA_RW);
     _gdt_ptrs[coreid].base = (uint64) &_gdts[coreid];
     _gdt_ptrs[coreid].limit = GDT_ENTRY_NUM * GDT_ENTRY_SIZE - 1;
-    hal_flush_gdt(&_gdt_ptrs[coreid], seg_selector(1, 0), seg_selector(2, 0));
+    arch_flush_gdt(&_gdt_ptrs[coreid], seg_selector(1, 0), seg_selector(2, 0));
 }

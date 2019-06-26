@@ -1,5 +1,5 @@
 
-#include <ke/cdef.h>
+#include <kern/cdef.h>
 #include <arch/cpu.h>
 #include <arch/mem.h>
 #include <arch/intr.h>
@@ -69,7 +69,7 @@ arch_write_page_tbl(void *base, uintptr pdpt_addr, uint64 attr)
 
 
 void*
-arch_pmap_map(phys_addr paddr, usize size)
+arch_pmap_map(uintptr paddr, usize size)
 {
     UNREFERENCED(size);
     return (void*)(paddr + KERNEL_PMAP_VADDR);

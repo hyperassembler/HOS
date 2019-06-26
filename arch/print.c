@@ -1,9 +1,9 @@
-#include <ke/cdef.h>
+#include <kern/cdef.h>
 #include <arch/cpu.h>
 #include <arch/mem.h>
 #include <arch/print.h>
-#include <ke/clib.h>
-#include <ke/spin_lock.h>
+#include <kern/clib.h>
+#include <kern/spin_lock.h>
 
 #define CALC_ROW(pos) ((pos) / 80)
 #define CALC_POS(row, col) ((row) * 80 + (col))
@@ -19,7 +19,7 @@ arch_print_init(void)
     // 0 here since it doesn't matter direct mapped
     base = arch_pmap_map(FB_PADDR, 0);
     text_pos = 0;
-    ke_spin_init(&print_lock);
+    spin_init(&print_lock);
 }
 
 static void
@@ -149,8 +149,8 @@ arch_cls(void)
     mem_set(base, 0, 25 * 80 * 2);
 }
 
-static void
-_vprintf(char const *format, va_list args)
+void
+arch_vprintf(char const *format, va_list args)
 {
     char buf[2];
     int64 d;
@@ -213,6 +213,6 @@ arch_printf(char const *format, ...)
 {
     va_list args;
     va_start(args, format);
-    _vprintf(format, args);
+    arch_vprintf(format, args);
     va_end(args);
 }

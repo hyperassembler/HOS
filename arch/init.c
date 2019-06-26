@@ -1,14 +1,20 @@
-#include <ke/cdef.h>
+#include <kern/cdef.h>
 #include <arch/print.h>
 
 // private headers
 #include "multiboot2.h"
-
-void arch_init(void* mb_info)
+/**
+ * What the heck was that?
+ * @param mb_info
+ */
+void arch_main(void* mb_info)
 {
+    UNREFERENCED(mb_info);
     arch_print_init();
+
+    arch_printf("In arch stuff...\n");
     
-    if (mb_info == NULL)
+/*    if (mb_info == NULL)
     {
         goto err;
     }
@@ -60,5 +66,5 @@ void arch_init(void* mb_info)
 
     kmain(boot_info);
 err:
-    hal_halt_cpu();
+    hal_halt_cpu(); */
 }

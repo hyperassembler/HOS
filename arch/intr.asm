@@ -1,15 +1,3 @@
-global hal_disable_interrupt
-global hal_enable_interrupt
-
-hal_disable_interrupt:
-cli
-ret
-
-hal_enable_interrupt:
-sti
-ret
-
-
 %macro PUSHAQ 0
    push rax      ;save current rax
    push rbx      ;save current rbx
@@ -37,7 +25,7 @@ ret
     pop r10         ;restore current r10
     pop r9         ;restore current r9
     pop r8         ;restore current r8
-    pop rsi         ;restore current rsi
+    pop rsi         ;restore current rsix
     pop rdi         ;restore current rdi
     pop rbp         ;restore current rbp
     pop rdx         ;restore current rdx
@@ -85,6 +73,7 @@ hal_interrupt_handler_%1:
 ; +0  RBP
 push rbp
 mov rbp,rsp
+
 PUSHAQ
 cld
 mov rdi, %1 ; INT VEC #
