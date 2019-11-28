@@ -11,7 +11,7 @@ make
 # Running
 Load the iso with QEMU/your favorite simulator.
 
-# C++
+# C vs C++
 I would like my kernel code to be explicit so that I can reason about performance, memory allocation/deallocation. That mostly means when I look at a statement I know exactly what it does. 
 The philosophy overlaps with Go's design quite a lot: https://commandcenter.blogspot.com/2012/06/less-is-exponentially-more.html. 
 
