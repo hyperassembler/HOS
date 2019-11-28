@@ -1,41 +1,40 @@
 # Building
 ### Required packages
-For compiling kernel only (make compile):
-
-nasm, clang, lld, llvm
-
-To make bootable ISO (make all):
-
-xorriso; grub-pc-bin for bios; grub-efi-amd64-bin, mtools for UEFI.
+nasm, clang, lld, xorriso, grub-pc-bin
 
 ### Compiling
-CMAKE coming...
-
+mkdir build
+cd build
+cmake ../
+make
 
 # Running
-Load the iso with your favorite simulator or use "-kernel" option with QEMU.
-
-For UEFI simulation, use qemu_bios.bin in the root dir with QEMU.
+Load the iso with QEMU/your favorite simulator.
 
 # C++
 I would like my kernel code to be explicit so that I can reason about performance, memory allocation/deallocation. That mostly means when I look at a statement I know exactly what it does. 
 The philosophy overlaps with Go's design quite a lot: https://commandcenter.blogspot.com/2012/06/less-is-exponentially-more.html. 
 
-Using fully-featured C++ is overly complicated for kernels and I'm dubious of OOP in general. With "modern" C++ sometimes I find myself struggling more with the language itself than getting work done. Although the kernel is compiled with a C++ compiler, the base is very much C and we only add few nice things we can benefit from C++:
+Using fully-featured C++ is overly complicated for kernels and I'm dubious of OOP in general. Especially while enforcing "modern" C++, sometimes I find myself struggling more with the language itself than getting work done. **I have had lengthy thoughts myself regarding C++ but decided to drop it**. Here are some of the pros and cons I came up with.
 
-## Stronger types
+## Good features
+
+### Stronger types
 C++ is stronger typed than C. Simply compiling the kernel itself with a C++ compiler provides more type safety than C.
 
-## C++ style casts (no dynamic_cast)
+### C++ style casts (no dynamic_cast)
 They are compile time casts so no runtime overhead. They provide a bit better type safety than C style casts. The only two casts we would need are probably const_cast and reinterpret_cast.
 
-## template
+### template
 For type safety for data structures. Linux's list.h isn't type safe. FreeBSD's queue.h tries to mimic templates with macros, which is less elegant than just using template.
 
-## namespace
+### namespace
 Oh boy how I wish C standard would include namespace, if it weren't for backward compaibility and stable ABI.
 
-## Banned features worth mentioning
+### Ownership management
+But rust did better?
+
+## Banned features (tentative)
 This list explains SOME of the banned features that might seem useful.
 
 ### Class and ctors/dtors
@@ -59,4 +58,4 @@ Think about what "f();" could mean in C++ and the code executed by "a + b;". Nee
 I don't like mixing references with pointers. I don't find reference offering much more than raw pointers. 
 
 ### RTTI and Exceptions
-Totally useless for kernels.
+Totally useless for bond.
