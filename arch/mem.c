@@ -1,7 +1,4 @@
-
-
 #include <kern/cdef.h>
-#include <arch/cpu.h>
 #include <arch/mem.h>
 #include <arch/mlayout.h>
 
@@ -56,21 +53,14 @@ write_page_tbl(void *base, uintptr pdpt_addr, uint64 attr)
     {
         return;
     }
-    uint64 entry = (pdpt_addr & 0xFFFFFFFFFF000) | attr;
-    ((uint8 *) base)[0] = (uint8) (entry & 0xFF);
-    ((uint8 *) base)[1] = (uint8) ((entry >> 8) & 0xFF);
-    ((uint8 *) base)[2] = (uint8) ((entry >> 16) & 0xFF);
-    ((uint8 *) base)[3] = (uint8) ((entry >> 24) & 0xFF);
-    ((uint8 *) base)[4] = (uint8) ((entry >> 32) & 0xFF);
-    ((uint8 *) base)[5] = (uint8) ((entry >> 40) & 0xFF);
-    ((uint8 *) base)[6] = (uint8) ((entry >> 48) & 0xFF);
-    ((uint8 *) base)[7] = (uint8) ((entry >> 56) & 0xFF);
+    uint64 entry = (pdpt_addr & 0xFFFFFFFFFF000ul) | attr;
+    ((uint8 *) base)[0] = (uint8) (entry & 0xFFul);
+    ((uint8 *) base)[1] = (uint8) ((entry >> 8u) & 0xFFu);
+    ((uint8 *) base)[2] = (uint8) ((entry >> 16u) & 0xFFu);
+    ((uint8 *) base)[3] = (uint8) ((entry >> 24u) & 0xFFu);
+    ((uint8 *) base)[4] = (uint8) ((entry >> 32u) & 0xFFu);
+    ((uint8 *) base)[5] = (uint8) ((entry >> 40u) & 0xFFu);
+    ((uint8 *) base)[6] = (uint8) ((entry >> 48u) & 0xFFu);
+    ((uint8 *) base)[7] = (uint8) ((entry >> 56u) & 0xFFu);
 }
 
-
-void*
-arch_pmap_map(uintptr paddr, usize size)
-{
-    UNREFERENCED(size);
-    return (void*)(paddr + KERNEL_PMAP_VADDR);
-}

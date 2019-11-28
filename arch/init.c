@@ -1,20 +1,21 @@
 #include <kern/cdef.h>
+#include <kern/print.h>
 #include <arch/print.h>
+#include <arch/brute.h>
 
 // private headers
 #include "multiboot2.h"
-/**
- * What the heck was that?
- * @param mb_info
- */
-void arch_main(void* mb_info)
+
+void arch_main(ATTR_UNUSED void* mb_info)
 {
-    UNREFERENCED(mb_info);
+    /* init printf related stuff */
     arch_print_init();
 
-    arch_printf("In arch stuff...\n");
+    kprintf("Initializing arch layer...\n");
+
+    arch_brute();
     
-/*    if (mb_info == NULL)
+/*  if (mb_info == NULL)
     {
         goto err;
     }

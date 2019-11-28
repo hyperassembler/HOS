@@ -5,11 +5,10 @@
 /**
  * Specific error codes
  */
-typedef enum {
-    SUCCESS = 0x0,
-    ENOMEM = 0x1,
-    EINVARG = 0x2,
-    EINIT = 0x3,
-    EDUP = 0x4
-} kstatus;
-
+enum {
+    S_OK = 0x0,
+    S_NOMEM = 0x1,
+    S_INVARG = 0x2,
+    S_INIT = 0x3,
+    S_DUP = 0x4
+};

@@ -1,7 +1,10 @@
 #pragma once
 
 #include <kern/cdef.h>
+#include <arch/mlayout.h>
 
-void *
-arch_pmap_map(uintptr paddr, usize size);
-
+static inline void *
+arch_pmap_map(uintptr paddr, ATTR_UNUSED usize size)
+{
+    return (void*)(paddr + KERNEL_PMAP_VADDR);
+}

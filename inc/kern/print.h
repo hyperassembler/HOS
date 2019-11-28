@@ -3,8 +3,8 @@
 #include <kern/cdef.h>
 #include <kern/print.h>
 
-void
+ATTR_FMT_PRINTF int
 kprintf(const char *str, ...);
 
-void
+int
 kvprintf(const char *str, va_list args);

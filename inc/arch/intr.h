@@ -1,7 +1,6 @@
 #pragma once
 
 #include <arch/intr.h>
-#include <kern/clib.h>
 #include <kern/status.h>
 
 /**
@@ -36,7 +35,7 @@ struct interrupt_context
 /**
  * C declaration
  */
-kstatus
+void
 arch_intr_init(void);
 
 /**
@@ -51,11 +50,11 @@ arch_exc_disp(uint64 exc_vec, struct interrupt_context *context, uint32 errorcod
 /**
  * ASM declaration
  */
-uint32
-arch_raise_irql(uint32 irql);
+int
+arch_raise_irql(int irql);
 
-uint32
-arch_lower_irql(uint32 irql);
+int
+arch_lower_irql(int irql);
 
-uint32
-arch_get_irql(void);
+int
+arch_get_irql();

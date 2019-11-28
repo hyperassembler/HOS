@@ -1,5 +1,18 @@
 #pragma once
-#include <kern/cdef.h>
+
+#define BITSET_DEFINE(sz)
+
+static inline uint64
+bit_mask(uint32 bit)
+{
+    return (uint64) 1 << bit;
+}
+
+static inline uint64
+bit_field_mask(uint32 low, uint32 high)
+{
+    return ~(~(uint64) 0 << high << 1) << low;
+}
 
 static inline uint8* bit_byte(void* base, uint32 bit)
 {

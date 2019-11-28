@@ -1,34 +1,60 @@
 #include <kern/cdef.h>
 #include <kern/spin_lock.h>
-#include <arch/atomic.h>
 
-void
-spin_init(struct spin_lock *lock)
+static inline uint32
+_spin_lock_get_ticket(uint32 val)
 {
-    if (lock != NULL)
-    {
-        lock->val = 0;
-    }
+    return val & 0xFFFFu;
 }
 
-
-void
-spin_lock(struct spin_lock *lock)
+static inline uint32
+_spin_lock_get_owner(uint32 val)
 {
-    if (lock != NULL)
-    {
-        while (arch_cmp_swp_32(&lock->val, 0, 1) != 0)
-        {}
-    }
+    return val >> 16u;
 }
 
+void
+spin_lock_init(struct spin_lock *lock)
+{
+    atomic_store(&lock->val, 0);
+}
 
 void
-spin_unlock(struct spin_lock *lock)
+spin_lock_acq(struct spin_lock *lock)
 {
-    if (lock != NULL)
-    {
-        lock->val = 0;
+    uint32 val;
+
+    do {
+        val = atomic_load(&lock->val);
+    } while (!atomic_compare_exchange_weak(&lock->val, &val, val + (1u << 16u)));
+
+    // val now contains cur ticket and target ticket
+    while (_spin_lock_get_ticket(val) != _spin_lock_get_owner(val)) {
+        val = atomic_load(&lock->val);
     }
+
+    // owner = ticket, we've acquired the lock
+}
+
+void
+spin_lock_rel(struct spin_lock *lock)
+{
+    // increment ticket
+    atomic_fetch_add(&lock->val, 1);
+}
+
+int
+spin_lock_try_acq(struct spin_lock *lock)
+{
+    uint32 val;
+
+    val = atomic_load(&lock->val);
+
+    if ((_spin_lock_get_owner(val) == _spin_lock_get_ticket(val)) &&
+        atomic_compare_exchange_weak(&lock->val, &val, val + (1u << 16u))) {
+        return 1;
+    }
+
+    return 0;
 }
 

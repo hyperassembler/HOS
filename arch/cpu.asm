@@ -19,6 +19,22 @@ global arch_write_msr
 section .text
 bits 64
 
+; uint64* arch_random_int64(void)
+; Returns a random 64-bit integer
+global arch_random_int64
+arch_random_int64:
+rdrand rax
+ret
+
+; uint32* arch_random_int32(void)
+; Returns a random 32-bit integer
+global arch_random_int32
+arch_random_int32:
+rdrand eax
+ret
+
+
+
 arch_flush_gdt:
 push rbp
 mov rbp,rsp
@@ -185,7 +201,6 @@ nop
 nop
 ret
 
-
 arch_read_port_8:
 mov rdx,rdi
 xor rax,rax
@@ -203,7 +218,6 @@ nop
 nop
 nop
 ret
-
 
 arch_read_port_32:
 mov rdx,rdi

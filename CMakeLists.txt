@@ -4,9 +4,9 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 
-project(fusion)
+project(bond)
 
-set(proj fusion)
+set(proj bond)
 set(INC ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 set(MK ${CMAKE_CURRENT_SOURCE_DIR}/mk)
 set(arch amd64)
@@ -27,17 +27,23 @@ FOREACH(f IN LISTS TOOLCHAINS)
     endif()
 endforeach(f)
 
+set(CC_WARN_IGNORE
+        -Wno-gnu-statement-expression # this means we can assign the return val of the last statment in a block, useful in MAX, MIN, etc.
+        -Wno-gnu-zero-variadic-macro-arguments # this enables us to use __VA_ARGS__ in macros
+        )
+
 set(CC_FLAGS
         -std=c17
         -c
         -g
-        -O2
+        -Og
         -Wall
         -Wextra
         -Wpedantic
         -Werror
+        ${CC_WARN_IGNORE}
         -ffreestanding
-        -I${CMAKE_CURRENT_SOURCE_DIR}/inc
+        -I${INC}
         -fno-pic
         -fno-stack-protector
         ${CC_FLAGS_${ARCH}})
@@ -64,7 +70,8 @@ set(DMP_FLAGS
 set(SUBMODULES
         kern
         arch
-        scripts)
+        scripts
+        test)
 
 # process submodules
 FOREACH(f IN LISTS SUBMODULES)
@@ -125,8 +132,9 @@ add_custom_target(${proj}_iso ALL
 
 # hack for clion not parsing custom targets
 if ($ENV{CLION_IDE})
-    include_directories(inc)
+    include_directories(${INC})
     add_executable(kernel ${G_CC_SRC})
+    target_compile_options(kernel PRIVATE ${CC_FLAGS})
 endif()
 
 

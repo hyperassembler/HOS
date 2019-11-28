@@ -1,43 +1,30 @@
 #pragma once
 
 #include <kern/cdef.h>
-#include <kern/assert.h>
+#include <kern/poison.h>
+#include <kern/brute.h>
 
 struct list_entry {
-    struct list_entry *next;
     struct list_entry *prev;
-};
-
-struct list {
-    struct list_entry *head;
-    struct list_entry *tail;
+    struct list_entry *next;
 };
 
 /*
  * Init Operations
  */
 static inline void
-list_init(struct list *list)
+list_init(struct list_entry *head)
 {
-    list->head = NULL;
-    list->tail = NULL;
+    head->next = head;
+    head->prev = head;
 }
 
-static inline void
-list_entry_init(struct list_entry *ent)
-{
-    ent->prev = NULL;
-    ent->next = NULL;
-}
-
-static inline bool
+static inline int
 list_empty(struct list_entry *ent)
 {
-    return (ent->next == NULL);
+    return (ent->next == ent);
 }
-/*
- * Location Operations
- */
+
 static inline struct list_entry *
 list_prev(struct list_entry *ent)
 {
@@ -50,55 +37,54 @@ list_next(struct list_entry *ent)
     return ent->next;
 }
 
-static inline struct list_entry *
-list_head(struct list *list)
-{
-    return list->head;
-}
-
-static inline struct list_entry *
-list_tail(struct list *list)
-{
-    return list->tail;
-}
-
 /*
  * Insert Operations
  */
-void
-list_insert(struct list *list, struct list_entry *cur, struct list_entry *ent);
-
-static inline void
-list_insert_head(struct list *list, struct list_entry *ent)
+static inline void 
+list_insert(struct list_entry *head, struct list_entry *ent)
 {
-    list_insert(list, NULL, ent);
+    ent->next = head->next;
+    ent->prev = head;
+
+    head->next->prev = ent;
+    head->next = ent;
 }
 
 static inline void
-list_insert_tail(struct list *list, struct list_entry *ent)
+list_insert_before(struct list_entry *head, struct list_entry *ent)
 {
-    list_insert(list, list_tail(list), ent);
+    list_insert(head->prev, ent);
 }
 
 /*
  * Remove Operations
  */
-void
-list_remove(struct list *list, struct list_entry *ent);
-
-
 static inline struct list_entry *
-list_remove_tail(struct list *list)
+list_remove(struct list_entry *ent)
 {
-    struct list_entry *ret = list_tail(list);
-    list_remove(list, ret);
-    return ret;
+    ent->next->prev = ent->prev;
+    ent->prev->next = ent->next;
+    
+    ent->next = POISON_LIST;
+    ent->prev = POISON_LIST;
+
+    return ent;
 }
 
 static inline struct list_entry *
-list_remove_head(struct list *list)
+list_remove_before(struct list_entry *list)
 {
-    struct list_entry *ret = list_head(list);
-    list_remove(list, ret);
-    return ret;
+    return list_remove(list->prev);
 }
+
+static inline struct list_entry *
+list_remove_after(struct list_entry *list)
+{
+    return list_remove(list->next);
+}
+
+#define LIST_FOREACH(list, it) \
+    for (it = list_next(list); it != list; it = list_next(it))
+
+#define LIST_FOREACH_REVERSE(list, it) \
+    for (it = list_prev(list); it != list; it = list_prev(it))

@@ -4,12 +4,12 @@ set(CC_SRC
         init.c
         intr.c
         mem.c
-        print.c)
+        print.c
+        brute.c)
 
 set(AS_SRC
         boot.asm
         mb_hdr.asm
-        atomic.asm
         cpu.asm
         intr.asm)
 

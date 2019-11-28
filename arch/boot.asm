@@ -82,7 +82,7 @@ arch_init_32:
 	; switch to long mode
     jmp init_gdt.code:GET_PADDR(arch_init_64)
 .end:
-    hlt
+    jmp $
 
 check_long_mode:
     push ebp
@@ -137,9 +137,11 @@ arch_init_64:
     mov gs,ax
     mov ss,ax
 
+    ; initial kernel stack, 4k
     mov rsp, init_stack
     xor rdi, rdi
     mov edi, dword [multiboot_info_ptr]
+    ; init arch
     call arch_main
 .end:
     hlt

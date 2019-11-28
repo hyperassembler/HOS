@@ -3,7 +3,10 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <stdatomic.h>
 
+typedef uintmax_t uintmax;
+typedef intmax_t intmax;
 typedef uint32_t uint32;
 typedef int32_t int32;
 typedef uint64_t uint64;
@@ -14,25 +17,21 @@ typedef int16_t int16;
 typedef uint8_t uint8;
 typedef int8_t int8;
 typedef size_t usize;
-
-typedef _Bool bool;
-#define TRUE (1)
-#define FALSE (0)
-
-#define PRAGMA_PACKED __attribute__((packed))
-
-#define PRAGMA_SECTION(x) __attribute__ ((section (x)))
-
-#define PRAGMA_ALIGN(x) __attribute__ ((aligned(x)))
-
-#define ALIGN_2(type, num, align) (((type)(num) + ((type)align - 1)) & ~((type)align - 1))
-
-#define ALIGN(type, num, align) (((type)(num) + (type)(align) - 1) / (type)(align))
-
-#define UNREFERENCED(x) do { \
-                            (x) = (x); \
-                            } while(0)
-
+typedef unsigned char uchar;
+typedef unsigned long ulong;
+typedef unsigned int uint;
 #define KABI __attribute__((sysv_abi))
 
+#define STATIC_ASSERT(cond, msg) _Static_assert((cond), msg)
+#define TYPEOF(type) __typeof__(type)
 
+/* Declarations */
+#define DECL_ATOMIC(type) _Atomic type
+
+/* Attributes */
+#define ATTR_PACKED __attribute__((packed))
+#define ATTR_UNUSED __attribute__((unused))
+#define ATTR_USED __attribute__((used))
+#define ATTR_SECTION(x) __attribute__ ((section (#x)))
+#define ATTR_ALIGN(x) _Alignas(x)
+#define ATTR_FMT_PRINTF __attribute__((format (printf, 1, 2)))

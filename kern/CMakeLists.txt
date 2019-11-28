@@ -1,13 +1,11 @@
 set(SUBMODULE kern)
 set(CC_SRC
-        assert.c
-        atree.c
-        clib.c
-        main.c
-        panic.c
+        avl_tree.c
+        libkern.c
+        kmain.c
         print.c
         spin_lock.c
-        list.c )
+        )
 
 include(${MK}/kern.cmake)
 

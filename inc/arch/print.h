@@ -3,13 +3,10 @@
 #include <arch/print.h>
 
 void
-arch_printf(const char *format, ...);
+arch_cls();
 
 void
-arch_cls(void);
+arch_print_init();
 
 void
-arch_print_init(void);
-
-void
-arch_vprintf(char const *format, va_list args);
+arch_putc(char c);
