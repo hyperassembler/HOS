@@ -26,7 +26,7 @@ C++ is stronger typed than C. Simply compiling the kernel itself with a C++ comp
 They are compile time casts so no runtime overhead. They provide a bit better type safety than C style casts. The only two casts we would need are probably const_cast and reinterpret_cast.
 
 ### template
-For type safety for data structures. Linux's list.h isn't type safe. FreeBSD's queue.h tries to mimic templates with macros, which is less elegant than just using template.
+For type safety for data structures. Linux's list.h isn't type safe. FreeBSD's queue.h tries to mimic templates with macros, which is less elegant than just using template. Update: this might not be true after trying to implement type safe in-place linked list in C++. I feel like template is just as inelegant for that.
 
 ### namespace
 Oh boy how I wish C standard would include namespace, if it weren't for backward compaibility and stable ABI.
