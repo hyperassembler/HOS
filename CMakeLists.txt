@@ -1,24 +1,140 @@
-cmake_minimum_required(VERSION 2.8.4)
-project(secX)
+cmake_minimum_required(VERSION 3.10)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c11")
+# disable in-source build
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 
-file(GLOB_RECURSE hal_src  ./inc/*.h ./hal/*.c ./hal/*.h ./common/*.c)
-file(GLOB_RECURSE kernel_src ./inc/*.h ./kernel/*.c ./kernel/*.h ./common/*.c)
-file(GLOB_RECURSE test_src  ./inc/*.h ./test/*.c ./test/*.h ./common/*.c)
-include_directories(inc)
+project(bond)
 
-# HAL
-#include_directories(hal/inc)
-#add_executable(hal ${hal_src})
+set(proj bond)
+set(INC ${CMAKE_CURRENT_SOURCE_DIR}/inc)
+set(MK ${CMAKE_CURRENT_SOURCE_DIR}/mk)
+set(arch amd64)
+
+include(${MK}/${arch}.cmake)
+
+# sanity check
+set(TOOLCHAINS
+        AS
+        CC
+        GRUB
+        LD
+        DMP)
+
+FOREACH(f IN LISTS TOOLCHAINS)
+    if(NOT ${f})
+        message(FATAL_ERROR "Toolchain ${f} cannot be found.")
+    endif()
+endforeach(f)
+
+set(CC_WARN_IGNORE
+        -Wno-gnu-statement-expression # this means we can assign the return val of the last statment in a block, useful in MAX, MIN, etc.
+        -Wno-gnu-zero-variadic-macro-arguments # this enables us to use __VA_ARGS__ in macros
+        )
+
+set(CC_FLAGS
+        -std=c17
+        -c
+        -g
+        -Og
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Werror
+        ${CC_WARN_IGNORE}
+        -ffreestanding
+        -I${INC}
+        -fno-pic
+        -fno-stack-protector
+        ${CC_FLAGS_${ARCH}})
+
+set(AS_FLAGS
+        ${AS_FLAGS_${ARCH}})
+
+set(LD_FLAGS
+        -fuse-ld=${LD}
+        -nostdlib
+        -Wl,--fatal-warnings
+        ${LD_FLAGS_${ARCH}})
+
+set(PP_FLAGS
+        -E
+        -xc
+        -P
+        -I${INC}
+        ${PP_FLAGS_${ARCH}})
+
+set(DMP_FLAGS
+        ${DMP_FLAGS_${ARCH}})
+
+set(SUBMODULES
+        kern
+        arch
+        scripts
+        test)
+
+# process submodules
+FOREACH(f IN LISTS SUBMODULES)
+    add_subdirectory(${f})
+endforeach(f)
+
+# process dependencies
+FOREACH(f IN LISTS SUBMODULES)
+    set(OBJS ${OBJS} ${OBJS_${f}})
+    set(TARGETS ${TARGETS} ${TARGET_${f}})
+endforeach(f)
+
+# set target names
 
 
-# KERNEL
-include_directories(kernel/inc)
-add_executable(kernel ${kernel_src})
+# Rules for generating the image
+set(TARGET ${proj}_elf)
+set(OBJ_${TARGET} ${CMAKE_CURRENT_BINARY_DIR}/${proj}.elf)
+add_custom_command(
+        OUTPUT ${OBJ_${TARGET}}
+        DEPENDS ${TARGETS}
+        COMMAND ${CC} ${LD_FLAGS} -Wl,-T, ${SCRIPT_LD} -o ${OBJ_${TARGET}} ${OBJS})
 
-# KERNEL + TESTS
-#include_directories(test/inc)
-#include_directories(kernel/inc)
-#add_definitions(-DTDBG)
-#add_executable(tests ${test_src} ${kernel_src})
+add_custom_target(${TARGET} ALL
+        DEPENDS ${OBJ_${TARGET}})
+
+
+# Rules for generating the dump
+set(TARGET ${proj}_dmp)
+set(OBJ_${TARGET} ${CMAKE_CURRENT_BINARY_DIR}/${proj}.dmp)
+
+add_custom_command(
+        OUTPUT ${OBJ_${TARGET}}
+        DEPENDS ${proj}_elf
+        COMMAND ${DMP} ${DMP_FLAGS} ${OBJ_${proj}_elf} > ${OBJ_${TARGET}}
+)
+add_custom_target(${proj}_dmp ALL
+        DEPENDS ${OBJ_${TARGET}})
+
+
+# Rules for generating the iso
+set(TARGET ${proj}_iso)
+set(OBJ_${TARGET} ${CMAKE_CURRENT_BINARY_DIR}/${proj}.iso)
+
+add_custom_command(
+        OUTPUT ${OBJ_${TARGET}}
+        DEPENDS ${proj}_elf ${TARGET_scripts}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/tmp_iso
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/tmp_iso/boot
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/tmp_iso/boot/grub
+        COMMAND ${CMAKE_COMMAND} -E copy ${OBJ_${proj}_elf} ${CMAKE_CURRENT_BINARY_DIR}/tmp_iso/
+        COMMAND ${CMAKE_COMMAND} -E copy ${SCRIPT_GRUB} ${CMAKE_CURRENT_BINARY_DIR}/tmp_iso/boot/grub/
+        COMMAND ${GRUB} -d /usr/lib/grub/i386-pc -o ${OBJ_${TARGET}} ${CMAKE_CURRENT_BINARY_DIR}/tmp_iso
+)
+
+add_custom_target(${proj}_iso ALL
+        DEPENDS ${OBJ_${TARGET}})
+
+# hack for clion not parsing custom targets
+if ($ENV{CLION_IDE})
+    include_directories(${INC})
+    add_executable(kernel ${G_CC_SRC})
+    target_compile_options(kernel PRIVATE ${CC_FLAGS})
+endif()
+
+
