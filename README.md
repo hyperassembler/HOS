@@ -4,8 +4,11 @@ nasm, clang, lld, xorriso, grub-pc-bin
 
 ### Compiling
 mkdir build
+
 cd build
+
 cmake ../
+
 make
 
 # Running
