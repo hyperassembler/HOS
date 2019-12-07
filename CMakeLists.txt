@@ -36,7 +36,7 @@ set(CC_FLAGS
         -std=c17
         -c
         -g
-        -Og
+        -O0
         -Wall
         -Wextra
         -Wpedantic
@@ -55,6 +55,7 @@ set(LD_FLAGS
         -fuse-ld=${LD}
         -nostdlib
         -Wl,--fatal-warnings
+        -Wl,--build-id=none
         ${LD_FLAGS_${ARCH}})
 
 set(PP_FLAGS
@@ -92,7 +93,7 @@ set(TARGET ${proj}_elf)
 set(OBJ_${TARGET} ${CMAKE_CURRENT_BINARY_DIR}/${proj}.elf)
 add_custom_command(
         OUTPUT ${OBJ_${TARGET}}
-        DEPENDS ${TARGETS}
+        DEPENDS ${TARGETS} ${OBJS}
         COMMAND ${CC} ${LD_FLAGS} -Wl,-T, ${SCRIPT_LD} -o ${OBJ_${TARGET}} ${OBJS})
 
 add_custom_target(${TARGET} ALL
@@ -105,7 +106,7 @@ set(OBJ_${TARGET} ${CMAKE_CURRENT_BINARY_DIR}/${proj}.dmp)
 
 add_custom_command(
         OUTPUT ${OBJ_${TARGET}}
-        DEPENDS ${proj}_elf
+        DEPENDS ${proj}.elf
         COMMAND ${DMP} ${DMP_FLAGS} ${OBJ_${proj}_elf} > ${OBJ_${TARGET}}
 )
 add_custom_target(${proj}_dmp ALL
@@ -118,7 +119,7 @@ set(OBJ_${TARGET} ${CMAKE_CURRENT_BINARY_DIR}/${proj}.iso)
 
 add_custom_command(
         OUTPUT ${OBJ_${TARGET}}
-        DEPENDS ${proj}_elf ${TARGET_scripts}
+        DEPENDS ${proj}.elf
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/tmp_iso
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/tmp_iso/boot
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/tmp_iso/boot/grub

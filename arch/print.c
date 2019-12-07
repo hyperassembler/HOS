@@ -16,6 +16,8 @@ static void
 _fb_scroll()
 {
     memmove(base, base + FB_COL * BYTE_PER_CHAR, FB_SZ - (FB_COL * BYTE_PER_CHAR));
+    // clear the last line
+    memset(base + (FB_ROW - 1) * FB_COL * BYTE_PER_CHAR, 0, FB_COL * BYTE_PER_CHAR);
     text_pos = FB_SZ - (FB_COL * BYTE_PER_CHAR);
 }
 

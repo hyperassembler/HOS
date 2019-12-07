@@ -5,10 +5,31 @@ ENTRY(arch_init_32)
 
 SECTIONS
 {
-	. = KERNEL_IMG_VADDR + KERNEL_IMG_PADDR;
+	. = KERN_BASE_START + KERN_IMG_PADDR;
 
-	.multiboot_header ALIGN(KERNEL_PAGE_SIZE) : AT(ADDR(.multiboot_header) - KERNEL_IMG_VADDR)
+    KERN_IMG_START = .;
+
+	.multiboot_header ALIGN(0x1000) : AT(ADDR(.multiboot_header) - KERN_BASE_START)
 	{
 		*(.multiboot_header)
 	}
+
+    .text ALIGN(0x1000) : AT(ADDR(.text) - KERN_BASE_START)
+    {
+        *(.text)
+    }
+
+    .data ALIGN(0x1000) : AT(ADDR(.data) - KERN_BASE_START)
+    {
+        *(.data)
+        *(.rodata*)
+    }
+
+    .bss ALIGN(0x1000) : AT(ADDR(.bss) - KERN_BASE_START)
+    {
+        *(.bss)
+        *(COMMON)
+    }
+
+    KERN_IMG_STOP = .;
 }

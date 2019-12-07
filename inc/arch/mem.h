@@ -6,5 +6,5 @@
 static inline void *
 arch_pmap_map(uintptr paddr, ATTR_UNUSED usize size)
 {
-    return (void*)(paddr + KERNEL_PMAP_VADDR);
+    return (void*)(paddr + KERN_PMAP_START);
 }

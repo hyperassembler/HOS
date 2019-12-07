@@ -2,14 +2,11 @@
 #include "multiboot2.h"
 #include <arch/mlayout.h>
 
-extern hmain
-global hal_main_32
-
 ASM_MULTIBOOT_CHECK_SUM equ (0xFFFFFFFF - (MULTIBOOT2_HEADER_MAGIC + ASM_MULTIBOOT_HEADER_SIZE + MULTIBOOT_ARCHITECTURE_I386) + 1)
 
 section .multiboot_header
 bits 32
-align KERNEL_PAGE_SIZE
+align 0x1000
 ;====================
 align MULTIBOOT_HEADER_ALIGN
 start_hdr:

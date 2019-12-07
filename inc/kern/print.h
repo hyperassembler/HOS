@@ -4,7 +4,7 @@
 #include <kern/print.h>
 
 ATTR_FMT_PRINTF int
-kprintf(const char *str, ...);
+kprintf(const char *fmt, ...);
 
 int
-kvprintf(const char *str, va_list args);
+kvprintf(const char *fmt, va_list args);
