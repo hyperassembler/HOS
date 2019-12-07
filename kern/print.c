@@ -16,6 +16,12 @@ _printu(char *buf, uintmax num, uint base, int cap)
     char c;
 
     len = 0;
+
+    if (num == 0) {
+        buf[0] = '0';
+        return 1;
+    }
+
     while (num > 0) {
         c = dtoa(num % base);
         if (cap) {
@@ -57,6 +63,7 @@ _vprintf(const char *fmt, va_list args)
         switch (*fmt) {
             case 'p':
                 sz_ptr = 1;
+                base = 16;
                 goto pnum;
             case 'd':
                 goto pnum;
@@ -120,10 +127,11 @@ _vprintf(const char *fmt, va_list args)
                 }
 
                 len = _printu(nbuf, num, base, capf);
-                while (len) {
-                    arch_putc(nbuf[len]);
-                    len--;
+
+                for(int i = len - 1; i >= 0; i--) {
+                    arch_putc(nbuf[i]);
                 }
+
                 ret += len;
         }
     }

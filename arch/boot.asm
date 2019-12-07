@@ -1,58 +1,81 @@
 #define ASM_FILE
 #include <arch/mlayout.h>
 #include "multiboot2.h"
-
-%define GET_PADDR(x) ((x) - KERNEL_IMG_VADDR)
+%define BOCHS_BREAK xchg bx, bx
+%define GET_PADDR(x) ((x) - KERN_BASE_START)
 %define GET_PML4(vaddr) (((vaddr) >> 39 ) & 0x1FF)
 %define GET_PDPT(vaddr) (((vaddr) >> 30 ) & 0x1FF)
+%define GET_PDE(vaddr) (((vaddr) >> 21 ) & 0x1FF)
 
+; make arch_init_32 visiable
 global arch_init_32
+
+; arch_main is the C long mode entry point
 extern arch_main
 
 section .text
 bits 32
+; the bootloader calls this dude, we switch to long mode with some basic setup:
+; Identity map the first 4G memory, where the kernel binary and multiboot info is
+; Map the first 4G memory to KERN_PMAP temporarily so we have access to printf
+; Map the first 1G memory, which contains the kernel, to KERN_BASE_START
 arch_init_32:
-    cli
-    cld
-    cmp eax, MULTIBOOT2_BOOTLOADER_MAGIC
-    jne .end
+    cli ; close interrupt
+    cld ; set direction
+    cmp eax, MULTIBOOT2_BOOTLOADER_MAGIC ; compare with multiboot2 magic
+    jne .end ; if not loaded by multiboot2 compliant bootloader, loop infinitely
+
+    BOCHS_BREAK
 
     ; save multiboot info
     mov dword [GET_PADDR(multiboot_info_ptr)], ebx
-
-    ; setup stack
-    call check_long_mode ; check support for long mode 
-    cmp eax, 1
-    jne .end
 
     ; disable paging first
     mov eax, cr0          ; Set the A-register to control register 0.
     and eax, ~(1 << 31) & 0xFFFFFFFF   ; Clear the PG-bit, which is bit 31, and hack to get rid of warning
     mov cr0, eax          ; Set control register 0 to the A-register.
 
+    ; identity map the first 4G page
+    mov eax, GET_PADDR(kern_early_pml4)
+    add eax, GET_PML4(0) * 8 ; eax = offset of pml4e in pml4 for the 0th GB
+    mov dword [eax], GET_PADDR(kern_early_ident_pdpt) + 11b ; let the corresponding pml4e point to the kern_early_ident_pdpt
+
+    mov eax, GET_PADDR(kern_early_ident_pdpt)
+    add eax, GET_PDPT(0) * 8
+    mov ebx, 10000011b ; ebx lower bits is attribute = R/W + SU + 1G page, high bits = physical 0th GB
+    mov ecx, 4 ; 4 times = 4GB
+    .l0:
+        mov dword [eax], ebx ; set the corresponding pdpte to map 1GB pages in ebx
+        add ebx, 1*1024*1024*1024 ; add another 1G to ebx higher bits
+        add eax, 8 ; increment to next pdpte
+        loop .l0
+
+    ; map the first 4G to pmap
+    mov eax, GET_PADDR(kern_early_pml4)
+    add eax, GET_PML4(KERN_PMAP_START) * 8 ; eax = offset of pml4e in pml4 for PMAP region
+    mov dword [eax], GET_PADDR(kern_early_pmap_pdpt) + 11b ; let the corresponding pml4e point to the kern_early_pmap_pdpt
+
+    mov eax, GET_PADDR(kern_early_pmap_pdpt)
+    add eax, GET_PDPT(KERN_PMAP_START) * 8
+    mov ebx, 10000011b ; ebx lower bits is attribute = R/W + SU + 1G page, high bits = physical 0th GB
+    mov ecx, 4 ; 4 times = 4GB
+    .l1:
+        mov dword [eax], ebx ; set the corresponding pdpte to map 1GB pages in ebx
+        add ebx, 1*1024*1024*1024 ; add another 1G to ebx higher bits
+        add eax, 8 ; increment to next pdpte
+        loop .l1
+
+    ; map the first 1G to kern_base
     ; point the first PML4 entry to the identity pdpt
-    mov eax, GET_PADDR(init_pml4)
-    mov dword [eax], GET_PADDR(init_pdpt_iden) + 11b ; write the lower bits, higher = 0
-    ; point the nth PML4 entry to the kernel pdpt
-    add eax, GET_PML4(KERNEL_SPACE_VADDR) * 8
-    mov dword [eax], GET_PADDR(init_pdpt_kern) + 11b
+    mov eax, GET_PADDR(kern_early_pml4)
+    add eax, GET_PML4(KERN_BASE_START) * 8
+    mov dword [eax], GET_PADDR(kern_early_img_pdpt) + 11b ; let the corresponding pml4e point to the kern_early_img_pdpt
 
-    ; identity map the first 4GB
-    mov eax, GET_PADDR(init_pdpt_iden)
-    mov ebx, 10000011b ; R/W + SU + 1G page
-    mov ecx, 4 ; loop 4 times
-.l0:
-    mov dword [eax], ebx
-    add ebx, 1*1024*1024*1024 ; 1G
-    add eax, 8
-    loop .l0
+    mov eax, GET_PADDR(kern_early_img_pdpt)
+    add eax, GET_PDPT(KERN_BASE_START) * 8
+    mov dword [eax], 10000011b ; ebx lower bits is attribute = R/W + SU + 1G page, high bits = physical 0th GB
 
-    ; map the first 1 GB, which contains the kernel, to KERNEL_BASE_VADDR
-    mov eax, GET_PADDR(init_pdpt_kern)
-    ; extract the PML4 entry
-    add eax, GET_PDPT(KERNEL_SPACE_VADDR) * 8
-    mov ebx, 10000011b ; R/W + SU + 1G page
-    mov dword [eax], ebx
+    BOCHS_BREAK
 
     ; enable PAE
     mov eax, cr4                 ; Set the A-register to control register 4.
@@ -66,55 +89,24 @@ arch_init_32:
     wrmsr                        ; Write to the model-specific register.
 
     ; let cr3 point at page table
-    mov eax, GET_PADDR(init_pml4)
+    mov eax, GET_PADDR(kern_early_pml4)
     mov cr3, eax
 
+    xchg bx, bx
     ; enable paging, enter compatibility mode
     mov eax, cr0                                   ; Set the A-register to control register 0.
     or eax, 1 << 31                                ; Set the PG-bit, which is bit 31.
     mov cr0, eax                                   ; Set control register 0 to the A-register.
 
     ; now we are in compat mode
-
     ; load the long mode GDT
-    lgdt [GET_PADDR(init_gdt.ptr)]
+    lgdt [GET_PADDR(kern_early_gdt.ptr)]
 
 	; switch to long mode
-    jmp init_gdt.code:GET_PADDR(arch_init_64)
+    jmp kern_early_gdt.code:GET_PADDR(arch_init_64)
+    ; should not reach this point
 .end:
     jmp $
-
-check_long_mode:
-    push ebp
-    mov ebp,esp
-    pushfd
-    pop eax
-    mov ecx, eax
-    xor eax, 1 << 21
-    push eax
-    popfd
-    pushfd
-    pop eax
-    push ecx
-    popfd
-    xor eax, ecx
-    jz .not_supported
-    mov eax, 0x80000000    ; Set the A-register to 0x80000000.
-    cpuid                  ; CPU identification.
-    cmp eax, 0x80000001    ; Compare the A-register with 0x80000001.
-    jb .not_supported      ; It is less, there is no long mode.
-    mov eax, 0x80000001    ; Set the A-register to 0x80000001.
-    cpuid                  ; CPU identification.
-    test edx, 1 << 29      ; Test if the LM-bit, which is bit 29, is set in the D-register.
-    jz .not_supported      ; They arent, there is no long mode.
-    mov eax,1
-    jmp .end
-.not_supported:
-    xor eax,eax
-.end:
-    mov esp,ebp
-    pop ebp
-    ret
 
 section .data
 bits 32
@@ -130,7 +122,7 @@ arch_init_64:
 	jmp rax
 .high:
     ; set proper segment registers
-    mov ax,init_gdt.data
+    mov ax,kern_early_gdt.data
     mov ds,ax
     mov es,ax
     mov fs,ax
@@ -138,49 +130,53 @@ arch_init_64:
     mov ss,ax
 
     ; initial kernel stack, 4k
-    mov rsp, init_stack
+    mov rsp, kern_early_stack
     xor rdi, rdi
     mov edi, dword [multiboot_info_ptr]
     ; init arch
     call arch_main
-.end:
-    hlt
+    ; should not reach this point
+    jmp $
 
 
 section .data
 bits 64
-align KERNEL_PAGE_SIZE
-    times KERNEL_PAGE_SIZE db 0
-init_stack:
+align 0x1000
+    times KERN_PAGE_SZ db 0
+kern_early_stack:
 
-init_pml4:
-align KERNEL_PAGE_SIZE
-    times KERNEL_PAGE_SIZE db 0
+align 0x1000
+kern_early_pml4:
+    times 0x1000 db 0
 
-init_pdpt_iden:
-align KERNEL_PAGE_SIZE
-    times KERNEL_PAGE_SIZE db 0
+align 0x1000
+kern_early_ident_pdpt:
+    times 0x1000 db 0
 
-init_pdpt_kern:
-align KERNEL_PAGE_SIZE
-    times KERNEL_PAGE_SIZE db 0
+align 0x1000
+kern_early_pmap_pdpt:
+    times 0x1000 db 0
 
-init_gdt:                        ; Global Descriptor Table (long mode).
-.null: equ $ - init_gdt         ; The null descriptor.
+align 0x1000
+kern_early_img_pdpt:
+    times 0x1000 db 0
+
+kern_early_gdt:                        ; Global Descriptor Table (long mode).
+.null: equ $ - kern_early_gdt         ; The null descriptor.
     dw 0                         ; Limit (low).
     dw 0                         ; Base (low).
     db 0                         ; Base (middle)
     db 0                         ; Access.
     db 0                         ; Granularity.
     db 0                         ; Base (high).
-.code: equ $ - init_gdt         ; The code descriptor.
+.code: equ $ - kern_early_gdt    ; The code descriptor.
     dw 0                         ; Limit (low).
     dw 0                         ; Base (low).
     db 0                         ; Base (middle)
     db 10011010b                 ; Access (exec/read).
     db 00100000b                 ; Granularity.
     db 0                         ; Base (high).
-.data: equ $ - init_gdt         ; The data descriptor.
+.data: equ $ - kern_early_gdt    ; The data descriptor.
     dw 0                         ; Limit (low).
     dw 0                         ; Base (low).
     db 0                         ; Base (middle)
@@ -189,5 +185,5 @@ init_gdt:                        ; Global Descriptor Table (long mode).
     db 0                         ; Base (high).
 .ptr:
     ; GDT PTR
-    dw $ - init_gdt - 1             ; Limit.
-    dq GET_PADDR(init_gdt)          ; Base.
+    dw $ - kern_early_gdt - 1       ; Limit.
+    dq GET_PADDR(kern_early_gdt)    ; Base.

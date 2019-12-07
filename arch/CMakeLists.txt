@@ -1,7 +1,7 @@
 set(SUBMODULE arch)
 set(CC_SRC
         cpu.c
-        init.c
+        main.c
         intr.c
         mem.c
         print.c
