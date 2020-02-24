@@ -1,9 +1,9 @@
 #include <arch/intr.h>
-#include <arch/mem.h>
+#include <arch/pmap.h>
 #include <arch/print.h>
-#include <kern/print.h>
-#include <kern/status.h>
-#include <kern/brute.h>
+#include <ke/print.h>
+#include <ke/status.h>
+#include <ke/brute.h>
 
 #include "cpu.h"
 

@@ -1,6 +1,5 @@
-set(SUBMODULE kern)
+set(SUBMODULE ke)
 set(CC_SRC
-        avl_tree.c
         libkern.c
         kmain.c
         print.c

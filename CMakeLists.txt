@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 # disable in-source build
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(bond)
 
@@ -69,8 +70,10 @@ set(DMP_FLAGS
         ${DMP_FLAGS_${ARCH}})
 
 set(SUBMODULES
-        kern
+        common
+        ke
         arch
+        mm
         scripts
         test)
 

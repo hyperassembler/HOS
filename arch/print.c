@@ -1,6 +1,6 @@
-#include <kern/cdef.h>
-#include <arch/mem.h>
-#include <kern/libkern.h>
+#include <common/cdef.h>
+#include <arch/pmap.h>
+#include <common/libkern.h>
 
 #define FB_PADDR (0xb8000)
 #define FB_ROW (25)

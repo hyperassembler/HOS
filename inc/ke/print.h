@@ -1,7 +1,7 @@
 #pragma once
 
-#include <kern/cdef.h>
-#include <kern/print.h>
+#include <common/cdef.h>
+#include <ke/print.h>
 
 ATTR_FMT_PRINTF int
 kprintf(const char *fmt, ...);

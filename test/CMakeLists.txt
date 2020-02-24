@@ -7,4 +7,3 @@ set(CC_SRC
         )
 
 include(${MK}/kern.cmake)
-

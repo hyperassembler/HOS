@@ -1,6 +1,6 @@
-#include <kern/cdef.h>
-#include <kern/libkern.h>
-#include <kern/brute.h>
+#include <common/cdef.h>
+#include <common/libkern.h>
+#include <ke/brute.h>
 #include <test/ktest.h>
 
 #define MAX_ELE (10)

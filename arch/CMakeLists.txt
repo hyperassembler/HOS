@@ -3,9 +3,10 @@ set(CC_SRC
         cpu.c
         main.c
         intr.c
-        mem.c
         print.c
-        brute.c)
+        brute.c
+        pmap.c
+        paging.c)
 
 set(AS_SRC
         boot.asm

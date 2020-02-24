@@ -1,7 +1,7 @@
 #pragma once
 
 #include <arch/intr.h>
-#include <kern/status.h>
+#include <ke/status.h>
 
 /**
  * Interrupt context structure

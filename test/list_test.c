@@ -1,7 +1,7 @@
 #include <test/ktest.h>
-#include <kern/cdef.h>
-#include <kern/list.h>
-#include <kern/libkern.h>
+#include <common/cdef.h>
+#include <common/list.h>
+#include <common/libkern.h>
 
 #define ARR_SZ(arr) (sizeof(arr) / sizeof((arr)[0]))
 

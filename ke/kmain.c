@@ -1,7 +1,7 @@
-#include <kern/cdef.h>
-#include <kern/brute.h>
-#include <kern/kinit.h>
-#include <kern/libkern.h>
+#include <common/cdef.h>
+#include <ke/brute.h>
+#include <ke/kinit.h>
+#include <common/libkern.h>
 
 static int
 kinit_cmpf(const void *ki1, const void *ki2)
@@ -26,10 +26,9 @@ init_kinit()
  * Kernel entry point
  * @param boot_info passed by the bootloader
  */
-ATTR_UNUSED void KABI
-kmain(ATTR_UNUSED void *boot_info)
+ATTR_USED void
+kmain()
 {
-    KASSERT(boot_info != NULL, "bootinfo is NULL");
     init_kinit();
     BRUTE("Control reached end of kmain");
 }

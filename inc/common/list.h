@@ -1,8 +1,8 @@
 #pragma once
 
-#include <kern/cdef.h>
-#include <kern/poison.h>
-#include <kern/brute.h>
+#include <common/cdef.h>
+#include <ke/poison.h>
+#include <ke/brute.h>
 
 struct list_entry {
     struct list_entry *prev;

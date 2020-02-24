@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kern/cdef.h>
+#include <common/cdef.h>
 
 struct avl_node
 {

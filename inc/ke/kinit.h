@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kern/lds.h>
+#include <common/lds.h>
 
 typedef void (kinitf)(void*);
 

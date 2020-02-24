@@ -1,5 +1,5 @@
-#include <kern/cdef.h>
-#include <kern/libkern.h>
+#include <common/cdef.h>
+#include <common/libkern.h>
 
 void
 memswp(void *dst, void *src, usize size)

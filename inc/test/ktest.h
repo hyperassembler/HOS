@@ -1,7 +1,7 @@
 #pragma once
 
-#include <kern/cdef.h>
-#include <kern/lds.h>
+#include <common/cdef.h>
+#include <common/lds.h>
 
 LDS_DECL(ktest);
 

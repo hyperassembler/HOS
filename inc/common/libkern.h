@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kern/cdef.h>
+#include <common/cdef.h>
 
 /*
  * Common macros, etc
@@ -8,7 +8,9 @@
 
 #define OBTAIN_STRUCT_ADDR(member_addr, struct_name, member_name) ((struct_name*)((uintptr)(member_addr) - (uintptr)(&(((struct_name*)0)->member_name))))
 
-#define CEIL(num, div) \
+#define ALIGN_UP2(num, round) (((num) + (round) - 1) & ~((round) - 1))
+
+#define DIV_CEIL(num, div) \
     ({ __typeof__(num) _num = (num); \
     __typeof__(div) _div = (div); \
     ((_num + _div - 1) / _div); })

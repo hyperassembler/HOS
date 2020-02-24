@@ -1,13 +1,13 @@
-#include <kern/print.h>
+#include <ke/print.h>
 #include <arch/print.h>
-#include <kern/libkern.h>
-#include <kern/spin_lock.h>
+#include <common/libkern.h>
+#include <ke/spin_lock.h>
 
 /* max space needed for each byte is when printing it in binary = 8 bits */
 #define NBUF_SZ (sizeof(uintmax) * 8)
 
 static char nbuf[NBUF_SZ];
-static struct spin_lock print_lock = SPIN_LOCK_INITIALIZER;
+static struct ke_spin_lock print_lock = KE_SPIN_LOCK_INITIALIZER;
 
 static int
 _printu(char *buf, uintmax num, uint base, int cap)
@@ -64,6 +64,7 @@ _vprintf(const char *fmt, va_list args)
             case 'p':
                 sz_ptr = 1;
                 base = 16;
+                usignf = 1;
                 goto pnum;
             case 'd':
                 goto pnum;
@@ -146,9 +147,9 @@ kprintf(const char *fmt, ...)
     va_list args;
     va_start(args, fmt);
 
-    spin_lock_acq(&print_lock);
+    ke_spin_lock_acq(&print_lock);
     ret = _vprintf(fmt, args);
-    spin_lock_rel(&print_lock);
+    ke_spin_lock_rel(&print_lock);
 
     va_end(args);
     return ret;
@@ -159,9 +160,9 @@ kvprintf(const char *fmt, va_list args)
 {
     int ret;
 
-    spin_lock_acq(&print_lock);
+    ke_spin_lock_acq(&print_lock);
     ret = _vprintf(fmt, args);
-    spin_lock_rel(&print_lock);
+    ke_spin_lock_rel(&print_lock);
 
     return ret;
 }

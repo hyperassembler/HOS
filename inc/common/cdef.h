@@ -20,6 +20,7 @@ typedef size_t usize;
 typedef unsigned char uchar;
 typedef unsigned long ulong;
 typedef unsigned int uint;
+typedef unsigned short ushort;
 #define KABI __attribute__((sysv_abi))
 
 #define STATIC_ASSERT(cond, msg) _Static_assert((cond), msg)
@@ -33,7 +34,7 @@ typedef unsigned int uint;
 #define ATTR_UNUSED __attribute__((unused))
 #define ATTR_USED __attribute__((used))
 #define ATTR_SECTION(x) __attribute__ ((section (#x)))
-#define ATTR_ALIGN(x) _Alignas(x)
+#define ATTR_ALIGN(x) __attribute__((aligned (x)))
 #define ATTR_FMT_PRINTF __attribute__((format (printf, 1, 2)))
 
 #define BOCHS_BREAK __asm__("xchg %bx, %bx")

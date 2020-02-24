@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kern/cdef.h>
+#include <common/cdef.h>
 
 #define HAL_CORE_COUNT 1
 struct ATTR_PACKED hal_gdt_ptr {

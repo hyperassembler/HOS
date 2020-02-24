@@ -31,5 +31,5 @@ SECTIONS
         *(COMMON)
     }
 
-    KERN_IMG_STOP = .;
+    ARCH_ML_KIMAGE_STOP = .;
 }

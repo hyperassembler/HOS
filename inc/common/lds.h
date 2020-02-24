@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kern/cdef.h>
+#include <common/cdef.h>
 
 #define LDS_DECL(name) \
     extern const char __start_##name[]; \

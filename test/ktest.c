@@ -1,7 +1,7 @@
 #include <test/ktest.h>
-#include <kern/cdef.h>
-#include <kern/print.h>
-#include <kern/kinit.h>
+#include <common/cdef.h>
+#include <ke/print.h>
+#include <ke/kinit.h>
 
 static uint ktest_cases = 0;
 

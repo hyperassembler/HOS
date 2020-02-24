@@ -1,7 +1,8 @@
-#include <kern/avl_tree.h>
-#include <kern/libkern.h>
-#include <kern/poison.h>
-#include <kern/cdef.h>
+#include <common/avl_tree.h>
+#include <common/cdef.h>
+
+#include <common/libkern.h>
+#include <ke/poison.h>
 
 static inline struct avl_node *
 _avl_node_max(struct avl_node *node)

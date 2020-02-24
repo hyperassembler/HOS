@@ -1,8 +1,8 @@
-#include <kern/cdef.h>
-#include <kern/libkern.h>
-#include <kern/avl_tree.h>
+#include <common/cdef.h>
+#include <common/libkern.h>
+#include <common/avl_tree.h>
 #include <test/ktest.h>
-#include <kern/brute.h>
+#include <ke/brute.h>
 
 struct test_node {
     struct avl_node tree_entry;

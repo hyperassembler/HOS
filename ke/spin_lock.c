@@ -1,5 +1,5 @@
-#include <kern/cdef.h>
-#include <kern/spin_lock.h>
+#include <common/cdef.h>
+#include <ke/spin_lock.h>
 
 static inline uint32
 _spin_lock_get_ticket(uint32 val)
@@ -14,13 +14,13 @@ _spin_lock_get_owner(uint32 val)
 }
 
 void
-spin_lock_init(struct spin_lock *lock)
+ke_spin_lock_init(struct ke_spin_lock *lock)
 {
     atomic_store(&lock->val, 0);
 }
 
 void
-spin_lock_acq(struct spin_lock *lock)
+ke_spin_lock_acq(struct ke_spin_lock *lock)
 {
     uint32 val;
 
@@ -37,14 +37,14 @@ spin_lock_acq(struct spin_lock *lock)
 }
 
 void
-spin_lock_rel(struct spin_lock *lock)
+ke_spin_lock_rel(struct ke_spin_lock *lock)
 {
     // increment ticket
     atomic_fetch_add(&lock->val, 1);
 }
 
 int
-spin_lock_try_acq(struct spin_lock *lock)
+ke_spin_lock_try_acq(struct ke_spin_lock *lock)
 {
     uint32 val;
 

@@ -19,6 +19,7 @@ bits 32
 ; Identity map the first 4G memory, where the kernel binary and multiboot info is
 ; Map the first 4G memory to KERN_PMAP temporarily so we have access to printf
 ; Map the first 1G memory, which contains the kernel, to KERN_BASE_START
+; Map the nth PML4 to itself for recursive page tables
 arch_init_32:
     cli ; close interrupt
     cld ; set direction
@@ -74,6 +75,11 @@ arch_init_32:
     mov eax, GET_PADDR(kern_early_img_pdpt)
     add eax, GET_PDPT(KERN_BASE_START) * 8
     mov dword [eax], 10000011b ; ebx lower bits is attribute = R/W + SU + 1G page, high bits = physical 0th GB
+
+    ; map the recursive mapping
+    mov eax, GET_PADDR(kern_early_pml4)
+    add eax, GET_PML4(KERN_RPT_START) * 8
+    mov dword [eax], GET_PADDR(kern_early_pml4) + 11b
 
     BOCHS_BREAK
 

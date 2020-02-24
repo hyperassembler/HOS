@@ -1,4 +1,4 @@
-#include <kern/cdef.h>
+#include <common/cdef.h>
 
 #include "cpu.h"
 
