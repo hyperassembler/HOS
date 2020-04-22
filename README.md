@@ -1,7 +1,7 @@
 [![Build Status](https://build.quacker.org/api/badges/d/bond/status.svg)](https://build.quacker.org/d/bond)
 # Building
 ### Required packages
-nasm, clang, lld, xorriso, grub-pc-bin
+nasm, clang, lld, xorriso
 
 ### Compiling
 mkdir build
