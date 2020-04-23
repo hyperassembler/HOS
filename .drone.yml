@@ -10,3 +10,22 @@ steps:
   - cd build
   - cmake ../
   - make
+
+---
+
+trigger:
+  event:
+    - cron
+  cron:
+    - hourly
+
+steps:
+  - name: docker-image-update
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      repo: quackerd/fedora
+      tags: latest
