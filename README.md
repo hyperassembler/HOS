@@ -2,7 +2,7 @@
 [![APM](https://img.shields.io/apm/l/vim-mode)](https://opensource.org/licenses/MIT)
 # Building
 ### Required packages
-nasm, clang, lld, xorriso
+Fedora: dnf install -y cmake make clang nasm xorriso lld grub2-pc-modules grub2-tools-extra
 
 ### Compiling
 mkdir build
