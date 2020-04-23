@@ -5,6 +5,9 @@ name: default
 trigger:
   branch:
     - master
+  event:
+    exclude:
+      - cron
 
 steps:
 - name: build
