@@ -4,11 +4,9 @@ name: default
 
 steps:
 - name: build
-  image: alpine
+  image: quackerd/fedora:latest
   commands:
-  - echo hello
-
-- name: test
-  image: alpine
-  commands:
-  - echo hello
+  - mkdir build
+  - cd build
+  - cmake ../
+  - make
