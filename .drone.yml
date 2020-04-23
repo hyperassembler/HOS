@@ -12,6 +12,9 @@ steps:
   - make
 
 ---
+kind: pipeline
+type: docker
+name: docker-update
 
 trigger:
   event:
@@ -20,7 +23,7 @@ trigger:
     - hourly
 
 steps:
-  - name: docker-image-update
+  - name: docker-update
     image: plugins/docker
     settings:
       username:
