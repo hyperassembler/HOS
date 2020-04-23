@@ -1,5 +1,5 @@
 [![Build Status](https://build.quacker.org/api/badges/d/bond/status.svg)](https://build.quacker.org/d/bond)
-[![APM](https://img.shields.io/apm/l/vim-mode)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 # Building
 ### Required packages
 Fedora: dnf install -y cmake make clang nasm xorriso lld grub2-pc-modules grub2-tools-extra
