@@ -2,6 +2,10 @@ kind: pipeline
 type: docker
 name: default
 
+trigger:
+  branch:
+    - master
+
 steps:
 - name: build
   image: quackerd/fedora:latest
@@ -20,7 +24,9 @@ trigger:
   event:
     - cron
   cron:
-    - hourly
+    - nightly
+  branch:
+    - master
 
 steps:
   - name: docker-update
