@@ -8,3 +8,7 @@ steps:
   commands:
   - echo hello
 
+- name: test
+  image: alpine
+  commands:
+  - echo hello
