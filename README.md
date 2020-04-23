@@ -1,5 +1,5 @@
 [![Build Status](https://build.quacker.org/api/badges/d/bond/status.svg)](https://build.quacker.org/d/bond)
-![APM](https://img.shields.io/apm/l/vim-mode)
+[![APM](https://img.shields.io/apm/l/vim-mode)](https://opensource.org/licenses/MIT)
 # Building
 ### Required packages
 nasm, clang, lld, xorriso
