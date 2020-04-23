@@ -1,4 +1,4 @@
-![Build Status](https://build.quacker.org/api/badges/d/bond/status.svg)](https://build.quacker.org/d/bond)
+[![Build Status](https://build.quacker.org/api/badges/d/bond/status.svg)](https://build.quacker.org/d/bond)
 ![APM](https://img.shields.io/apm/l/vim-mode)
 # Building
 ### Required packages
