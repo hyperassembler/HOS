@@ -1,4 +1,4 @@
-[![Build Status](https://build.quacker.org/api/badges/d/bond/status.svg)](https://build.quacker.org/d/bond)
+[![Build Status](https://ci.quacker.org/api/badges/d/bond/status.svg)](https://build.quacker.org/d/bond)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 # Building
 ### Required packages
