@@ -22,11 +22,11 @@ set(TOOLCHAINS
         LD
         DMP)
 
-FOREACH(f IN LISTS TOOLCHAINS)
-    if(NOT ${f})
+FOREACH (f IN LISTS TOOLCHAINS)
+    if (NOT ${f})
         message(FATAL_ERROR "Toolchain ${f} cannot be found.")
-    endif()
-endforeach(f)
+    endif ()
+endforeach (f)
 
 set(CC_WARN_IGNORE
         -Wno-gnu-statement-expression # this means we can assign the return val of the last statment in a block, useful in MAX, MIN, etc.
@@ -78,15 +78,15 @@ set(SUBMODULES
         test)
 
 # process submodules
-FOREACH(f IN LISTS SUBMODULES)
+FOREACH (f IN LISTS SUBMODULES)
     add_subdirectory(${f})
-endforeach(f)
+endforeach (f)
 
 # process dependencies
-FOREACH(f IN LISTS SUBMODULES)
+FOREACH (f IN LISTS SUBMODULES)
     set(OBJS ${OBJS} ${OBJS_${f}})
     set(TARGETS ${TARGETS} ${TARGET_${f}})
-endforeach(f)
+endforeach (f)
 
 # set target names
 
@@ -136,9 +136,11 @@ add_custom_target(${proj}_iso ALL
 
 # hack for clion not parsing custom targets
 if ($ENV{CLION_IDE})
+    SET(CMAKE_C_COMPILER ${CC})
     include_directories(${INC})
     add_executable(kernel ${G_CC_SRC})
+    add_definitions(-DKOPT_DBG)
     target_compile_options(kernel PRIVATE ${CC_FLAGS})
-endif()
+endif ()
 
 

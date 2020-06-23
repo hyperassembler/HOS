@@ -1,3 +1,5 @@
 #pragma once
+#include <common/cdef.h>
 
-void arch_brute();
+ATTR_NORETURN void
+arch_brute();

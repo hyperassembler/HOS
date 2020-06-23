@@ -36,5 +36,7 @@ typedef unsigned short ushort;
 #define ATTR_SECTION(x) __attribute__ ((section (#x)))
 #define ATTR_ALIGN(x) __attribute__((aligned (x)))
 #define ATTR_FMT_PRINTF __attribute__((format (printf, 1, 2)))
+#define ATTR_NORETURN _Noreturn
+
 
 #define BOCHS_BREAK __asm__("xchg %bx, %bx")

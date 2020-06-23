@@ -1,6 +1,7 @@
 #include <arch/brute.h>
 
-void arch_brute()
+ATTR_NORETURN void
+arch_brute()
 {
     while(1) {}
 }

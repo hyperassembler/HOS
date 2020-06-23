@@ -6,6 +6,7 @@ struct mm_phys_seg {
     mm_paddr stop;
 };
 
+
 static ATTR_UNUSED struct list_entry _freelist[MM_PHYS_MAX_POOLS][MM_PHYS_ORDER_MAX];
 
 static struct mm_phys_seg _phys_segs[ARCH_PMAP_MAX_PHYS_SEGS];

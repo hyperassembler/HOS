@@ -3,26 +3,26 @@
 #include <mm/phys.h>
 #include <common/libkern.h>
 
-#include "pmap_p.h"
 #include "paging.h"
 
-struct arch_pmap_segs {
-    mm_paddr start;
-    mm_paddr stop;
+struct arch_pmap_segs
+{
+    mm_paddr base;
+    usize len;
 };
 
 // the physical memory segments information obtained from multiboot info
-static struct arch_pmap_segs _phys_segs[ARCH_PMAP_MAX_PHYS_SEGS];
-static usize _phys_segs_sz = 0;
+static struct arch_pmap_segs phys_segs[ARCH_PMAP_MAX_PHYS_SEGS];
+static usize phys_segs_sz = 0;
 
 // the base addr for mm_page structures
 static mm_paddr _mm_pages_base;
 
 // initializes _pmap region
 static void
-_pmap_init(mm_paddr *cur_addr, arch_pml4e *kern_pml4)
+pmap_init(mm_paddr *cur_addr, arch_pml4e *kern_pml4)
 {
-    usize high_mem = _phys_segs[_phys_segs_sz - 1].stop;
+    usize high_mem = phys_segs[phys_segs_sz - 1].stop;
 
     if (high_mem >= ARCH_ML_MAX_RAM) {
         BRUTE("Only supports maximum %ld bytes RAM", ARCH_ML_MAX_RAM);
@@ -44,16 +44,16 @@ _pmap_init(mm_paddr *cur_addr, arch_pml4e *kern_pml4)
 }
 
 static void
-_mm_pg_init(mm_paddr *cur_addr, arch_pml4e *kern_pml4)
+mm_pg_init(mm_paddr *cur_addr, arch_pml4e *kern_pml4)
 {
 
 }
 
 // initializes kernel mapping
 static void
-_kern_mapping_init(mm_paddr *cur_addr, arch_pml4e *kern_pml4)
+kern_mapping_init(mm_paddr *cur_addr, arch_pml4e *kern_pml4)
 {
-    // map the kernel with 2MB mapping now
+    // map the kernel with 4KB mapping now
     KASSERT((ARCH_ML_KIMAGE_PADDR & (PDE_MAPPING_SZ - 1)) == 0, "kernel vaddr not 2MB aligned.");
     KASSERT(((uintptr) KERN_IMG_START & (PDE_MAPPING_SZ - 1)) == 0, "kernel paddr not 2MB aligned.");
 
@@ -97,29 +97,32 @@ arch_pmap_map(mm_paddr paddr, ATTR_UNUSED usize sz)
 mm_paddr
 arch_paddr_to_mm_page(mm_paddr paddr)
 {
-    return (paddr / ARCH_KPAGE_SZ) * sizeof(struct mm_page) + _mm_pages_base;
+    return (paddr / ARCH_KPAGE_SZ) * sizeof(struct mm_phys_page) + _mm_pages_base;
 }
 
-// adds an available physical segment to _phys_segs
+// adds an available physical segment to phys_segs
 void
-arch_mem_addseg(mm_paddr start, usize len)
+archp_mem_addseg(mm_paddr start, usize len)
 {
-    KASSERT(_phys_segs_sz < ARCH_PMAP_MAX_PHYS_SEGS, "too many physical segments!");
-    _phys_segs[_phys_segs_sz].start = start;
-    _phys_segs[_phys_segs_sz].stop = start + len - 1;
-    _phys_segs_sz++;
+    if (phys_segs_sz >= ARCH_PMAP_MAX_PHYS_SEGS) {
+        BRUTE("archp_mem_addseg: too many physical segments.");
+    }
+    phys_segs[phys_segs_sz].base = start;
+    phys_segs[phys_segs_sz].len = start + len - 1;
+    phys_segs_sz++;
 }
 
-// sets up paging for kernel and mm_pages for mm_phys
-// specifically, we do:
-// 1. Map the kernel to KERN_BASE
-// 2. Allocate mm_page for the all physical memory (avail and unavail) and put them after the kernel paddr
-// 2.5. Map all mm_page (s) to KERN_MM_PAGE_START
-// 3. Direct map all available physical memory to PMAP_BASE
-// 4. Save the mapping and switch the page table to the new table
-// 5. Save the information to mm_phys for future phys setup
+/* sets up initial paging and mm_phys_pages
+ * specifically, we do:
+ * 1. Map the kernel to KERN_BASE
+ * 2. Allocate mm_page for the all physical memory (avail and unavail) and put them after the kernel paddr
+ * 2.5. Map all mm_page (s) to KERN_MM_PAGE_START
+ * 3. Direct map all available physical memory to PMAP_BASE
+ * 4. Save the mapping and switch the page table to the new table
+ * 5. Save the information to mm_phys for future phys setup
+ */
 void
-arch_mem_init()
+archp_mem_init()
 {
     // we use 2M (PDE) pages to map the kernel so align the physical address to 2MB
     mm_paddr cur_addr = ALIGN_UP2(ARCH_ML_KIMAGE_PADDR, PDE_MAPPING_SZ);
@@ -129,13 +132,13 @@ arch_mem_init()
     memset(kern_pml4, 0, ARCH_KPAGE_SZ);
     cur_addr += ARCH_KPAGE_SZ;
 
-    _kern_mapping_init(&cur_addr, kern_pml4);
-    _mm_pg_init(&cur_addr, kern_pml4);
-    _pmap_init(&cur_addr, kern_pml4);
+    kern_mapping_init(&cur_addr, kern_pml4);
+    mm_pg_init(&cur_addr, kern_pml4);
+    pmap_init(&cur_addr, kern_pml4);
 
     // copy the physical segments information to mm_phys
-    for (usize i = 0; i < _phys_segs_sz; i++) {
-        mm_phys_add_phys_seg(_phys_segs[i].start, _phys_segs[i].stop);
+    for (usize i = 0; i < phys_segs_sz; i++) {
+        mm_phys_add_phys_seg(phys_segs[i].start, phys_segs[i].stop);
     }
 
     // add reserved segment information to mm_phys
