@@ -3,5 +3,5 @@
 ATTR_NORETURN void
 arch_brute()
 {
-    while(1) {}
+    while (1) {}
 }

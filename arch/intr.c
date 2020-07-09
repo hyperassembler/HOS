@@ -73,7 +73,7 @@ populate_idt(void)
 }
 
 void
-arch_intr_init(void)
+archp_intr_init(void)
 {
     uint32 coreid;
     uint32 eax;
@@ -83,7 +83,7 @@ arch_intr_init(void)
 
     // detect APIC first
     eax = 1;
-    arch_cpuid(&eax, &ebx, &ecx, &edx);
+    archp_cpuid(&eax, &ebx, &ecx, &edx);
     if (!(edx & (1u << 9u))) {
         BRUTE("ERROR: APIC is not present.\n");
     }

@@ -5,6 +5,7 @@
 #include <arch/brute.h>
 #include <arch/mlayout.h>
 #include <arch/pmap.h>
+#include <arch/intr.h>
 #include <mm/phys.h>
 
 #include "multiboot2.h"
@@ -60,6 +61,12 @@ proc_mbinfo(void *mb_info)
     if (!mmap_detected) {
         BRUTE("proc_mbinfo: could not find MMAP tag.");
     }
+
+    // initialize interrupts
+    archp_intr_init();
+
+    // initialize memory
+    archp_mem_init();
 }
 
 ATTR_USED void

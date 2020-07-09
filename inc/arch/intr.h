@@ -36,7 +36,7 @@ struct interrupt_context
  * C declaration
  */
 void
-arch_intr_init(void);
+archp_intr_init(void);
 
 /**
  * Exported Dispatchers for asm code

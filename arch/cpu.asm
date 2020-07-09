@@ -10,7 +10,7 @@ global arch_read_cr3
 global arch_write_cr3
 global arch_read_cr8
 global arch_write_cr8
-global arch_cpuid
+global archp_cpuid
 global arch_halt_cpu
 global arch_read_msr
 global arch_write_msr
@@ -102,15 +102,15 @@ mov cr8,rdi
 ret
 
 ;======================
-global arch_halt
-arch_halt:
+global archp_halt
+archp_halt:
 hlt
 
 
 ; ============================
-; extern void KAPI arch_cpuid(uint32* eax, uint32* ebx, uint32* ecx, uint32* edx);
-global arch_cpuid
-arch_cpuid:
+; extern void KAPI archp_cpuid(uint32* eax, uint32* ebx, uint32* ecx, uint32* edx);
+global archp_cpuid
+archp_cpuid:
 push rbp
 mov rbp,rsp
 ; preserve rbx,rcx,rdx
